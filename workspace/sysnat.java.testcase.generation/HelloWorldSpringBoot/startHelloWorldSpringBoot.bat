@@ -1,0 +1,1 @@
+java -jar hello-world-spring-boot.war

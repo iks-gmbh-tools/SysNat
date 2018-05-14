@@ -1,0 +1,13 @@
+package com.iksgmbh.sysnat.helper;
+
+/**
+ * Used form LanguageTemplatePattern and LanguageInstructionPattern to
+ * split an instruction line into its pattern in order to
+ * make templates and instructions easier to compare.
+ * 
+ * @author Reik Oberrath
+ */
+public class LanguagePatternParser 
+{
+
+}

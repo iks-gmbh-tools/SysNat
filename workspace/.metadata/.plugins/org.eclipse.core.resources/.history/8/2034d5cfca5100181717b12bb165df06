@@ -1,0 +1,17 @@
+package com.iksgmbh.sysnat;
+
+public class SysNatTesting 
+{
+	public static void main(String[] args) 
+	{
+		// Phase A: translate natural language into java code
+		SysNatTestCaseGenerator.doYourJob();
+		
+		// Phase B: compile generated java code
+		MavenCaller.compile();
+		
+		// Phase C: start java test runtime to perform tests
+		MavenCaller.runTests();
+		
+	}
+}

@@ -1,0 +1,25 @@
+package com.iksgmbh.sysnat.test.templateContainer;
+
+import com.iksgmbh.sysnat.annotation.LanguageTemplate;
+import com.iksgmbh.sysnat.test.domain.Order;
+
+public class ComplexInstructionTestApplication_LanguageTemplateContainer 
+{
+	@LanguageTemplate(value = "Erzeuge einen Auftrag <>.")
+	public Order createOrder() {
+		// do nothing
+		return null;
+	}
+
+	@LanguageTemplate(value = "Füge dem Auftrag '' den Wert ^^ zu.")
+	public void addToOrder(Order order, String value) {
+		// do nothing
+	}
+
+	@LanguageTemplate(value = "Erzeuge Auftrag <> aus '' und ''.")
+	public Order toOrder(Order order1, Order order2) {
+		// do nothing
+		return null;
+	}
+
+}

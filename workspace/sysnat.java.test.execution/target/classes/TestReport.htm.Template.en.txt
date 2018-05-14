@@ -1,0 +1,251 @@
+﻿﻿<html xmlns:v="urn:schemas-microsoft-com:vml"
+﻿<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+</head>
+
+<body lang=DE style='tab-interval:35.4pt'>
+
+
+<img src="../resources/images/SNT_Logo.png" style="float:left">
+<img src="../resources/images/SNT_Logo.png" style="float:right" />
+<center><b><span style='font-size:36.0pt;line-height:200%;float:center'>SNT-Test-Report</span></b></center>
+
+<div style='mso-element:para-border-div;border:none;border-bottom:solid windowtext 1.5pt;
+padding:0cm 0cm 1.0pt 0cm'>
+
+</div>
+
+<p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
+padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><b style='mso-bidi-font-weight:
+normal'><span style='font-size:8.0pt;line-height:105%'><o:p>&nbsp;</o:p></span></b></p>
+
+<table class=MsoTableGrid border=0 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;border:none;mso-yfti-tbllook:1184;mso-padding-alt:
+ 0cm 5.4pt 0cm 5.4pt;mso-border-insideh:none;mso-border-insidev:none'>
+
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td width=267 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:20.0pt;line-height:105%'>Test Application:</span></b></p>
+  </td>
+  <td width=299 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:20.0pt;line-height:105%'>PLACEHOLDER_PRODUCT</span></p>
+  </td>
+ </tr>
+
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td width=267 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:20.0pt;line-height:105%'>Environment:</span></b></p>
+  </td>
+  <td width=299 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:20.0pt;line-height:105%'>PLACEHOLDER_TARGET_ENV</span></p>
+  </td>
+ </tr>
+
+ <tr style='mso-yfti-irow:1'>
+  <td width=267 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:20.0pt;line-height:105%'>Execution Start:<span
+  style='color:#00B050'></span></span></b></p>
+  </td>
+  <td width=299 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:20.0pt;line-height:105%'>PLACEHOLDER_TIME<b
+  style='mso-bidi-font-weight:normal'></b></span></p>
+  </td>
+ </tr>
+
+ <tr style='mso-yfti-irow:2'>
+  <td width=267 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:20.0pt;line-height:105%'>Execution Period:<span
+  style='color:#00B050'></span></span></b></p>
+  </td>
+  <td width=299 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:20.0pt;line-height:105%'>PLACEHOLDER_DURATION<b
+  style='mso-bidi-font-weight:normal'></b></span></p>
+  </td>
+ </tr>
+
+ <tr style='mso-yfti-irow:2'>
+  <td width=267 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:20.0pt;line-height:105%'>Filter Categories:<span
+  style='color:#00B050'></span></span></b></p>
+  </td>
+  <td width=299 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:20.0pt;line-height:105%'>PLACEHOLDER_CATEGORIES<b
+  style='mso-bidi-font-weight:normal'></b></span></p>
+  </td>
+ </tr>
+ 
+ <tr style='mso-yfti-irow:3;mso-yfti-lastrow:yes'>
+  <td width=267 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
+  style='font-size:20.0pt;line-height:105%'>Overall Result:<span
+  style='color:#00B050'></span></span></b></p>
+  </td>
+  <td width=299 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>
+  <span style='font-size:20.0pt;line-height:105%;background:PLACEHOLDER_BACKGROUND_COLOR_OVERALL_RESULT'>
+  PLACEHOLDER_RESULT<b style='mso-bidi-font-weight:normal'></b></span>
+  </p>
+  </td>
+ </tr>
+</table>
+
+<div style='mso-element:para-border-div;border:none;border-bottom:solid windowtext 1.5pt;
+padding:0cm 0cm 1.0pt 0cm'>
+
+<p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
+padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><b style='mso-bidi-font-weight:
+normal'><span style='font-size:8.0pt;line-height:105%;color:#00B050'><o:p>&nbsp;</o:p></span></b></p>
+
+</div>
+
+<p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
+padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><b style='mso-bidi-font-weight:
+normal'><span style='font-size:8.0pt;line-height:105%'><o:p>&nbsp;</o:p></span></b></p>
+
+<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-yfti-tbllook:1184;mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
+ 
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td width=348 valign=top style='width:318.65pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'>
+  <span style='font-size:18.0pt;line-height:106%'>Test Statistics:</span></b></p>
+  </td>
+  <td width=219 valign=top style='width:225.4pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:166%'></span></p>
+  </td>
+ </tr>
+ 
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+  <td width=348 valign=top style='width:318.65pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%'>
+  Total Number of tests found:</span></p>
+  </td>
+  <td width=219 valign=top style='width:225.4pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%'>PLACEHOLDER_N1</span></p>
+  </td>
+ </tr> 
+ 
+ <tr style='mso-yfti-irow:1'>
+  <td width=348 valign=top style='width:318.65pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%'>
+  Number of executed tests:</span></p>
+  </td>
+  <td width=219 valign=top style='width:225.4pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%'>PLACEHOLDER_N2</span></p>
+  </td>
+ </tr>
+ 
+ <tr style='mso-yfti-irow:2'>
+  <td width=348 valign=top style='width:318.65pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%;background:PLACEHOLDER_BACKGROUND_INAKTIV_NUMBER'>
+  Number of inactive tests:</span></p>
+  </td>
+  <td width=219 valign=top style='width:225.4pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%;background:PLACEHOLDER_BACKGROUND_INAKTIV_NUMBER'>
+  PLACEHOLDER_N3</span></p>
+  </td>
+ </tr>
+ 
+ <tr style='mso-yfti-irow:3'>
+  <td width=348 valign=top style='width:318.65pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%;background:PLACEHOLDER_BACKGROUND_OK_NUMBER'>
+  Number of successful tests:</span></p>
+  </td>
+  <td width=219 valign=top style='width:225.4pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%;background:PLACEHOLDER_BACKGROUND_OK_NUMBER'>
+  PLACEHOLDER_N4</span></p>
+  </td>
+ </tr>
+ 
+ <tr style='mso-yfti-irow:4'>
+  <td width=348 valign=top style='width:318.65pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%;background:PLACEHOLDER_BACKGROUND_WRONG_NUMBER'>
+  Number of tests with wrong results:</span></p>
+  </td>
+  <td width=219 valign=top style='width:225.4pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%;background:PLACEHOLDER_BACKGROUND_WRONG_NUMBER'>
+  PLACEHOLDER_N5</span></p>
+  </td>
+ </tr>
+ 
+ <tr style='mso-yfti-irow:5;mso-yfti-lastrow:yes'>
+  <td width=348 valign=top style='width:318.65pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%;background:PLACEHOLDER_BACKGROUND_FAILED_NUMBER'>
+  Number of tests that failed technically:</span></p>
+  </td>
+  <td width=219 valign=top style='width:225.4pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><span style='font-size:18.0pt;line-height:106%;background:PLACEHOLDER_BACKGROUND_FAILED_NUMBER'>PLACEHOLDER_N6</span></p>
+  </td>
+ </tr>
+</table>
+
+<br>
+
+<br>
+
+</div>
+
+<hr/>
+
+
+<br>
+<b><span style='font-size:14.0pt'>List of executed tests:</span></b>
+<br>
+
+<p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
+padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;color:#FF0000;
+line-height:106%'>PLACEHOLDER_RED_EXECUTED_TESTS</span></p>
+
+<p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
+padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;color:#FF6E00;
+line-height:106%'>PLACEHOLDER_ORANGE_EXECUTED_TESTS</span></p>
+
+<p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
+padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;color:#00B050;
+line-height:106%'>PLACEHOLDER_GREEN_EXECUTED_TESTS</span></p>
+
+<hr/>
+
+
+<br>
+<b><span style='font-size:14.0pt'>Inactive Tests:</span></b>
+<br>
+
+<p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
+padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;color:#FF0000
+line-height:106%'>PLACEHOLDER_INACTIVE_TEST_CASES</span></p>
+
+<hr/>
+
+<br>
+<b><span style='font-size:14.0pt'>Filter Categories defined in NatSpec files:</span></b>
+<br>
+
+<p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
+padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;
+line-height:106%'>PLACEHOLDER_AVAILABLE_CATEGORIES</span></p>
+
+<hr/>
+
+
+<br>
+<b><span style='font-size:18.0pt'>Test Details:</span></b>
+<br>
+
+PLACEHOLDER_DETAILS
+
+</body>
+
+</html>

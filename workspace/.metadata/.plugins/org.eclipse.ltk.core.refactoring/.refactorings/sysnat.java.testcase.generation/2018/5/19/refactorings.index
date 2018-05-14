@@ -1,0 +1,9 @@
+1525678276967	Copy file
+1525678279453	Delete element
+1525678510165	Copy file
+1525678516773	Delete element
+1525678582505	Rename type 'SysNatTestExecutor'
+1525681440402	Extract local variable 'languagePatternParser'
+1525687821221	Rename local variable 'returnValueType'
+1525689779470	Rename method 'verify'
+1525693903997	Extract method 'toFieldName'

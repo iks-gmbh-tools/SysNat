@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.iksgmbh.sysnat.SysNatTestCaseGenerator"/>
+<fullyQualifiedTypeName name="com.sun.org.apache.xalan.internal.xsltc.compiler.Pattern"/>
+<fullyQualifiedTypeName name="com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory.Default"/>
+<fullyQualifiedTypeName name="com.iksgmbh.sysnat.utils.ExceptionHandlingUtil"/>
+<fullyQualifiedTypeName name="com.iksgmbh.sysnat.domain.NaturalLanguagePatternPart.NaturalLanguagePatternPartType"/>
+<fullyQualifiedTypeName name="com.iksgmbh.sysnat.exception.SysNatException"/>
+<fullyQualifiedTypeName name="com.iksgmbh.sysnat.helper.LanguagePatternParser"/>
+<fullyQualifiedTypeName name="com.sun.xml.internal.ws.util.StringUtils"/>
+<fullyQualifiedTypeName name="com.iksgmbh.sysnat.utils.SysNatStringUtil"/>
+</qualifiedTypeNameHistroy>

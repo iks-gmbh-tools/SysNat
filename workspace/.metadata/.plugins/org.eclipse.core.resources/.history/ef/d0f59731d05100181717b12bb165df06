@@ -1,0 +1,28 @@
+package com.iksgmbh.sysnat.helper;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.iksgmbh.sysnat.domain.NaturalLanguagePatternPart;
+
+/**
+ * Used form LanguageTemplatePattern and LanguageInstructionPattern to
+ * split an instruction line into its pattern in order to
+ * make templates and instructions easier to compare.
+ * 
+ * @author Reik Oberrath
+ */
+public class LanguagePatternParser 
+{
+	private List<NaturalLanguagePatternPart> patternParts = new ArrayList<>();
+	
+	public static List<NaturalLanguagePatternPart> doYourJob() {
+		return new LanguagePatternParser().parse();
+	}
+
+	private List<NaturalLanguagePatternPart> parse() 
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

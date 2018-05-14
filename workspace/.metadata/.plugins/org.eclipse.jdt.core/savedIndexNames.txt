@@ -1,0 +1,14 @@
+INDEX VERSION 1.130+C:\data\Reik\dev\SysNatTesting2\workspace\.metadata\.plugins\org.eclipse.jdt.core
+1251511624.index
+1471249302.index
+2450019018.index
+2441881009.index
+427313518.index
+775086395.index
+968004431.index
+496274950.index
+4278495557.index
+2410899517.index
+4000208766.index
+2136750154.index
+3037173580.index
