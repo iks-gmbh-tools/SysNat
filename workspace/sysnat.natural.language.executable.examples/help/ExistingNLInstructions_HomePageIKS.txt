@@ -1,0 +1,64 @@
+Instructions read from LanguageTemplatesCommon
+-------------------------------------------------------
+Active: ^^
+Aktiv: ^^
+Beep ^^ times.
+Category-Filter: ^^
+Comment: ^^
+Das heutige Datum wird als <> festgehalten.
+Date of today is stored as <>.
+Ein Screenshot wird als ^^ gespeichert.
+Ein Screenshot wird gespeichert, falls der Testfall als pictureProof kategorisiert wurde.
+Es existieren ^^.
+Execute for all ^^
+Execute script ^^.
+Execute with ^^
+Execute with following data
+Führe das Skript ^^ aus.
+Führe mit ^^
+Führe mit folgenden Daten
+Führe mit folgenden Daten ^^
+Kategorie-Filter: ^^
+Keyword-Comment: Arrange test requirements
+Keyword-Comment: Assert expected results
+Keyword-Comment: Perform action under test
+Keyword-Comment: Reset to start situation
+Kommentar: ^^
+Piepse ^^ mal.
+Save screenshot now as ^^.
+Save screenshot now if test case is categorized as mitBildnachweis.
+Schlüsselkommentar: Test-Durchführung
+Schlüsselkommentar: Test-Vorbereitungen
+Schlüsselkommentar: Wiederherstellen der Ausgangssituation
+Schlüsselkommentar: Überprüfung der Testergebnisse
+Test-ID: ^^
+Test-Parameter: ^^
+TestData: ^^
+Testdaten: ^^
+There are ^^.
+Wait ^^ second(s).
+Warte ^^ Sekunde(n).
+^^ = ^^
+^^.
+das Skript ^^ als separaten Testfall aus.
+das Skript ^^ aus.
+the script ^^ as separate testcases.
+the script ^^.
+
+Instructions read from LanguageTemplatesHomePageIKSBasics
+-------------------------------------------------------
+Das PDF wird als Dokument <> gespeichert.
+Download PDF ^^ als <>.
+Enthält '' auf Seite ^^ den Text ^^?
+Klicke Hauptmenüpunkt ^^.
+Klicke Link ^^.
+Klicke die Schaltfläche ^^.
+Wird die Seite ^^ angezeigt?
+
+Instructions read from LanguageTemplatesPrint
+-------------------------------------------------------
+Die Liste der PDF-Dateien im Download-Verzeichnis ^^ als <> festgehalten.
+Die jüngste PDF-Datei im Download-Verzeichnis ^^ wird als <> festgehalten.
+Enthält das Dokument '' genau ^^ Seite(n)?
+Ist die aktuelle Zahl der PDF-Dateien im Download-Verzeichnis um ^^ höher als in der ^^?
+Schließe das PDF-Fenster ^^.

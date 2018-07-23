@@ -1,0 +1,6 @@
+Instructions read from ComplexInstructionTestApplication_LanguageTemplateContainer
+-------------------------------------------------------
+Erzeuge Auftrag <> aus '' und '' und Wert ^^.
+Erzeuge eine Rechnung <>.
+Erzeuge einen Auftrag <>.
+Füge dem Auftrag '' den Wert ^^ zu.

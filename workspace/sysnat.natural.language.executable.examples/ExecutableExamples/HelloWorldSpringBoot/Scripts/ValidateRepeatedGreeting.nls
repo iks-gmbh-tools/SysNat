@@ -1,0 +1,20 @@
+# This script represents a full test case.
+# Its szenario is executed separately for each data set in GreetingValidationData 
+
+# arrange
+Keyword-Comment: Arrange test requirements
+TestData: GreetingValidationData
+
+# This is needed ??? to make the test data in GreetingValidationData available for the script GreetingData!
+# Convert data "GreetingValidationData" to "GreetingData".
+
+Click menu item "Form Page".
+Execute script "EnterGreetingData".
+
+# act 
+Keyword-Comment: Perform action under test
+Click button "Greet".
+
+# assert
+Keyword-Comment: Assert expected results
+Is the displayed text "GreetingResult" equal to ":GreetingResult"?

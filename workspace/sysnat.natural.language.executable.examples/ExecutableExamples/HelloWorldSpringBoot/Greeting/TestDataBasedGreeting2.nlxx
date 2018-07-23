@@ -1,0 +1,21 @@
+# In this test case, a series of dataset is defined by the stage instruction "TestData".
+# The datasets are read from a Excel-file.
+# Wenn accessing the datafield, this test case must specify which dataset to take for testing.
+# Therefore, the script "EnterGreetingData" cannot be used, because it depends on only one dataset loaded!
+
+Test-ID:          <Dateiname>
+Kategorie-Filter: <Pfad>
+TestData:         HelloWorldTestData
+
+# arrange
+Keyword-Comment: Arrange test requirements
+Select "HelloWorldTestData_GreetingValidationData1:Greeting" in selection field "Greeting".
+Enter "HelloWorldTestData_GreetingValidationData1:Name" in text field "Name".
+
+# act 
+Keyword-Comment: Perform action under test
+Click button "Greet".
+
+# assert
+Keyword-Comment: Assert expected results
+Is the displayed text "GreetingResult" equal to "HelloWorldTestData_GreetingValidationData1:GreetingResult"?

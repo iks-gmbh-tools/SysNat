@@ -1,0 +1,17 @@
+Test-ID:          <Dateiname>
+Kategorie-Filter: <Pfad>
+
+# arrange
+Keyword-Comment: Arrange test requirements
+Execute with following data
+    "Name" = "John"
+    "Greeting" = "Hi"
+the script "EnterGreetingData".
+
+# act 
+Keyword-Comment: Perform action under test
+Click button "Greet".
+
+# assert
+Keyword-Comment: Assert expected results
+Is the displayed text "GreetingResult" equal to "Hi John!"?

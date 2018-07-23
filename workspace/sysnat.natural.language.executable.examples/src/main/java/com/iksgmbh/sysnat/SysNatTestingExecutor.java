@@ -1,0 +1,135 @@
+package com.iksgmbh.sysnat;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.ResourceBundle;
+
+import org.apache.maven.shared.invoker.DefaultInvocationRequest;
+import org.apache.maven.shared.invoker.DefaultInvoker;
+import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.Invoker;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+
+import com.iksgmbh.sysnat.testresult.archiving.SysNatTestResultArchiver;
+
+public class SysNatTestingExecutor 
+{
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
+
+	public static final String MAVEN_OK = "OK";
+	public static final File JAVA_HOME = new File("../../java");
+	
+	public static void main(String[] args) 
+	{
+		// optional PRE-Phase: read settings from dialog
+		SettingsConfigDialog.doYourJob();
+		
+		// mandatory Phase A: translate natural language into JUnit test code
+		SysNatTestCaseGenerator.doYourJob();
+		
+		// mandatory Phase B: compile and start tests 
+		startMavenCleanCompileTest();
+
+		// optional POST-Phase: archive test results
+		archiveIfNeccessary();
+	}
+
+	private static void archiveIfNeccessary() 
+	{
+		final ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		if (executionInfo.areResultsToArchive()) {			
+			SysNatTestResultArchiver.doYourJob(executionInfo.getReportFolder());
+		}
+	}
+
+	/**
+	 * @return result of execution 
+	 */
+	public static String startMavenCleanCompileTest(Properties jvmSystemProperties)
+	{
+		final InvocationRequest request = new DefaultInvocationRequest();
+		request.setPomFile(new File("../sysnat.test.execution/pom.xml"));
+		request.setProperties(jvmSystemProperties);
+		request.setJavaHome(JAVA_HOME);
+		request.setMavenOpts("-Dfile.encoding=UTF-8");
+		
+		final List<String> goals = new ArrayList<>();
+		goals.add("clean"); 
+		goals.add("test");
+		request.setGoals(goals);
+		
+		final Invoker mavenInvoker = new DefaultInvoker();
+		mavenInvoker.setMavenHome(new File("../../maven"));
+		
+		InvocationResult result = null;
+		try {
+			result = mavenInvoker.execute(request);
+		} catch (MavenInvocationException e) {
+			e.printStackTrace();
+			return "Error";
+		}
+		
+		if (result.getExitCode() != 0) 
+		{
+			String toReturn = "Failure";
+			if (result.getExecutionException() != null) {				
+				toReturn += ": " + result.getExecutionException().getMessage();
+			} else {
+				toReturn += "!";
+			}
+			return toReturn;
+		}
+		
+		return MAVEN_OK;
+	}
+	
+	/**
+	 * @return result of execution 
+	 */
+	public static String startMavenCleanCompileTest() 
+	{
+		Properties properties = collectSysNatSystemProperties();
+		return startMavenCleanCompileTest( properties );
+	}
+
+	public static Properties collectSysNatSystemProperties() 
+	{
+		final Properties properties = new Properties();
+		
+		String propertyKey = BUNDLE.getString("TESTAPP_SETTING_KEY");
+		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		propertyKey = BUNDLE.getString("BROWSER_SETTING_KEY");
+		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		propertyKey = BUNDLE.getString("ENVIRONMENT_SETTING_KEY");
+		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		propertyKey = BUNDLE.getString("FILTER_CATEGORIES_TO_EXECUTE");
+		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		propertyKey = BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY");
+		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		propertyKey = BUNDLE.getString("REPORT_NAME_SETTING_KEY");
+		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		propertyKey = BUNDLE.getString("ARCHIVE_DIR_SETTING_KEY");
+		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		
+		propertyKey = "sysnat.dummy.test.run";
+		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		propertyKey = "sysnat.autolaunch.report";
+		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		
+		propertyKey = "settings.config";
+		if (System.getProperty(propertyKey) != null) {			
+			properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		}
+		
+		propertyKey = "sysnat.properties.path";
+		if (System.getProperty(propertyKey) != null) {			
+			properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		}
+		
+		return properties;
+	}
+}

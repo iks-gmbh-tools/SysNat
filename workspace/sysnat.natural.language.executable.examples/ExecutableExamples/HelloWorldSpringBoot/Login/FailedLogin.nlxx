@@ -1,0 +1,22 @@
+Test-ID:          <Dateiname>
+Kategorie-Filter: <Pfad>
+
+# arrange
+Keyword-Comment: Arrange test requirements
+Is page "Form Page" visible?
+Click menu item "Logout".
+Is page "Login Page" visible?
+
+# act 
+Keyword-Comment: Perform action under test
+Login with "Peter", "wrongPW".
+
+# assert
+Keyword-Comment: Assert expected results
+Is page "Error Page" visible?
+Is the displayed text "ErrorMessage" equal to "Invalid User Login Data."?
+
+# clean up so that next test case can start
+Keyword-Comment: Reset to start situation
+Click button "Back".
+Relogin.

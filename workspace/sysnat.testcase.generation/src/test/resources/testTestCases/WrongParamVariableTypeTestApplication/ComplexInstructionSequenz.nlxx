@@ -1,0 +1,4 @@
+
+Erzeuge eine Rechnung <Auftrag 1>. # This must cause an exception due to missing type!
+Füge dem Auftrag 'Auftrag 1' den Wert "Wert A" zu.
+

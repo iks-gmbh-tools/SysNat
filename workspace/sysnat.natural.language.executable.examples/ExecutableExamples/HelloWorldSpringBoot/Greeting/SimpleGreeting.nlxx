@@ -1,0 +1,14 @@
+Test-ID:          <Dateiname>
+Kategorie-Filter: <Pfad>,Smoketest
+
+# arrange
+Keyword-Comment: Arrange test requirements
+Comment: Nothing_to_arrange.
+
+# act 
+Keyword-Comment: Perform action under test
+Click button "Greet".
+
+# assert
+Keyword-Comment: Assert expected results
+Is the displayed text "GreetingResult" equal to "Hello World!"? 

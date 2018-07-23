@@ -1,0 +1,15 @@
+Test-ID:         TestId
+Test-Parameter:  ExcelDataFile
+
+# arrange 
+Keyword-Comment: Arrange test requirements
+Comment: Nothing_to_arrange.
+
+# act 
+Keyword-Comment: Perform action under test
+Click button "TestSeriesData:buttonName".
+
+# assert
+Keyword-Comment: Assert expected results
+Is the displayed text "Welcome" equal to "TestSeriesData:WelcomeText"? 
+

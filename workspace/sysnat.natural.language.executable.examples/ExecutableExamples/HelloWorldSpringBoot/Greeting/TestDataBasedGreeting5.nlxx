@@ -1,0 +1,19 @@
+# In this test case, a single dataset from a Excel-File is defined by the stage instruction "TestData".
+# Therefore, when accessing the datafields, this test case does not need to specifies a specific dataset
+# and the script EnterGreetingData can be used.
+
+Test-ID:          <Dateiname>
+Kategorie-Filter: <Pfad>
+TestData:         HelloWorldTestData_GreetingValidationData1
+
+# arrange
+Keyword-Comment: Arrange test requirements
+"EnterGreetingData".
+
+# act 
+Keyword-Comment: Perform action under test
+Click button "Greet".
+
+# assert
+Keyword-Comment: Assert expected results
+Is the displayed text "GreetingResult" equal to ":GreetingResult"?

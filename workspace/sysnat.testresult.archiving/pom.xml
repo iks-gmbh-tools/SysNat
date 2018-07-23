@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>sysnat.testresult.archiving</artifactId>
+  <name>SNT Archiving Test Results</name>
+  <description>Implements a way to store the test results at a save place.</description>
+
+  <parent>
+     <groupId>com.iksgmbh.snt</groupId>
+     <artifactId>sysnat.parent</artifactId>
+     <version>0.0.1-SNAPSHOT</version>
+     <relativePath>../sysnat.parent/pom.xml</relativePath>
+  </parent>
+
+  <dependencies>
+  
+   	<dependency>
+  	    <groupId>com.iksgmbh.snt</groupId>
+   	    <artifactId>sysnat.common</artifactId>
+  	    <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  
+  </dependencies>
+
+
+</project>

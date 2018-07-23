@@ -1,0 +1,28 @@
+Test-ID:         <Dateiname>
+Kategorie-Filter: Smoketest
+
+Wird die Seite "Home" angezeigt?
+
+Kommentar:
+Klicke Hauptmenüpunkt "Dienstleistungen".
+Wird die Seite "Dienstleistungen" angezeigt?
+
+Kommentar:
+Klicke Hauptmenüpunkt "Unternehmen".
+Wird die Seite "Unternehmen" angezeigt?
+
+Kommentar:
+Klicke Hauptmenüpunkt "Downloads".
+Wird die Seite "Downloads" angezeigt?
+
+Kommentar:
+Klicke Hauptmenüpunkt "Karriere".
+Wird die Seite "Karriere" angezeigt?
+
+Kommentar:
+Klicke Hauptmenüpunkt "Kontakt".
+Wird die Seite "Kontakt" angezeigt?
+
+Kommentar:
+Klicke Hauptmenüpunkt "Home".
+Wird die Seite "Home" angezeigt?

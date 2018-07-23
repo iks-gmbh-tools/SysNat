@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <artifactId>sysnat.natural.language.executable.examples</artifactId>
+  <name>SNT Executable Examples in Natural Language</name>
+  <description>Formulation of tests as executable examples written in natural language, but executable as Java JUnit tests.</description>
+  
+  <parent>
+     <groupId>com.iksgmbh.snt</groupId>
+     <artifactId>sysnat.parent</artifactId>
+     <version>0.0.1-SNAPSHOT</version>
+     <relativePath>../sysnat.parent/pom.xml</relativePath>
+  </parent>
+   
+   
+  <dependencies>
+    	
+  	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.test.execution</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	
+  	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.testcase.generation</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+
+  	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.testresult.archiving</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-invoker</artifactId>
+      <version>3.0.1</version>
+    </dependency>  
+  
+  	
+  </dependencies>  
+  
+</project>

@@ -1,0 +1,17 @@
+Test-ID:          <Dateiname>
+Kategorie-Filter: <Pfad>
+
+# arrange
+Keyword-Comment: Arrange test requirements
+Is page "Form Page" visible?
+Click menu item "Logout".
+Is page "Login Page" visible?
+
+# act 
+Keyword-Comment: Perform action under test
+Relogin.
+
+# assert
+Keyword-Comment: Assert expected results
+Is page "Form Page" visible?
+

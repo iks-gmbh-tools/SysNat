@@ -1,0 +1,57 @@
+# In this test case, a series of dataset is defined by the stage instruction "TestData".
+# The datasets are read from a dat-file.
+# Wenn accessing the datafield, this test case must specify which dataset to take for testing.
+# Therefore, the script "EnterGreetingData" cannot be used, because it depends on only one dataset loaded!
+
+Test-ID:          <Dateiname>
+Kategorie-Filter: <Pfad>
+TestData:         MultipleGreetingData
+
+
+# arrange 1
+Keyword-Comment: Arrange test requirements
+Select "MultipleGreetingData_1:Greeting" in selection field "Greeting".
+Enter "MultipleGreetingData_1:Name" in text field "Name".
+
+# act 1
+Keyword-Comment: Perform action under test
+Click button "Greet".
+
+# assert 1
+Keyword-Comment: Assert expected results
+Is the displayed text "GreetingResult" equal to "Hi Tim!"?
+
+
+
+
+# arrange 2
+Keyword-Comment: Arrange test requirements
+Click menu item "Form Page".
+Select "MultipleGreetingData_2:Greeting" in selection field "Greeting".
+Enter "MultipleGreetingData_2:Name" in text field "Name".
+
+# act 2
+Keyword-Comment: Perform action under test
+Click button "Greet".
+
+# assert 2
+Keyword-Comment: Assert expected results
+Is the displayed text "GreetingResult" equal to "Hello Rose!"?
+
+
+
+
+
+# arrange 3
+Keyword-Comment: Arrange test requirements
+Click menu item "Form Page".
+Select "MultipleGreetingData_3:Greeting" in selection field "Greeting".
+Enter "MultipleGreetingData_3:Name" in text field "Name".
+
+# act 3
+Keyword-Comment: Perform action under test
+Click button "Greet".
+
+# assert 3
+Keyword-Comment: Assert expected results
+Is the displayed text "GreetingResult" equal to "MultipleGreetingData_3:Greeting MultipleGreetingData_3:Name!"?

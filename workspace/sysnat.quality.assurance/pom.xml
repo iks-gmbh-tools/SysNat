@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <artifactId>sysnat.quality.assurance</artifactId>
+  <name>SNT Test Integration and System Module</name>
+  <description>Contains a) System Level test (testing end-to-end the whole sysnat module chain), b) Module Level tests (integration tests between two or more different sysnat modules) and c) a class to execute the Class Level tests of all modules</description>
+
+  <parent>
+     <groupId>com.iksgmbh.snt</groupId>
+     <artifactId>sysnat.parent</artifactId>
+     <version>0.0.1-SNAPSHOT</version>
+     <relativePath>../sysnat.parent/pom.xml</relativePath>
+  </parent>
+ 
+
+  <dependencies>
+
+  	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.testdata.import</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	
+   	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.test.execution</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	  <scope>test</scope>
+  	</dependency>
+
+   	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.test.runtime.environment</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	  <scope>test</scope>
+  	</dependency>
+  
+  	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.testcase.generation</artifactId>   	  
+  	  <version>0.0.1-SNAPSHOT</version>
+  	  <scope>test</scope>
+  	</dependency>
+  	
+	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.natural.language.executable.examples</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	  <scope>test</scope>
+  	</dependency>
+    	
+  </dependencies>
+
+</project>

@@ -1,0 +1,5 @@
+# Zeilen im Response XML, die mit den folgenden Werten rechts vom Gleichheitszeichen beginnen,
+# werden für den fachlichen XML-Vergleich ignoriert, wenn diese Datei dafür genutzt wird.
+1=<antragsnummer>
+2=<traceId>
+3=<versicherungsbeginn>

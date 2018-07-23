@@ -1,0 +1,102 @@
+# Metadaten:
+Test-ID:          PB Leben Aktiv erfolgreich erfassen
+Kategorie-Filter: Prototyp
+Testdaten:		  ErlaubteAbweichungenIn_PB_Leben_Aktiv_ZusammenfassungPDF
+Testdaten:		  ErlaubteAbweichungenIn_PB_Leben_Aktiv_ResponseXML
+
+
+# *************************************
+Schlüsselkommentar: Test-Vorbereitungen
+# *************************************
+
+Klicke Link "Neue XML Datenerfassungsmaske".
+Wähle für die Auswahlbox "Aktionskennzeichen" die Option "PB Leben Aktiv".
+Klicke die Schaltfläche "Anfrage senden".
+
+# WizardPage 1
+Ist auf der aktuellen Seite der Text "Wofür sparen Sie" zu sehen?
+Ist auf der aktuellen Seite der Text "Gezieltes Verteilen - nach Ihren Wünschen" zu sehen?
+Klicke die Schaltfläche "Möglichkeiten >>".
+Klicke die Schaltfläche "Weiter".
+
+
+# ***********************************
+Schlüsselkommentar: Test-Durchführung
+# ***********************************
+
+# WizardPage 2
+Ist auf der aktuellen Seite der Text "Beratung" zu sehen?
+Ist auf der aktuellen Seite der Text "Persönliche Angaben" zu sehen?
+Ist auf der aktuellen Seite der Text "Welche Wünsche und Bedürfnisse haben Sie" zu sehen?
+Ist auf der aktuellen Seite der Text "Sterbegeld" zu sehen?
+
+Wähle für die "Sterbegeldversicherung" die Option "Nein".
+Wähle für die "Jetzt gewünschter Beitrag" die Option "Monatlicher Beitrag".
+Gebe ins Feld "Monatlicher Beitrag" den Wert "50" ein.
+Gebe ins Feld "Frei verfügbares monatliches Einkommen" den Wert "100" ein.
+
+Klicke die Schaltfläche "Weiter".
+
+# Popup
+Wird ein Popup angezeigt, der den Text "folgende Fehler" enthält?
+Wird ein Popup angezeigt, der den Text "nicht jünger als" enthält?
+Wird ein Popup angezeigt, der den Text "versicherungstechnisches Alter" enthält?
+Klicke die Schaltfläche "Schließen".
+
+# Datenmaske II
+Gebe ins Feld "Geburtsdatum" den Wert "17.10.1960" ein.
+Klicke die Schaltfläche "Weiter".
+
+# Datenmaske III
+Ist auf der aktuellen Seite der Text "Notwendige Angaben" zu sehen?
+Klicke die Schaltfläche "Weiter".
+
+# Datenmaske IV
+Ist auf der aktuellen Seite der Text "Persönliche Angaben" zu sehen?
+
+Wähle für die Auswahlbox "Art des Ausweises" die Option "Personalausweis".
+Gebe ins Feld "Geburtsort" den Wert "Hilden" ein.
+Gebe ins Feld "Ausweisnummer" den Wert "12345" ein.
+Gebe ins Feld "Gültig Bis" den Wert "12.12.2022" ein.
+Gebe ins Feld "Ausst. Behörde und Ort" den Wert "Bürgermeisteramt Hilden" ein.
+Wähle für die Auswahlbox "Staatsangehörigkeit" die Option "Deutschland".
+
+Klicke die Schaltfläche "Weiter".
+Klicke die Schaltfläche "Weiter".
+
+# Datenmaske V
+Ist auf der aktuellen Seite der Text "Empfänger der Leistungen im Todesfall" zu sehen?
+Klicke die Schaltfläche "Weiter".
+
+# Datenmaske VI
+Ist auf der aktuellen Seite der Text "Zusammenfassung" zu sehen?
+
+Klicke die Schaltfläche "Zusammenfassung drucken".
+Das PDF wird als Dokument <Zusammenfassung> gespeichert.
+Schließe das PDF-Fenster für "zusammenfassung".
+Enthält das Dokument 'Zusammenfassung' genau "1" Seite(n)?
+Entspricht der Inhalt des Dokuments 'Zusammenfassung' unter Berücksichtung von "ErlaubteAbweichungenIn_PB_Leben_Aktiv_ZusammenfassungPDF" fachlich dem von "PBLebenAktiv/ErwarteteZusammenfassung.pdf"?
+#Ist der Inhalt des Dokuments 'Zusammenfassung' mit dem von "PBLebenAktiv/ErwarteteZusammenfassung.pdf" identisch?
+
+Wähle für die "Option Anwesenheit" die Option "Ja".
+Klicke die Schaltfläche "Antrag drucken".
+
+# Popup
+Wird ein Popup angezeigt, der den Text "mit AVB drucken" enthält?
+Klicke die Schaltfläche "mit AVB drucken".
+
+Das PDF wird als Dokument <Antrag> gespeichert.
+Schließe das PDF-Fenster für "antrag".
+Enthält das Dokument 'Antrag' genau "48" Seite(n)?
+#Entspricht der Inhalt des Dokuments 'Antrag' fachlich dem von "PBLebenAktiv/ErwarteterAntrag.pdf"?
+
+Wähle für die "Option Unterschrift" die Option "Ja".
+Klicke die Schaltfläche "Weiter".
+
+
+# ************************************************
+Schlüsselkommentar: Überprüfung der Testergebnisse
+# ************************************************
+Wird die Ergebnisseite angezeigt?
+Entsprechen die angezeigten Daten unter Berücksichtung von "ErlaubteAbweichungenIn_PB_Leben_Aktiv_ResponseXML" fachlich dem Inhalt der Datei "PBLebenAktiv/Erfolgreich.xml"?
+

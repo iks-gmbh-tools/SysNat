@@ -1,0 +1,17 @@
+Unterschiede zwischen
+../sysnat.test.runtime.environment/src/test/resources/PdfAnalyserTest/CIV05_Privat_Antrag_Vertrag_01129751_Karaagacli_Hamit_013040280.pdf (Seitenzahl: 39)
+und
+../sysnat.test.runtime.environment/src/test/resources/PdfAnalyserTest/CIV05_Privat_Antrag_Vertrag_01129750_Karaagacli_Hamit_013040280.pdf (Seitenzahl: 39)
+--------------------------------------------------------------------
+PDFs unterscheiden sich auf den Seiten 1, 3, 4, 5, 7, 13, 21, 22, 24, 27, 29, 30, 31, 33, 35, 37 und 39.
+Es gibt insgesamt 90 unterschiedliche Zeilen. Die ersten sind: 
+Seite 1, Zeile 5:  Anlage zu Antrag 1129750 #  Anlage zu Antrag 1129751
+Seite 1, Zeile 15: Monatliche Garantierente* 77,59 EUR # Monatliche Garantierente* 77,61 EUR
+Seite 1, Zeile 16: Monatliche Rente aus Gesamtkapital**, *** 149,05 EUR # Monatliche Rente aus Gesamtkapital**, *** 149,10 EUR
+Seite 1, Zeile 18: Monatliche Rente inkl. Überschüsse**** 175,49 EUR # Monatliche Rente inkl. Überschüsse**** 175,55 EUR
+Seite 1, Zeile 22: Garantiekapital* 29.700 EUR # Garantiekapital* 29.709 EUR
+Seite 1, Zeile 23: Gesamtkapital** 48.250 EUR # Gesamtkapital** 48.268 EUR
+Seite 1, Zeile 24: Zu zahlender Beitrag:  monatlich 125,00 EUR # Zu zahlender Beitrag:  monatlich 125,04 EUR
+Seite 3, Zeile 3: Antragsnummer 1129750  # Antragsnummer 1129751 
+Seite 3, Zeile 14:    lebenslange Garantierente 77,59 EUR #    lebenslange Garantierente 77,61 EUR
+Seite 3, Zeile 18:    Garantiekapital 29.700 EUR #    Garantiekapital 29.709 EUR
