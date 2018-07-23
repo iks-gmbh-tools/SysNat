@@ -71,7 +71,7 @@ public class ExecutionRuntimeInfo
 
 	private String testCategories;
 	private List<String> testCategoriesToExecute;
-	private List<String> inactiveTestIDs = new ArrayList<>();
+	private List<String> inactiveXXIDs = new ArrayList<>();
 	private File reportFolder;
 	
 	private int totalNumberOfTestCases = 0; // known for the given application/product under test
@@ -203,20 +203,20 @@ public class ExecutionRuntimeInfo
 		totalNumberOfTestCases++;
 	}
 
-	public void addInactiveTestCase(String inactiveTestId) {
-		inactiveTestIDs.add(inactiveTestId);
+	public void addInactiveTestCase(String inactiveXXId) {
+		inactiveXXIDs.add(inactiveXXId);
 	}
 
-	public void addTestMessagesOK(String testIdOK, List<String> messagesOK) {
-		reportMessagesOK.put(testIdOK, messagesOK);
+	public void addTestMessagesOK(String xxid, List<String> messagesOK) {
+		reportMessagesOK.put(xxid, messagesOK);
 	}
 
-	public void addTestMessagesWRONG(String testIdWRONG, List<String> messagesWRONG) {
-		reportMessagesWRONG.put(testIdWRONG, messagesWRONG);
+	public void addTestMessagesWRONG(String xxid, List<String> messagesWRONG) {
+		reportMessagesWRONG.put(xxid, messagesWRONG);
 	}
 
-	public void addTestMessagesFAILED(String testIdFAILED, List<String> messagesFAILED) {
-		reportMessagesFAILED.put(testIdFAILED, messagesFAILED);
+	public void addTestMessagesFAILED(String xxid, List<String> messagesFAILED) {
+		reportMessagesFAILED.put(xxid, messagesFAILED);
 	}
 
 	public List<String> getTestCategoriesToExecute() {
@@ -278,22 +278,22 @@ public class ExecutionRuntimeInfo
 	}
 
 	public String getInactiveTestListAsString() {
-		if (inactiveTestIDs.size() == 0) {
+		if (inactiveXXIDs.size() == 0) {
 			return "-";
 		}
 
 		final StringBuffer sb = new StringBuffer();
-		for (String testId : inactiveTestIDs) {
-			sb.append(testId).append(", ");
+		for (String xxid : inactiveXXIDs) {
+			sb.append(xxid).append(", ");
 		}
 
 		String toReturn = sb.toString();
 		return toReturn.substring(0, toReturn.length() - 2);
 	}
 
-	public boolean isTestIdAlreadyUsed(String testID) {
-		return reportMessagesOK.containsKey(testID) || reportMessagesFAILED.containsKey(testID)
-				|| reportMessagesWRONG.containsKey(testID);
+	public boolean isXXIdAlreadyUsed(String xxid) {
+		return reportMessagesOK.containsKey(xxid) || reportMessagesFAILED.containsKey(xxid)
+				|| reportMessagesWRONG.containsKey(xxid);
 	}
 
 	public HashMap<String, List<String>> getReportMessagesOK() {
@@ -309,7 +309,7 @@ public class ExecutionRuntimeInfo
 	}
 
 	public int getNumberOfInactiveTests() {
-		return inactiveTestIDs.size();
+		return inactiveXXIDs.size();
 	}
 
 	public String getTestCategories() {
@@ -471,17 +471,17 @@ public class ExecutionRuntimeInfo
 		List<String> reportMessages = virtualTestCase.getReportMessages();
 		for (String message : reportMessages) {
 			if (message.contains(SysNatLocaleConstants.ERROR_KEYWORD)) {
-				reportMessagesFAILED.put(virtualTestCase.getTestID(), virtualTestCase.getReportMessages());
+				reportMessagesFAILED.put(virtualTestCase.getXXID(), virtualTestCase.getReportMessages());
 				return false;
 			}
 			if (message.contains(SysNatConstants.QUESTION_IDENTIFIER)
 					&& message.contains(SysNatLocaleConstants.NO_KEYWORD)) {
-				reportMessagesWRONG.put(virtualTestCase.getTestID(), virtualTestCase.getReportMessages());
+				reportMessagesWRONG.put(virtualTestCase.getXXID(), virtualTestCase.getReportMessages());
 				return false;
 			}
 		}
 
-		reportMessagesOK.put(virtualTestCase.getTestID(), virtualTestCase.getReportMessages());
+		reportMessagesOK.put(virtualTestCase.getXXID(), virtualTestCase.getReportMessages());
 		return true;
 	}
 
@@ -620,8 +620,8 @@ public class ExecutionRuntimeInfo
 		return reportFolder;
 	}
 
-	public void addTestStatistics(String testId, TestStatistics statistics) {
-		testStatistics.put(testId, statistics);
+	public void addTestStatistics(String xxid, TestStatistics statistics) {
+		testStatistics.put(xxid, statistics);
 	}
 
 	public static class TestStatistics 

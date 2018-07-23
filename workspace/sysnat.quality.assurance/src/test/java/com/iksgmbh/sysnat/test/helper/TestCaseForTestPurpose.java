@@ -3,12 +3,12 @@ package com.iksgmbh.sysnat.test.helper;
 import org.junit.Ignore;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
 import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 
 @Ignore
-public class TestCaseForTestPurpose extends TestCase
+public class TestCaseForTestPurpose extends ExecutableExample
 {
 	protected LanguageTemplatesCommon languageTemplatesCommon;
 	

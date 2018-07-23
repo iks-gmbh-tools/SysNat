@@ -1,6 +1,6 @@
 package com.iksgmbh.sysnat.testcasejavatemplate;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.utils.SysNatUtil;
 
 /**
@@ -8,17 +8,17 @@ import com.iksgmbh.sysnat.utils.SysNatUtil;
  * For technical reasons it is a subclass of TestCase,
  * although it is not executable on its own.
  */
-public abstract class ScriptTemplateParent extends TestCase
+public abstract class ScriptTemplateParent extends ExecutableExample
 {
 	private String testCaseFileName;
 	
-	public ScriptTemplateParent(TestCase callingTestCase) {
+	public ScriptTemplateParent(ExecutableExample callingTestCase) {
 		adoptContextDataFrom(callingTestCase);
 	}
 	
 	public abstract void executeScript();
 	
-	protected void adoptContextDataFrom(TestCase callingTestCase) 
+	protected void adoptContextDataFrom(ExecutableExample callingTestCase) 
 	{
 		testCaseFileName = callingTestCase.getTestCaseFileName();
 		SysNatUtil.copyContextData(callingTestCase, this);

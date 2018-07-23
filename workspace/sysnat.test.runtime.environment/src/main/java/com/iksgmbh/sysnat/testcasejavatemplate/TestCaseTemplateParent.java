@@ -10,7 +10,7 @@ import org.junit.Before;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo.TestStatistics;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
@@ -28,7 +28,7 @@ import com.iksgmbh.sysnat.utils.SysNatUtil;
  * 
  * @author Reik Oberrath
  */
-public abstract class TestCaseTemplateParent extends TestCase
+public abstract class TestCaseTemplateParent extends ExecutableExample
 {
 	@Before
 	public void setUp() 
@@ -45,7 +45,7 @@ public abstract class TestCaseTemplateParent extends TestCase
 			System.out.println("Done with test case in " + getExecDuration() + ".");
 			
 			final TestStatistics testStatistics = new ExecutionRuntimeInfo.TestStatistics(startTime, new DateTime());
-			executionInfo.addTestStatistics(getTestID(), testStatistics );
+			executionInfo.addTestStatistics(getXXID(), testStatistics );
 			
 			final String reportName = executionInfo.buildDefaultReportName();
 			final String detailReportFilename = ReportCreator.buildDetailReportFilename(reportName);
@@ -61,7 +61,7 @@ public abstract class TestCaseTemplateParent extends TestCase
 			System.out.println(ExecutionRuntimeInfo.getInstance().getTotalNumberOfTestCases() + " test cases executed so far.");
 		}
 		
-		setTestID(null);
+		setXXID(null);
 		System.out.println("Intermediate Result: " + executionInfo.getIntermediateResultLogText() + ".");
 	}
 	

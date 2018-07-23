@@ -1,12 +1,12 @@
 package com.iksgmbh.sysnat.helper;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 
-public class VirtualTestCase extends TestCase 
+public class VirtualTestCase extends ExecutableExample 
 {
 	public VirtualTestCase(String id) {
-		super.setTestID(id);
+		super.setXXID(id);
 		executionInfo = ExecutionRuntimeInfo.getInstance();
 		setGuiController(executionInfo.getGuiController());
 	}

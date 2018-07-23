@@ -20,7 +20,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException;
@@ -37,10 +37,10 @@ public class TestLanguageTemplatesContainer
 	public static ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/LanguageTemplatesCommon", Locale.getDefault());
 
 	protected ExecutionRuntimeInfo executionInfo;
-	protected TestCase testCase;
+	protected ExecutableExample testCase;
 	private Properties nlsProperties;
 	
-	public TestLanguageTemplatesContainer(TestCase test) 
+	public TestLanguageTemplatesContainer(ExecutableExample test) 
 	{
 		this.testCase = test;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();
@@ -85,13 +85,13 @@ public class TestLanguageTemplatesContainer
 		return new ArrayList<>(Arrays.asList(splitResult));
 	}
 	
-	protected void executeScript(String scriptName, TestCase aTestCase)
+	protected void executeScript(String scriptName, ExecutableExample aTestCase)
 	{
 		Method executeTestMethod = null;
 		Object newInstance = null;
 		try {
 			Class<?> classForName = getClassFor(scriptName);
-			Constructor<?> constructor = classForName.getConstructor(TestCase.class);
+			Constructor<?> constructor = classForName.getConstructor(ExecutableExample.class);
 			newInstance = constructor.newInstance(aTestCase);
 			executeTestMethod = classForName.getMethod("executeScript");
 		} catch (ClassNotFoundException e) {
@@ -131,24 +131,24 @@ public class TestLanguageTemplatesContainer
 	//##########################################################################################
 
 	
-	@LanguageTemplate(value = "Test-ID: ^^")
-	public void startNewTestCase(String testID) 
+	@LanguageTemplate(value = "XXID: ^^")
+	public void startNewTestCase(String xxid) 
 	{
-		testID = testID.trim();
+		xxid = xxid.trim();
 		if (! testCase.doesTestBelongToApplicationUnderTest()) {
 			throw new SkipTestCaseException(SkipReason.APPLICATION_TO_TEST);
 		}
 		
-		if (testID.equals(FROM_FILENAME) || testID.equals("<filename>"))  {
-			testID = testCase.getTestCaseFileName();
+		if (xxid.equals(FROM_FILENAME) || xxid.equals("<filename>"))  {
+			xxid = testCase.getTestCaseFileName();
 		}
 		
-		if (executionInfo.isTestIdAlreadyUsed(testID))  {
-			testCase.failWithMessage(BUNDLE.getString("Ambiguous") + " Test-Id: " + testID);
+		if (executionInfo.isXXIdAlreadyUsed(xxid))  {
+			testCase.failWithMessage(BUNDLE.getString("Ambiguous") + " XXID: " + xxid);
 		}
 
-		testCase.setTestID( testID.trim() );
-		System.out.println((executionInfo.getTotalNumberOfTestCases() + 1) + ". TestID: " + testID);
+		testCase.setXXID( xxid.trim() );
+		System.out.println((executionInfo.getTotalNumberOfTestCases() + 1) + ". XXID: " + xxid);
 		executionInfo.countTestCase();
 		
 		if ( ! executionInfo.isApplicationStarted() ) {

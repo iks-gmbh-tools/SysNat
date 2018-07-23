@@ -34,7 +34,7 @@ public class LanguageTemplatesCommonClassLevelTest
 	public void throwsExceptionForUnkownScript() throws Exception 
 	{
 		// arrange
-		TestCase testCase = new TestCaseCallingUnknownScript();
+		ExecutableExample testCase = new TestCaseCallingUnknownScript();
 
 		// act
 		testCase.executeTestCase();
@@ -72,7 +72,7 @@ public class LanguageTemplatesCommonClassLevelTest
 		// arrange
 		try {
 			TestCaseUsingMissingObjectData testCase = new TestCaseUsingMissingObjectData();
-			testCase.setTestID("id");
+			testCase.setXXID("id");
 			testCase.executeTestCase();
 			fail("Expected exception was not thrown!");
 		} catch (Exception e) {
@@ -85,7 +85,7 @@ public class LanguageTemplatesCommonClassLevelTest
 	public void executesSimpleScript() throws Exception 
 	{
 		// arrange
-		TestCase testCase = new TestCaseCallingSimpleScript();
+		ExecutableExample testCase = new TestCaseCallingSimpleScript();
 
 		// act
 		testCase.executeTestCase();
@@ -108,7 +108,7 @@ public class LanguageTemplatesCommonClassLevelTest
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.testdata.import.directory", "../sysnat.test.runtime.environment/src/test/resources/testData");
 		ExecutionRuntimeInfo.getInstance().setTestApplicationName("HomePageIKS");
 		ExecutionRuntimeInfo.getInstance();
-		TestCase testCase = new TestCaseCallingMainScriptCallingSubscript();
+		ExecutableExample testCase = new TestCaseCallingMainScriptCallingSubscript();
 		
 		// act
 		testCase.executeTestCase();
@@ -129,7 +129,7 @@ public class LanguageTemplatesCommonClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
-		TestCase testCase = new TestCaseCallingMainScriptCallingSubscript();
+		ExecutableExample testCase = new TestCaseCallingMainScriptCallingSubscript();
 		LanguageTemplatesCommon cut = new LanguageTemplatesCommonTestImpl(testCase);
 		List<String> testCategoriesOfTestCase = new ArrayList<>();
 		testCategoriesOfTestCase.add("A");

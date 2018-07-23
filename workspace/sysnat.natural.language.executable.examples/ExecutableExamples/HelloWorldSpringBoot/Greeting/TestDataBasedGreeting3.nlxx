@@ -3,7 +3,7 @@
 # Because two datasets are imported, this test case must specify a specific dataset
 # when accessing the datafields and the script EnterGreetingData cannot be used.
 
-Test-ID:          <Dateiname>
+XXID:          <Dateiname>
 Kategorie-Filter: <Pfad>
 TestData:         MultipleGreetingData_1  # Note: this dataset does not contain a Greeting Result!
 TestData:         MultipleValidationData_1 

@@ -41,8 +41,8 @@ public class TestSeriesBuilderClassLevelTest
 		
 		// arrange
 		assertEquals("Number of testcases", 3, javaCommandCollection.size());
-		assertEquals("Java Command", "languageTemplatesCommon.startNewTestCase(\"ParamTestId_TestParam_1\");", getCommandListFor(javaCommandCollection, "ParamTestId_TestParam_1.java").get(0).value);
-		assertEquals("Java Command", "languageTemplatesCommon.importTestData(\"TestParam_1\");", getCommandListFor(javaCommandCollection, "ParamTestId_TestParam_1.java").get(1).value);
+		assertEquals("Java Command", "languageTemplatesCommon.startNewTestCase(\"ParamXXId_TestParam_1\");", getCommandListFor(javaCommandCollection, "ParamXXId_TestParam_1.java").get(0).value);
+		assertEquals("Java Command", "languageTemplatesCommon.importTestData(\"TestParam_1\");", getCommandListFor(javaCommandCollection, "ParamXXId_TestParam_1.java").get(1).value);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -58,7 +58,7 @@ public class TestSeriesBuilderClassLevelTest
 	{
 		final List<JavaCommand> commands = new ArrayList<>();
 
-		commands.add(new JavaCommand("templateContainer.startNewTestCase(\"ParamTestId\");"));
+		commands.add(new JavaCommand("templateContainer.startNewTestCase(\"ParamXXId\");"));
 		commands.add(new JavaCommand("templateContainer.applyTestParameter(\"TestParam\");") );
 		commands.add(new JavaCommand("templateContainer.doSomething();"));
 		commands.add(new JavaCommand("templateContainer.doSomethingElse();"));
@@ -70,7 +70,7 @@ public class TestSeriesBuilderClassLevelTest
 	{
 		final List<JavaCommand> commands = new ArrayList<>();
 
-		commands.add(new JavaCommand("templateContainer.startNewTestCase(\"aTestId\");"));
+		commands.add(new JavaCommand("templateContainer.startNewTestCase(\"XXId\");"));
 		commands.add(new JavaCommand("templateContainer.doSomething();"));
 		commands.add(new JavaCommand("templateContainer.doSomethingElse();"));
 		

@@ -5,7 +5,7 @@ import com.iksgmbh.sysnat.language_templates.homepageiks.LanguageTemplatesHomePa
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesPrint;
 import java.io.File;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.testcasejavatemplate.ScriptTemplateParent;
 
 /**
@@ -18,7 +18,7 @@ public class DownloadPdfAndCheckContentScript extends ScriptTemplateParent
 	protected LanguageTemplatesHomePageIKSBasics languageTemplatesHomePageIKSBasics;
 	protected LanguageTemplatesPrint languageTemplatesPrint;
 
-	public DownloadPdfAndCheckContentScript(TestCase callingTestCase)
+	public DownloadPdfAndCheckContentScript(ExecutableExample callingTestCase)
 	{
 		super(callingTestCase);
 		languageTemplatesCommon = new LanguageTemplatesCommon(this);

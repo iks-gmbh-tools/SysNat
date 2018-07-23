@@ -3,7 +3,7 @@
 # Wenn accessing the datafield, this test case must specify which dataset to take for testing.
 # Therefore, the script "EnterGreetingData" cannot be used, because it depends on only one dataset loaded!
 
-Test-ID:          <Dateiname>
+XXID:          <Dateiname>
 Kategorie-Filter: <Pfad>
 TestData:         HelloWorldTestData
 

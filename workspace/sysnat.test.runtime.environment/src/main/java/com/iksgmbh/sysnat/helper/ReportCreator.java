@@ -29,7 +29,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 
 public class ReportCreator 
@@ -62,7 +62,7 @@ public class ReportCreator
 		return new ReportCreator().createShortOverview();
 	}
 	
-	public static String createSingleTestReport(final TestCase testcase) {
+	public static String createSingleTestReport(final ExecutableExample testcase) {
 		return new ReportCreator().createDetailReport(testcase);
 	}
 
@@ -90,17 +90,17 @@ public class ReportCreator
 		return overviewReport;
 	}
 
-	private String createDetailReport(final TestCase testcase) 
+	private String createDetailReport(final ExecutableExample testcase) 
 	{
 		String report = readReportTemplate(DETAIL_TEMPLATE);
-		String testId = testcase.getTestID();
+		String xxid = testcase.getXXID();
 		String color = GREEN_HTML_COLOR;
-		if (executionInfo.getReportMessagesFAILED().containsKey(testId)) {
+		if (executionInfo.getReportMessagesFAILED().containsKey(xxid)) {
 			color = ORANGE_HTML_COLOR;
-		} else if (executionInfo.getReportMessagesWRONG().containsKey(testId)) {
+		} else if (executionInfo.getReportMessagesWRONG().containsKey(xxid)) {
 			color = RED_HTML_COLOR;
 		}
-		return report.replace("PLACEHOLDER_DETAILS", getReportDetailsForSingleTestcase(testId, testcase.getReportMessages(), color, false));
+		return report.replace("PLACEHOLDER_DETAILS", getReportDetailsForSingleTestcase(xxid, testcase.getReportMessages(), color, false));
 	}
 
 
@@ -168,7 +168,7 @@ public class ReportCreator
 	private CharSequence createExecutedTestList(HashMap<String, List<String>> messages) 
 	{
 		ExecutedTestData data = new ExecutedTestData(); 
-		messages.keySet().forEach(s-> appendExecutedTestIds(data, s));		
+		messages.keySet().forEach(s-> appendExecutedXXIds(data, s));		
 		return data.sb.toString();
 	}
 	
@@ -182,7 +182,7 @@ public class ReportCreator
 		
 	}
 
-	private void appendExecutedTestIds(ExecutedTestData data, String s) 
+	private void appendExecutedXXIds(ExecutedTestData data, String s) 
 	{
 		data.counter = data.counter + 1;
 		
@@ -223,14 +223,14 @@ public class ReportCreator
 		final ArrayList<String> keys = new ArrayList<>(reportMessages.keySet());
 		Collections.sort(keys);
 		
-		for (String testId : keys) {
-			sb.append( getReportDetailsForSingleTestcase(testId, reportMessages.get(testId), color, true) );
+		for (String xxid : keys) {
+			sb.append( getReportDetailsForSingleTestcase(xxid, reportMessages.get(xxid), color, true) );
 		}
 		
 		return sb.toString();
 	}
 
-	private String getReportDetailsForSingleTestcase(final String testId, 
+	private String getReportDetailsForSingleTestcase(final String xxid, 
 			                                         final List<String> messages, 
 			                                         final String color,
 			                                         final boolean withTestCounter) 
@@ -244,7 +244,7 @@ public class ReportCreator
 			counterText = testCounter + ". ";
 		}
 		
-		sb.append("<b><span style='font-size:14.0pt;color:" + color + "'>" + counterText + testId + ":</span></b>")
+		sb.append("<b><span style='font-size:14.0pt;color:" + color + "'>" + counterText + xxid + ":</span></b>")
 		  .append(System.getProperty("line.separator"))
 		  .append("<br>")
 		  .append(System.getProperty("line.separator"));
@@ -278,7 +278,7 @@ public class ReportCreator
 		} else if (message.contains(NO_KEYWORD)) {
 			sb.append(buildWrongMessageLine(message));
 		} else if (message.contains(ERROR_KEYWORD)) {
-			message = message + " " + TestCase.SMILEY_FAILED;
+			message = message + " " + ExecutableExample.SMILEY_FAILED;
 			sb.append("<span style='font-size:12.0pt;color:" + RED_HTML_COLOR + "'>" + message + "</span>");
 		} else {
 			sb.append("<span style='font-size:12.0pt'>" + message + "</span>");

@@ -1,6 +1,6 @@
 package com.iksgmbh.sysnat.language_templates.icf.pageobject;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
 import com.iksgmbh.sysnat.guicontrol.SeleniumGuiController;
 import com.iksgmbh.sysnat.language_templates.PageObject;
@@ -15,9 +15,9 @@ public class AlertPopup_PageObject implements PageObject
 {	
 	private static final String XPATH_TO_CLOSE_POPUP_BUTTON = "//div[@class='pure-button button closeOverlayAlert']";
 	
-	private TestCase testCase;
+	private ExecutableExample testCase;
 
-	public AlertPopup_PageObject(TestCase aTestCase) {
+	public AlertPopup_PageObject(ExecutableExample aTestCase) {
 		this.testCase = aTestCase;
 	}
 

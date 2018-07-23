@@ -1,10 +1,10 @@
 package com.iksgmbh.sysnat.helper;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 
 public class PopupHandler 
 {
-	private static TestCase testCase;
+	private static ExecutableExample testCase;
 
 	public static void closeByOk() {
 		testCase.sleep(100);
@@ -12,7 +12,7 @@ public class PopupHandler
 		testCase.sleep(100);
 	}
 
-	public static void setTestCase(TestCase aTestCase) {
+	public static void setTestCase(ExecutableExample aTestCase) {
 		testCase = aTestCase;
 	}
 }

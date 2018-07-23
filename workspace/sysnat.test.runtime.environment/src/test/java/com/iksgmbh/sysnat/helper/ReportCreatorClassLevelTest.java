@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat._testcases.TestCaseFailed;
 import com.iksgmbh.sysnat._testcases.TestCaseInactive;
 import com.iksgmbh.sysnat._testcases.TestCaseOK;
@@ -24,7 +24,7 @@ import com.iksgmbh.sysnat._testcases.TestCaseWrong;
 
 public class ReportCreatorClassLevelTest 
 {
-	private List<TestCase> testCases = new ArrayList<TestCase>();
+	private List<ExecutableExample> testCases = new ArrayList<ExecutableExample>();
 	private String result;
 	
 	@Before
@@ -148,7 +148,7 @@ public class ReportCreatorClassLevelTest
 	}
 	
 	@Test
-	public void createReportForIdenticalTestIDs() 
+	public void createReportForIdenticalXXIDs() 
 	{
 		// arrange
 		ExecutionRuntimeInfo.getInstance();
@@ -162,12 +162,12 @@ public class ReportCreatorClassLevelTest
 
 		// assert
 		assertReportOverview(2, 2, 0, 1, 0, 1);
-		assertTrue("Expected error message not found.", result.contains("Fehler: Uneindeutige Test-Id"));
+		assertTrue("Expected error message not found.", result.contains("Fehler: Uneindeutige XXId"));
 	}
 	
 	private void executeAllTestCases() 
 	{
-		for (TestCase testCase : testCases) {
+		for (ExecutableExample testCase : testCases) {
 			testCase.executeTestCase();
 		}
 	}

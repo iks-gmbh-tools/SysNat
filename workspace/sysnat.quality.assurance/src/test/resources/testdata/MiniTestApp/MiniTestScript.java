@@ -1,12 +1,12 @@
 package com.iksgmbh.sysnat.test.integration.testcase;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.testcasejavatemplate.ScriptTemplateParent;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class MiniTestScript extends ScriptTemplateParent
 {	
-	public MiniTestScript(TestCase callingTestCase) {
+	public MiniTestScript(ExecutableExample callingTestCase) {
 		super(callingTestCase);
 	}
 

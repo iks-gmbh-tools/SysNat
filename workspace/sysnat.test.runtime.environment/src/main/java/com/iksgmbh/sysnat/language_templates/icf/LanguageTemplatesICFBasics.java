@@ -11,7 +11,7 @@ import java.util.List;
 import org.openqa.selenium.WebDriver;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
@@ -43,7 +43,7 @@ import com.iksgmbh.sysnat.utils.SysNatUtil;
 @LanguageTemplateContainer
 public class LanguageTemplatesICFBasics implements LanguageTemplates
 {	
-	private TestCase testCase;
+	private ExecutableExample testCase;
 	private ExecutionRuntimeInfo executionInfo;
 	
 	private ResultPageObject resultPageObject;
@@ -57,7 +57,7 @@ public class LanguageTemplatesICFBasics implements LanguageTemplates
 	private WizardPage5_PageObject wizardPage5;
 	private WizardPage6_PageObject wizardPage6;
 	
-	public LanguageTemplatesICFBasics(TestCase aTestCase) 
+	public LanguageTemplatesICFBasics(ExecutableExample aTestCase) 
 	{
 		this.testCase = aTestCase;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();

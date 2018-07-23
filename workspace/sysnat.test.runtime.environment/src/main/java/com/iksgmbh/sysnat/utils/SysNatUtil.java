@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Properties;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class SysNatUtil 
 {
-	public static boolean doesTestBelongToApplicationUnderTest(TestCase testcase) 
+	public static boolean doesTestBelongToApplicationUnderTest(ExecutableExample testcase) 
 	{
 		String aut = ExecutionRuntimeInfo.getInstance().getTestApplicationNameAsPropertyKey();
 		String fullClassName = testcase.getClass().getName().toLowerCase();
@@ -54,9 +54,9 @@ public class SysNatUtil
 		return getExecutionProperties().getProperty("screenshot.dir", "screenshots");
 	}
 
-	public static void copyContextData(TestCase source, TestCase target)
+	public static void copyContextData(ExecutableExample source, ExecutableExample target)
 	{
-		target.setTestID(source.getTestID());
+		target.setXXID(source.getXXID());
 		target.setGuiController(source.getGuiController());
 		target.setReportMessages(source.getReportMessages());
 		target.setTestCategories(source.getTestCategories());

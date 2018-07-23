@@ -3,7 +3,7 @@ package com.iksgmbh.sysnat.language_templates.icf.pageobject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
@@ -18,9 +18,9 @@ public class ResultPageObject implements PageObject
 	@SuppressWarnings("unused")
 	private static final int WIZARD_PAGE_NUMBER = 6;
 
-	private TestCase testCase;
+	private ExecutableExample testCase;
 
-	public ResultPageObject(TestCase aTestCase) {
+	public ResultPageObject(ExecutableExample aTestCase) {
 		this.testCase = aTestCase;
 	}
 

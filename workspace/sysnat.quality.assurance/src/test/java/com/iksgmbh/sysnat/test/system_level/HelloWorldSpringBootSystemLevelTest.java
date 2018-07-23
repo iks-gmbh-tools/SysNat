@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import com.iksgmbh.sysnat.SysNatTestCaseGenerator;
 import com.iksgmbh.sysnat.SysNatTestingExecutor;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.test.system_level.common.SysNatSystemTest;
@@ -151,8 +151,8 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 		assertEquals("Maven result", SysNatTestingExecutor.MAVEN_OK, result);
 		final File reportFile = getFullOverviewOfCurrentReport();
 		final String report = SysNatFileUtil.readTextFileToString(reportFile); 
-		final boolean testResultOk = ! report.contains(TestCase.SMILEY_FAILED) && 
-				                     ! report.contains(TestCase.SMILEY_WRONG); 
+		final boolean testResultOk = ! report.contains(ExecutableExample.SMILEY_FAILED) && 
+				                     ! report.contains(ExecutableExample.SMILEY_WRONG); 
 		assertTrue("Report contains problem(s).", testResultOk);
 		return report;
 	}

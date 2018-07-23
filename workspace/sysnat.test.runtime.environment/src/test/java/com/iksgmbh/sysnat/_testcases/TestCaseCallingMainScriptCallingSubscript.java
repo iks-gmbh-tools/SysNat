@@ -17,7 +17,7 @@ public class TestCaseCallingMainScriptCallingSubscript extends TestCaseTestImpl
 	public void executeTestCase() 
 	{
 		languageTemplatesCommon = new LanguageTemplatesCommonTestImpl(this);
-		languageTemplatesCommon.startNewTestCase("testID");
+		languageTemplatesCommon.startNewTestCase("testXXID");
 		languageTemplatesCommon.loadTestDatasets("Testdata_A");
 		languageTemplatesCommon.setSingleTestDataValue("Menu", "aMenuName");
 		try {

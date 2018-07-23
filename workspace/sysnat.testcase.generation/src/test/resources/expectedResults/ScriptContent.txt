@@ -2,7 +2,7 @@ package com.iksgmbh.sysnat.test;
 
 import com.iksgmbh.sysnat.test.testTemplateContainers.testcasegeneratortestapplication.ComplexInstructionTestApplication_LanguageTemplateContainer;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.testcasejavatemplate.ScriptTemplateParent;
 
 /**
@@ -13,7 +13,7 @@ public class FilenameScript extends ScriptTemplateParent
 {
 	protected ComplexInstructionTestApplication_LanguageTemplateContainer complexInstructionTestApplication_LanguageTemplateContainer;
 
-	public FilenameScript(TestCase callingTestCase)
+	public FilenameScript(ExecutableExample callingTestCase)
 	{
 		super(callingTestCase);
 		complexInstructionTestApplication_LanguageTemplateContainer = new ComplexInstructionTestApplication_LanguageTemplateContainer(this);

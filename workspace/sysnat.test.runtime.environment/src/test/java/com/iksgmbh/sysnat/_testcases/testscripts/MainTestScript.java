@@ -2,7 +2,7 @@ package com.iksgmbh.sysnat._testcases.testscripts;
 
 import org.junit.Ignore;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat._testhelper.LanguageTemplatesCommonTestImpl;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
 import com.iksgmbh.sysnat.testcasejavatemplate.ScriptTemplateParent;
@@ -13,7 +13,7 @@ public class MainTestScript extends ScriptTemplateParent
 {
 	private LanguageTemplatesCommonTestImpl languageTemplatesCommon;
 
-	public MainTestScript(TestCase callingTestCase) {
+	public MainTestScript(ExecutableExample callingTestCase) {
 		super(callingTestCase);
 	}
 	

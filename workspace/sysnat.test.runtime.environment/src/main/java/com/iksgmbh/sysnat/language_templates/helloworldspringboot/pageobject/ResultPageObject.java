@@ -1,6 +1,6 @@
 package com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
@@ -12,9 +12,9 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
  */
 public class ResultPageObject implements PageObject
 {	
-	private TestCase testCase;
+	private ExecutableExample testCase;
 
-	public ResultPageObject(TestCase aTestCase) {
+	public ResultPageObject(ExecutableExample aTestCase) {
 		this.testCase = aTestCase;
 	}
 

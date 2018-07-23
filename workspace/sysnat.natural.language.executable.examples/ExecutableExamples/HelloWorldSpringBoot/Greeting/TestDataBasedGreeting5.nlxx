@@ -2,7 +2,7 @@
 # Therefore, when accessing the datafields, this test case does not need to specifies a specific dataset
 # and the script EnterGreetingData can be used.
 
-Test-ID:          <Dateiname>
+XXID:          <Dateiname>
 Kategorie-Filter: <Pfad>
 TestData:         HelloWorldTestData_GreetingValidationData1
 

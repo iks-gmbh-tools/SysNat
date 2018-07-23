@@ -16,7 +16,7 @@ public class SysNatStringUtil
 		return firstChar.toLowerCase() + s.substring(1);
 	}
 	
-	public static List<String> getTestCategoriesAsList(String testCategoriesAsString, String testId) 
+	public static List<String> getTestCategoriesAsList(String testCategoriesAsString, String xxid) 
 	{
 		List<String> toReturn = new ArrayList<>();
 		
@@ -33,7 +33,7 @@ public class SysNatStringUtil
 					category = category.replace('_', ' ');
 					if (SysNatLocaleConstants.FROM_PACKAGE.equals(category)) 
 					{
-						String[] splitResult2 = testId.split("_");
+						String[] splitResult2 = xxid.split("_");
 						for (String category2 : splitResult2) {
 							toReturn.add(category2);
 						}

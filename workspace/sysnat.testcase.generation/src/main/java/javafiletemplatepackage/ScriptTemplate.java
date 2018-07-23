@@ -2,7 +2,7 @@ package javafiletemplatepackage;
 
 /* TO BE REPLACED: imports */
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.testcasejavatemplate.ScriptTemplateParent;
 
 /**
@@ -13,7 +13,7 @@ public class ScriptTemplate extends ScriptTemplateParent
 {
 	/* TO BE REPLACED: fields for language template containers */
 
-	public ScriptTemplate(TestCase callingTestCase)
+	public ScriptTemplate(ExecutableExample callingTestCase)
 	{
 		super(callingTestCase);
 		/* TO BE REPLACED: field initialization */			

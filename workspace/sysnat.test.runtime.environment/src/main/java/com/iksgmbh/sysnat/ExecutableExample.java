@@ -51,7 +51,7 @@ import com.iksgmbh.sysnat.utils.SysNatUtil;
  * 
  * @author Reik Oberrath
  */
-abstract public class TestCase
+abstract public class ExecutableExample
 {
 	public static final String SMILEY_FAILED = "&#x1F61E;";
 	public static final String SMILEY_WRONG = "&#x1F612;";
@@ -66,7 +66,7 @@ abstract public class TestCase
     protected TestDataImporter testDataImporter; 
     
     private List<String> testCategories;
-    private String testID = null;
+    private String XXID = null; // unique id of the executable example
 	private boolean skipped = false;
 	private boolean alreadyTerminated = false;
 	private GuiControl guiController;
@@ -118,12 +118,12 @@ abstract public class TestCase
 		return reportMessages;
 	}
 
-	public void setTestID(String aTestId) {
-		this.testID = aTestId;
+	public void setXXID(String aXXID) {
+		this.XXID = aXXID;
 	}
 	
-	public String getTestID() {
-		return testID;
+	public String getXXID() {
+		return XXID;
 	}
     
 	public void addReportMessage(String message) {
@@ -198,19 +198,19 @@ abstract public class TestCase
 	{
 		if (reportMessages != null)  {
 			System.out.println("Test Result: OK");
-			executionInfo.addTestMessagesOK(getCheckedTestId(), reportMessages);
+			executionInfo.addTestMessagesOK(getCheckedXXId(), reportMessages);
 		}
 	}
 
 	public void terminateWrongTestCase() {
 		System.out.println("Test Result: Failed Assertion");
-		executionInfo.addTestMessagesWRONG(getCheckedTestId(), reportMessages);
+		executionInfo.addTestMessagesWRONG(getCheckedXXId(), reportMessages);
 	}
 
 	public void finishSkippedTestCase(SkipReason skipReason) 
 	{
 		skipped = true;
-		testID = null;
+		XXID = null;
 		reportMessages.clear();
 		if (skipReason == SkipReason.ACTIVATION_STATE) {
 			System.out.println("Skipped because set inactive.");
@@ -227,7 +227,7 @@ abstract public class TestCase
 	
 	public void failWithMessage(String message) 
 	{
-		if (executionInfo.isTestIdAlreadyUsed(getCheckedTestId())) {
+		if (executionInfo.isXXIdAlreadyUsed(getCheckedXXId())) {
 			return;
 		}
 		if ( ! message.contains(ERROR_KEYWORD) )  {
@@ -235,7 +235,7 @@ abstract public class TestCase
 		}
 		System.out.println("Test Result: Technical Error");
 		reportMessages.add(message);
-		executionInfo.addTestMessagesFAILED(getCheckedTestId(), reportMessages);
+		executionInfo.addTestMessagesFAILED(getCheckedXXId(), reportMessages);
 		terminateTestCase(message);
 	}
 
@@ -248,7 +248,7 @@ abstract public class TestCase
                                          + "LanguageTemplates" + applicationUnderTest + "Basics";
     	try {
 			final Class<?> type =  Class.forName(expectedClassName);
-			final Constructor<?> constructor = type.getConstructor(TestCase.class);
+			final Constructor<?> constructor = type.getConstructor(ExecutableExample.class);
 			final Object toReturn = constructor.newInstance(this);
 			return (LanguageTemplates) toReturn;
 		} 
@@ -570,13 +570,13 @@ abstract public class TestCase
 	//##########################################################################################
 
 
-	private String getCheckedTestId() 
+	private String getCheckedXXId() 
 	{
-		if (testID == null)  {
-			testID = getTestCaseFileName();
-			terminateTestCase("Für den Test " + testID + " wurde keine TestId angegeben!");
+		if (XXID == null)  {
+			XXID = getTestCaseFileName();
+			terminateTestCase("Für den Test " + XXID + " wurde keine XXID angegeben!");
 		}
-		return testID;
+		return XXID;
 	}
 
 	private void initShutDownHook() 
@@ -758,7 +758,7 @@ abstract public class TestCase
 	
 	public List<String> buildTestCategories(String testCategoriesOfThisTestCase) 
 	{
-		setTestCategories(SysNatStringUtil.getTestCategoriesAsList(testCategoriesOfThisTestCase, getTestID()));
+		setTestCategories(SysNatStringUtil.getTestCategoriesAsList(testCategoriesOfThisTestCase, getXXID()));
 		return getTestCategories();
 	}
 	

@@ -8,7 +8,7 @@ import java.util.List;
 import org.openqa.selenium.WebDriver;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.domain.FileList;
@@ -20,9 +20,9 @@ public class LanguageTemplatesPrint
 {
 	public static final String NO_PDF_MESSAGE = "Problem: Es wurde keine PDF-Datei erzeugt!";
 
-	private TestCase testCase;
+	private ExecutableExample testCase;
 	
-	public LanguageTemplatesPrint(TestCase aTestCase) {
+	public LanguageTemplatesPrint(ExecutableExample aTestCase) {
 		testCase = aTestCase;
 	}
 	

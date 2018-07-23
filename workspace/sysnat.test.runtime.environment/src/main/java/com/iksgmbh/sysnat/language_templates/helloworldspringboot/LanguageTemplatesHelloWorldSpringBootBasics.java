@@ -5,7 +5,7 @@ import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIE
 import java.util.HashMap;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
@@ -25,13 +25,13 @@ import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.Res
 @LanguageTemplateContainer
 public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemplates
 {	
-	private TestCase testCase;
+	private ExecutableExample testCase;
 	private ExecutionRuntimeInfo executionInfo;
 	private FormPageObject formPageObject;
 	private ResultPageObject resultPageObject;
 	private ErrorPageObject errorPageObject;
 	
-	public LanguageTemplatesHelloWorldSpringBootBasics(TestCase aTestCase) 
+	public LanguageTemplatesHelloWorldSpringBootBasics(ExecutableExample aTestCase) 
 	{
 		this.testCase = aTestCase;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();

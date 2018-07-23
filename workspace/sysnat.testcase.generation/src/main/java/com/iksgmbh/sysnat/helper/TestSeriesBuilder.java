@@ -64,12 +64,12 @@ public class TestSeriesBuilder
 			                   final List<JavaCommand> commands) 
 	{
 		final List<JavaCommand> newCommands = new ArrayList<>();
-		String testId = "";
+		String xxid = "";
 		
 		for (JavaCommand javaCommand : commands) {
 			if (javaCommand.value.contains( "startNewTestCase" )) {
-				testId = extractTestId(javaCommand.value);
-				newCommands.add(new JavaCommand("languageTemplatesCommon.startNewTestCase(\"" + testId + "_" + dataSetName + "\");"));
+				xxid = extractXXId(javaCommand.value);
+				newCommands.add(new JavaCommand("languageTemplatesCommon.startNewTestCase(\"" + xxid + "_" + dataSetName + "\");"));
 			} else if (javaCommand.value.contains(TEST_PARAMETER_IDENTIFIER_METHOD_CALL)) {
 					newCommands.add(new JavaCommand("languageTemplatesCommon.importTestData(\"" + dataSetName + "\");"));
 			} else {
@@ -80,11 +80,11 @@ public class TestSeriesBuilder
 		int pos = nameOfCurrentFile.lastIndexOf('/');
 		String packagePath = "";
 		if (pos > -1) packagePath = nameOfCurrentFile.substring(0, pos) + "/";
-		final String filenameWithPath = packagePath + testId + "_" + dataSetName + ".java";
+		final String filenameWithPath = packagePath + xxid + "_" + dataSetName + ".java";
 		javaCommandCollection.put(new Filename(filenameWithPath), newCommands); // no transformation needed
 	}
 
-	private String extractTestId(String command) 
+	private String extractXXId(String command) 
 	{
 		final int pos1 = command.indexOf('"');
 		final int pos2 = command.lastIndexOf('"');

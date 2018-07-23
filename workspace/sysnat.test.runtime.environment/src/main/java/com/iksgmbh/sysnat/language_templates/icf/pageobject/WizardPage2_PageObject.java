@@ -4,7 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
@@ -18,9 +18,9 @@ public class WizardPage2_PageObject implements PageObject
 {	
 	private static final int WIZARD_PAGE_NUMBER = 2;
 
-	private TestCase testCase;
+	private ExecutableExample testCase;
 
-	public WizardPage2_PageObject(TestCase aTestCase) {
+	public WizardPage2_PageObject(ExecutableExample aTestCase) {
 		this.testCase = aTestCase;
 	}
 

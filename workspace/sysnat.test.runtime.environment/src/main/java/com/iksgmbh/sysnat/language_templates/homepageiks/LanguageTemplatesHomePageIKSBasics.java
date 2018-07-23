@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
@@ -25,12 +25,12 @@ import com.iksgmbh.sysnat.language_templates.homepageiks.pageobject.Zeiterfassun
 @LanguageTemplateContainer
 public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 {	
-	private TestCase testCase;
+	private ExecutableExample testCase;
 	@SuppressWarnings("unused")
 	private ExecutionRuntimeInfo executionInfo;
 	private ZeiterfassungPageObject zeitErfassungPageObject;
 	
-	public LanguageTemplatesHomePageIKSBasics(TestCase aTestCase) 
+	public LanguageTemplatesHomePageIKSBasics(ExecutableExample aTestCase) 
 	{
 		this.testCase = aTestCase;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();

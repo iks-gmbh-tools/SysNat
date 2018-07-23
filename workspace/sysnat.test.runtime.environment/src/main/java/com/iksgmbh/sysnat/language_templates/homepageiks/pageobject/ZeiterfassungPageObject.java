@@ -1,6 +1,6 @@
 package com.iksgmbh.sysnat.language_templates.homepageiks.pageobject;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
@@ -13,9 +13,9 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
 public class ZeiterfassungPageObject implements PageObject
 {	
 	private static final String REPORT_FIELD_ID = "editForm:reportPrjNr";
-	private TestCase testCase;
+	private ExecutableExample testCase;
 
-	public ZeiterfassungPageObject(TestCase aTestCase) {
+	public ZeiterfassungPageObject(ExecutableExample aTestCase) {
 		this.testCase = aTestCase;
 	}
 

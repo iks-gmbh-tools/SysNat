@@ -39,7 +39,7 @@ public class StageInstructionUtilClassLevelTest
 			fail("Expected exception not thrown!");
 		} catch (SysNatException e) {
 			// assert
-			assertEquals("error message", "Invalid instruction in ../sysnat.testcase.generation/src/test/resources/TestSageInstructions.config: Test-ID", 
+			assertEquals("error message", "Invalid instruction in ../sysnat.testcase.generation/src/test/resources/TestSageInstructions.config: XXID", 
 					                      e.getMessage());
 		}		
 	}

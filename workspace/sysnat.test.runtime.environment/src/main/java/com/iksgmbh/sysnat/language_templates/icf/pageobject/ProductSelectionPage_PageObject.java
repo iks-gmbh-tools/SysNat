@@ -1,6 +1,6 @@
 package com.iksgmbh.sysnat.language_templates.icf.pageobject;
 
-import com.iksgmbh.sysnat.TestCase;
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
@@ -12,9 +12,9 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
  */
 public class ProductSelectionPage_PageObject implements PageObject
 {	
-	private TestCase testCase;
+	private ExecutableExample testCase;
 
-	public ProductSelectionPage_PageObject(TestCase aTestCase) {
+	public ProductSelectionPage_PageObject(ExecutableExample aTestCase) {
 		this.testCase = aTestCase;
 	}
 
