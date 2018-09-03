@@ -7,11 +7,11 @@ SysNatTesting (or in short: SysNat or SNT) stands for a BDD testing tool to perf
 Its main features are
 
 - It let you formulate instructions in natural language that operates your application under test and asserts the corresponding expectations.
-- Creates a test report with an test result overview as well as detailed information about any instruction, expectations and results - all presented in natural language.
+- It creates a test report with a test result overview as well as detailed information about any instruction, expectations and results - all presented in natural language.
 
-With these main features, SysNatTesting is perfectly suitable to bring domain experts and developers together, in order to build a Domain Specific Language (DSL) in natural language.
-Once established, this DSL allows domain experts to modify tests, to create tests and to execute them without any technical support, because the natural language is intuitively understandable.
-This tool is supposed to support cross functional teams and teams that follow DDD (Domain driven design).
+With these main features, SysNatTesting is perfectly suitable to bring domain experts and developers together in order to build a Domain Specific Language (DSL) in natural language.
+Once established, this DSL allows domain experts to modify tests, to create new tests and to execute them without any support by developers because the natural language is intuitively understandable.
+This tool is supposed to support cross functional teams and teams that follow DDD (Domain Driven Design).
 
 Minor features of the SysNatTesting are:
 
@@ -33,8 +33,6 @@ Technical Requirements:
 Copyright by [IKS GmbH](https://www.iks-gmbh.com)
 
 Licenced under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
-
-travis-ci: [![Build Status](https://travis-ci.org/iks-github/MOGLiCodeCreator.png?branch=master)](https://travis-ci.org/iks-github/MOGLiCodeCreator)
 
 Current version: **0.0.1**
 
