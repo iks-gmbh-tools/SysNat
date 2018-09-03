@@ -3,7 +3,7 @@ Kategorie-Filter: <Pfad>
 
 # arrange
 Keyword-Comment: Arrange test requirements
-Execute with following data
+Execute with
     "Name" = "John"
     "Greeting" = "Hi"
 the script "EnterGreetingData".

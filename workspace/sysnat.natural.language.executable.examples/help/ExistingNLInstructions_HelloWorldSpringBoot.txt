@@ -1,5 +1,6 @@
 Instructions read from LanguageTemplatesCommon
 -------------------------------------------------------
+.
 Active: ^^
 Aktiv: ^^
 Beep ^^ times.
@@ -10,14 +11,20 @@ Date of today is stored as <>.
 Ein Screenshot wird als ^^ gespeichert.
 Ein Screenshot wird gespeichert, falls der Testfall als pictureProof kategorisiert wurde.
 Es existieren ^^.
-Execute for all ^^
+Execute script ^^ with
+Execute script ^^ with input data
+Execute script ^^ with input data ^^.
 Execute script ^^.
+Execute with
 Execute with ^^
-Execute with following data
+Execute with all ^^
+Führe das Skript ^^ aus mit
+Führe das Skript ^^ aus mit den Eingabedaten
 Führe das Skript ^^ aus.
+Führe das Skript ^^ mit den Eingabedaten ^^ aus.
+Führe mit
 Führe mit ^^
-Führe mit folgenden Daten
-Führe mit folgenden Daten ^^
+Führe mit allen ^^
 Kategorie-Filter: ^^
 Keyword-Comment: Arrange test requirements
 Keyword-Comment: Assert expected results
@@ -38,11 +45,15 @@ There are ^^.
 Wait ^^ second(s).
 Warte ^^ Sekunde(n).
 XXID: ^^
-^^ = ^^
+^^ mit
+^^ mit den Eingabedaten
+^^ mit den Eingabedaten ^^.
+^^ with 
+^^ with input data
+^^ with input data ^^.
 ^^.
-das Skript ^^ als separaten Testfall aus.
+^^=^^
 das Skript ^^ aus.
-the script ^^ as separate testcases.
 the script ^^.
 
 Instructions read from LanguageTemplatesHelloWorldSpringBootBasics

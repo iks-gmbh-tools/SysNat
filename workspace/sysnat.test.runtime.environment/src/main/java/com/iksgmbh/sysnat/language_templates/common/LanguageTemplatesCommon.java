@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.language_templates.common;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.COMMENT_IDENTIFIER;
@@ -21,19 +36,17 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutableExample;
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException.SkipReason;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
-import com.iksgmbh.sysnat.common.exception.UnexpectedResultException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
-import com.iksgmbh.sysnat.domain.SysNatTestData.SysNatDataset;
-import com.iksgmbh.sysnat.helper.VirtualTestCase;
+import com.iksgmbh.sysnat.domain.SysNatTestData;
 
 /**
  * Contains the implementation of the most basic language templates available in the natspec files
@@ -61,23 +74,23 @@ public class LanguageTemplatesCommon
 	public static ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/LanguageTemplatesCommon", Locale.getDefault());
 
 	protected ExecutionRuntimeInfo executionInfo;
-	protected ExecutableExample testCase;
+	protected ExecutableExample executableExample;
 	private Properties nlsProperties;
 	
-	public LanguageTemplatesCommon(ExecutableExample test) 
+	public LanguageTemplatesCommon(ExecutableExample aExecutableExample) 
 	{
-		this.testCase = test;
+		this.executableExample = aExecutableExample;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();
 	}
 
-	public boolean isThisTestToExecute(final List<String> testCategoriesOfTestCase,
+	public boolean isThisTestToExecute(final List<String> testCategoriesOfExecutableExample,
 			                           final List<String> testCategoriesToExecute) 
 	{
 		if (testCategoriesToExecute.isEmpty()) {
 			return true;
 		}
 		
-		if (testCategoriesToExecute.contains(testCase.getXXID())) {
+		if (testCategoriesToExecute.contains(executableExample.getXXID())) {
 			return true;
 		}
 
@@ -92,14 +105,14 @@ public class LanguageTemplatesCommon
 				final String excludedCategory = SysNatStringUtil.cutPrefix(categoryToExecute,
 						SysNatLocaleConstants.NON_KEYWORD);
 
-				if (testCategoriesOfTestCase.contains(excludedCategory)) {
+				if (testCategoriesOfExecutableExample.contains(excludedCategory)) {
 					listOfNegativeMatchingCategories.add(excludedCategory);
 				}
 			}
 			else
 			{
 				listOfPositiveCategoriesToExecute.add(categoryToExecute);
-				if (testCategoriesOfTestCase.contains(categoryToExecute)) {
+				if (testCategoriesOfExecutableExample.contains(categoryToExecute)) {
 					listOfPositiveMatchingCategories.add(categoryToExecute);
 				}
 			}
@@ -164,29 +177,31 @@ public class LanguageTemplatesCommon
 		return new ArrayList<>(Arrays.asList(splitResult));
 	}
 	
-	protected void executeScript(String scriptName, ExecutableExample aTestCase)
+	protected void executeScript(String scriptName, ExecutableExample aExecutableExample)
 	{
+		scriptName = SysNatStringUtil.toFileName(scriptName);
 		Method executeTestMethod = null;
 		Object newInstance = null;
 		try {
 			Class<?> classForName = getClassFor(scriptName);
 			Constructor<?> constructor = classForName.getConstructor(ExecutableExample.class);
-			newInstance = constructor.newInstance(aTestCase);
+			newInstance = constructor.newInstance(aExecutableExample);
 			executeTestMethod = classForName.getMethod("executeScript");
 		} catch (ClassNotFoundException e) {
-			aTestCase.failWithMessage(e.getMessage());
+			aExecutableExample.failWithMessage(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			aTestCase.failWithMessage(BUNDLE.getString("NotExecutableScriptComment").replace("x", scriptName)
+			aExecutableExample.failWithMessage(BUNDLE.getString("NotExecutableScriptComment").replace("x", scriptName)
 					                 + System.getProperty("line.separator") + e.getMessage());
 		}
 		
-		if (executeTestMethod != null  && newInstance != null) {
+		if (executeTestMethod != null  && newInstance != null) 
+		{
 			try {
-				aTestCase.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptStart") 
+				aExecutableExample.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptStart") 
 				                          + ": <b>" + scriptName + "</b> ----------");
 				executeTestMethod.invoke(newInstance);
-				aTestCase.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptEnd") 
+				aExecutableExample.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptEnd") 
 				                          + ": <b>" + scriptName + "</b> ----------");
 			}
 			catch (InvocationTargetException ite) 
@@ -199,7 +214,7 @@ public class LanguageTemplatesCommon
 			}
 			catch (Exception e) 
 			{
-				aTestCase.failWithMessage(BUNDLE.getString("FailedScriptExecutionComment").replace("x", scriptName));
+				aExecutableExample.failWithMessage(BUNDLE.getString("FailedScriptExecutionComment").replace("x", scriptName));
 			}
 		}
 	}
@@ -209,29 +224,35 @@ public class LanguageTemplatesCommon
 	//                   L A N G U A G E   T E M P L A T E    M E T H O D S
 	//##########################################################################################
 
+	@LanguageTemplate(value = "Rule: ^^")
+	@LanguageTemplate(value = "Regel: ^^")
+	public void declareXXGroupForRule(String ruleID) 
+	{
+		// TODO
+	}
 	
 	@LanguageTemplate(value = "XXID: ^^")
-	public void startNewTestCase(String xxid) 
+	public void startNewXX(String xxid) 
 	{
 		xxid = xxid.trim();
-		if (! testCase.doesTestBelongToApplicationUnderTest()) {
+		if (! executableExample.doesTestBelongToApplicationUnderTest()) {
 			throw new SkipTestCaseException(SkipReason.APPLICATION_TO_TEST);
 		}
 		
 		if (xxid.equals(FROM_FILENAME) || xxid.equals("<filename>"))  {
-			xxid = testCase.getTestCaseFileName();
+			xxid = executableExample.getTestCaseFileName();
 		}
 		
 		if (executionInfo.isXXIdAlreadyUsed(xxid))  {
-			testCase.failWithMessage(BUNDLE.getString("Ambiguous") + " XXId: " + xxid);
+			executableExample.failWithMessage(BUNDLE.getString("Ambiguous") + " XXId: " + xxid);
 		}
 
-		testCase.setXXID( xxid.trim() );
+		executableExample.setXXID( xxid.trim() );
 		System.out.println((executionInfo.getTotalNumberOfTestCases() + 1) + ". XXId: " + xxid);
 		executionInfo.countTestCase();
 		
 		if ( ! executionInfo.isApplicationStarted() ) {
-			testCase.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
+			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
 			                          + "</b> steht derzeit nicht zur Verfügung!");
 		}
 	}
@@ -241,14 +262,14 @@ public class LanguageTemplatesCommon
 	public void checkFilterCategory(String testCategoriesOfThisTestCase) 
 	{
 		boolean executeThisTest = true;
-		final List<String> testCategoriesOfTestCase = testCase.buildTestCategories(testCategoriesOfThisTestCase);
-		testCategoriesOfTestCase.addAll(testCase.getPackageNames());
+		final List<String> testCategoriesOfExecutableExample = executableExample.buildTestCategories(testCategoriesOfThisTestCase);
+		testCategoriesOfExecutableExample.addAll(executableExample.getPackageNames());
 		final List<String> testCategoriesToExecute = executionInfo.getTestCategoriesToExecute();
 		if (testCategoriesToExecute.size() > 1 || ! testCategoriesToExecute.get(0).equalsIgnoreCase(NO_FILTER)) {
-			executeThisTest = isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+			executeThisTest = isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 		}
 		
-		for (String category : testCategoriesOfTestCase) {
+		for (String category : testCategoriesOfExecutableExample) {
 			executionInfo.addCategoryToCollection(category);
 		}	
 		
@@ -267,7 +288,7 @@ public class LanguageTemplatesCommon
 			|| value.trim().equalsIgnoreCase("no"))  
 		{
 			executionInfo.uncountAsExecutedTestCases();  // undo previously added 
-			executionInfo.addInactiveTestCase( testCase.getXXID() );
+			executionInfo.addInactiveTestCase( executableExample.getXXID() );
 			throw new SkipTestCaseException(SkipReason.ACTIVATION_STATE);
 		}
 	}
@@ -275,31 +296,31 @@ public class LanguageTemplatesCommon
 	@LanguageTemplate(value = "Kommentar: ^^")
 	@LanguageTemplate(value = "Comment: ^^")
 	public void createComment(String comment) {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + comment);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + comment);
 	}
 	
 	@LanguageTemplate(value = "Keyword-Comment: Arrange test requirements") 
 	@LanguageTemplate(value = "Schlüsselkommentar: Test-Vorbereitungen")
 	public void createKeywordArrangeComment() {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + ARRANGE_KEYWORD);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + ARRANGE_KEYWORD);
 	}
 	
 	@LanguageTemplate(value = "Keyword-Comment: Perform action under test") 
 	@LanguageTemplate(value = "Schlüsselkommentar: Test-Durchführung")
 	public void createKeywordActComment() {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + ACT_KEYWORD);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + ACT_KEYWORD);
 	}
 
 	@LanguageTemplate(value = "Keyword-Comment: Assert expected results") 
 	@LanguageTemplate(value = "Schlüsselkommentar: Überprüfung der Testergebnisse")
 	public void createKeywordAssertComment() {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + ASSERT_KEYWORD);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + ASSERT_KEYWORD);
 	}
 
 	@LanguageTemplate(value = "Keyword-Comment: Reset to start situation")  
 	@LanguageTemplate(value = "Schlüsselkommentar: Wiederherstellen der Ausgangssituation")
 	public void createKeywordCleanupComment() {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + CLEANUP_KEYWORD);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + CLEANUP_KEYWORD);
 	}
 
 	@LanguageTemplate(value = "Wait ^^ second(s).") 
@@ -311,9 +332,9 @@ public class LanguageTemplatesCommon
 		try {
 			double sec = Double.valueOf(seconds);
 			Thread.sleep((long)sec * 1000);
-			testCase.addReportMessage(BUNDLE.getString("WaitComment").replace("x", seconds));
+			executableExample.addReportMessage(BUNDLE.getString("WaitComment").replace("x", seconds));
 		} catch (Exception e) {
-			testCase.addReportMessage(ERROR_KEYWORD + ": Die Testausführung hat nicht warten können.");
+			executableExample.addReportMessage(ERROR_KEYWORD + ": Die Testausführung hat nicht warten können.");
 		}
 	}
 
@@ -330,45 +351,28 @@ public class LanguageTemplatesCommon
 	{
 		for (int i = 0; i < timesToBeep; i++) {
 			Toolkit.getDefaultToolkit().beep();
-			testCase.sleep(200);
+			executableExample.sleep(200);
 		}
 	}
 	
 	/**
 	 * Makes a single data set available.
 	 * If not yet done, it is initialized now.
-	 * Terminates with error, if objectName is unknown as test data.
 	 * Test data is read from the TestData directory
 	 * @param objectName
 	 * @return
 	 */
 	@LanguageTemplate(value = "There are ^^.") 
 	@LanguageTemplate(value = "Es existieren ^^.")
-	public void setDatasetObject(String datatype) 
-	{
-		if ( ! testCase.getTestData().isKnown(datatype) ) {
-			testCase.importTestData(datatype);
-		}
-	}	
-	
 	@LanguageTemplate(value = "Testdaten: ^^")
 	@LanguageTemplate(value = "TestData: ^^")
-	public void importTestData(String testDataId) {
-		testCase.importTestData(testDataId);
-	}
-
-
-	/**
-	 * Removes all existing data sets and makes an empty data collection available.
-	 * Test data MUST be added by "setSingleTestDataValue" method!
-	 */
-	@LanguageTemplate(value = "Execute with following data") 
-	@LanguageTemplate(value = "Führe mit folgenden Daten")  
-	public void createSysNatTestData() 
+	public void setDatasetObject(String datatype)  
 	{
-		testCase.getTestData().clear();
-	}
-	
+		if ( ! executableExample.getTestData().isKnown(datatype) ) {
+			executableExample.importTestData(datatype);
+		}
+	}	
+
 	/**
 	 * Removes all existing data sets and makes an data collection available
 	 * that contains those data referenced by 'objectNames'.
@@ -376,14 +380,14 @@ public class LanguageTemplatesCommon
 	 * 
 	 * @param objectNames one or more (comma separated) references to data sets.
 	 */
-	@LanguageTemplate(value = "Execute with ^^") 
-	@LanguageTemplate(value = "Führe mit folgenden Daten ^^")  
+	@LanguageTemplate(value = "Execute with all ^^") 
+	@LanguageTemplate(value = "Führe mit allen ^^")  
 	public void loadTestDatasets(String datatypes) 
 	{
-		testCase.getTestData().clear();
+		executableExample.getTestData().clear();
 		final List<String> datatypesList = getObjectNameList(datatypes);
 		for (String datatype : datatypesList) {
-			testCase.importTestData(datatype);
+			executableExample.importTestData(datatype);
 		}
 	}
 
@@ -396,34 +400,41 @@ public class LanguageTemplatesCommon
 	 * 
 	 * @param objectNames one or more (comma separated) references to data sets.
 	 */
-	@LanguageTemplate(value = "Execute for all ^^") 
+	@LanguageTemplate(value = "Execute with ^^") 
 	@LanguageTemplate(value = "Führe mit ^^")
-	public void storeDataSets(String datatype) 
+	public void loadSingleDataSet(String datatype) 
 	{
-		testCase.getTestData().clear();
-		testCase.importTestData(datatype);
+		executableExample.getTestData().clear();
+		executableExample.importTestData(datatype);
 	}	
 
+	@LanguageTemplate(value = "Execute with") 
+	@LanguageTemplate(value = "Führe mit")
+	public void initDefaultTestDataset() 
+	{
+		executableExample.getTestData().clear();
+		executableExample.getTestData().addEmptyDataset(SysNatTestData.DEFAULT_TEST_DATA);
+	}	
 
 	/**
 	 * Used to override or extent data sets provided in testDataSets.
 	 * @param objectAndfieldName
 	 * @param value
 	 */
-	@LanguageTemplate(value = "^^ = ^^") 
+	@LanguageTemplate(value = "^^=^^") 
 	public void setSingleTestDataValue(String objectAndfieldName, String value) 
 	{
 		String[] splitResult = objectAndfieldName.split("\\.");
 		
 		if (splitResult.length == 1) {
-			testCase.getTestData().addValue(splitResult[0], value);
+			executableExample.getTestData().addValue(splitResult[0], value);
 		} else {			
 			String objectName = splitResult[0];
 			String fieldName = splitResult[1];
-			if ( ! testCase.getTestData().isKnown(objectName) ) {
-				testCase.failWithMessage(BUNDLE.getString("NoTestDataComment"));
+			if ( ! executableExample.getTestData().isKnown(objectName) ) {
+				executableExample.failWithMessage(BUNDLE.getString("NoTestDataComment"));
 			}
-			testCase.getTestData().addValue(objectName, fieldName, value);
+			executableExample.getTestData().addValue(objectName, fieldName, value);
 		}
 	}
 
@@ -437,72 +448,76 @@ public class LanguageTemplatesCommon
 	@LanguageTemplate(value = "das Skript ^^ aus.")
 	public void executeScriptWithData(String scriptName)
 	{
-		if (testCase.getTestData().size() == 0)  {
-			testCase.failWithMessage(BUNDLE.getString("NoTestDataForScriptComment").replace("x", scriptName));
+		if (executableExample.getTestData().size() == 0)  {
+			executableExample.failWithMessage(BUNDLE.getString("NoTestDataForScriptComment").replace("x", scriptName));
 		}
 
-		executeScript(scriptName, testCase);
+		executeScript(scriptName, executableExample);
 	}
 	
 	@LanguageTemplate(value = "Execute script ^^.")  
 	@LanguageTemplate(value = "Führe das Skript ^^ aus.")
 	@LanguageTemplate(value = "^^.")  
 	public void executeScript(String scriptName) {
-		executeScript(scriptName, testCase);
+		executeScript(scriptName, executableExample);
+	}
+
+	@LanguageTemplate(value = "Execute script ^^ with input data ^^.")  
+	@LanguageTemplate(value = "Führe das Skript ^^ mit den Eingabedaten ^^ aus.")
+	@LanguageTemplate(value = "^^ mit den Eingabedaten ^^.")  
+	@LanguageTemplate(value = "^^ with input data ^^.")  
+	public void executeScriptWithDataset(String scriptName, String datasetNameCandidate) {
+		if (executableExample.getTestData().findMatchingDataSet(datasetNameCandidate) == null) {
+			executableExample.importTestData(datasetNameCandidate);
+		};
+		executableExample.getTestData().setMarker( executableExample.getTestData().findMatchingDataSet(datasetNameCandidate) );
+		executeScript(scriptName);
 	}	
 	
-	/**
-	 * Executes the given script repeatedly using the data previously defined.
-	 * Each repetition is reported as individual test case.
-	 * @param scriptName
-	 */	
-	@LanguageTemplate(value = "the script ^^ as separate testcases.") 
-	@LanguageTemplate(value = "das Skript ^^ als separaten Testfall aus.")
-	public void executeTheScriptAsSeparateTestcase(String scriptName)      // TODO Was macht das?
+	
+	@LanguageTemplate(value = "Execute script ^^ with")  
+	@LanguageTemplate(value = "Execute script ^^ with input data")  
+	@LanguageTemplate(value = "^^ with input data")  
+	@LanguageTemplate(value = "^^ with ")  
+	@LanguageTemplate(value = "Führe das Skript ^^ aus mit")
+	@LanguageTemplate(value = "Führe das Skript ^^ aus mit den Eingabedaten")
+	@LanguageTemplate(value = "^^ mit den Eingabedaten")  
+	@LanguageTemplate(value = "^^ mit")  
+	public void setScriptName(String scriptName) {
+		executableExample.getTestData().initDefaultDataset();
+		executableExample.setScriptToExecute(scriptName);
+	}	
+	
+	@LanguageTemplate(value = ".")  
+	public void executeScript() 
 	{
-		try {
-			getClassFor(scriptName);
-		} catch (ClassNotFoundException e) {
-			testCase.failWithMessage(ERROR_KEYWORD + ": " + e. getMessage()); 
+		final String scriptName = executableExample.getScriptToExecute();
+		
+		if (scriptName == null) {
+			throw new SysNatException(BUNDLE.getString("NoScriptNameDefined"));
 		}
 		
-		List<SysNatDataset> objectDataSets = testCase.getTestData().getAllDatasets();
-		for (SysNatDataset objectData : objectDataSets) 
-		{
-			VirtualTestCase virtualTestCase = new VirtualTestCase(objectData.getName());
-			virtualTestCase.getTestData().addDataset(objectData.getName(), objectData);
-			
-			try {
-				executeScript(scriptName, virtualTestCase);
-			} catch (UnexpectedResultException e) {
-				// do nothing
-			} catch (Exception e) {
-				virtualTestCase.addReportMessage(ERROR_KEYWORD + ": " + e. getMessage());
-			}
-			executionInfo.addToResultAsSeparateTestCase(virtualTestCase);
-		}
-		
-		testCase.addReportMessage("A total of " + objectDataSets.size()	+ " datasets has been executed as separate test cases.");
-	}
+		executeScript( scriptName );
+	}	
 	
 	@LanguageTemplate(value = "Save screenshot now as ^^.") 
 	@LanguageTemplate(value = "Ein Screenshot wird als ^^ gespeichert.")
 	public void saveScreenshotWithName(String filename) 
 	{
-		filename = filename.replace("<XXId>", testCase.getXXID());
-		testCase.takeScreenshot(filename);
-		testCase.addReportMessage(BUNDLE.getString("ScreenshotSavedComment").replace("x", filename));
+		filename = filename.replace("<XXId>", executableExample.getXXID());
+		executableExample.takeScreenshot(filename);
+		executableExample.addReportMessage(BUNDLE.getString("ScreenshotSavedComment").replace("x", filename));
 	}
 
 	@LanguageTemplate(value = "Save screenshot now if test case is categorized as mitBildnachweis.")
 	@LanguageTemplate(value = "Ein Screenshot wird gespeichert, falls der Testfall als pictureProof kategorisiert wurde.")
 	public void savePictureProofIfNecessary() 
 	{
-		if (testCase.hasBildnachweisCategory()) 
+		if (executableExample.hasBildnachweisCategory()) 
 		{			
-			String fileName = testCase.getScreenshotName();
-			testCase.takeScreenshot(fileName);
-			testCase.addReportMessage(BUNDLE.getString("ScreenshotSavedComment").replace("x", fileName));
+			String fileName = executableExample.getScreenshotName();
+			executableExample.takeScreenshot(fileName);
+			executableExample.addReportMessage(BUNDLE.getString("ScreenshotSavedComment").replace("x", fileName));
 		}
 	}
 

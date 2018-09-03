@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.helper;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.GREEN_HTML_COLOR;
@@ -24,7 +39,7 @@ import com.iksgmbh.sysnat._testcases.TestCaseWrong;
 
 public class ReportCreatorClassLevelTest 
 {
-	private List<ExecutableExample> testCases = new ArrayList<ExecutableExample>();
+	private List<ExecutableExample> executableExamples = new ArrayList<ExecutableExample>();
 	private String result;
 	
 	@Before
@@ -51,7 +66,7 @@ public class ReportCreatorClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.getInstance();
-		testCases.add(new TestCaseInactive());
+		executableExamples.add(new TestCaseInactive());
 
 		// act
 		executeAllTestCases();
@@ -67,7 +82,7 @@ public class ReportCreatorClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.getInstance();
-		testCases.add(new TestCaseOK());
+		executableExamples.add(new TestCaseOK());
 
 		// act
 		executeAllTestCases();
@@ -83,7 +98,7 @@ public class ReportCreatorClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.getInstance();
-		testCases.add(new TestCaseWrong());
+		executableExamples.add(new TestCaseWrong());
 
 		// act
 		executeAllTestCases();
@@ -99,7 +114,7 @@ public class ReportCreatorClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.getInstance();
-		testCases.add(new TestCaseFailed());
+		executableExamples.add(new TestCaseFailed());
 
 		// act
 		executeAllTestCases();
@@ -115,9 +130,9 @@ public class ReportCreatorClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.getInstance();
-		testCases.add(new TestCaseFailed());
-		testCases.add(new TestCaseOK());
-		testCases.add(new TestCaseWrong());
+		executableExamples.add(new TestCaseFailed());
+		executableExamples.add(new TestCaseOK());
+		executableExamples.add(new TestCaseWrong());
 
 		// act
 		executeAllTestCases();
@@ -133,10 +148,10 @@ public class ReportCreatorClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.getInstance();
-		testCases.add(new TestCaseFailed());
-		testCases.add(new TestCaseOK());
-		testCases.add(new TestCaseWrong());
-		testCases.add(new TestCaseInactive());
+		executableExamples.add(new TestCaseFailed());
+		executableExamples.add(new TestCaseOK());
+		executableExamples.add(new TestCaseWrong());
+		executableExamples.add(new TestCaseInactive());
 
 		// act
 		executeAllTestCases();
@@ -152,8 +167,8 @@ public class ReportCreatorClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.getInstance();
-		testCases.add(new TestCaseOK());
-		testCases.add(new TestCaseOK());
+		executableExamples.add(new TestCaseOK());
+		executableExamples.add(new TestCaseOK());
 
 		// act
 		executeAllTestCases();
@@ -167,8 +182,8 @@ public class ReportCreatorClassLevelTest
 	
 	private void executeAllTestCases() 
 	{
-		for (ExecutableExample testCase : testCases) {
-			testCase.executeTestCase();
+		for (ExecutableExample executableExample : executableExamples) {
+			executableExample.executeTestCase();
 		}
 	}
 

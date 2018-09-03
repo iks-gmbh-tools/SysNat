@@ -1,12 +1,30 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.helper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
 import com.iksgmbh.sysnat.common.utils.ExceptionHandlingUtil;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaCommand;
@@ -20,6 +38,9 @@ import com.iksgmbh.sysnat.domain.LanguageTemplatePattern;
  */
 public class PatternMergeJavaCommandGenerator 
 {
+	private static final String TEST_DATA_COMMAND_TEMPLATE = "importTestData(\"-\");";
+	private static final String TEST_PARAMETER_COMMAND_TEMPLATE = "applyTestParameter(\"-\");";
+	
 	private HashMap<Filename, List<LanguageTemplatePattern>> languageTemplateCollection;
 	private HashMap<Filename, List<LanguageInstructionPattern>> languageInstructionCollection;
 	private HashMap<String, Class<?>> availableParamVariables = new HashMap<>();
@@ -30,7 +51,8 @@ public class PatternMergeJavaCommandGenerator
 	private HashMap<Filename, List<JavaCommand>> toReturn;
 	private boolean matchFound = false;
 	private String applicationUnderTest;
-
+	private String testDataMultiLineString = null;
+	private boolean tableDataMode;
 	
 	public PatternMergeJavaCommandGenerator(final HashMap<Filename, List<LanguageInstructionPattern>> aLanguageInstructionCollection,
 											final HashMap<Filename, List<LanguageTemplatePattern>> aLanguageTemplateCollection,
@@ -75,7 +97,39 @@ public class PatternMergeJavaCommandGenerator
 		instructionPatternToMatch = instructionPattern;
 		languageTemplateCollection.forEach( this::processTemplateList );
 		
-		if (! matchFound) {
+		if ( ! matchFound ) 
+		{
+			if ( testDataMultiLineString != null ) 
+			{
+				if (! testDataMultiLineString.isEmpty()) {
+					testDataMultiLineString += SysNatConstants.LINE_SEPARATOR;
+				} 
+				testDataMultiLineString += instructionPatternToMatch.getPart(0).value.toString();
+				matchFound = true;
+			}
+		} 
+		else 
+		{
+			if ( ! tableDataMode && testDataMultiLineString != null) 
+			{
+				List<JavaCommand> commands = javaCommandsForCurrentInstructionFile.stream()
+						                        .filter(command -> command.value.contains(TEST_DATA_COMMAND_TEMPLATE) 
+						                        		        || command.value.contains(TEST_PARAMETER_COMMAND_TEMPLATE))
+						                        .collect(Collectors.toList());
+				if (commands.size() == 1) {					
+					JavaCommand testDataCommand = commands.get(0);
+					testDataCommand.value = testDataCommand.value.toString().replace("-", testDataMultiLineString);
+					testDataMultiLineString = null;
+					tableDataMode = false;
+				} else {
+					throw new SysNatException("Error parsing TableData: Unexpected number of java command matches.");
+				}
+				
+			}
+		}
+		
+		if (! matchFound) 
+		{
 			final String methodSuggestion = MethodAnnotationSuggestionBuilder.
 					buildAnnotationSuggestion(instructionPattern.getInstructionLine());
 			ExceptionHandlingUtil.throwClassifiedException(ErrorCode.MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION, 
@@ -92,12 +146,23 @@ public class PatternMergeJavaCommandGenerator
 	}
 
 	private void processTemplatePattern(final LanguageTemplatePattern languageTemplatePattern) 
-	{
+	{		
 		if ( ! matchFound && isMatching(languageTemplatePattern, instructionPatternToMatch)) 
 		{
 			javaCommandsForCurrentInstructionFile.add( JavaCommandCreator.doYourJob(instructionPatternToMatch, languageTemplatePattern));
 			matchFound = true;
-		}
+			tableDataMode = isTableDataMode();
+			
+			if (tableDataMode) {
+				testDataMultiLineString = "";
+			}
+		}	
+	}
+
+	private boolean isTableDataMode() {
+		return (instructionPatternToMatch.getPart(0).value.toString().equals(SysNatConstants.TEST_DATA + ":")
+				|| instructionPatternToMatch.getPart(0).value.toString().equals(SysNatConstants.TEST_PARAMETER + ":")
+                ) && instructionPatternToMatch.getPart(1).value.toString().equals("-");
 	}
 
 	protected boolean isMatching(final LanguageTemplatePattern templatePattern,
@@ -124,7 +189,13 @@ public class PatternMergeJavaCommandGenerator
 				case DEFAULT:
 					final String s1 = (String) templatePattern.getPart(i).value;
 					final String s2 = (String) instructionPattern.getPart(i).value;
-					if ( ! s1.equals(s2) ) {
+					
+					if (s1.trim().equals("=")) 
+					{
+						if ( ! s2.trim().equals("=") ) {
+							return false;
+						}
+					} else if ( ! s1.equals(s2) ) {
 						return false;
 					}
 					break;
@@ -184,9 +255,9 @@ public class PatternMergeJavaCommandGenerator
 	protected void logInput(final LanguageTemplatePattern templatePattern,
 			                final LanguageInstructionPattern instructionPattern) 
 	{
-		String s = "Active";
-		if (instructionPattern.getInstructionLine().startsWith(s))
-			//&& templatePattern.getAnnotationValue().startsWith(s)) 
+		String s = "Group";
+		if (instructionPattern.getInstructionLine().contains(s))
+			//&& templatePattern.getAnnotationValue().contains(s)) 
 		{
 			System.err.println(instructionPattern.getInstructionLine() + " ### " + templatePattern.getAnnotationValue());
 		}
@@ -236,8 +307,7 @@ public class PatternMergeJavaCommandGenerator
 			toReturn += ".java";  // for scripts
 		}
 		
-		toReturn = SysNatStringUtil.replaceGermanUmlauts(toReturn)
-				                   .replaceAll("[\\W]&&[^.]", ""); // removes special chars
+		toReturn = SysNatStringUtil.toFileName(toReturn);
 		return new Filename(toReturn);
 	}
 

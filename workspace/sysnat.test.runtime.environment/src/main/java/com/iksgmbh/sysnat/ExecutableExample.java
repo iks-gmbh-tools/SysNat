@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.CATEGORY_BILDNACHWEIS;
@@ -40,6 +55,7 @@ import com.iksgmbh.sysnat.helper.PopupHandler;
 import com.iksgmbh.sysnat.helper.ReportCreator;
 import com.iksgmbh.sysnat.helper.WindowHelper;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
+import com.iksgmbh.sysnat.testdataimport.TableDataParser;
 import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 import com.iksgmbh.sysnat.utils.SysNatUtil;
 
@@ -71,7 +87,8 @@ abstract public class ExecutableExample
 	private boolean alreadyTerminated = false;
 	private GuiControl guiController;
 	private DateTime startDate = DateTime.now();
-	private List<String> reportMessages = new ArrayList<>(); 
+	private List<String> reportMessages = new ArrayList<>();
+	private String setScriptToExecute; 
 	
     abstract public void executeTestCase();
     abstract public String getTestCaseFileName();
@@ -805,13 +822,46 @@ abstract public class ExecutableExample
 		return testDataSets;
 	}
 	
+	public String getTestDataValue(String valueCandidate) 
+	{
+		if ( ! valueCandidate.contains(":") ) {
+			// valueCandidate is a hard coded value no fieldname reference
+			return valueCandidate; 
+		}
+
+		String fieldName = valueCandidate;
+		if (valueCandidate.startsWith(":")) {
+			fieldName = valueCandidate.substring(1);
+		}
+		
+//		while (fieldName.contains(":")) {
+//			fieldName = testDataSets.findValueForValueReference(fieldName);
+//		}
+//
+//		return testDataSets.getValue(fieldName);
+		return testDataSets.findValueForValueReference(fieldName);
+	}
+	
+	
 	public boolean isTextCurrentlyDisplayed(String text) {
 		return guiController.isTextCurrentlyDisplayed(text);
 	}
 	
 	
-	public void importTestData(final String testdataID) {
-		final Hashtable<String, Properties> loadedDatasets = getTestDataImporter().loadTestdata(testdataID);
+	public void importTestData(final String testdata) 
+	{
+		final Hashtable<String, Properties> loadedDatasets;
+		
+		if (testdata.contains(SysNatConstants.LINE_SEPARATOR)) 
+		{
+			List<Properties> datasets = TableDataParser.doYourJob(getTestCaseFileName(), testdata);
+			loadedDatasets = new Hashtable<>();
+			for (int i = 0; i < datasets.size(); i++) {
+				loadedDatasets.put("TestData" + (i+1), datasets.get(0));
+			}
+		} else {
+			loadedDatasets = getTestDataImporter().loadTestdata(testdata);
+		}
 		loadedDatasets.forEach( (datasetName, dataset) -> testDataSets.addDataset(datasetName, dataset));	
 	}
 	
@@ -855,6 +905,13 @@ abstract public class ExecutableExample
 
 		return toReturn;
 	}
+	
+	public void setScriptToExecute(String scriptName) {
+		this.setScriptToExecute = scriptName;
+	}
 
+	public String getScriptToExecute() {
+		return setScriptToExecute;
+	}
 	
 }

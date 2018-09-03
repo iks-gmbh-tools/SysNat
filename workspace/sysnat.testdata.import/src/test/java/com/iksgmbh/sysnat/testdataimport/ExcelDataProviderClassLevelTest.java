@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.testdataimport;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +37,7 @@ public class ExcelDataProviderClassLevelTest {
 	public void readsDatasetsFromExcelFile() throws IOException 
 	{
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/ExcelTestData.xlsx");
+		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/ExcelTestData.xlsx");
 		
 		// act
 		final Hashtable<String, Properties> result = ExcelDataProvider.doYourJob(excelFile);
@@ -38,7 +53,7 @@ public class ExcelDataProviderClassLevelTest {
 	public void throwsErrorForEmptyMatrix() throws Exception 
 	{		
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/EmptyDataFile.xlsx");
+		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/EmptyDataFile.xlsx");
 		
 		try {
 			// act
@@ -54,7 +69,7 @@ public class ExcelDataProviderClassLevelTest {
 	public void throwsErrorForMissingDatasets() throws Exception 
 	{		
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/MissingDatasets.xlsx");
+		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/MissingDatasets.xlsx");
 		
 		try {
 			// act
@@ -70,7 +85,7 @@ public class ExcelDataProviderClassLevelTest {
 	public void throwsErrorForMissingFields() throws Exception 
 	{		
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/MissingFields.xlsx");
+		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/MissingFields.xlsx");
 		
 		try {
 			// act

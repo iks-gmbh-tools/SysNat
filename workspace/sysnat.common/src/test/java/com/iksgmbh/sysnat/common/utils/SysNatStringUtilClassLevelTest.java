@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.common.utils;
 
 import static org.junit.Assert.*;
@@ -60,16 +75,14 @@ public class SysNatStringUtilClassLevelTest
 
 		// assert
 		assertEquals("Text", "abc", result);
-	}
-	
-	
+	}	
 
 	@Test
 	public void cutsTrailingChars() throws Exception 
 	{
 		// arrange
 		final String text = "abc_.-0123456789";
-		char[] charsToCut = {'0','1','2','3','4','5','6','7','8','9','0','-','_', '.' };
+		char[] charsToCut = {'0','1','2','3','4','5','6','7','8','9', '-','_', '.' };
 
 		// act
 		final String result = SysNatStringUtil.cutTrailingChars(text, charsToCut);
@@ -77,4 +90,21 @@ public class SysNatStringUtilClassLevelTest
 		// assert
 		assertEquals("Text", "abc", result);
 	}
+	
+	@Test
+	public void extractsTrailingDigits() throws Exception 
+	{
+		// arrange
+		final String text1 = "abc_0_0123456789";
+		final String text2 = "abc_0_0123456789a";
+
+		// act
+		final String result1 = SysNatStringUtil.extraxtTrailingDigits(text1);
+		final String result2 = SysNatStringUtil.extraxtTrailingDigits(text2);
+
+		// assert
+		assertEquals("Text1", "0123456789", result1);
+		assertEquals("Text2", "", result2);
+	}
+	
 }

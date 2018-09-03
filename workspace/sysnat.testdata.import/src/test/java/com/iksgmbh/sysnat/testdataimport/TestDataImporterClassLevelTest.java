@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.testdataimport;
 
 import static org.junit.Assert.assertEquals;
@@ -63,20 +78,6 @@ public class TestDataImporterClassLevelTest
 		assertEquals("Number of files", 4, result.size());
 	}
 
-	@Test
-	public void loadSingleDatasetFromSingleDatFiles() 
-	{
-		// arrange
-		cut.testdataId = "singleDataset";
-		
-		// act
-		final List<File> filesToLoad = cut.findFilesToLoad();
-		final List<Properties> testdata = cut.loadDatasetsFromDatFile(filesToLoad.get(0));
-		
-		// arrange
-		assertEquals("Number of datasets", 1, testdata.size());
-		assertEquals("Number of datafields in dataset", 2, testdata.get(0).keySet().size());
-	}
 
 	@Test
 	public void throwsExceptionForMissingTestData() throws Exception 
@@ -89,20 +90,6 @@ public class TestDataImporterClassLevelTest
 		}
 	}
 
-	@Test
-	public void loadMultipleDatasetsFromSingleDatFile() 
-	{
-		// arrange
-		cut.testdataId = "threeDatasets";
-		
-		// act
-		final List<File> filesToLoad = cut.findFilesToLoad();
-		final List<Properties> testdata = cut.loadDatasetsFromDatFile(filesToLoad.get(0));
-		
-		// arrange
-		assertEquals("Number of datasets", 3, testdata.size());
-		assertEquals("Number of datafields in dataset", 3, testdata.get(0).keySet().size());
-	}
 
 	@Test
 	public void loadDatasetsFromMultipleDatFiles() throws Exception 
@@ -157,23 +144,6 @@ public class TestDataImporterClassLevelTest
 		assertEquals("DatasetID", testdataId + "_3_2", key6);
 		assertEquals("DatasetID", testdataId + "_3_3", key7);
 	}
-
-	@Test
-	public void ignoresEmptyDatasetsInDatFiles() throws Exception 
-	{
-		// arrange
-		cut.testdataId = "manyEmptyDatasets";
-		
-		// act
-		final List<File> filesToLoad = cut.findFilesToLoad();
-		final List<Properties> testdata = cut.loadDatasetsFromDatFile(filesToLoad.get(0));
-		
-		// arrange
-		assertEquals("Number of datasets", 1, testdata.size());
-		assertEquals("Number of datafields in dataset", 1, testdata.get(0).keySet().size());
-		
-	}
-	
 	
 	@Test
 	public void loadDatasetsFromDatAndExcelFiles() throws Exception 

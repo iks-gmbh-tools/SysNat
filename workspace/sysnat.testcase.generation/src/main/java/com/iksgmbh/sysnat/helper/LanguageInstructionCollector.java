@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.helper;
 
 import java.io.File;
@@ -11,6 +26,7 @@ import java.util.stream.Collectors;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.LanguageInstructionPattern;
+import com.iksgmbh.sysnat.utils.BDDKeywordUtil;
 
 /**
  * Collects all natural language instructions from all nlxx-files of the given test application.
@@ -92,9 +108,22 @@ public class LanguageInstructionCollector
 
 	private void extractInstruction(String line, List<String> instructions) 
 	{
-		if ( line.isEmpty() || line.startsWith(COMMENT_SEPARATOR)) return;
+		if ( line.isEmpty() || line.startsWith(COMMENT_SEPARATOR)) 
+			return;
+		
 		int pos = line.indexOf(COMMENT_SEPARATOR);
 		if (pos > 0) line = line.substring(0, pos).trim();
+		
+		if (BDDKeywordUtil.startsWithBDDKeyword(line)) {
+			line = transformToSysNatScriptCall(line);
+		}
+		
 		instructions.add(line);
-	}	
+	}
+
+	private String transformToSysNatScriptCall(String line) {
+		// TODO Auto-generated method stub
+		return line;
+	}
+
 }

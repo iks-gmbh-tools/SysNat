@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.language_templates.common;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIER;
@@ -20,10 +35,10 @@ public class LanguageTemplatesPrint
 {
 	public static final String NO_PDF_MESSAGE = "Problem: Es wurde keine PDF-Datei erzeugt!";
 
-	private ExecutableExample testCase;
+	private ExecutableExample executableExample;
 	
-	public LanguageTemplatesPrint(ExecutableExample aTestCase) {
-		testCase = aTestCase;
+	public LanguageTemplatesPrint(ExecutableExample aExecutableExample) {
+		executableExample = aExecutableExample;
 	}
 	
 	@LanguageTemplate("Die Liste der PDF-Dateien im Download-Verzeichnis ^^ als <> festgehalten.")
@@ -32,7 +47,7 @@ public class LanguageTemplatesPrint
 		FileList toReturn = SysNatFileUtil.findDownloadFiles("pdf");
 		toReturn.setName(fileListName);
     	        
-   		testCase.addReportMessage("Es wurde die Liste der PDF-Dateien als <b>" + fileListName + "</b> festgehalten. "
+   		executableExample.addReportMessage("Es wurde die Liste der PDF-Dateien als <b>" + fileListName + "</b> festgehalten. "
    				                  + "Diese Liste umfasst <b>" + toReturn.size() + "</b> Dateien.");
    		return toReturn;
 	}
@@ -44,7 +59,7 @@ public class LanguageTemplatesPrint
 		boolean ok = oldPdfFiles.size() + number == currentFileList.size(); 
 		String question = "Ist die aktuelle Zahl der PDF-Dateien im Download-Verzeichnis (" + currentFileList.size() + ") um "
 				           + "<b>" + number + "</b> höher als in der <b>" + oldPdfFiles.getName() + "</b>? - ";
-		testCase.answerQuestion(question, ok);
+		executableExample.answerQuestion(question, ok);
 	}
 
 	@LanguageTemplate("Die jüngste PDF-Datei im Download-Verzeichnis ^^ wird als <> festgehalten.")
@@ -65,29 +80,29 @@ public class LanguageTemplatesPrint
 		final PdfAnalyser pdfAnalyser = new PdfAnalyser(document.getAbsolutePath());
 		final boolean ok = expectedPageNumber == pdfAnalyser.getPageNumber();
 		final String question = "Enhält das Dokument <b>" + document.getName() + "</b> genau <b>" + expectedPageNumber + "</b> Seite(n)" + QUESTION_IDENTIFIER;
-		testCase.answerQuestion(question, ok);	
+		executableExample.answerQuestion(question, ok);	
 	}
 
 	@LanguageTemplate("Schließe das PDF-Fenster ^^.")
 	public void closePDFWindow(String windowTitle)
 	{
-		testCase.sleep(1000); // give system time 
+		executableExample.sleep(1000); // give system time 
 		
 		if ( ! doesWindowWithTitleExists(windowTitle) ) {
 			System.err.println("Warning: Window with title" + windowTitle + " not found.");
 			return;
 		};
 		
-		testCase.getGuiController().switchToLastWindow();		
-		((WebDriver)testCase.getGuiController().getWebDriver()).close();
-		testCase.getGuiController().switchToFirstWindow();		
+		executableExample.getGuiController().switchToLastWindow();		
+		((WebDriver)executableExample.getGuiController().getWebDriver()).close();
+		executableExample.getGuiController().switchToFirstWindow();		
  
-		testCase.sleep(1000); // give system time 
+		executableExample.sleep(1000); // give system time 
 	}
 
 	private boolean doesWindowWithTitleExists(String windowTitlePart) 
 	{
-		final List<String> result = testCase.executeCommandAndListOutput("tasklist /v");
+		final List<String> result = executableExample.executeCommandAndListOutput("tasklist /v");
 		result.forEach(System.out::println);
 		final String infoLine = result.stream().filter(line->line.contains(windowTitlePart)).findFirst().orElse("");
 		return infoLine.length() > 0;

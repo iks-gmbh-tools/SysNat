@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.testdataimport;
 
 import java.io.File;
@@ -9,7 +24,6 @@ import java.util.Properties;
 
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
-import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 
 /**
@@ -106,7 +120,7 @@ public class TestDataImporter
 		if (file.getName().endsWith(".dat")) 
 		{
 			final Hashtable<String, Properties> toReturn = new Hashtable<>();
-			final List<Properties> loadedDataSets = loadDatasetsFromDatFile(file);
+			final List<Properties> loadedDataSets = DatFileReader.doYourJob(file);
 			
 			if (loadedDataSets.size() == 1) {
 				String dataSetName = SysNatStringUtil.cutExtension(file.getName());
@@ -128,43 +142,6 @@ public class TestDataImporter
 		return loadDatasetsFromExcelFile(file);
 	}
 	
-	List<Properties> loadDatasetsFromDatFile(final File file) 
-	{
-		final List<Properties> toReturn = new ArrayList<>();
-		final List<String> readTextFile = SysNatFileUtil.readTextFile(file);
-		
-		Properties properties = new Properties();
-		int lineCounter = 0;
-
-		for (String line : readTextFile) 
-		{
-			line = line.trim();
-			lineCounter++;
-			if (line.equals("") || line.startsWith("#")) {
-				// ignore this line
-			} else if (line.equals("-")) 
-			{
-				if ( ! properties.isEmpty()) {
-					toReturn.add(properties);
-					properties = new Properties();
-				}
-			} else 
-			{
-				String[] splitResult = line.split("=");
-				if (splitResult.length != 2) {
-					throw new SysNatTestDataException("Error reading property in <b>" + file.getAbsolutePath() 
-					                                  + "</b>, line " + lineCounter + " \"<b>" + line + "\"<b>.");
-				} else {
-					properties.put(splitResult[0], splitResult[1]);
-				}
-			}
-		}
-		
-		if ( ! properties.isEmpty()) 
-			toReturn.add(properties);
-		
-		return toReturn;
-	}
 
 	private Hashtable<String, Properties> loadDatasetsFromExcelFile(final File excelFile) 
 	{

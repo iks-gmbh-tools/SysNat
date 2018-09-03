@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.language_templates.homepageiks;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIER;
@@ -25,16 +40,16 @@ import com.iksgmbh.sysnat.language_templates.homepageiks.pageobject.Zeiterfassun
 @LanguageTemplateContainer
 public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 {	
-	private ExecutableExample testCase;
+	private ExecutableExample executableExample;
 	@SuppressWarnings("unused")
 	private ExecutionRuntimeInfo executionInfo;
 	private ZeiterfassungPageObject zeitErfassungPageObject;
 	
-	public LanguageTemplatesHomePageIKSBasics(ExecutableExample aTestCase) 
+	public LanguageTemplatesHomePageIKSBasics(ExecutableExample aExecutableExample) 
 	{
-		this.testCase = aTestCase;
+		this.executableExample = aExecutableExample;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();
-		this.zeitErfassungPageObject = new ZeiterfassungPageObject(aTestCase);
+		this.zeitErfassungPageObject = new ZeiterfassungPageObject(aExecutableExample);
 	}
 
 	private String getPageName() 
@@ -44,13 +59,13 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 		
 		while (true) {			
 			try {
-				return testCase.getTextForId("menuOben");
+				return executableExample.getTextForId("menuOben");
 			} catch (Exception e) {
 				if (tryCounter == maxTries) {
 					throw e;
 				}
 				tryCounter++;
-				testCase.sleep(100);
+				executableExample.sleep(100);
 			}
 		}
 	}
@@ -77,7 +92,7 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 	@Override
 	public boolean isStartPageVisible() {
 		try {
-			return testCase.getTextForId("//div[@class='content']//h1").equals("Projekte. Beratung. Spezialisten.");
+			return executableExample.getTextForId("//div[@class='content']//h1").equals("Projekte. Beratung. Spezialisten.");
 		} catch (Exception e) {
 			return false;
 		}
@@ -87,7 +102,7 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 	@Override
 	public void gotoStartPage() {
 		if ( ! isStartPageVisible() ) {
-			testCase.clickLink("Home");
+			executableExample.clickLink("Home");
 		}
 	}
 
@@ -101,32 +116,32 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 	public void isPageVisible(String expectedPage) 
 	{
 		boolean ok = true;
-		testCase.sleep(1500);
+		executableExample.sleep(1500);
 		
 		if (expectedPage.equals("Home"))  {
 			ok = isStartPageVisible();
 		} else if (expectedPage.equals("Downloads"))  {
-			ok = testCase.getTextForId("//div[@class='downloads-title']//h1").equals("Vorträge");
+			ok = executableExample.getTextForId("//div[@class='downloads-title']//h1").equals("Vorträge");
 		} else if (expectedPage.equals("Dienstleistungen"))  {
-			ok = testCase.getTextForId("//div[@class='content']//h1").equals("Wir erstellen individuelle Softwarelösungen");
+			ok = executableExample.getTextForId("//div[@class='content']//h1").equals("Wir erstellen individuelle Softwarelösungen");
 		} else if (expectedPage.equals("Unternehmen"))  {
-			ok = testCase.getTextForId("//div[@class='content']//h1").equals("Wir entwickeln individuelle Softwarelösungen");
+			ok = executableExample.getTextForId("//div[@class='content']//h1").equals("Wir entwickeln individuelle Softwarelösungen");
 		} else if (expectedPage.equals("Karriere"))  {
-			ok = testCase.getTextForId("//div[@class='content']//h2").equals("Was macht IKS?");
+			ok = executableExample.getTextForId("//div[@class='content']//h2").equals("Was macht IKS?");
 		} else if (expectedPage.equals("Kontakt"))  {
-			ok = testCase.getTextForId("//div[@class='content']//h1").equals("Schreiben Sie uns, wir freuen uns auf Ihre Nachricht!");
+			ok = executableExample.getTextForId("//div[@class='content']//h1").equals("Schreiben Sie uns, wir freuen uns auf Ihre Nachricht!");
 		} else {
-			testCase.failWithMessage("Unbekannte Seite <b>" + expectedPage + "</b>.");
+			executableExample.failWithMessage("Unbekannte Seite <b>" + expectedPage + "</b>.");
 		}
 		
 		String question = "Wurde die Seite <b>" + expectedPage + "</b> angezeigt" + QUESTION_IDENTIFIER;
-		testCase.answerQuestion(question, ok);
+		executableExample.answerQuestion(question, ok);
 	}
 	
 	@LanguageTemplate(value = "Klicke Hauptmenüpunkt ^^.")
 	public void clickMainMenuItem(String menuItemText) {
-		testCase.clickLink(menuItemText);
-		testCase.addReportMessage("Der Hauptmenüpunkt <b>" + menuItemText + "</b> wurde geklickt.");
+		executableExample.clickLink(menuItemText);
+		executableExample.addReportMessage("Der Hauptmenüpunkt <b>" + menuItemText + "</b> wurde geklickt.");
 	}
 
 	@LanguageTemplate(value = "Klicke die Schaltfläche ^^.")
@@ -142,9 +157,9 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 		}
 		
 		if (ok) {
-			testCase.addReportMessage("Button <b>" + buttonName + "</b> wurde geklickt.");
+			executableExample.addReportMessage("Button <b>" + buttonName + "</b> wurde geklickt.");
 		} else {
-			testCase.failWithMessage("Die aktuelle Datenmaske (siehe Screenshot) ist unbekannt.");
+			executableExample.failWithMessage("Die aktuelle Datenmaske (siehe Screenshot) ist unbekannt.");
 		}
 	}
 
@@ -166,18 +181,18 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 	public void clickLink(String linkText) 
 	{
 		if (linkText.equals("IKS Software zum Anfassen Gibt es so etwas")) {
-			testCase.clickLink("//a[@href='/assets/downloads/IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf']");
+			executableExample.clickLink("//a[@href='/assets/downloads/IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf']");
 		} else {			
-			testCase.clickLink(linkText);
+			executableExample.clickLink(linkText);
 		}
-		testCase.addReportMessage("Der Link <b>" + linkText + "</b> wurde geklickt.");
+		executableExample.addReportMessage("Der Link <b>" + linkText + "</b> wurde geklickt.");
 	}
 	
 	@LanguageTemplate("Das PDF wird als Dokument <> gespeichert.")
 	public File savePDF() 
 	{
 		List<File> findDownloadFiles1 = SysNatFileUtil.findDownloadFiles("PDF").getFiles();
-		testCase.downloadPdf();
+		executableExample.downloadPdf();
 		List<File> findDownloadFiles2 = SysNatFileUtil.findDownloadFiles("PDF").getFiles();
 		findDownloadFiles2.removeAll(findDownloadFiles1); 
 		return findDownloadFiles2.get(0);

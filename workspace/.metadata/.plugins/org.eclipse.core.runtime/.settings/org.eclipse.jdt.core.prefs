@@ -1,4 +1,6 @@
+M2_REPO=C\:/dev/maven/localRepository
 eclipse.preferences.version=1
+org.eclipse.jdt.core.classpathVariable.M2_REPO=C\:/dev/maven/localRepository
 org.eclipse.jdt.core.codeComplete.visibilityCheck=enabled
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.8

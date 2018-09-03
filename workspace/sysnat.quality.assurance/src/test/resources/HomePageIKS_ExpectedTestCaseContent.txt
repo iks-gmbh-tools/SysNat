@@ -46,7 +46,7 @@ public class PruefeHauptmenuepunkteTest extends TestCaseTemplateParent
 	public void executeTestCase() 
 	{
 		try {
-			languageTemplatesCommon.startNewTestCase("<Dateiname>");
+			languageTemplatesCommon.startNewXX("<Dateiname>");
 			languageTemplatesCommon.checkFilterCategory("Smoketest");
 			languageTemplatesHomePageIKSBasics.isPageVisible("Home");
 			languageTemplatesCommon.createComment("-");

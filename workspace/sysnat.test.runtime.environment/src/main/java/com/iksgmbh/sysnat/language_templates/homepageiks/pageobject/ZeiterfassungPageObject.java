@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.language_templates.homepageiks.pageobject;
 
 import com.iksgmbh.sysnat.ExecutableExample;
@@ -13,10 +28,10 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
 public class ZeiterfassungPageObject implements PageObject
 {	
 	private static final String REPORT_FIELD_ID = "editForm:reportPrjNr";
-	private ExecutableExample testCase;
+	private ExecutableExample executableExample;
 
-	public ZeiterfassungPageObject(ExecutableExample aTestCase) {
-		this.testCase = aTestCase;
+	public ZeiterfassungPageObject(ExecutableExample aExecutableExample) {
+		this.executableExample = aExecutableExample;
 	}
 
 	@Override
@@ -28,23 +43,23 @@ public class ZeiterfassungPageObject implements PageObject
 	public void enterTextInField(String fieldName, String value) 
 	{
 		if ("Tag".equals(fieldName)) {
-			testCase.inputText("editForm:reportDateInput", value);
+			executableExample.inputText("editForm:reportDateInput", value);
 		} else if ("Beginn".equals(fieldName)) {
 			if (value.length() < 3) {
 				value += ":00"; 
 			}
-			testCase.inputText("editForm:reportVon", value);
+			executableExample.inputText("editForm:reportVon", value);
 		} else if ("Ende".equals(fieldName)) {
 			if (value.length() < 3) {
 				value += ":00"; 
 			}
-			testCase.inputText("editForm:reportBis", value);
+			executableExample.inputText("editForm:reportBis", value);
 		} else if ("Pause".equals(fieldName)) {
-			testCase.inputText("editForm:reportPause", value);
+			executableExample.inputText("editForm:reportPause", value);
 		} else if ("Projekt".equals(fieldName)) {
-			String textForElement = testCase.getTextForElement(REPORT_FIELD_ID);
+			String textForElement = executableExample.getTextForElement(REPORT_FIELD_ID);
 			if (textForElement.trim().length() == 0) {
-				testCase.inputText(REPORT_FIELD_ID, value);
+				executableExample.inputText(REPORT_FIELD_ID, value);
 			} else {
 				if ( ! textForElement.equals(value) ) {
 					throw new RuntimeException("This input field does not allow input by selenium command sendKey. "
@@ -52,11 +67,11 @@ public class ZeiterfassungPageObject implements PageObject
 				}
 			}
 		} else if ("Ort".equals(fieldName)) {
-			testCase.inputText("editForm:reportPrjOrtId", value);
+			executableExample.inputText("editForm:reportPrjOrtId", value);
 		} else if ("TK-Schlüssel".equals(fieldName)) {
-			testCase.inputText("editForm:reportSch", value);
+			executableExample.inputText("editForm:reportSch", value);
 		} else if ("Bemerkung".equals(fieldName)) {
-			testCase.inputText("editForm:reportBemerk", value);
+			executableExample.inputText("editForm:reportBemerk", value);
 		} else {			
 			throwUnsupportedGuiEventException(GuiType.TextField, fieldName);
 		}
@@ -66,16 +81,16 @@ public class ZeiterfassungPageObject implements PageObject
 	public void clickButton(String buttonName) 
 	{
 		if ("Speichern".equals(buttonName)) {
-			testCase.clickButton("editForm:save");
+			executableExample.clickButton("editForm:save");
 		} else if ("?".equals(buttonName)) {
-				testCase.clickButton("editForm:showProjectDetails");
+				executableExample.clickButton("editForm:showProjectDetails");
 		} else {	
 			throwUnsupportedGuiEventException(GuiType.Button, buttonName);
 		}
 	}
 
 	public boolean isProjectFieldTextInputField() {
-		return testCase.getTagName(REPORT_FIELD_ID).equals("input");
+		return executableExample.getTagName(REPORT_FIELD_ID).equals("input");
 	}
 
 	@Override
@@ -87,7 +102,7 @@ public class ZeiterfassungPageObject implements PageObject
 	@Override
 	public void chooseForCombobox(String fieldName, String value) {
 		if ("Projekt".equals(fieldName)) {
-			testCase.chooseFromComboBoxByValue(REPORT_FIELD_ID, value);
+			executableExample.chooseFromComboBoxByValue(REPORT_FIELD_ID, value);
 		} else {	
 			throwUnsupportedGuiEventException(GuiType.ComboBox, fieldName);
 		}

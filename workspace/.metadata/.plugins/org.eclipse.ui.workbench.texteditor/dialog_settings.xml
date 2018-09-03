@@ -2,40 +2,51 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="returnType" key="selection"/>
-		<item value="false" key="casesensitive"/>
+		<item value="xxCounter" key="selection"/>
+		<item value="true" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="returnType"/>
-			<item value="toLower"/>
-			<item value="JavaCodeGen"/>
-			<item value="returnValueName ="/>
-			<item value="PARAM_VALUE_IDENTIFIER_1"/>
-			<item value="NATURAL_LANGUAGE_PARSING__MISSING_CLOSING_PART_IDENTIFIER"/>
-			<item value="closing"/>
-			<item value=" "/>
-			<item value=" &quot; &quot; +"/>
-			<item value="&quot; &quot; +"/>
-			<item value="splitResult"/>
-			<item value="splitResult."/>
-			<item value="\&quot;"/>
-			<item value="methodAnnotatedWithTwoReturnValues"/>
-			<item value="misses to indicate a return value!"/>
+			<item value="xxCounter"/>
+			<item value="groupDeclarationCommand"/>
+			<item value="RULE_IDENTIFIER_METHOD_CALL"/>
+			<item value="&lt;fi"/>
+			<item value="&lt;Da"/>
+			<item value="nameOfCurrentFile"/>
+			<item value="extractXXId"/>
+			<item value="extractXXID"/>
+			<item value="createNewFilename"/>
+			<item value="doesXXCorrectlyDefineAnyRule"/>
+			<item value="isTestCaseParameterized"/>
+			<item value="javaCommandCollection."/>
+			<item value="javaCommandCollection"/>
+			<item value="createCommandListWithMissingXXID"/>
+			<item value="remove"/>
 		</list>
 		<list key="replacehistory">
-			<item value="^"/>
-			<item value="parameter.&quot;"/>
-			<item value="Parameter&quot;"/>
-			<item value="PARAM_VALUE"/>
+			<item value="startNewXX"/>
+			<item value="getTestDataValue"/>
+			<item value=".getTestDataValueFromDefaultDataset"/>
+			<item value=""/>
+			<item value="createFullOverviewReport"/>
+			<item value="doYourJob(excelFile, &quot;testID&quot;)"/>
+			<item value="BigTestDataSeriesPart3_1"/>
+			<item value="Hey"/>
+			<item value="ExceptionHandlingUtil"/>
+			<item value="GenerationRuntimeInfo"/>
+			<item value="executionInfo"/>
+			<item value="GenerationInfo"/>
+			<item value="GenerationRuntimeInfo.setSysNatSystemProperty"/>
+			<item value="ExecutionRuntimeInfo.setSysNatSystemProperty"/>
+			<item value="${basedir}/../sysnat.test.runtime.environment/lib"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="263" key="DIALOG_WIDTH"/>
-		<item value="1|Tahoma|8.25|0|WINDOWS|1|-11|0|0|0|400|0|0|0|1|0|0|0|0|Tahoma" key="DIALOG_FONT_NAME"/>
-		<item value="367" key="DIALOG_HEIGHT"/>
-		<item value="833" key="DIALOG_X_ORIGIN"/>
-		<item value="278" key="DIALOG_Y_ORIGIN"/>
+		<item value="385" key="DIALOG_WIDTH"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-18|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+		<item value="523" key="DIALOG_HEIGHT"/>
+		<item value="1363" key="DIALOG_X_ORIGIN"/>
+		<item value="132" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

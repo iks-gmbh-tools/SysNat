@@ -4,3 +4,6 @@ Erzeuge Auftrag <> aus '' und '' und Wert ^^.
 Erzeuge eine Rechnung <>.
 Erzeuge einen Auftrag <>.
 Füge dem Auftrag '' den Wert ^^ zu.
+Rule: ^^
+TestData: ^^
+XXID: ^^

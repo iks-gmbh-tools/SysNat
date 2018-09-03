@@ -31,7 +31,7 @@ public class MiniTestCaseTest extends TestCaseTemplateParent
 	public void executeTestCase() 
 	{
 		String testCaseName = this.getClass().getSimpleName();
-		languageTemplatesCommon.startNewTestCase(testCaseName);
+		languageTemplatesCommon.startNewXX(testCaseName);
 		addReportMessage("Start executing " + testCaseName + "...");
 		languageTemplatesCommon.executeScript("MiniTestScript");
 		addReportMessage("Done executing " + testCaseName + "!");

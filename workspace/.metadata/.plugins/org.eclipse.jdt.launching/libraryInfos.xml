@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <libraryInfos>
+<libraryInfo home="C:\dev\SysNatTesting\java" version="1.8.0_65">
+<bootpath>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\resources.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\rt.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\sunrsasign.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\jsse.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\jce.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\charsets.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\jfr.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\classes"/>
+</bootpath>
+<extensionDirs>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\ext"/>
+<entry path="C:\Windows\Sun\Java\lib\ext"/>
+</extensionDirs>
+<endorsedDirs>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\endorsed"/>
+</endorsedDirs>
+</libraryInfo>
 <libraryInfo home="C:\data\Reik\dev\SysNatTesting2\java" version="1.8.0_65">
 <bootpath>
 <entry path="C:\data\Reik\dev\SysNatTesting2\java\jre\lib\resources.jar"/>
@@ -19,6 +38,44 @@
 <entry path="C:\data\Reik\dev\SysNatTesting2\java\jre\lib\endorsed"/>
 </endorsedDirs>
 </libraryInfo>
+<libraryInfo home="C:\dev\SysNatTesting2\java\jre" version="1.8.0_65">
+<bootpath>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\resources.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\rt.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\sunrsasign.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\jsse.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\jce.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\charsets.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\jfr.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\classes"/>
+</bootpath>
+<extensionDirs>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\ext"/>
+<entry path="C:\Windows\Sun\Java\lib\ext"/>
+</extensionDirs>
+<endorsedDirs>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\endorsed"/>
+</endorsedDirs>
+</libraryInfo>
+<libraryInfo home="C:\dev\SysNatTesting\java\jre" version="1.8.0_65">
+<bootpath>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\resources.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\rt.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\sunrsasign.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\jsse.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\jce.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\charsets.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\jfr.jar"/>
+<entry path="C:\dev\SysNatTesting\java\jre\classes"/>
+</bootpath>
+<extensionDirs>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\ext"/>
+<entry path="C:\Windows\Sun\Java\lib\ext"/>
+</extensionDirs>
+<endorsedDirs>
+<entry path="C:\dev\SysNatTesting\java\jre\lib\endorsed"/>
+</endorsedDirs>
+</libraryInfo>
 <libraryInfo home="C:\data\Reik\dev\SysNatTesting2\java\jre" version="1.8.0_65">
 <bootpath>
 <entry path="C:\data\Reik\dev\SysNatTesting2\java\jre\lib\resources.jar"/>
@@ -36,6 +93,25 @@
 </extensionDirs>
 <endorsedDirs>
 <entry path="C:\data\Reik\dev\SysNatTesting2\java\jre\lib\endorsed"/>
+</endorsedDirs>
+</libraryInfo>
+<libraryInfo home="C:\dev\SysNatTesting2\java" version="1.8.0_65">
+<bootpath>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\resources.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\rt.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\sunrsasign.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\jsse.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\jce.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\charsets.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\jfr.jar"/>
+<entry path="C:\dev\SysNatTesting2\java\jre\classes"/>
+</bootpath>
+<extensionDirs>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\ext"/>
+<entry path="C:\Windows\Sun\Java\lib\ext"/>
+</extensionDirs>
+<endorsedDirs>
+<entry path="C:\dev\SysNatTesting2\java\jre\lib\endorsed"/>
 </endorsedDirs>
 </libraryInfo>
 </libraryInfos>

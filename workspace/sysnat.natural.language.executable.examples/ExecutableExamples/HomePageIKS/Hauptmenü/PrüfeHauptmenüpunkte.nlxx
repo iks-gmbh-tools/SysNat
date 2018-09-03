@@ -1,28 +1,40 @@
-XXID:         <Dateiname>
+Rule: <Dateiname>
+
+XXID: Dienstleistungen
 Kategorie-Filter: Smoketest
-
 Wird die Seite "Home" angezeigt?
-
-Kommentar:
 Klicke Hauptmenüpunkt "Dienstleistungen".
 Wird die Seite "Dienstleistungen" angezeigt?
 
-Kommentar:
+XXID:         <Dateiname>
+Kategorie-Filter: Smoketest
+Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Unternehmen".
 Wird die Seite "Unternehmen" angezeigt?
 
-Kommentar:
+XXID:         <Dateiname>
+Kategorie-Filter: Smoketest
+Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Downloads".
 Wird die Seite "Downloads" angezeigt?
 
-Kommentar:
+XXID:         <Dateiname>
+Kategorie-Filter: Smoketest
+Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Karriere".
 Wird die Seite "Karriere" angezeigt?
 
-Kommentar:
+XXID:         <Dateiname>
+Kategorie-Filter: Smoketest
+Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Kontakt".
 Wird die Seite "Kontakt" angezeigt?
 
-Kommentar:
+XXID:         <Dateiname>
+Kategorie-Filter: Smoketest
+Wird die Seite "Home" angezeigt?
+Klicke Hauptmenüpunkt "Kontakt".
+Wird die Seite "Kontakt" angezeigt?
+
 Klicke Hauptmenüpunkt "Home".
 Wird die Seite "Home" angezeigt?

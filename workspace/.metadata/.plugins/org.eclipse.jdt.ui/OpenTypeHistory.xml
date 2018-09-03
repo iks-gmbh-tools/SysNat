@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <typeInfoHistroy>
-<typeInfo handle="=sysnat.java.testcase.generation/src\/test\/java&lt;com.iksgmbh.sysnat.test.templateContainer{LanguageTemplateContainer2TestImpl.java[LanguageTemplateContainer2TestImpl" modifiers="1" timestamp="1525537446000"/>
-<typeInfo handle="=sysnat.java.testcase.generation/src\/main\/java&lt;com.iksgmbh.sysnat.utils{ExceptionHandlingUtil.java[ExceptionHandlingUtil" modifiers="1" timestamp="1525532394000"/>
-<typeInfo handle="=sysnat.java.testcase.generation/src\/test\/java&lt;com.iksgmbh.sysnat.test.templateContainer{LanguageTemplateContainerTestImpl.java[LanguageTemplateContainerTestImpl" modifiers="1" timestamp="1525537446000"/>
-<typeInfo handle="=sysnat.java.testcase.generation/src\/test\/java&lt;com.iksgmbh.sysnat.test.templateContainer{LanguageTemplateContainerFailingTestImpl.java[LanguageTemplateContainerFailingTestImpl" modifiers="1" timestamp="1525537446000"/>
-<typeInfo handle="=sysnat.java.testcase.generation/src\/test\/java&lt;com.iksgmbh.sysnat.test.testcase_templates{ComplexInstructionTestApplication_TestCaseTemplate.java[ComplexInstructionTestApplication_TestCaseTemplate" modifiers="1" timestamp="1525594052000"/>
-<typeInfo handle="=sysnat.java.testcase.generation/src\/test\/java&lt;com.iksgmbh.sysnat.test.templateContainer{ComplexInstructionTestApplication_LanguageTemplateContainer.java[ComplexInstructionTestApplication_LanguageTemplateContainer" modifiers="1" timestamp="1525538728000"/>
-<typeInfo handle="=sysnat.java.testcase.generation/src\/main\/java&lt;com.iksgmbh.sysnat.helper{JavaCodeCreator.java[JavaCodeCreator" modifiers="1" timestamp="1525682518750"/>
+<typeInfo handle="=sysnat.test.runtime.environment/src\/main\/java&lt;com.iksgmbh.sysnat.helper{BrowserStarter.java[BrowserStarter" modifiers="1" timestamp="1532340628000"/>
+<typeInfo handle="=sysnat.natural.language.executable.examples/src\/main\/java&lt;com.iksgmbh.sysnat{SettingsConfigDialog.java[SettingsConfigDialog" modifiers="1" timestamp="1532340628000"/>
+<typeInfo handle="=sysnat.test.runtime.environment/src\/main\/java&lt;com.iksgmbh.sysnat{ExecutionRuntimeInfo.java[ExecutionRuntimeInfo" modifiers="1" timestamp="1534511834000"/>
+<typeInfo handle="=sysnat.test.runtime.environment/src\/main\/java&lt;com.iksgmbh.sysnat.testcasejavatemplate{TestCaseTemplateParent.java[TestCaseTemplateParent" modifiers="1025" timestamp="1535028336000"/>
+<typeInfo handle="=sysnat.test.runtime.environment/src\/main\/java&lt;com.iksgmbh.sysnat.helper{ReportCreator.java[ReportCreator" modifiers="1" timestamp="1534505316000"/>
+<typeInfo handle="=sysnat.testcase.generation/src\/test\/java&lt;com.iksgmbh.sysnat.test.testTemplateContainers.testapplication{LanguageTemplateContainerTestImpl.java[LanguageTemplateContainerTestImpl" modifiers="1" timestamp="1532340628000"/>
+<typeInfo handle="=sysnat.testcase.generation/src\/test\/java&lt;com.iksgmbh.sysnat.test.testTemplateContainers.testapplication2{LanguageTemplateContainer2TestImpl.java[LanguageTemplateContainer2TestImpl" modifiers="1" timestamp="1532340628000"/>
+<typeInfo handle="=sysnat.common/src\/main\/java&lt;com.iksgmbh.sysnat.common.utils{SysNatConstants.java[SysNatConstants" modifiers="1" timestamp="1534863046000"/>
+<typeInfo handle="=sysnat.test.runtime.environment/src\/main\/java&lt;com.iksgmbh.sysnat.language_templates.common{LanguageTemplatesCommon.java[LanguageTemplatesCommon" modifiers="1" timestamp="1535635713311"/>
+<typeInfo handle="=sysnat.test.runtime.environment/src\/test\/java&lt;com.iksgmbh.sysnat.domain{SysNatTestDataClassLevelTest.java[SysNatTestDataClassLevelTest" modifiers="1" timestamp="1535103692000"/>
+<typeInfo handle="=sysnat.testcase.generation/src\/main\/java&lt;com.iksgmbh.sysnat.helper{PatternMergeJavaCommandGenerator.java[PatternMergeJavaCommandGenerator" modifiers="1" timestamp="1535534422152"/>
+<typeInfo handle="=sysnat.common/src\/test\/java&lt;com.iksgmbh.sysnat.common.utils{SysNatStringUtilClassLevelTest.java[SysNatStringUtilClassLevelTest" modifiers="1" timestamp="1535006554000"/>
+<typeInfo handle="=sysnat.testcase.generation/src\/main\/java&lt;com.iksgmbh.sysnat.helper{JavaFileBuilder.java[JavaFileBuilder" modifiers="1" timestamp="1535547642387"/>
+<typeInfo handle="=sysnat.testcase.generation/src\/main\/java&lt;com.iksgmbh.sysnat.helper{TestSeriesBuilder.java[TestSeriesBuilder" modifiers="1" timestamp="1535644520577"/>
+<typeInfo handle="=sysnat.testcase.generation/src\/test\/java&lt;com.iksgmbh.sysnat.helper{TestSeriesBuilderClassLevelTest.java[TestSeriesBuilderClassLevelTest" modifiers="1" timestamp="1535636250162"/>
+<typeInfo handle="=sysnat.common/C:\/dev\/SysNatTesting\/java\/jre\/lib\/rt.jar&lt;java.lang(NullPointerException.class[NullPointerException" modifiers="33" timestamp="1445416264000"/>
 </typeInfoHistroy>

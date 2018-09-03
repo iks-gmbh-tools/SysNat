@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.domain;
 
 import java.util.ArrayList;
@@ -20,8 +35,11 @@ import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
  */
 public class SysNatTestData 
 {
+	public static final String DEFAULT_TEST_DATA = "DefaultTestData";
+	
 	private HashMap<String, SysNatDataset> datasets = new HashMap<>();
 	private HashMap<Integer, String> order = new HashMap<>();  // contains order information for each dataset
+	private SysNatDataset markedDataset;
 
 	/**
 	 * @param type
@@ -42,13 +60,20 @@ public class SysNatTestData
 		return toReturn;
 	}
 
-	public SysNatDataset getDataSetForName(final String nameToSearchFor) 
+	public SysNatDataset findMatchingDataSet(final String nameToSearchFor) 
 	{
 		final List<Object> keys = Arrays.asList( datasets.keySet().toArray() );
 		
 		for (Object name : keys) 
 		{
 			if (name.toString().equals(nameToSearchFor)) {
+				return datasets.get(name);
+			}
+		}
+		
+		for (Object name : keys) 
+		{
+			if (name.toString().startsWith(nameToSearchFor)) {
 				return datasets.get(name);
 			}
 		}
@@ -76,9 +101,9 @@ public class SysNatTestData
 		return toReturn;
 	}
 	
-	public void addEmptyObjectData(String aObjectName) {
-		datasets.put(aObjectName, new SysNatDataset(aObjectName));
-		order.put(order.size()+1, aObjectName);
+	public void addEmptyDataset(String datasetName) {
+		datasets.put(datasetName, new SysNatDataset(datasetName));
+		order.put(order.size()+1, datasetName);
 	}
 
 	
@@ -123,15 +148,54 @@ public class SysNatTestData
 		datasets.get(datasetName).setProperty(fieldName, value);
 	}
 
+	/**
+	 * Uses DEFAULT_TEST_DATA as dataset 
+	 * @param fieldName
+	 * @param value
+	 */
+	public void addValue(String fieldName, String value) 
+	{
+		if ( size() == 0 ) {
+			addEmptyDataset(DEFAULT_TEST_DATA);
+		}
+		
+		if (size() == 1) {
+			String datasetName = datasets.keySet().iterator().next();
+			datasets.get(datasetName).setProperty(fieldName, value);
+		} else {			
+			throw new SysNatTestDataException("Es gibt " + size() + " Testdatensätze. Zu welchem soll der Wert für <b>" + fieldName + "</b> zugefügt werden?");
+		}
+	}
+
 	public SysNatDataset getDataSetForOrderNumber(int i) {
 		if (i<1) throw new IllegalArgumentException("Invalid Order Number. Lowest valid Order Number is 1.");
 		return datasets.get( order.get(i) );
 	}
 	
-	public SysNatDataset getDataSet(String aDatadetName) {
-		return datasets.get( aDatadetName );
+	public SysNatDataset getDataSet(String aDatasetName) {
+		return datasets.get( aDatasetName );
 	}
 	
+	
+	/**
+	 * Works only if one dataset is known !
+	 * @param fieldName
+	 * @return value
+	 */
+	public String getValue(String fieldName) 
+	{
+		if (size() == 1) {
+			String datasetName = datasets.keySet().iterator().next();
+			return getValue(datasetName, fieldName);
+		}
+		
+		if (size() == 0) {
+			throw new SysNatTestDataException("Es wurden keine Testdatensätze geladen!");
+		}
+		
+		throw new SysNatTestDataException("Es gibt " + size() + " Testdatensätze. Von welchem wird der Wert für <b>" + fieldName + "</b> benötigt?");
+	}
+
 	public String getValue(String aDatasetName, String fieldName) 
 	{
 		final SysNatDataset dataset = datasets.get(aDatasetName);
@@ -142,52 +206,17 @@ public class SysNatTestData
 		
 		return dataset.getProperty(fieldName);
 	}
-
-	/**
-	 * Works only if one dataset is known !
-	 * @param fieldName
-	 * @param value
-	 */
-	public void addValue(String fieldName, String value) 
-	{
-		if (size() == 1) {
-			String objectName = datasets.keySet().iterator().next();
-			datasets.get(objectName).setProperty(fieldName, value);
-		} else if (size() == 0) {
-			addEmptyObjectData("DefaultTestData");
-			addValue(fieldName, value);
-		} else {
-			throw new SysNatTestDataException("Es gibt " + size() + " Testdaten-Objekte. Zu welchem soll der Wert für <b>" + fieldName + "</b> hinzugefügt werden?");
-		}
-	}
-	
-	/**
-	 * Works only if one dataset is known !
-	 * @param fieldName
-	 * @return value
-	 */
-	public String getValue(String fieldName) 
-	{
-		if (size() == 1) {
-			String objectName = datasets.keySet().iterator().next();
-			return getValue(objectName, fieldName);
-		}
 		
-		if (size() == 0) {
-			throw new SysNatTestDataException("Es wurden keine Testdatensätze geladen!");
-		}
-		
-		throw new SysNatTestDataException("Es gibt " + size() + " Testdatensätze. Von welchem wird der Wert für <b>" + fieldName + "</b> benötigt?");
-	}
-	
 
 	public int size() {
 		return datasets.size();
 	}
 	
-	public void clear() {
+	public void clear() 
+	{
 		datasets.clear();
 		order.clear();
+		markedDataset = null;
 	}
 
 	@Override
@@ -195,45 +224,55 @@ public class SysNatTestData
 		return "SysNatTestData [" + getAllDatasets() + "]";
 	}
 
-	public String getValueFor(String valueCandidate) 
+	/**
+	 * Searches in all datasets for the given valueReference 
+	 * in order to replace it by the corresponding value
+	 * @param valueReference
+	 * @return value
+	 */
+	public String findValueForValueReference(final String valueReference) 
 	{
-		if (valueCandidate.startsWith(":")) {
-			String fieldName = valueCandidate.substring(1);
-			return getValue(fieldName);
-		}
-		
-		while (valueCandidate.contains(":")) {
-			valueCandidate = replaceTestDataReferences(valueCandidate);
-		}
-		
-		return valueCandidate;
-	}
-
-	private String replaceTestDataReferences(final String valueCandidate) 
-	{
-		String toReturn = valueCandidate;
-		Set<String> keySet = datasets.keySet();
-		List<String> datasetMatches = keySet.stream().filter(key -> valueCandidate.contains(key)).collect(Collectors.toList());
-		
-		if (datasetMatches.size() == 0 && keySet.size() == 1 && valueCandidate.contains(":")) 
+		if (markedDataset != null) 
 		{
-			int pos = valueCandidate.indexOf(":");
-			String testdataIdCandidate = valueCandidate.substring(0, pos);
-			if (keySet.iterator().next().startsWith(testdataIdCandidate))
-				return keySet.iterator().next() + valueCandidate.substring(pos);
+			String fieldName = valueReference;
+			if (valueReference.startsWith(":")) {
+				fieldName = valueReference.substring(1);
+			}
+			return markedDataset.getProperty(fieldName);
+		}
+		
+		Set<String> keySet = datasets.keySet();
+		List<String> datasetMatches = keySet.stream().filter(key -> valueReference.contains(key))
+				                                     .collect(Collectors.toList());
+		if (   datasetMatches.size() == 0 
+			&& keySet.size() == 1 
+			&& valueReference.contains(":")) 
+		{
+			String fieldName;
+			if (valueReference.startsWith(":")) {
+				fieldName = valueReference.substring(1);
+			} else {
+				int pos = valueReference.indexOf(":");
+				fieldName = valueReference.substring(pos+1);
+			}
+			return getValue(fieldName);
 		}
 		
 		for (String datasetName : datasetMatches) 
 		{
 			List<Object> fieldMatches = datasets.get(datasetName).keySet().stream()
-					                            .filter(field -> valueCandidate.contains(datasetName + ":" + field)).collect(Collectors.toList());
-			
+					                            .filter(field -> valueReference.contains(datasetName + ":" + field))
+					                            .collect(Collectors.toList());
+			String toReturn = valueReference;
 			for (Object field : fieldMatches) {
 				String fieldName = field.toString();
 				toReturn = toReturn.replace(datasetName + ":" + fieldName, getValue(datasetName, fieldName));
 			}
+			
+			return toReturn;
 		}
-		return toReturn;
+		
+		return getValue(valueReference);
 	}
 	
 	
@@ -288,6 +327,24 @@ public class SysNatTestData
 			}
 			return toReturn;
 		}
+	}
+
+
+	public void initDefaultDataset() 
+	{
+		if (datasets.containsKey(DEFAULT_TEST_DATA)) {
+			datasets.get(DEFAULT_TEST_DATA).clear();
+		} else {
+			addEmptyDataset(DEFAULT_TEST_DATA);
+		}
+	}
+
+	/**
+	 * This dataset is going to be used shortly
+	 * @param aDatasetName
+	 */
+	public void setMarker(SysNatDataset dataset) {
+		markedDataset = dataset;
 	}
 
 }

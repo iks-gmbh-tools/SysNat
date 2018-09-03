@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat;
 
 import static com.iksgmbh.sysnat.helper.TestClassLevelTest.doesMessagesContain;
@@ -15,7 +30,6 @@ import org.junit.Test;
 import com.iksgmbh.sysnat._testcases.TestCaseCallingMainScriptCallingSubscript;
 import com.iksgmbh.sysnat._testcases.TestCaseCallingSimpleScript;
 import com.iksgmbh.sysnat._testcases.TestCaseCallingUnknownScript;
-import com.iksgmbh.sysnat._testcases.TestCaseUsingAmbiguousObjectData;
 import com.iksgmbh.sysnat._testcases.TestCaseUsingMissingObjectData;
 import com.iksgmbh.sysnat._testhelper.LanguageTemplatesCommonTestImpl;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
@@ -34,46 +48,23 @@ public class LanguageTemplatesCommonClassLevelTest
 	public void throwsExceptionForUnkownScript() throws Exception 
 	{
 		// arrange
-		ExecutableExample testCase = new TestCaseCallingUnknownScript();
+		ExecutableExample executableExample = new TestCaseCallingUnknownScript();
 
 		// act
-		testCase.executeTestCase();
+		executableExample.executeTestCase();
 
 		// assert
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Fehler: Ein Skript mit dem Namen <b>UnkownScript</b> ist nicht bekannt"));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Fehler: Ein Skript mit dem Namen <b>UnkownScript</b> ist nicht bekannt"));
 	}
-
-	
-	@Test
-	public void throwsExceptionForAmbiguousObjectData() throws Exception 
-	{
-		// arrange
-		ExecutionRuntimeInfo.reset();
-		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.runtime.environment/src/test/resources/AvailableNaturalLanguageScripts.properties");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.testdata.import.directory", "../sysnat.test.runtime.environment/src/test/resources/testData");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.testdata.import.directory", "HomePageIKS");
-		ExecutionRuntimeInfo.getInstance().setTestApplicationName("HomePageIKS");
-		ExecutionRuntimeInfo.getInstance();
-				
 		
-		try {
-			// act
-			new TestCaseUsingAmbiguousObjectData().executeTestCase();
-			fail("Expected exception was not thrown!");
-		} catch (Exception e) {
-			// assert
-			assertEquals("Error message", "Es gibt 2 Testdaten-Objekte. Zu welchem soll der Wert für <b>Name</b> hinzugefügt werden?", e.getMessage());
-		}
-	}
-	
 	@Test
 	public void throwsExceptionForMissingObjectData() throws Exception 
 	{
 		// arrange
 		try {
-			TestCaseUsingMissingObjectData testCase = new TestCaseUsingMissingObjectData();
-			testCase.setXXID("id");
-			testCase.executeTestCase();
+			TestCaseUsingMissingObjectData executableExample =  new TestCaseUsingMissingObjectData();
+			executableExample.setXXID("id");
+			executableExample.executeTestCase();
 			fail("Expected exception was not thrown!");
 		} catch (Exception e) {
 			assertEquals("Error message", "Fehler: Es stehen keine Testdaten für das Skript <b>SimpleTestScript</b> zur Verfügung.", e.getMessage());
@@ -85,15 +76,15 @@ public class LanguageTemplatesCommonClassLevelTest
 	public void executesSimpleScript() throws Exception 
 	{
 		// arrange
-		ExecutableExample testCase = new TestCaseCallingSimpleScript();
+		ExecutableExample executableExample =  new TestCaseCallingSimpleScript();
 
 		// act
-		testCase.executeTestCase();
+		executableExample.executeTestCase();
 
 		// assert
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Skript Start: <b>SimpleTestScript</b>"));
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Simple script executed."));
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Skript Ende: <b>SimpleTestScript</b>"));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Start: <b>SimpleTestScript</b>"));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Simple script executed."));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Ende: <b>SimpleTestScript</b>"));
 	}
 
 	
@@ -108,20 +99,20 @@ public class LanguageTemplatesCommonClassLevelTest
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.testdata.import.directory", "../sysnat.test.runtime.environment/src/test/resources/testData");
 		ExecutionRuntimeInfo.getInstance().setTestApplicationName("HomePageIKS");
 		ExecutionRuntimeInfo.getInstance();
-		ExecutableExample testCase = new TestCaseCallingMainScriptCallingSubscript();
+		ExecutableExample executableExample =  new TestCaseCallingMainScriptCallingSubscript();
 		
 		// act
-		testCase.executeTestCase();
+		executableExample.executeTestCase();
 
 		// assert
-		System.out.println(testCase.getReportMessages());
+		System.out.println(executableExample.getReportMessages());
 		
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Skript Start: <b>MainTestScript</b>"));
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Skript Start: <b>SubTestScript</b>"));
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Subscript executed for aMenuName and aLink."));
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Skript Ende: <b>SubTestScript</b>"));
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Mainscript executed."));
-		assertTrue("Expected error message not found.", doesMessagesContain(testCase.getReportMessages(), "Skript Ende: <b>MainTestScript</b>"));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Start: <b>MainTestScript</b>"));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Start: <b>SubTestScript</b>"));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Subscript executed for aMenuName and aLink."));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Ende: <b>SubTestScript</b>"));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Mainscript executed."));
+		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Ende: <b>MainTestScript</b>"));
 	}
 
 	@Test
@@ -129,50 +120,50 @@ public class LanguageTemplatesCommonClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
-		ExecutableExample testCase = new TestCaseCallingMainScriptCallingSubscript();
-		LanguageTemplatesCommon cut = new LanguageTemplatesCommonTestImpl(testCase);
-		List<String> testCategoriesOfTestCase = new ArrayList<>();
-		testCategoriesOfTestCase.add("A");
-		testCategoriesOfTestCase.add("B");
+		ExecutableExample executableExample =  new TestCaseCallingMainScriptCallingSubscript();
+		LanguageTemplatesCommon cut = new LanguageTemplatesCommonTestImpl(executableExample);
+		List<String> testCategoriesOfExecutableExample =  new ArrayList<>();
+		testCategoriesOfExecutableExample.add("A");
+		testCategoriesOfExecutableExample.add("B");
 		List<String> testCategoriesToExecute = new ArrayList<>();
 
 		// act
-		boolean result1 = cut.isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+		boolean result1 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 
 		testCategoriesToExecute.add("A");
-		boolean result2 = cut.isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+		boolean result2 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 		
 		testCategoriesToExecute.clear();
 		testCategoriesToExecute.add("NICHT-C");
-		boolean result3 = cut.isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+		boolean result3 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 
 		testCategoriesToExecute.clear();
 		testCategoriesToExecute.add("A");
 		testCategoriesToExecute.add("NICHT-C");
-		boolean result4 = cut.isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+		boolean result4 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 		
 		testCategoriesToExecute.clear();
 		testCategoriesToExecute.add("X");
 		testCategoriesToExecute.add("NICHT-Y");
-		boolean result5 = cut.isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+		boolean result5 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 
 		testCategoriesToExecute.clear();
 		testCategoriesToExecute.add("D");
 		testCategoriesToExecute.add("NICHT-B");
-		boolean result6 = cut.isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+		boolean result6 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 		
 		testCategoriesToExecute.clear();
 		testCategoriesToExecute.add("A");
 		testCategoriesToExecute.add("NICHT-B");
-		boolean result7 = cut.isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+		boolean result7 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 		
 		testCategoriesToExecute.clear();
 		testCategoriesToExecute.add("X");
-		boolean result8 = cut.isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+		boolean result8 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 
 		testCategoriesToExecute.clear();
 		testCategoriesToExecute.add("NICHT-Y");
-		boolean result9 = cut.isThisTestToExecute(testCategoriesOfTestCase, testCategoriesToExecute);
+		boolean result9 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
 		
 		// assert
 		assertTrue( result1 );

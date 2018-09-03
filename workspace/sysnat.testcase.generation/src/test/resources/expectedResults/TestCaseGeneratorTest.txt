@@ -38,6 +38,7 @@ public class ComplexInstructionSequenzTest extends TestCaseTemplateParent
 	public void executeTestCase() 
 	{
 		try {
+			complexInstructionTestApplication_LanguageTemplateContainer.startNewXX("SequenceTest");
 			Order auftrag_1 = complexInstructionTestApplication_LanguageTemplateContainer.createOrder();
 			Order auftrag_2 = complexInstructionTestApplication_LanguageTemplateContainer.createOrder();
 			complexInstructionTestApplication_LanguageTemplateContainer.addToOrder(auftrag_1, "Wert A");

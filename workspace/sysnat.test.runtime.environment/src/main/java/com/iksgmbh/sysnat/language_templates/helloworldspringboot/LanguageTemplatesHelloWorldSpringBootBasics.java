@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.language_templates.helloworldspringboot;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIER;
@@ -25,7 +40,7 @@ import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.Res
 @LanguageTemplateContainer
 public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemplates
 {	
-	private ExecutableExample testCase;
+	private ExecutableExample executableExample;
 	private ExecutionRuntimeInfo executionInfo;
 	private FormPageObject formPageObject;
 	private ResultPageObject resultPageObject;
@@ -33,7 +48,7 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	
 	public LanguageTemplatesHelloWorldSpringBootBasics(ExecutableExample aTestCase) 
 	{
-		this.testCase = aTestCase;
+		this.executableExample = aTestCase;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();
 		this.formPageObject = new FormPageObject(aTestCase);
 		this.resultPageObject = new ResultPageObject(aTestCase);
@@ -41,7 +56,7 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	}
 
 	private String getPageName() {
-		return testCase.getTextForElement("h2");
+		return executableExample.getTextForElement("h2");
 	}
 	
 	//##########################################################################################
@@ -51,26 +66,26 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	@Override
 	public void doLogin(final HashMap<StartParameter,String> startParameter) 
 	{
-		testCase.inputText("username", startParameter.get(StartParameter.LOGINID));
-		testCase.inputText("password", startParameter.get(StartParameter.PASSWORD));
-		testCase.clickButton("login_button");			
+		executableExample.inputText("username", startParameter.get(StartParameter.LOGINID));
+		executableExample.inputText("password", startParameter.get(StartParameter.PASSWORD));
+		executableExample.clickButton("login_button");			
 	}
 
 	@Override
     public void doLogout() {
-        testCase.clickMenuHeader("Logout");
+        executableExample.clickMenuHeader("Logout");
     }
     
 	@Override
 	public boolean isLoginPageVisible() {
-		return testCase.isElementReadyToUse("username");
+		return executableExample.isElementReadyToUse("username");
 	}
 
 	@Override
 	public boolean isStartPageVisible() 
 	{
-		return testCase.isElementReadyToUse("greeting") 
-			&& testCase.isElementReadyToUse("//*[@id='navbar-inner']");
+		return executableExample.isElementReadyToUse("greeting") 
+			&& executableExample.isElementReadyToUse("//*[@id='navbar-inner']");
 	}
 
 
@@ -78,9 +93,9 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	public void gotoStartPage() 
 	{
 		try {
-			if (testCase.isElementReadyToUse("closeDialogButton")) {
+			if (executableExample.isElementReadyToUse("closeDialogButton")) {
 				// close dialog that may have been opened but not closed by the previous test
-				testCase.clickButton("closeDialogButton");  
+				executableExample.clickButton("closeDialogButton");  
 			}
 			if ( ! isStartPageVisible() )  {
 				clickMainMenuItem("Form Page"); // goto to Standard Start position for all test cases
@@ -103,34 +118,34 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 		startParameter.put(StartParameter.LOGINID, username);
 		startParameter.put(StartParameter.PASSWORD, password);
 		doLogin(startParameter);
-		testCase.addReportMessage("Login performed with <b>" + username + "</b>.");		
+		executableExample.addReportMessage("Login performed with <b>" + username + "</b>.");		
 	}
 
 	@LanguageTemplate(value = "Is page ^^ visible?")
 	public void isPageVisible(final String valueCandidate) 
 	{
-		final String expectedPage = testCase.getTestData().getValueFor(valueCandidate);
+		final String expectedPage = executableExample.getTestDataValue(valueCandidate);
 		final String actualPageName = getPageName();
 		boolean ok = actualPageName.equals(expectedPage);
 		String question = "Is page <b>" + expectedPage + "</b> visible" + QUESTION_IDENTIFIER;
-		testCase.answerQuestion(question, ok);
+		executableExample.answerQuestion(question, ok);
 	}
 
 	@LanguageTemplate(value = "Click menu item ^^.")
 	public void clickMainMenuItem(final String valueCandidate) 
 	{
-		final String menuText = testCase.getTestData().getValueFor(valueCandidate);
+		final String menuText = executableExample.getTestDataValue(valueCandidate);
 		
 		if (menuText.equals("Form Page"))  {
-			testCase.clickMenuHeader("Form Page");
+			executableExample.clickMenuHeader("Form Page");
 		} else if (menuText.equals("Logout"))  {
 			doLogout();
 			executionInfo.setAlreadyLoggedIn(false);
 		} else {
-			testCase.failWithMessage("Unknown menu item <b>" + menuText + "</b>.");
+			executableExample.failWithMessage("Unknown menu item <b>" + menuText + "</b>.");
 		}
 		
-		testCase.addReportMessage("Menu item <b>" + menuText + "</b> has been clicked.");
+		executableExample.addReportMessage("Menu item <b>" + menuText + "</b> has been clicked.");
 	}
 
 	@LanguageTemplate(value = "Relogin.")
@@ -138,14 +153,14 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	{
 		TestApplication testApp = executionInfo.getTestApplication();
 		doLogin(testApp.getStartParameter());
-		testCase.addReportMessage("Login has been perfomed with DefaultLoginData.");
+		executableExample.addReportMessage("Login has been perfomed with DefaultLoginData.");
 	}
 
 	@LanguageTemplate(value = "Enter ^^ in text field ^^.")
 	public void enterTextInField(String valueCandidate, String fieldName)
 	{
 		boolean ok = true;
-		String value = testCase.getTestData().getValueFor(valueCandidate);
+		String value = executableExample.getTestDataValue(valueCandidate);
 		String pageName = getPageName();
 		
 		if ("Form Page".equals(pageName)) {
@@ -157,16 +172,16 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 		}
 		
 		if (ok) {
-			testCase.addReportMessage("In field <b>" + fieldName + "</b> the value <b>" + value + "</b> has been entered.");
+			executableExample.addReportMessage("In field <b>" + fieldName + "</b> the value <b>" + value + "</b> has been entered.");
 		} else {
-			testCase.failWithMessage("Entering a value into a field is not supported for page <b>"+ pageName + "</b>.");
+			executableExample.failWithMessage("Entering a value into a field is not supported for page <b>"+ pageName + "</b>.");
 		}
 	}
 
 	@LanguageTemplate(value = "Click button ^^.")
 	public void clickButton(String valueCandidate) 
 	{
-		final String buttonName = testCase.getTestData().getValueFor(valueCandidate);
+		final String buttonName = executableExample.getTestDataValue(valueCandidate);
 		boolean ok = true;
 		String pageName = getPageName();
 		
@@ -175,15 +190,15 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 		} else if ("Result Page".equals(pageName)) {
 			resultPageObject.clickButton(buttonName);
 		} else if ("Error Page".equals(pageName)) {
-			testCase.clickButton("btnBack");
+			executableExample.clickButton("btnBack");
 		} else {
 			ok = false;
 		}
 		
 		if (ok) {
-			testCase.addReportMessage("Button <b>" + buttonName + "</b> has beed clicked.");
+			executableExample.addReportMessage("Button <b>" + buttonName + "</b> has beed clicked.");
 		} else {
-			testCase.failWithMessage("Clicking a button is not supported for page <b>"+ pageName + "</b>.");
+			executableExample.failWithMessage("Clicking a button is not supported for page <b>"+ pageName + "</b>.");
 		}
 	}
 
@@ -191,7 +206,7 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	@LanguageTemplate(value = "Select ^^ in selection field ^^.")
 	public void choose(String valueCandidate, String fieldName) 
 	{
-		final String value = testCase.getTestData().getValueFor(valueCandidate);
+		final String value = executableExample.getTestDataValue(valueCandidate);
 		final String pageName = getPageName();
 		boolean ok = true;		
 		
@@ -202,16 +217,16 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 		}
 		
 		if (ok) {
-			testCase.addReportMessage("For field <b>" + fieldName + "</b> value <b>" + value + "</b> has been selected.");
+			executableExample.addReportMessage("For field <b>" + fieldName + "</b> value <b>" + value + "</b> has been selected.");
 		} else {
-			testCase.failWithMessage("Selecting a value is not supported for page <b>"+ pageName + "</b>.");
+			executableExample.failWithMessage("Selecting a value is not supported for page <b>"+ pageName + "</b>.");
 		}		
 	}
 
 	@LanguageTemplate(value = "Is the displayed text ^^ equal to ^^?")
 	public void isDislayedTextCorrect(final String guiElementToRead, final String valueCandidate) 
 	{
-		final String expectedText = testCase.getTestData().getValueFor(valueCandidate);
+		final String expectedText = executableExample.getTestDataValue(valueCandidate);
 		final String pageName = getPageName();
 		
 		String actualText = null;
@@ -223,11 +238,11 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 		}
 		
 		if (actualText == null) {
-			testCase.failWithMessage("Element <b>"+ guiElementToRead + "</b> is not supported to be read from page <b>" + pageName + "</b>.");
+			executableExample.failWithMessage("Element <b>"+ guiElementToRead + "</b> is not supported to be read from page <b>" + pageName + "</b>.");
 		} else {
 			boolean ok = actualText.equals(expectedText);
 			String question = "Is the expected text (" + expectedText + ") equals to the actually displayed one (" + actualText + ")" + QUESTION_IDENTIFIER;
-			testCase.answerQuestion(question, ok);	
+			executableExample.answerQuestion(question, ok);	
 		}
 	}
 	
@@ -236,7 +251,7 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 //	public void convertTo(ObjectData oldObjectData, String nameOfNewObjectData) 
 //	{
 //		ObjectData newDataset = oldObjectData.dublicate(nameOfNewObjectData);
-//		testCase.getTestData().addObjectData(nameOfNewObjectData, newDataset);
+//		executableExample.getTestData().addObjectData(nameOfNewObjectData, newDataset);
 //		//return newDataset;
 //	}
 //

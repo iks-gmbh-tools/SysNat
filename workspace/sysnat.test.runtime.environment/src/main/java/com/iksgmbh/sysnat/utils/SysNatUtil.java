@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.utils;
 
 import java.io.File;
@@ -14,10 +29,10 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class SysNatUtil 
 {
-	public static boolean doesTestBelongToApplicationUnderTest(ExecutableExample testcase) 
+	public static boolean doesTestBelongToApplicationUnderTest(ExecutableExample executableExample) 
 	{
 		String aut = ExecutionRuntimeInfo.getInstance().getTestApplicationNameAsPropertyKey();
-		String fullClassName = testcase.getClass().getName().toLowerCase();
+		String fullClassName = executableExample.getClass().getName().toLowerCase();
 		int pos = fullClassName.indexOf('.');
 		if (pos == -1) {
 			// class belongs to default package: avoid this !

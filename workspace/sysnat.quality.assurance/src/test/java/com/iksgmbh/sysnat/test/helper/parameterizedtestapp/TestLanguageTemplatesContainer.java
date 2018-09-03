@@ -1,3 +1,18 @@
+/*
+ * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.iksgmbh.sysnat.test.helper.parameterizedtestapp;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.COMMENT_IDENTIFIER;
@@ -28,6 +43,7 @@ import com.iksgmbh.sysnat.common.exception.SkipTestCaseException.SkipReason;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.UnexpectedResultException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.domain.SysNatTestData;
 import com.iksgmbh.sysnat.domain.SysNatTestData.SysNatDataset;
 import com.iksgmbh.sysnat.helper.VirtualTestCase;
 
@@ -37,12 +53,12 @@ public class TestLanguageTemplatesContainer
 	public static ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/LanguageTemplatesCommon", Locale.getDefault());
 
 	protected ExecutionRuntimeInfo executionInfo;
-	protected ExecutableExample testCase;
+	protected ExecutableExample executableExample;
 	private Properties nlsProperties;
 	
-	public TestLanguageTemplatesContainer(ExecutableExample test) 
+	public TestLanguageTemplatesContainer(ExecutableExample aExecutableExample) 
 	{
-		this.testCase = test;
+		this.executableExample = aExecutableExample;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();
 	}
 
@@ -85,29 +101,29 @@ public class TestLanguageTemplatesContainer
 		return new ArrayList<>(Arrays.asList(splitResult));
 	}
 	
-	protected void executeScript(String scriptName, ExecutableExample aTestCase)
+	protected void executeScript(String scriptName, ExecutableExample aExecutableExample)
 	{
 		Method executeTestMethod = null;
 		Object newInstance = null;
 		try {
 			Class<?> classForName = getClassFor(scriptName);
 			Constructor<?> constructor = classForName.getConstructor(ExecutableExample.class);
-			newInstance = constructor.newInstance(aTestCase);
+			newInstance = constructor.newInstance(aExecutableExample);
 			executeTestMethod = classForName.getMethod("executeScript");
 		} catch (ClassNotFoundException e) {
-			aTestCase.failWithMessage(e.getMessage());
+			aExecutableExample.failWithMessage(e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			aTestCase.failWithMessage(BUNDLE.getString("NotExecutableScriptComment").replace("x", scriptName)
+			aExecutableExample.failWithMessage(BUNDLE.getString("NotExecutableScriptComment").replace("x", scriptName)
 					                 + System.getProperty("line.separator") + e.getMessage());
 		}
 		
 		if (executeTestMethod != null  && newInstance != null) {
 			try {
-				aTestCase.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptStart") 
+				aExecutableExample.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptStart") 
 				                          + ": <b>" + scriptName + "</b> ----------");
 				executeTestMethod.invoke(newInstance);
-				aTestCase.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptEnd") 
+				aExecutableExample.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptEnd") 
 				                          + ": <b>" + scriptName + "</b> ----------");
 			}
 			catch (InvocationTargetException ite) 
@@ -120,7 +136,7 @@ public class TestLanguageTemplatesContainer
 			}
 			catch (Exception e) 
 			{
-				aTestCase.failWithMessage(BUNDLE.getString("FailedScriptExecutionComment").replace("x", scriptName));
+				aExecutableExample.failWithMessage(BUNDLE.getString("FailedScriptExecutionComment").replace("x", scriptName));
 			}
 		}
 	}
@@ -132,27 +148,27 @@ public class TestLanguageTemplatesContainer
 
 	
 	@LanguageTemplate(value = "XXID: ^^")
-	public void startNewTestCase(String xxid) 
+	public void startNewXX(String xxid) 
 	{
 		xxid = xxid.trim();
-		if (! testCase.doesTestBelongToApplicationUnderTest()) {
+		if (! executableExample.doesTestBelongToApplicationUnderTest()) {
 			throw new SkipTestCaseException(SkipReason.APPLICATION_TO_TEST);
 		}
 		
 		if (xxid.equals(FROM_FILENAME) || xxid.equals("<filename>"))  {
-			xxid = testCase.getTestCaseFileName();
+			xxid = executableExample.getTestCaseFileName();
 		}
 		
 		if (executionInfo.isXXIdAlreadyUsed(xxid))  {
-			testCase.failWithMessage(BUNDLE.getString("Ambiguous") + " XXID: " + xxid);
+			executableExample.failWithMessage(BUNDLE.getString("Ambiguous") + " XXID: " + xxid);
 		}
 
-		testCase.setXXID( xxid.trim() );
+		executableExample.setXXID( xxid.trim() );
 		System.out.println((executionInfo.getTotalNumberOfTestCases() + 1) + ". XXID: " + xxid);
 		executionInfo.countTestCase();
 		
 		if ( ! executionInfo.isApplicationStarted() ) {
-			testCase.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
+			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
 			                          + "</b> steht derzeit nicht zur Verfügung!");
 		}
 	}
@@ -161,31 +177,31 @@ public class TestLanguageTemplatesContainer
 	@LanguageTemplate(value = "Kommentar: ^^")
 	@LanguageTemplate(value = "Comment: ^^")
 	public void createComment(String comment) {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + comment);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + comment);
 	}
 	
 	@LanguageTemplate(value = "Keyword-Comment: Arrange test requirements") 
 	@LanguageTemplate(value = "Schlüsselkommentar: Test-Vorbereitungen")
 	public void createKeywordArrangeComment() {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + ARRANGE_KEYWORD);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + ARRANGE_KEYWORD);
 	}
 	
 	@LanguageTemplate(value = "Keyword-Comment: Perform action under test") 
 	@LanguageTemplate(value = "Schlüsselkommentar: Test-Durchführung")
 	public void createKeywordActComment() {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + ACT_KEYWORD);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + ACT_KEYWORD);
 	}
 
 	@LanguageTemplate(value = "Keyword-Comment: Assert expected results") 
 	@LanguageTemplate(value = "Schlüsselkommentar: Überprüfung der Testergebnisse")
 	public void createKeywordAssertComment() {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + ASSERT_KEYWORD);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + ASSERT_KEYWORD);
 	}
 
 	@LanguageTemplate(value = "Keyword-Comment: Reset to start situation")  
 	@LanguageTemplate(value = "Schlüsselkommentar: Wiederherstellen der Ausgangssituation")
 	public void createKeywordCleanupComment() {
-		testCase.addReportMessage(COMMENT_IDENTIFIER + CLEANUP_KEYWORD);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + CLEANUP_KEYWORD);
 	}
 
 	
@@ -201,15 +217,15 @@ public class TestLanguageTemplatesContainer
 	@LanguageTemplate(value = "Es existieren ^^.")
 	public void setDatasetObject(String datatype) 
 	{
-		if ( ! testCase.getTestData().isKnown(datatype) ) {
-			testCase.importTestData(datatype);
+		if ( ! executableExample.getTestData().isKnown(datatype) ) {
+			executableExample.importTestData(datatype);
 		}
 	}	
 	
 	@LanguageTemplate(value = "Testdaten: ^^")
 	@LanguageTemplate(value = "TestData: ^^")
 	public void importTestData(String nameOfDataset) {
-		testCase.importTestData(nameOfDataset);
+		executableExample.importTestData(nameOfDataset);
 	}
 
 
@@ -221,7 +237,7 @@ public class TestLanguageTemplatesContainer
 	@LanguageTemplate(value = "Führe mit folgenden Daten")  
 	public void createSysNatTestData() 
 	{
-		testCase.getTestData().clear();
+		executableExample.getTestData().clear();
 	}
 	
 	/**
@@ -235,10 +251,10 @@ public class TestLanguageTemplatesContainer
 	@LanguageTemplate(value = "Führe mit folgenden Daten ^^")  
 	public void loadTestDatasets(String datatypes) 
 	{
-		testCase.getTestData().clear();
+		executableExample.getTestData().clear();
 		final List<String> datatypesList = getObjectNameList(datatypes);
 		for (String datatype : datatypesList) {
-			testCase.importTestData(datatype);
+			executableExample.importTestData(datatype);
 		}
 	}
 
@@ -255,8 +271,8 @@ public class TestLanguageTemplatesContainer
 	@LanguageTemplate(value = "Führe mit ^^")
 	public void storeDataSets(String datatype) 
 	{
-		testCase.getTestData().clear();
-		testCase.importTestData(datatype);
+		executableExample.getTestData().clear();
+		executableExample.importTestData(datatype);
 	}	
 
 
@@ -271,14 +287,15 @@ public class TestLanguageTemplatesContainer
 		String[] splitResult = objectAndfieldName.split("\\.");
 		
 		if (splitResult.length == 1) {
-			testCase.getTestData().addValue(splitResult[0], value);
+			executableExample.getTestData().addValue(SysNatTestData.DEFAULT_TEST_DATA, 
+					                                 splitResult[0], value);
 		} else {			
 			String objectName = splitResult[0];
 			String fieldName = splitResult[1];
-			if ( ! testCase.getTestData().isKnown(objectName) ) {
-				testCase.failWithMessage(BUNDLE.getString("NoTestDataComment"));
+			if ( ! executableExample.getTestData().isKnown(objectName) ) {
+				executableExample.failWithMessage(BUNDLE.getString("NoTestDataComment"));
 			}
-			testCase.getTestData().addValue(objectName, fieldName, value);
+			executableExample.getTestData().addValue(objectName, fieldName, value);
 		}
 	}
 
@@ -292,18 +309,18 @@ public class TestLanguageTemplatesContainer
 	@LanguageTemplate(value = "das Skript ^^ aus.")
 	public void executeScriptWithData(String scriptName)
 	{
-		if (testCase.getTestData().size() == 0)  {
-			testCase.failWithMessage(BUNDLE.getString("NoTestDataForScriptComment").replace("x", scriptName));
+		if (executableExample.getTestData().size() == 0)  {
+			executableExample.failWithMessage(BUNDLE.getString("NoTestDataForScriptComment").replace("x", scriptName));
 		}
 
-		executeScript(scriptName, testCase);
+		executeScript(scriptName, executableExample);
 	}
 	
 	@LanguageTemplate(value = "Execute script ^^.")  
 	@LanguageTemplate(value = "Führe das Skript ^^ aus.")
 	@LanguageTemplate(value = "^^.")  
 	public void executeScript(String scriptName) {
-		executeScript(scriptName, testCase);
+		executeScript(scriptName, executableExample);
 	}	
 	
 	/**
@@ -318,10 +335,10 @@ public class TestLanguageTemplatesContainer
 		try {
 			getClassFor(scriptName);
 		} catch (ClassNotFoundException e) {
-			testCase.failWithMessage(ERROR_KEYWORD + ": " + e. getMessage()); 
+			executableExample.failWithMessage(ERROR_KEYWORD + ": " + e. getMessage()); 
 		}
 		
-		List<SysNatDataset> objectDataSets = testCase.getTestData().getAllDatasets();
+		List<SysNatDataset> objectDataSets = executableExample.getTestData().getAllDatasets();
 		for (SysNatDataset objectData : objectDataSets) 
 		{
 			VirtualTestCase virtualTestCase = new VirtualTestCase(objectData.getName());
@@ -337,7 +354,7 @@ public class TestLanguageTemplatesContainer
 			executionInfo.addToResultAsSeparateTestCase(virtualTestCase);
 		}
 		
-		testCase.addReportMessage("A total of " + objectDataSets.size()	+ " datasets has been executed as separate test cases.");
+		executableExample.addReportMessage("A total of " + objectDataSets.size()	+ " datasets has been executed as separate test cases.");
 	}
 	
 	/**
