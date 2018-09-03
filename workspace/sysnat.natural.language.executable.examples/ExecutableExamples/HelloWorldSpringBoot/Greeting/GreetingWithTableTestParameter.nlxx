@@ -1,0 +1,18 @@
+XXID:          <Dateiname>
+Kategorie-Filter: <Pfad>
+Test-Parameter:
+Datasets in columns
+|Name|Susi|Bob|
+|Greeting|Hi|Hello|
+|GreetingResult|Hi Susi!|Hello Bob!|
+# arrange
+Keyword-Comment: Arrange test requirements
+"EnterGreetingData".
+
+# act 
+Keyword-Comment: Perform action under test
+Click button "Greet".
+
+# assert
+Keyword-Comment: Assert expected results
+Is the displayed text "GreetingResult" equal to ":GreetingResult"?
