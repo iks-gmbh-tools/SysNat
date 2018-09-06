@@ -2,13 +2,13 @@ XXID:          <Dateiname>
 Kategorie-Filter: <Pfad>,Smoketest
 
 # arrange
-Keyword-Comment: Arrange test requirements
+Test-Phase: Arrange    # setup all test requirements
 Comment: Nothing_to_arrange.
 
 # act 
-Keyword-Comment: Perform action under test
+Test-Phase: Act  # Perform action under test
 Click button "Greet".
 
 # assert
-Keyword-Comment: Assert expected results
+Test-Phase: Assert    # check expectations
 Is the displayed text "GreetingResult" equal to "Hello World!"? 

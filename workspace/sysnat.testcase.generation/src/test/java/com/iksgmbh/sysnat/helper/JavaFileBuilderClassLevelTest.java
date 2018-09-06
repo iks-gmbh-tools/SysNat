@@ -91,11 +91,10 @@ public class JavaFileBuilderClassLevelTest
 		// assert
 		assertEquals("Number of test classes", 1, result.size());		
 		final File key = result.keySet().iterator().next();
-		final String actualFileContent = result.get(key).trim();
-		//System.out.println(actualFileContent);
+		final String actualFileContent = SysNatStringUtil.removeLicenceComment( result.get(key).trim() );
+		System.out.println(actualFileContent);
 		
-		String expectedFileContent = 
-				SysNatFileUtil.readTextFileToString(
+		String expectedFileContent = SysNatFileUtil.readTextFileToString(
 						"../sysnat.testcase.generation/src/test/resources/expectedResults/TestCaseContent.txt");
 		assertEquals("Generated Java File Content", 
 				     expectedFileContent, 
@@ -121,7 +120,7 @@ public class JavaFileBuilderClassLevelTest
 		assertEquals("Number of test classes", 1, result.size());
 		
 		final File key = result.keySet().iterator().next();
-		final String actualFileContent = result.get(key).trim();
+		final String actualFileContent = SysNatStringUtil.removeLicenceComment( result.get(key).trim() );
 		//System.out.println(actualFileContent);
 		
 		String expectedFileContent = 

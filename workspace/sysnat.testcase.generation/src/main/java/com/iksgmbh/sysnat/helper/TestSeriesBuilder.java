@@ -25,6 +25,7 @@ import java.util.Properties;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaCommand;
@@ -36,10 +37,10 @@ import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
  * 
  * Details:
  * Checks all Executable Examples (XX) (each represented by a list of JavaCommand parsed from the nlxx file) to define a test series.
- * A test series is represented either by a parameterized XX or a by group of XXs defined for a Rule of software behaviour.
- * Rules have to be declared in the nlxx file by the stage instruction "Rule-ID".
+ * A test series is represented either by a parameterized XX or a by group of XXs defined for a software behaviour.
+ * A Behaviour (or feature) has to be declared in a nlxx file by the stage instruction "Behaviour" or "Feature".
  * If any type of test series is detected, for each test case within this series a separate JUnit test class in generated.
- * For parameterized tests they only differ in the test data used, for rule groups they also differ in the executed instructions.
+ * For parameterized tests they only differ in the test data used, for XX groups they also differ in the executed instructions.
  * All JUnit java files belonging to the same test series will be written together into a specific package created only for the test series.
  * 
  * @author Reik Oberrath
@@ -47,14 +48,15 @@ import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 public class TestSeriesBuilder 
 {
 	private static final String PARAMETER_IDENTIFIER_METHOD_CALL = ".applyTestParameter(";
-	private static final String RULE_IDENTIFIER_METHOD_CALL = ".declareXXGroupForRule(";
+	private static final String BEHAVIOUR_IDENTIFIER_METHOD_CALL = ".declareXXGroupForBehaviour(";
+	private static final String BDD_KEYWORD_IDENTIFIER_METHOD_CALL = ".setBddKeyword(";
 	private static final String XXID_IDENTIFIER_METHOD_CALL = ".startNewXX(";
 	
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw;
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionTemp = new HashMap<>();
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionResult = new HashMap<>();
 	private HashMap<Filename, String> testParameter = new HashMap<>();
-	private HashMap<Filename, String> xxRuleGroups = new HashMap<>();
+	private HashMap<Filename, String> xxGroups = new HashMap<>();
 	private TestDataImporter testDataImporter;
 	private String nameOfCurrentFile;
 	private int xxCounter = 0;
@@ -70,21 +72,21 @@ public class TestSeriesBuilder
 	
 	private HashMap<Filename, List<JavaCommand>> buildTestCaseSeriesIfNecessary() 
 	{
-		// split XX with rule definition into separate XXs and put result into javaCommandCollectionTemp 
+		// split XX groups into separate XXs and put result into javaCommandCollectionTemp
 		javaCommandCollectionRaw.keySet().stream().filter(this::isNoScript)
-		                                          .filter(this::doesXXCorrectlyDefineAnyRule)
-                                                  .forEach(this::buildTestCaseSeriesForRuleGroup);
+		                                          .filter(this::doesXXFileCorrectlyDefineAnyBehaviour)
+                                                  .forEach(this::buildTestCaseSeriesForXXGroup);
 
-		// put XX without rule definition into javaCommandCollectionTemp 
-		javaCommandCollectionRaw.keySet().stream().filter(filename -> ! xxRuleGroups.containsKey(filename))
+		// put XX without group into javaCommandCollectionTemp
+		javaCommandCollectionRaw.keySet().stream().filter(filename -> ! xxGroups.containsKey(filename))
                                                   .forEach(filename -> javaCommandCollectionTemp.put(filename, javaCommandCollectionRaw.get(filename)));
-		
-		// split XX with parameter definition into separate XXs and put result into javaCommandCollectionResult 
+
+		// split XX with parameter definition into separate XXs and put result into javaCommandCollectionResult
 		javaCommandCollectionTemp.keySet().stream().filter(this::isNoScript)
                                                    .filter(this::isTestCaseParameterized)
 		                                           .forEach(this::buildTestCaseSeriesForParameter);
-		
-		// put XX without parameter definition into javaCommandCollectionResult 
+
+		// put XX without parameter definition into javaCommandCollectionResult
 		javaCommandCollectionTemp.keySet().stream().filter(filename -> ! testParameter.containsKey(filename))
                                                    .forEach(filename -> javaCommandCollectionResult.put(filename, javaCommandCollectionTemp.get(filename)));
 
@@ -95,11 +97,12 @@ public class TestSeriesBuilder
 		return ! filename.value.endsWith("Script.java");
 	}
 	
-	private void buildTestCaseSeriesForRuleGroup(final Filename filename)
+	private void buildTestCaseSeriesForXXGroup(final Filename filename)
 	{
+		nameOfCurrentFile = filename.value;
 		xxCounter = 0;
 		final List<JavaCommand> commands = javaCommandCollectionRaw.get(filename);
-		final HashMap<String, List<JavaCommand>> separatedXXs = cutXXRuleGroupIntoSeparateXX(commands, filename);
+		final HashMap<String, List<JavaCommand>> separatedXXs = cutXXGroupIntoSeparateXX(commands, filename);
 		separatedXXs.keySet().forEach(xxid -> javaCommandCollectionTemp.put(createNewFilename(filename, xxid), 
 				                                                            separatedXXs.get(xxid))); 
 	}
@@ -111,17 +114,17 @@ public class TestSeriesBuilder
 	
 	private Filename createNewFilename(Filename filename, String xxid) 
 	{
-		String xxRuleGroup = xxRuleGroups.get(filename);
-		if (containsFilenamePlaceholder(xxRuleGroup)) {
-			xxRuleGroup = extractXXIdFromFilename(filename.value);
+		String xxGroup = xxGroups.get(filename);
+		if (containsFilenamePlaceholder(xxGroup)) {
+			xxGroup = extractXXIdFromFilename(filename.value);
 		}
 		
 		int pos = filename.value.lastIndexOf('/');
-		return new Filename(filename.value.substring(0, pos) + "/" + xxRuleGroup.toLowerCase() + "/" + xxid + ".java");
+		return new Filename(filename.value.substring(0, pos) + "/" + xxGroup.toLowerCase() + "/" + xxid + ".java");
 	}
 
-	private HashMap<String, List<JavaCommand>> cutXXRuleGroupIntoSeparateXX(final List<JavaCommand> commandsOfGroup, 
-			                                                                final Filename filename) 
+	private HashMap<String, List<JavaCommand>> cutXXGroupIntoSeparateXX(final List<JavaCommand> commandsOfGroup,
+																		final Filename filename)
 	{
 		final HashMap<String, List<JavaCommand>> separatedXXs = new HashMap<>();
 		JavaCommand groupDeclarationCommand = null;
@@ -130,23 +133,38 @@ public class TestSeriesBuilder
 		
 		for (JavaCommand javaCommand : commandsOfGroup) 
 		{
-			if (javaCommand.value.contains(RULE_IDENTIFIER_METHOD_CALL)) {
+			if (javaCommand.value.contains(BDD_KEYWORD_IDENTIFIER_METHOD_CALL)) {
+				if (commandListOfseparatedXX == null) {
+					commandListOfseparatedXX = new ArrayList<>();
+				}
+				commandListOfseparatedXX.add(javaCommand);
+				continue;
+			}
+
+			if (javaCommand.value.contains(BEHAVIOUR_IDENTIFIER_METHOD_CALL)) {
 				groupDeclarationCommand = replaceFilenamePlaceholderIfPresent(filename, javaCommand, "");
+				if (commandListOfseparatedXX == null) {
+					commandListOfseparatedXX = new ArrayList<>();
+				}
+				commandListOfseparatedXX.add(groupDeclarationCommand);
+				continue;
 			}
 			
 			if (javaCommand.value.contains(XXID_IDENTIFIER_METHOD_CALL)) 
 			{
 				if (xxid != null) {
 					separatedXXs.put(xxid, commandListOfseparatedXX);
+					commandListOfseparatedXX = new ArrayList<>();
+					if (groupDeclarationCommand != null) {
+						commandListOfseparatedXX.add(groupDeclarationCommand);
+					}
 				}
-				
+
 				if (groupDeclarationCommand == null) {
-					throw new SysNatTestDataException("Rule declaration must occur before XXID declaration in '" 
+					throw new SysNatTestDataException("Behaviour declaration must occur before XXID declaration in '"
 				               + filename.value + "'.");
 				}
-				commandListOfseparatedXX = new ArrayList<>();
-				commandListOfseparatedXX.add(groupDeclarationCommand);
-				xxid = extractXXID(javaCommand.value);
+
 				if (containsFilenamePlaceholder(javaCommand.value)) {
 					javaCommand = replaceFilenamePlaceholderIfPresent(filename, javaCommand, "_" + ++xxCounter);
 				}
@@ -226,9 +244,9 @@ public class TestSeriesBuilder
 				newCommands.add(new JavaCommand("languageTemplatesCommon.startNewXX(\"" + xxid + "_" + datasetId + "\");"));
 			} else if (javaCommand.value.contains(PARAMETER_IDENTIFIER_METHOD_CALL)) {
 				if (tableDataMode) {
-					newCommands.add(new JavaCommand("languageTemplatesCommon.importTestData(\"" + toTableData(dataset) + "\");"));
+					newCommands.add(new JavaCommand("languageTemplatesCommon.setDatasetObject(\"" + toTableData(dataset) + "\");"));
 				} else {
-					newCommands.add(new JavaCommand("languageTemplatesCommon.importTestData(\"" + datasetName + "\");"));
+					newCommands.add(new JavaCommand("languageTemplatesCommon.setDatasetObject(\"" + datasetName + "\");"));
 				}
 			} else {
 				newCommands.add(javaCommand);
@@ -288,10 +306,10 @@ public class TestSeriesBuilder
 	/**
 	 * Analyses commands from an nlxx file
 	 * @param filename
-	 * @return true if Rule declaration exists and is correct
-	 * @throws SysNatTestDataException if Rule declaration is wrong
+	 * @return true if Behaviour declaration exists and is correct
+	 * @throws SysNatTestDataException if Behaviour declaration is wrong
 	 */
-	private boolean doesXXCorrectlyDefineAnyRule(final Filename filename)
+	private boolean doesXXFileCorrectlyDefineAnyBehaviour(final Filename filename)
 	{
 		final List<JavaCommand> commands = javaCommandCollectionRaw.get(filename);	
 		boolean xxGroupIdentifierPresent = false;
@@ -303,14 +321,14 @@ public class TestSeriesBuilder
 				counterXXId++;
 			}
 			
-			if (javaCommand.value.contains( RULE_IDENTIFIER_METHOD_CALL )) 
+			if (javaCommand.value.contains(BEHAVIOUR_IDENTIFIER_METHOD_CALL))
 			{
 				xxGroupIdentifierPresent = true;
-				if (xxRuleGroups.containsKey(filename)) {
-					throw new SysNatTestDataException("Only one Rule can be declared in '" +
+				if (xxGroups.containsKey(filename)) {
+					throw new SysNatTestDataException("Only one Behaviour can be declared in '" +
 				                                       filename.value + "'.");
 				}
-				xxRuleGroups.put(filename, extractXXGroup(javaCommand.value));
+				xxGroups.put(filename, extractXXGroup(javaCommand.value));
 			}
 		}
 
@@ -320,11 +338,11 @@ public class TestSeriesBuilder
 		}
 		
 		if (counterXXId > 1 && ! xxGroupIdentifierPresent) {
-			throw new SysNatTestDataException("Missing Rule declaration in '" +
+			throw new SysNatTestDataException("Missing Behaviour declaration in '" +
                     filename.value + "'.");
 		}
 		
-		if (xxRuleGroups.containsKey(filename)) {			
+		if (xxGroups.containsKey(filename)) {
 			return true;
 		}
 		
@@ -357,14 +375,18 @@ public class TestSeriesBuilder
 
 	private String extractXXGroup(String javaCommand) 
 	{
-		final int pos = javaCommand.indexOf(RULE_IDENTIFIER_METHOD_CALL) + RULE_IDENTIFIER_METHOD_CALL.length() + 1;
+		final int pos = javaCommand.indexOf(BEHAVIOUR_IDENTIFIER_METHOD_CALL) + BEHAVIOUR_IDENTIFIER_METHOD_CALL.length() + 1;
 		return javaCommand.substring(pos, javaCommand.length()-3).trim();
 	}
 
 	private String extractXXID(String javaCommand) 
 	{
 		final int pos = javaCommand.indexOf(XXID_IDENTIFIER_METHOD_CALL) + XXID_IDENTIFIER_METHOD_CALL.length() + 1;
-		return javaCommand.substring(pos, javaCommand.length()-3).trim();
+		String toReturn = javaCommand.substring(pos, javaCommand.length()-3).trim();
+		if (toReturn.equals(SysNatLocaleConstants.FROM_FILENAME)) {
+			return extractXXIdFromFilename(nameOfCurrentFile);
+		}
+		return toReturn;
 	}
 
 	private String extractXXIdFromFilename(String filename) 

@@ -14,16 +14,16 @@ import com.iksgmbh.sysnat.test.helper.parameterizedtestapp.TestLanguageTemplates
 public class TestXXId_1_Test extends TestCaseTemplateParent
 {
 	protected TestLanguageTemplatesContainer testLanguageTemplatesContainer;
-	
+
 	@Before
-	public void setUp() 
+	public void setUp()
 	{
 		super.setUp();
 		testLanguageTemplatesContainer = new TestLanguageTemplatesContainer(this);
 	}
 
 	@After
-	public void shutdown() 
+	public void shutdown()
 	{
 		if ( ! isSkipped() && executionInfo.isApplicationStarted()) {
 			if (languageTemplatesCommon != null) languageTemplatesCommon.gotoStartPage();
@@ -34,24 +34,24 @@ public class TestXXId_1_Test extends TestCaseTemplateParent
 
 	@Test
 	@Override
-	public void executeTestCase() 
+	public void executeTestCase()
 	{
 		try {
 			languageTemplatesCommon.startNewXX("TestXXId_1");
-			languageTemplatesCommon.importTestData("ExcelDataFile_Dataset1");
-			
+			languageTemplatesCommon.setDatasetObject("ExcelDataFile_Dataset1");
+
 			// arrange block
-			testLanguageTemplatesContainer.createKeywordArrangeComment();
+			testLanguageTemplatesContainer.startNewTestPhase("Arrange");
 			testLanguageTemplatesContainer.createComment("Nothing_to_arrange.");
-			
+
 			// act block
-			testLanguageTemplatesContainer.createKeywordActComment();
+			testLanguageTemplatesContainer.startNewTestPhase("Act");
 			testLanguageTemplatesContainer.clickButton("TestSeriesData:buttonName");
-			
+
 			// assert block
-			testLanguageTemplatesContainer.createKeywordAssertComment();
+			testLanguageTemplatesContainer.startNewTestPhase("Assert");
 			testLanguageTemplatesContainer.isTextDisplayed("Welcome", "TestSeriesData:WelcomeText");
-			
+
 			closeCurrentTestCaseWithSuccess();
 		} catch (Throwable e) {
 			super.handleThrowable(e);

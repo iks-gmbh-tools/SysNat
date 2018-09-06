@@ -59,7 +59,7 @@ public class TestSeriesBuilderClassLevelTest
 		// arrange
 		assertEquals("Number of testcases", 3, javaCommandCollection.size());
 		assertEquals("Java Command", "languageTemplatesCommon.startNewXX(\"ParamXXId_1\");", getCommandListFor(javaCommandCollection, "ParamXXId_1_Test.java").get(0).value);
-		assertEquals("Java Command", "languageTemplatesCommon.importTestData(\"TestParam_1\");", getCommandListFor(javaCommandCollection, "ParamXXId_1_Test.java").get(1).value);
+		assertEquals("Java Command", "languageTemplatesCommon.setDatasetObject(\"TestParam_1\");", getCommandListFor(javaCommandCollection, "ParamXXId_1_Test.java").get(1).value);
 	}
 
 	@Test
@@ -75,7 +75,7 @@ public class TestSeriesBuilderClassLevelTest
 			fail("Expected exception not thrown!");
 		} catch (SysNatException e) {
 			// assert
-			assertEquals("error message", "Only one Rule can be declared in 'aFile'.", 
+			assertEquals("error message", "Only one Behaviour can be declared in 'aFile'.",
 					                      e.getMessage());
 		}		
 	}
@@ -93,7 +93,7 @@ public class TestSeriesBuilderClassLevelTest
 			fail("Expected exception not thrown!");
 		} catch (SysNatException e) {
 			// assert
-			assertEquals("error message", "Missing Rule declaration in 'aFile'.", 
+			assertEquals("error message", "Missing Behaviour declaration in 'aFile'.",
 					                      e.getMessage());
 		}		
 	}
@@ -130,7 +130,7 @@ public class TestSeriesBuilderClassLevelTest
 			fail("Expected exception not thrown!");
 		} catch (SysNatException e) {
 			// assert
-			assertEquals("error message", "Rule declaration must occur before XXID declaration in 'aFile'.", 
+			assertEquals("error message", "Behaviour declaration must occur before XXID declaration in 'aFile'.",
 					                      e.getMessage());
 		}		
 	}
@@ -172,12 +172,12 @@ public class TestSeriesBuilderClassLevelTest
 	{
 		final List<JavaCommand> commands = new ArrayList<>();
 
-		commands.add(new JavaCommand("templateContainer.declareXXGroupForRule(\"Group1\");"));
+		commands.add(new JavaCommand("templateContainer.declareXXGroupForBehaviour(\"Group1\");"));
 		commands.add(new JavaCommand("templateContainer.startNewXX(\"XXId1\");"));
 		commands.add(new JavaCommand("templateContainer.doSomething();"));
 		commands.add(new JavaCommand("templateContainer.startNewXX(\"XXId2\");"));
 		commands.add(new JavaCommand("templateContainer.doSomethingElse();"));
-		commands.add(new JavaCommand("templateContainer.declareXXGroupForRule(\"Group2\");"));
+		commands.add(new JavaCommand("templateContainer.declareXXGroupForBehaviour(\"Group2\");"));
 		commands.add(new JavaCommand("templateContainer.startNewXX(\"XXId3\");"));
 		commands.add(new JavaCommand("templateContainer.doSomething();"));
 		commands.add(new JavaCommand("templateContainer.doSomethingElse();"));
@@ -205,7 +205,7 @@ public class TestSeriesBuilderClassLevelTest
 
 		commands.add(new JavaCommand("templateContainer.startNewXX(\"XXId1\");"));
 		commands.add(new JavaCommand("templateContainer.doSomething();"));
-		commands.add(new JavaCommand("templateContainer.declareXXGroupForRule(\"Group1\");"));
+		commands.add(new JavaCommand("templateContainer.declareXXGroupForBehaviour(\"Group1\");"));
 		commands.add(new JavaCommand("templateContainer.startNewXX(\"XXId2\");"));
 		commands.add(new JavaCommand("templateContainer.doSomethingElse();"));
 		commands.add(new JavaCommand("templateContainer.startNewXX(\"XXId3\");"));

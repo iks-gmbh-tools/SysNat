@@ -38,7 +38,7 @@ import com.iksgmbh.sysnat.domain.LanguageTemplatePattern;
  */
 public class PatternMergeJavaCommandGenerator 
 {
-	private static final String TEST_DATA_COMMAND_TEMPLATE = "importTestData(\"-\");";
+	private static final String TEST_DATA_COMMAND_TEMPLATE = "setDatasetObject(\"-\");";
 	private static final String TEST_PARAMETER_COMMAND_TEMPLATE = "applyTestParameter(\"-\");";
 	
 	private HashMap<Filename, List<LanguageTemplatePattern>> languageTemplateCollection;
@@ -116,7 +116,8 @@ public class PatternMergeJavaCommandGenerator
 						                        .filter(command -> command.value.contains(TEST_DATA_COMMAND_TEMPLATE) 
 						                        		        || command.value.contains(TEST_PARAMETER_COMMAND_TEMPLATE))
 						                        .collect(Collectors.toList());
-				if (commands.size() == 1) {					
+				if (commands.size() == 1)
+				{
 					JavaCommand testDataCommand = commands.get(0);
 					testDataCommand.value = testDataCommand.value.toString().replace("-", testDataMultiLineString);
 					testDataMultiLineString = null;
@@ -255,9 +256,9 @@ public class PatternMergeJavaCommandGenerator
 	protected void logInput(final LanguageTemplatePattern templatePattern,
 			                final LanguageInstructionPattern instructionPattern) 
 	{
-		String s = "Group";
-		if (instructionPattern.getInstructionLine().contains(s))
-			//&& templatePattern.getAnnotationValue().contains(s)) 
+		String s = "Test-Phase: Arrange test";
+		if (instructionPattern.getInstructionLine().contains(s)
+			&& templatePattern.getAnnotationValue().contains(s))
 		{
 			System.err.println(instructionPattern.getInstructionLine() + " ### " + templatePattern.getAnnotationValue());
 		}

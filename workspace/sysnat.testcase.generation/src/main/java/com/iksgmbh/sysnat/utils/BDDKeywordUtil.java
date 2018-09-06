@@ -23,18 +23,18 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class BDDKeywordUtil 
 {
-	public static String KNOWN_BDD_KEYWORDS_FILE = "../sysnat.testcase.generation/src/main/resources/StageInstructions.config";
+	public static String KNOWN_BDD_KEYWORDS_FILE = "../sysnat.testcase.generation/src/main/resources/BDDKeywords.config";
 
-	protected static List<String> knownStageInstructions;
+	protected static List<String> knownBddKeywords;
 	
 	public static boolean startsWithBDDKeyword(final String naturalLanguageLine) 
 	{
-		if (knownStageInstructions == null) {
-			knownStageInstructions = loadKnownBDDKeywords();
+		if (knownBddKeywords == null) {
+			knownBddKeywords = loadKnownBDDKeywords();
 		}
 		
-		for (String stageInstruction : knownStageInstructions) {
-			if (naturalLanguageLine.trim().startsWith(stageInstruction.trim())) {
+		for (String keyword : knownBddKeywords) {
+			if (naturalLanguageLine.trim().startsWith(keyword.trim())) {
 				return true;
 			}
 		}
@@ -44,17 +44,24 @@ public class BDDKeywordUtil
 
 	private static List<String> loadKnownBDDKeywords() 
 	{
-		 final List<String> content = SysNatFileUtil.readTextFile(KNOWN_BDD_KEYWORDS_FILE);
+		 List<String> content = SysNatFileUtil.readTextFile(KNOWN_BDD_KEYWORDS_FILE);
+		 content = content.stream().map(line -> cutComment(line)).collect(Collectors.toList());
 		 return content.stream().filter(BDDKeywordUtil::isValidStageInstruction).collect(Collectors.toList());
 	}
-	
-	private static boolean isValidStageInstruction(final String line) 
+
+	private static String cutComment(String line)
+	{
+		int pos = line.indexOf("#");
+		if (pos > -1) {
+			return line.substring(0, pos).trim();
+		}
+		return line.trim();
+	}
+
+	private static boolean isValidStageInstruction(String line)
 	{
 		if (line.trim().isEmpty()) return false;
 		if (line.trim().startsWith("#")) return false;
-		if (line.trim().endsWith(":")) return true;
-		throw new SysNatConfigurationException("Invalid keyword in " 
-		                                       + KNOWN_BDD_KEYWORDS_FILE 
-		                                       + ": " + line);
+		return true;
 	}
 }

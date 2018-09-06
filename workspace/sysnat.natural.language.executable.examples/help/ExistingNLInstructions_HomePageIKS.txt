@@ -4,6 +4,7 @@ Instructions read from LanguageTemplatesCommon
 Active: ^^
 Aktiv: ^^
 Beep ^^ times.
+Behaviour: ^^
 Category-Filter: ^^
 Comment: ^^
 Das heutige Datum wird als <> festgehalten.
@@ -26,24 +27,17 @@ Führe mit
 Führe mit ^^
 Führe mit allen ^^
 Kategorie-Filter: ^^
-Keyword-Comment: Arrange test requirements
-Keyword-Comment: Assert expected results
-Keyword-Comment: Perform action under test
-Keyword-Comment: Reset to start situation
 Kommentar: ^^
 Piepse ^^ mal.
-Regel: ^^
-Rule: ^^
 Save screenshot now as ^^.
 Save screenshot now if test case is categorized as mitBildnachweis.
-Schlüsselkommentar: Test-Durchführung
-Schlüsselkommentar: Test-Vorbereitungen
-Schlüsselkommentar: Wiederherstellen der Ausgangssituation
-Schlüsselkommentar: Überprüfung der Testergebnisse
+Set BDD-Keyword ^^.
 Test-Parameter: ^^
+Test-Phase: ^^
 TestData: ^^
 Testdaten: ^^
 There are ^^.
+Verhalten: ^^
 Wait ^^ second(s).
 Warte ^^ Sekunde(n).
 XXID: ^^

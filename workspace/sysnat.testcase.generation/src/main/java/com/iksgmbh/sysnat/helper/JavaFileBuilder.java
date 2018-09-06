@@ -64,9 +64,8 @@ public class JavaFileBuilder
 	 * For each input file an output file object and its content is generated.
 	 * 
 	 * @param aJavaCommandCollection HashMap containing for each input file a list or block of java commands
-	 * @param testCaseJavaTemplateFilename  test application specific file template in which the java commands are embedded
 	 * @param applicationName name of application under test
-	 * @param languageTemplateCollection 
+	 * @param languageTemplateContainerJavaFields
 	 * @return java code as a list of test classes ready to be written to file and to be compiled
 	 */
 	public static HashMap<File, String> doYourJob(
@@ -116,7 +115,9 @@ public class JavaFileBuilder
 	private void buildScriptFile(final Filename instructionFilename)
 	{
 		final HashMap<String,List<String>> placeHolderBlocks = buildCommandBlocksForReplacements(instructionFilename);
-		final List<String> scriptTemplateLines = SysNatFileUtil.readTextFile(PATH_TO_TEMPLATES + "/ScriptTemplate.java");
+		String scriptTemplateContent = SysNatFileUtil.readTextFileToString(PATH_TO_TEMPLATES + "/ScriptTemplate.java");
+		scriptTemplateContent = SysNatStringUtil.removeLicenceComment(scriptTemplateContent);
+		final List<String> scriptTemplateLines = SysNatStringUtil.toListOfLines(scriptTemplateContent);
 		final StringBuffer generatedCode = new StringBuffer();
 		scriptTemplateLines.forEach(line -> checkPlaceHolderReplacement(generatedCode, line, placeHolderBlocks));
 		final File targetFile = buildTargetFilename(instructionFilename);
@@ -139,7 +140,9 @@ public class JavaFileBuilder
 
 	private void buildJUnitTestCaseFile(final Filename instructionFilename)
 	{
-		final List<String> testcaseTemplateLines = SysNatFileUtil.readTextFile(PATH_TO_TEMPLATES + "/JUnitTestcaseTemplate.java");
+		String templateContent = SysNatFileUtil.readTextFileToString(PATH_TO_TEMPLATES + "/JUnitTestcaseTemplate.java");
+		templateContent = SysNatStringUtil.removeLicenceComment(templateContent);
+		final List<String> testcaseTemplateLines = SysNatStringUtil.toListOfLines(templateContent);
 		final HashMap<String,List<String>> placeHolderBlocks = buildCommandBlocksForReplacements(instructionFilename);
 		final StringBuffer generatedCode = new StringBuffer();
 		testcaseTemplateLines.forEach(line -> checkPlaceHolderReplacement(generatedCode, line, placeHolderBlocks));
@@ -304,27 +307,52 @@ public class JavaFileBuilder
 
 	private void addToJavaFile(final String line, final List<String> javaFileContent) 
 	{
-		if (line.contains(".createKeywordArrange") )
+		if (line.contains(".startNewTestPhase(\"Precondition") )
+		{
+			javaFileContent.add( "" );
+			javaFileContent.add( "// precondition block" );
+			javaFileContent.add(line);
+		}
+		else if (line.contains(".startNewTestPhase(\"Arrange") )
 		{
 			javaFileContent.add( "" );
 			javaFileContent.add( "// arrange block" );
-		} 
-		else if (line.contains(".createKeywordAct") )
+			javaFileContent.add(line);
+		}
+		else if (line.contains(".startNewTestPhase(\"Act") )
 		{
 			javaFileContent.add( "" );
 			javaFileContent.add( "// act block" );
+			javaFileContent.add(line);
 		}
-		else if (line.contains(".createKeywordAssert") )
+		else if (line.contains(".startNewTestPhase(\"Assert") )
 		{
 			javaFileContent.add( "" );
 			javaFileContent.add( "// assert block" );
+			javaFileContent.add(line);
 		}
-		else if (line.contains(".createKeywordCleanup") )
+		else if (line.contains(".startNewTestPhase(\"Cleanup") )
 		{
-				javaFileContent.add( "" );
-				javaFileContent.add( "// cleanup block" );
+			javaFileContent.add( "" );
+			javaFileContent.add( "// cleanup block" );
+			javaFileContent.add(line);
 		}
-		javaFileContent.add(line);
+		else if (line.contains(" = " ) )
+		{
+			javaFileContent.add(line);
+			javaFileContent.add(buildStoreDataObjectLine(line));
+		} else {
+			javaFileContent.add(line);
+		}
+
+	}
+
+	private String buildStoreDataObjectLine(String line)
+	{
+		int pos1 = line.indexOf(' ');
+		int pos2 = line.indexOf('=');
+		String testObjectName = line.substring(pos1, pos2).trim();
+		return "storeTestObject(\""  + testObjectName + "\", " + testObjectName + ");";
 	}
 
 	private void checkPlaceHolderReplacement(final StringBuffer generatedCode, 
@@ -353,8 +381,7 @@ public class JavaFileBuilder
 			}
 		}
 	}
-	
-	
+
 	private boolean checkPlaceHolderReplacement(final StringBuffer generatedCode,
 			                                    final String lineToCheckForReplacement,
 			                                    final String toBeReplacedMarker, 
@@ -370,7 +397,12 @@ public class JavaFileBuilder
 
 	private void appendLine(StringBuffer sb, String newLine, String oldLine) 
 	{
-		final String leadingWhiteSpace = SysNatStringUtil.getLeadingWhiteSpace(oldLine);
+		final String leadingWhiteSpace;
+		if (newLine.trim().equals("")) {
+			leadingWhiteSpace = "";
+		} else {
+			leadingWhiteSpace = SysNatStringUtil.getLeadingWhiteSpace(oldLine);
+		}
 		sb.append(leadingWhiteSpace)
           .append(newLine)
           .append(System.getProperty("line.separator"));

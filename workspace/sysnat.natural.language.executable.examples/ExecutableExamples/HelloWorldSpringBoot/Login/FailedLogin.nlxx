@@ -2,21 +2,21 @@ XXID:          <Dateiname>
 Kategorie-Filter: <Pfad>
 
 # arrange
-Keyword-Comment: Arrange test requirements
+Test-Phase: Arrange    # setup all test requirements
 Is page "Form Page" visible?
 Click menu item "Logout".
 Is page "Login Page" visible?
 
 # act 
-Keyword-Comment: Perform action under test
+Test-Phase: Act  # Perform action under test
 Login with "Peter", "wrongPW".
 
 # assert
-Keyword-Comment: Assert expected results
+Test-Phase: Assert    # check expectations
 Is page "Error Page" visible?
 Is the displayed text "ErrorMessage" equal to "Invalid User Login Data."?
 
 # clean up so that next test case can start
-Keyword-Comment: Reset to start situation
+Test-Phase: Reset to start situation
 Click button "Back".
 Relogin.

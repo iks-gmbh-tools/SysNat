@@ -2,12 +2,12 @@ XXID:         <Dateiname>
 Kategorie-Filter: Smoketest
 
 # Arrange
-Keyword-Comment: Arrange test requirements
+Test-Phase: Arrange    # setup all test requirements
 Klicke Hauptmenüpunkt "Downloads".
 Klicke Link "Alle Fachartikel zeigen". 
 
 # Act
-Keyword-Comment: Perform action under test
+Test-Phase: Act  # Perform action under test
 
 #Klicke Link "IKS Software zum Anfassen Gibt es so etwas".
 #Das PDF wird als Dokument <Fachartikel Software zum Anfassen> gespeichert.
@@ -15,6 +15,6 @@ Keyword-Comment: Perform action under test
 # TODO wait until bug "WebDriverException: java.net.SocketException: Software caused connection abort: recv failed " is solved
 
 # assert
-Keyword-Comment: Assert expected results
+Test-Phase: Assert    # check expectations
 #Enthält das Dokument 'Fachartikel Software zum Anfassen' genau "8" Seite(n)?
 

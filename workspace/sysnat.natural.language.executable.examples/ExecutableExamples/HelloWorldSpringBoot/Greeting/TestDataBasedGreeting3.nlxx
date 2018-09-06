@@ -9,14 +9,14 @@ TestData:         MultipleGreetingData_1  # Note: this dataset does not contain 
 TestData:         MultipleValidationData_1 
 
 # arrange
-Keyword-Comment: Arrange test requirements
+Test-Phase: Arrange    # setup all test requirements
 Select "MultipleGreetingData_1:Greeting" in selection field "Greeting".
 Enter "MultipleGreetingData_1:Name" in text field "Name".
 
 # act 
-Keyword-Comment: Perform action under test
+Test-Phase: Act  # Perform action under test
 Click button "Greet".
 
 # assert
-Keyword-Comment: Assert expected results
+Test-Phase: Assert    # check expectations
 Is the displayed text "GreetingResult" equal to "MultipleValidationData_1:GreetingResult"?

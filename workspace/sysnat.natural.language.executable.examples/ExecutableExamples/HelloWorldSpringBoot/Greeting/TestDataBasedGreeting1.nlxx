@@ -7,13 +7,13 @@ Kategorie-Filter: <Pfad>
 TestData:         SingleGreetingData # Note: this dataset does not contain a Greeting Result!
 
 # arrange
-Keyword-Comment: Arrange test requirements
+Test-Phase: Arrange    # setup all test requirements
 "EnterGreetingData".
 
 # act 
-Keyword-Comment: Perform action under test
+Test-Phase: Act  # Perform action under test
 Click button "Greet".
 
 # assert
-Keyword-Comment: Assert expected results
+Test-Phase: Assert    # check expectations
 Is the displayed text "GreetingResult" equal to "Hey Elisabeth!"?

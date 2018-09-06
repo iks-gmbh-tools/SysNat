@@ -37,7 +37,8 @@ public class SysNatTestingExecutor
 
 	public static final String MAVEN_OK = "OK";
 	public static final File JAVA_HOME = new File("../../java");
-	
+	private static final String PATH_TO_MAVEN = "../../maven";
+
 	public static void main(String[] args) 
 	{
 		// optional PRE-Phase: read settings from dialog
@@ -78,7 +79,7 @@ public class SysNatTestingExecutor
 		request.setGoals(goals);
 		
 		final Invoker mavenInvoker = new DefaultInvoker();
-		mavenInvoker.setMavenHome(new File("../../maven"));
+		mavenInvoker.setMavenHome(new File(PATH_TO_MAVEN));
 		
 		InvocationResult result = null;
 		try {

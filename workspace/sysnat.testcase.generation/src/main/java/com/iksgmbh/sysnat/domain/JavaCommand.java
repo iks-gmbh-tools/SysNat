@@ -22,7 +22,14 @@ package com.iksgmbh.sysnat.domain;
  */
 public class JavaCommand 
 {
+	/**
+	 * One line of Java code for the JUnit test case to create.
+	 */
 	public String value;
+
+	/**
+	 * Meta information about this Java command line.
+	 */
 	public String importType;
 	
 	public JavaCommand(final String aValue) {

@@ -50,16 +50,15 @@ import com.iksgmbh.sysnat.helper.VirtualTestCase;
  * 
  * @author Reik Oberrath
  */
-public class ExecutionRuntimeInfo 
-{
+public class ExecutionRuntimeInfo {
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
 
 	public static final String PROPERTIES_PATH = "../sysnat.test.runtime.environment/src/main/resources/execution_properties";
 	private static final Hashtable<String, String> sysNatProperties = new Hashtable<>();
-	
+
 	// common technical settings
-	public static final String PROPERTIES_FILENAME = "execution.properties"; 
-	
+	public static final String PROPERTIES_FILENAME = "execution.properties";
+
 	// user settings
 	public static final String CONFIG_FILE_NAME = "../sysnat.natural.language.executable.examples/settings.config";
 
@@ -82,13 +81,12 @@ public class ExecutionRuntimeInfo
 	private HashMap<String, List<String>> reportMessagesWRONG = new HashMap<>(); // assertion failed (fachliches Problem)
 	private HashMap<String, List<String>> reportMessagesFAILED = new HashMap<>(); // excecption thrown (technisches Problem)
 	private HashMap<String, Integer> testCategoryCollection = new HashMap<>(); // categories defined by the natspec files
-	private HashMap<String, TestStatistics> testStatistics = new HashMap<>();     
+	private HashMap<String, TestStatistics> testStatistics = new HashMap<>();
 
 	private String testCategories;
 	private List<String> testCategoriesToExecute;
 	private List<String> inactiveXXIDs = new ArrayList<>();
 	private File reportFolder;
-	
 	private int totalNumberOfTestCases = 0; // known for the given application/product under test
 	private int numberOfAllExecutedTestCases = 0;
 	private boolean alreadyLoggedIn = false;
@@ -101,19 +99,16 @@ public class ExecutionRuntimeInfo
 	private boolean archiveResults;
 	private boolean settingsOk;
 
-
-	public static ExecutionRuntimeInfo getInstance() 
-	{
+	public static ExecutionRuntimeInfo getInstance() {
 		if (instance == null) {
-			System.out.println("SysNatTesting v" + SysNatConstants.SYS_NAT_VERSION 
-					           + " test environment initialisation...");
+			System.out.println("SysNatTesting v" + SysNatConstants.SYS_NAT_VERSION
+					+ " test environment initialisation...");
 			instance = new ExecutionRuntimeInfo();
 		}
 		return instance;
 	}
 
-	protected ExecutionRuntimeInfo() 
-	{
+	protected ExecutionRuntimeInfo() {
 		// load test properties
 		addToSystemProperties(getExecutionPropertiesAsString());
 		addToSystemProperties(getSettingsConfigAsString());
@@ -144,9 +139,8 @@ public class ExecutionRuntimeInfo
 		System.out.println("Starting " + getTestApplicationName() + " on " + targetEnvironment + " at "
 				+ getStartPointOfTimeAsFileStringForFileName() + "...");
 	}
-	
-	void assertPositiveCategoriesInFrontOfNegativeOnes(List<String> testCategories) 
-	{
+
+	void assertPositiveCategoriesInFrontOfNegativeOnes(List<String> testCategories) {
 		int indexOfLastPositiveCategory = 0;
 		int indexOfFirstNegativeCategory = 0;
 		int indexCounter = 0;
@@ -183,17 +177,16 @@ public class ExecutionRuntimeInfo
 		throw new SysNatException(errorMessage);
 	}
 
-	private String getExecutionProperty(String propertyEnding) 
-	{
+	private String getExecutionProperty(String propertyEnding) {
 		if (targetEnvironment == null) {
 			throw new RuntimeException(
 					"Die property 'Zielumgebung' wurde in der Datei settings.config nicht gesetzt oder ist nicht gültig.");
 		}
 
-		return getTestApplicationNameAsPropertyKey() + "." 
+		return getTestApplicationNameAsPropertyKey() + "."
 				+ targetEnvironment.name().toLowerCase() + "." + propertyEnding;
 	}
-	
+
 	public String getTestApplicationNameAsPropertyKey() {
 		return getTestApplicationName().toLowerCase().replaceAll("_", "");
 	}
@@ -262,12 +255,11 @@ public class ExecutionRuntimeInfo
 		numberOfAllExecutedTestCases--;
 	}
 
-	private void addToSystemProperties(final String propertiesFilename) 
-	{
+	private void addToSystemProperties(final String propertiesFilename) {
 		System.out.println("Properties filename in use: " + propertiesFilename);
 
 		final File f = new File(propertiesFilename);
-		if ( ! f.exists() ) {
+		if (!f.exists()) {
 			RuntimeException e = new RuntimeException("The following necessary file is missing: " + f.getAbsolutePath());
 			e.printStackTrace();
 			throw e;
@@ -282,10 +274,8 @@ public class ExecutionRuntimeInfo
 
 	}
 
-	public static void setSysNatSystemProperty(String key, String value) 
-	{
-		if (System.getProperty(key.toString()) == null) 
-		{
+	public static void setSysNatSystemProperty(String key, String value) {
+		if (System.getProperty(key.toString()) == null) {
 			// add only if not yet present
 			System.setProperty(key, value);
 			sysNatProperties.put(key, value);
@@ -307,10 +297,10 @@ public class ExecutionRuntimeInfo
 	}
 
 	public boolean isXXIdAlreadyUsed(String xxid) {
-		return reportMessagesOK.containsKey(xxid) 
-			   || reportMessagesFAILED.containsKey(xxid)
-			   || reportMessagesWRONG.containsKey(xxid)
-			   || inactiveXXIDs.contains(xxid);
+		return reportMessagesOK.containsKey(xxid)
+				|| reportMessagesFAILED.containsKey(xxid)
+				|| reportMessagesWRONG.containsKey(xxid)
+				|| inactiveXXIDs.contains(xxid);
 	}
 
 	public HashMap<String, List<String>> getReportMessagesOK() {
@@ -368,18 +358,17 @@ public class ExecutionRuntimeInfo
 	}
 
 	protected static void clearSysNatProperties() {
-		sysNatProperties.forEach( (key,value) -> System.clearProperty(key) );
+		sysNatProperties.forEach((key, value) -> System.clearProperty(key));
 		sysNatProperties.clear();
 	}
 
-	public String getLoginDataForDefaultLogin(final String loginDataItem) 
-	{
+	public String getLoginDataForDefaultLogin(final String loginDataItem) {
 		final String propertyKey = getExecutionProperty("login." + loginDataItem).toLowerCase();
 		final String toReturn = System.getProperty(propertyKey);
 
 		if (toReturn == null) {
-			String errorMessage = "Expected property '" + propertyKey + "' not found " + "in '" 
-		           + getTestApplicationName() + ".properties' !";
+			String errorMessage = "Expected property '" + propertyKey + "' not found " + "in '"
+					+ getTestApplicationName() + ".properties' !";
 			System.err.println(errorMessage);
 			throw new RuntimeException(errorMessage);
 		}
@@ -410,14 +399,13 @@ public class ExecutionRuntimeInfo
 		System.setProperty(BUNDLE.getString("TESTAPP_SETTING_KEY"), name);
 	}
 
-	public String getTestApplicationName() 
-	{
+	public String getTestApplicationName() {
 		final String toReturn = System.getProperty(BUNDLE.getString("TESTAPP_SETTING_KEY"));
 
 		if (toReturn == null) {
 			throw new SysNatException("Appliacation under test not specified!");
 		}
-		
+
 		return toReturn;
 	}
 
@@ -425,8 +413,7 @@ public class ExecutionRuntimeInfo
 		return getSystemProperty(BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY"));
 	}
 
-	public int getMilliesForWaitState() 
-	{
+	public int getMilliesForWaitState() {
 		String executionSpeed = getExecutionSpeed();
 
 		if ("verySlow".equals(executionSpeed)) {
@@ -502,8 +489,7 @@ public class ExecutionRuntimeInfo
 		return true;
 	}
 
-	private String getSettingsConfigAsString() 
-	{
+	private String getSettingsConfigAsString() {
 		final String value = System.getProperty("settings.config", CONFIG_FILE_NAME);
 		System.out.println("settings.config used: " + value);
 		return value;
@@ -520,7 +506,7 @@ public class ExecutionRuntimeInfo
 	public void setApplicationStarted(boolean applicationStarted) {
 		this.applicationStarted = applicationStarted;
 	}
-	
+
 	public boolean isApplicationStarted() {
 		return applicationStarted;
 	}
@@ -533,15 +519,14 @@ public class ExecutionRuntimeInfo
 	public String getTestdataDir() {
 		return System.getProperty("sysnat.testdata.import.directory") + "/" + getTestApplicationName();
 	}
-	
-	public List<String> getContentOfConfigSettingsFile() 
-	{
-        File f = new File(CONFIG_FILE_NAME);
-        if ( ! f.exists() ) {
-            throw new RuntimeException("Folgende notwendige Datei wurde nicht gefunden: " + CONFIG_FILE_NAME);
-        }
-        String[] splitResult = SysNatFileUtil.readTextFileToString(f.getAbsolutePath()).split(System.getProperty("line.separator"));
-        return Arrays.asList(splitResult);
+
+	public List<String> getContentOfConfigSettingsFile() {
+		File f = new File(CONFIG_FILE_NAME);
+		if (!f.exists()) {
+			throw new RuntimeException("Folgende notwendige Datei wurde nicht gefunden: " + CONFIG_FILE_NAME);
+		}
+		String[] splitResult = SysNatFileUtil.readTextFileToString(f.getAbsolutePath()).split(System.getProperty("line.separator"));
+		return Arrays.asList(splitResult);
 	}
 
 	public boolean areResultsToArchive() {
@@ -551,9 +536,9 @@ public class ExecutionRuntimeInfo
 	public void setResultsToArchive(boolean value) {
 		archiveResults = value;
 	}
-	
+
 	public void setTargetEnv(String targetEnv) {
-		if (TargetEnv.valueOf(targetEnv) != null)  {
+		if (TargetEnv.valueOf(targetEnv) != null) {
 			targetEnvironment = TargetEnv.valueOf(targetEnv);
 			System.setProperty(BUNDLE.getString("ENVIRONMENT_SETTING_KEY"), targetEnv);
 		} else {
@@ -561,31 +546,29 @@ public class ExecutionRuntimeInfo
 		}
 	}
 
-	public String getReportName() 
-	{
+	public String getReportName() {
 		String toReturn = System.getProperty(BUNDLE.getString("REPORT_NAME_SETTING_KEY")).trim();
 
 		if (toReturn == null || toReturn.trim().length() == 0) {
 			toReturn = buildDefaultReportName();
 			System.setProperty(BUNDLE.getString("REPORT_NAME_SETTING_KEY"), toReturn);
 		}
-		
+
 		if (toReturn.endsWith("-")) {
-			toReturn = toReturn.substring(0, toReturn.length()-1);
+			toReturn = toReturn.substring(0, toReturn.length() - 1);
 		}
-		
+
 		return toReturn;
 	}
 
-	public String buildDefaultReportName() 
-	{
+	public String buildDefaultReportName() {
 		String testCategories = getTestCategories();
 		if (testCategories.equals(NO_FILTER)) {
 			testCategories = BUNDLE.getString("All");
 		}
-		return getTestApplicationName() + "-" 
-	         + getTargetEnv().name() + "-"
-	         + testCategories;
+		return getTestApplicationName() + "-"
+				+ getTargetEnv().name() + "-"
+				+ testCategories;
 	}
 
 	public String getArchiveDir() {
@@ -610,11 +593,11 @@ public class ExecutionRuntimeInfo
 	}
 
 	public boolean getUseSettingsDialog() {
-		return System.getProperty("SettingsConfigDialog").equalsIgnoreCase("on") 
-				|| System.getProperty("SettingsConfigDialog").equalsIgnoreCase("an") ;
+		return System.getProperty("SettingsConfigDialog").equalsIgnoreCase("on")
+				|| System.getProperty("SettingsConfigDialog").equalsIgnoreCase("an");
 	}
 
-	
+
 	public boolean areSettingsComplete() {
 		return settingsOk;
 	}
@@ -624,15 +607,14 @@ public class ExecutionRuntimeInfo
 	}
 
 	public String getReportFolderAsString() {
-		return System.getProperty("sysnat.report.dir") + "/" 
-	           + getReportName() + " "
-	           + getStartPointOfTimeAsFileStringForFileName();
+		return System.getProperty("sysnat.report.dir") + "/"
+				+ getReportName() + " "
+				+ getStartPointOfTimeAsFileStringForFileName();
 	}
 
-	public File getReportFolder() 
-	{
+	public File getReportFolder() {
 		if (reportFolder == null) {
-			reportFolder = SysNatFileUtil.createFolder( getReportFolderAsString() );
+			reportFolder = SysNatFileUtil.createFolder(getReportFolderAsString());
 		}
 		return reportFolder;
 	}
@@ -641,12 +623,12 @@ public class ExecutionRuntimeInfo
 		testStatistics.put(xxid, statistics);
 	}
 
-	public static class TestStatistics 
-	{
+	public static class TestStatistics {
 		public TestStatistics(DateTime startTime, DateTime endTime) {
-			startPointOfTime = DATE_FORMAT.format(startTime.toDate()); 
+			startPointOfTime = DATE_FORMAT.format(startTime.toDate());
 			duration = TIME_FORMAT.format(endTime.toDate().getTime() - startTime.toDate().getTime());
 		}
+
 		public String startPointOfTime;
 		public String duration;
 	}
@@ -655,24 +637,22 @@ public class ExecutionRuntimeInfo
 		return TIME_FORMAT.format(new Date().getTime() - startPointOfTime.getMillis());
 	}
 
-    public String getIntermediateResultLogText() 
-    {
-          int numTotal = getNumberOfAllExecutedTestCases();
-          int numSuccess = getReportMessagesOK().size();
-          
-          if (numTotal == 0) {
-                 return "No tests excecuted so far";
-          }
-          
-          if (numTotal == 1) {
-                 if (numSuccess == 0) {
-                       return "One failed test excecuted so far";
-                 } else {
-                       return "One successful test excecuted so far";
-                 }
-          }
-          
-          return numTotal + " tests executed so far - of these " + getReportMessagesOK().size() + " successful";
-    }
-	
+	public String getIntermediateResultLogText() {
+		int numTotal = getNumberOfAllExecutedTestCases();
+		int numSuccess = getReportMessagesOK().size();
+
+		if (numTotal == 0) {
+			return "No tests excecuted so far";
+		}
+
+		if (numTotal == 1) {
+			if (numSuccess == 0) {
+				return "One failed test excecuted so far";
+			} else {
+				return "One successful test excecuted so far";
+			}
+		}
+
+		return numTotal + " tests executed so far - of these " + getReportMessagesOK().size() + " successful";
+	}
 }

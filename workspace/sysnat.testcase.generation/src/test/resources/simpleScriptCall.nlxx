@@ -1,0 +1,6 @@
+# Script may be called using the "^^." annotation, e.g.
+"Create an order".
+
+# For convenience reasons, the following does the same:
+Create an order.
+

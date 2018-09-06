@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,14 +89,14 @@ public class TestcaseGeneration_ModuleLevelTest
 				return name.endsWith(".java");
 			}
 		});
-		assertEquals("Number", 4, result.size());
+		assertEquals("Number", 9, result.size());
 		
 		// check content of test case file
-		String expectedFileContent = 
+		String expectedFileContent = SysNatStringUtil.removeWhitespaceLinewise(
 				SysNatFileUtil.readTextFileToString(
-						"src/test/resources/HomePageIKS_ExpectedTestCaseContent.txt");
-		String actualFileContent = 
-				SysNatFileUtil.readTextFileToString( result.get(1) );
+						"src/test/resources/HomePageIKS_ExpectedTestCaseContent.txt"));
+		String actualFileContent = SysNatStringUtil.removeWhitespaceLinewise(
+				SysNatFileUtil.readTextFileToString( result.get(2) ) );
 		assertEquals("Generated Java File Content", 
 				     expectedFileContent, 
 				     actualFileContent);
@@ -119,14 +120,14 @@ public class TestcaseGeneration_ModuleLevelTest
 				return name.endsWith(".java");
 			}
 		});
-		assertEquals("Number of java files in target dir", 4, result.size());
+		assertEquals("Number of java files in target dir", 9, result.size());
 				
 		// check content of script file
 		String expectedFileContent = 
 				SysNatFileUtil.readTextFileToString(
 						"src/test/resources/HomePageIKS_ExpectedScriptContent.txt");
 		String actualFileContent = 
-				SysNatFileUtil.readTextFileToString( result.get(2) );
+				SysNatFileUtil.readTextFileToString( result.get(7) );
 		assertEquals("Generated Java File Content", 
 				     expectedFileContent, 
 				     actualFileContent);		
@@ -137,7 +138,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	public void createsEmptyTestCaseForFakeTestApp() throws Exception 
 	{
 		// arrange
-		setTestProperties("FakeTestApp", null);
+		setTestProperties("FakeTestApp", "./src/test/java/com/iksgmbh/sysnat/test/helper");
 		final File resultDir = new File("target/faketestapp");
 		SysNatFileUtil.deleteFolder(resultDir);
 		assertFalse(resultDir.exists());
@@ -154,8 +155,10 @@ public class TestcaseGeneration_ModuleLevelTest
 		});
 		assertEquals("Number", 1, result.size());
 		
-		String actualFileContent = SysNatFileUtil.readTextFileToString(result.get(0));
-		String expectedFileContent = SysNatFileUtil.readTextFileToString(testInputDir + "/Result.txt");
+		String actualFileContent = SysNatStringUtil.removeWhitespaceLinewise(
+				                       SysNatFileUtil.readTextFileToString(result.get(0)));
+		String expectedFileContent = SysNatStringUtil.removeWhitespaceLinewise(
+				                       SysNatFileUtil.readTextFileToString(testInputDir + "/Result.txt"));
 		assertEquals("File Content", expectedFileContent, actualFileContent);
 	}	 
 
@@ -179,8 +182,10 @@ public class TestcaseGeneration_ModuleLevelTest
 		List<String> filenames = result.stream().map(file -> file.getAbsolutePath()).collect(Collectors.toList());
 		Collections.sort(filenames);
 		
-		String actualFileContent = SysNatFileUtil.readTextFileToString(filenames.get(0));
-		String expectedFileContent = SysNatFileUtil.readTextFileToString(testInputDir + "/FirstTestCaseFile.txt");
+		String actualFileContent = SysNatStringUtil.removeWhitespaceLinewise(
+				                   SysNatFileUtil.readTextFileToString(filenames.get(0)));
+		String expectedFileContent = SysNatStringUtil.removeWhitespaceLinewise(
+				                     SysNatFileUtil.readTextFileToString(testInputDir + "/FirstTestCaseFile.txt"));
 		assertEquals("File Content", expectedFileContent, actualFileContent);
 	}	 
 	

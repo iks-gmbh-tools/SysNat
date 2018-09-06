@@ -89,6 +89,7 @@ public class TestExecution_ModuleLevelTest
 		final String testAppName = "MiniTestApp";
 		System.setProperty("sysnat.properties.path", TESTDATA_DIR + testAppName);
 		System.setProperty("settings.config", TESTDATA_DIR + testAppName + "/settings.config");
+		System.setProperty("sysnat.dummy.test.run", "true");
 		
 		final List<String> fileList = new ArrayList<>();
 		fileList.add("MiniTestCaseTest.java");
@@ -101,7 +102,7 @@ public class TestExecution_ModuleLevelTest
 		final File resultFile = makeSureThatResultFileDoesNotExist("MiniTestScriptResult.txt");
 		final File expectedClassFile = makeSureThatExpectedClassFileDoesNotExist("MiniTestCaseTest");
 		SysNatFileUtil.writeFile("../sysnat.test.execution/AvailableNaturalLanguageScripts.properties", 
-				                 "MiniTestScript=com.iksgmbh.sysnat.test.integration.executableExample.MiniTestScript");
+				                 "MiniTestScript=com.iksgmbh.sysnat.test.integration.testcase.MiniTestScript");
 		
 		// act
 		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();

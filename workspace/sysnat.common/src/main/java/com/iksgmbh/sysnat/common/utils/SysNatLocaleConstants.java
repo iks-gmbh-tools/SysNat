@@ -46,4 +46,7 @@ public class SysNatLocaleConstants
 	public static final String REPORT_NAME_SETTING_KEY = BUNDLE.getString("REPORT_NAME_SETTING_KEY");
 	public static final String BROWSER_SETTING_KEY = BUNDLE.getString("BROWSER_SETTING_KEY");
 
+	public static final String SCENARIO_KEYWORD = BUNDLE.getString("SCENARIO");
+	public static final String BEHAVIOUR_KEYWORD = BUNDLE.getString("BEHAVIOUR");
+
 }

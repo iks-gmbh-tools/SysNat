@@ -2,16 +2,16 @@ XXID:          <Dateiname>
 Kategorie-Filter: <Pfad>
 
 # arrange
-Keyword-Comment: Arrange test requirements
+Test-Phase: Arrange    # setup all test requirements
 Is page "Form Page" visible?
 Click menu item "Logout".
 Is page "Login Page" visible?
 
 # act 
-Keyword-Comment: Perform action under test
+Test-Phase: Act  # Perform action under test
 Relogin.
 
 # assert
-Keyword-Comment: Assert expected results
+Test-Phase: Assert    # check expectations
 Is page "Form Page" visible?
 

@@ -30,12 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
@@ -79,7 +74,8 @@ abstract public class ExecutableExample
     protected ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
     protected DateTime startTime = new DateTime();
 	protected SysNatTestData testDataSets = new SysNatTestData(); 	// Container for data used within a test or script
-    protected TestDataImporter testDataImporter; 
+	protected HashMap<String, Object> testObjects = new HashMap<>();
+    protected TestDataImporter testDataImporter;
     
     private List<String> testCategories;
     private String XXID = null; // unique id of the executable example
@@ -88,8 +84,9 @@ abstract public class ExecutableExample
 	private GuiControl guiController;
 	private DateTime startDate = DateTime.now();
 	private List<String> reportMessages = new ArrayList<>();
-	private String setScriptToExecute; 
-	
+	private String setScriptToExecute;
+	private String bddKeyword = "";
+
     abstract public void executeTestCase();
     abstract public String getTestCaseFileName();
     abstract public Package getTestCasePackage();
@@ -107,11 +104,15 @@ abstract public class ExecutableExample
 	private void initExecution() 
 	{
 		testDataImporter = new TestDataImporter(executionInfo.getTestdataDir());
-		setGuiController(new SeleniumGuiController());
-		executionInfo.setGuiController( getGuiController() );
 		initShutDownHook();
-		login();
-		PopupHandler.setTestCase(this);
+
+		if (System.getProperty("isWebApplication", "false").equals("true"))
+		{
+			setGuiController(new SeleniumGuiController());
+			executionInfo.setGuiController( getGuiController() );
+			login();
+			PopupHandler.setTestCase(this);
+		}
 	}
 
 	protected boolean isSkipped() {
@@ -144,7 +145,11 @@ abstract public class ExecutableExample
 	}
     
 	public void addReportMessage(String message) {
-		reportMessages.add(message);
+		if (bddKeyword == null || bddKeyword.isEmpty()) {
+			reportMessages.add(message.trim());
+		} else {
+			reportMessages.add(bddKeyword + " " + message.trim());
+		}
 	}
 
 	public void terminateTestCase(String message) 
@@ -352,6 +357,7 @@ abstract public class ExecutableExample
     		executionInfo.setApplicationStarted(applicationStarted);
     		getApplicationSpecificLanguageTemplates().doLogin(testApplication.getStartParameter());
     	} else {
+    		System.out.println("This is a dummy test run!");
     		executionInfo.setApplicationStarted(true);
     	}
     }
@@ -913,5 +919,18 @@ abstract public class ExecutableExample
 	public String getScriptToExecute() {
 		return setScriptToExecute;
 	}
-	
+
+	public void setBddKeyword(String bddKeyword) {
+		this.bddKeyword = bddKeyword;
+	}
+
+
+	public void storeTestObject(String name, Object o) {
+		testObjects.put(name, o);
+	}
+
+	public Object getTestObject(String name) {
+		return testObjects.get(name);
+	}
+
 }

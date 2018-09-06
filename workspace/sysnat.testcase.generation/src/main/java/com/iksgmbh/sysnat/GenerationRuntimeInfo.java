@@ -17,6 +17,8 @@ package com.iksgmbh.sysnat;
 
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
 
+import java.util.List;
+
 /**
  * Stores information on generation of java test case files.
  * 
@@ -25,7 +27,8 @@ import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
 public class GenerationRuntimeInfo extends ExecutionRuntimeInfo
 {
 	private static GenerationRuntimeInfo instance;
-	
+	private List<String> listOfScriptNames;
+
 	public static GenerationRuntimeInfo getInstance() 
 	{
 		if (instance == null)  {
@@ -54,6 +57,14 @@ public class GenerationRuntimeInfo extends ExecutionRuntimeInfo
 		} catch (Exception e) {
 			System.err.println("Unknown target environment: " + aValue);
 		}
-	}	
-	
+	}
+
+	public void setListOfKnownScriptNames(List<String> aList) {
+		listOfScriptNames = aList;
+	}
+
+	public List<String> getListOfKnownScriptNames() {
+		return listOfScriptNames;
+	}
+
 }

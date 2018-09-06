@@ -30,6 +30,7 @@ public class DownloadPdfAndCheckContentScript extends ScriptTemplateParent
 	public void executeScript()
 	{
 		File pdfFile = languageTemplatesHomePageIKSBasics.downloadPDF(":filename");
+		storeTestObject("pdfFile", pdfFile);
 		languageTemplatesHomePageIKSBasics.checkPdfContent(pdfFile, ":Seite", ":text");
 	}
 }

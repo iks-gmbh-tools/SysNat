@@ -43,17 +43,17 @@ import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException.SkipReason;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.SysNatTestData;
 
 /**
- * Contains the implementation of the most basic language templates available in the natspec files
- * available in each test case. Note that the NatSpec-TextSyntax annotated method are contained
+ * Contains the implementation of the most basic language templates available in the nlxx files.
+ * Note that the application specific LanguageTemplate-annotated method are contained
  * in language specific subclasses (see package com.iksgmbh.sysnat.language_templates.common).
- * Therefore this class is not meant to be instantiated (therefore set abstract).
- * 
+ *
  * The most basic language templates are those that do not access GUI elements and represent no 
  * application-under-test specific business logic. Each application has its own specific 
  * LanguageTemplates files.
@@ -76,7 +76,7 @@ public class LanguageTemplatesCommon
 	protected ExecutionRuntimeInfo executionInfo;
 	protected ExecutableExample executableExample;
 	private Properties nlsProperties;
-	
+
 	public LanguageTemplatesCommon(ExecutableExample aExecutableExample) 
 	{
 		this.executableExample = aExecutableExample;
@@ -224,9 +224,9 @@ public class LanguageTemplatesCommon
 	//                   L A N G U A G E   T E M P L A T E    M E T H O D S
 	//##########################################################################################
 
-	@LanguageTemplate(value = "Rule: ^^")
-	@LanguageTemplate(value = "Regel: ^^")
-	public void declareXXGroupForRule(String ruleID) 
+	@LanguageTemplate(value = "Behaviour: ^^")
+	@LanguageTemplate(value = "Verhalten: ^^")
+	public void declareXXGroupForBehaviour(String behaviourID)
 	{
 		// TODO
 	}
@@ -298,29 +298,14 @@ public class LanguageTemplatesCommon
 	public void createComment(String comment) {
 		executableExample.addReportMessage(COMMENT_IDENTIFIER + comment);
 	}
-	
-	@LanguageTemplate(value = "Keyword-Comment: Arrange test requirements") 
-	@LanguageTemplate(value = "Schlüsselkommentar: Test-Vorbereitungen")
-	public void createKeywordArrangeComment() {
-		executableExample.addReportMessage(COMMENT_IDENTIFIER + ARRANGE_KEYWORD);
-	}
-	
-	@LanguageTemplate(value = "Keyword-Comment: Perform action under test") 
-	@LanguageTemplate(value = "Schlüsselkommentar: Test-Durchführung")
-	public void createKeywordActComment() {
-		executableExample.addReportMessage(COMMENT_IDENTIFIER + ACT_KEYWORD);
-	}
 
-	@LanguageTemplate(value = "Keyword-Comment: Assert expected results") 
-	@LanguageTemplate(value = "Schlüsselkommentar: Überprüfung der Testergebnisse")
-	public void createKeywordAssertComment() {
-		executableExample.addReportMessage(COMMENT_IDENTIFIER + ASSERT_KEYWORD);
-	}
-
-	@LanguageTemplate(value = "Keyword-Comment: Reset to start situation")  
-	@LanguageTemplate(value = "Schlüsselkommentar: Wiederherstellen der Ausgangssituation")
-	public void createKeywordCleanupComment() {
-		executableExample.addReportMessage(COMMENT_IDENTIFIER + CLEANUP_KEYWORD);
+	@LanguageTemplate(value = "Test-Phase: ^^")
+	public void startNewTestPhase(String phase)
+	{
+		if (SysNatConstants.TestPhase.valueOf(phase.trim().toUpperCase()) == null) {
+			throw new SysNatException("Unknown test phase <b>" + phase + "</b>.");
+		}
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + phase);
 	}
 
 	@LanguageTemplate(value = "Wait ^^ second(s).") 
@@ -527,6 +512,11 @@ public class LanguageTemplatesCommon
 	@LanguageTemplate(value = "Test-Parameter: ^^")
 	public void applyTestParameter(String param) {
 	    // needs no implementation because this method call will be replaced !
+	}
+
+	@LanguageTemplate(value = "Set BDD-Keyword ^^.")
+	public void setBddKeyword(String aKeyword) {
+		executableExample.setBddKeyword(aKeyword);
 	}
 	
 }

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -69,41 +70,60 @@ public class FileFinder
 			}
 		});
 	}
-	
-	public static List<File> searchFilesRecursively(final File folder, 
-			                             		    final FilenameFilter fileFilter)
+
+	public static List<File> searchFilesRecursively(final File folder,
+													final FilenameFilter fileFilter)
+	{
+		final List<File> toReturn = searchRecursively(folder, fileFilter);
+		sortAlphabetically(toReturn);
+		return toReturn;
+	}
+
+
+	private static List<File> searchRecursively(final File folder,
+			                             		final FilenameFilter fileFilter)
 	{
 		final List<File> toReturn = new ArrayList<File>();
-		
+
 		if (! folder.exists()) {
 			System.err.println("Folder does not extist: " + folder.getAbsolutePath());
 			return toReturn;
 		}
-		
+
 		final List<File> foundChildren = new ArrayList<File>();
 		foundChildren.addAll(Arrays.asList(folder.listFiles(fileFilter)));
-		
+
 		if (fileFilter instanceof CustomizedFileFilter) {
 			// do nothing
 		} else {
 			foundChildren.addAll(Arrays.asList( folder.listFiles(DIRECTORY_FILTER) ));
 		}
-		
-		for (File child : foundChildren) 
+
+		for (File child : foundChildren)
 		{
 			if ( child.isDirectory() )
 			{
-				toReturn.addAll( searchFilesRecursively(child, fileFilter) );					
+				toReturn.addAll( searchRecursively(child, fileFilter) );
 			}
 			else
 			{
 				toReturn.add(child);
 			}
 		}
+
 		return toReturn;
 	}
-	
-	
+
+	private static void sortAlphabetically(List<File> fileList) {
+		fileList.sort(new Comparator<File>() {
+			@Override
+			public int compare(File f1, File f2) {
+				return f1.getAbsolutePath().compareTo(f2.getAbsolutePath());
+			}
+		});
+	}
+
+
 	public static class CustomizedFileFilter implements FilenameFilter
 	{
 		private List<String> subdirsToSearch;
@@ -201,5 +221,5 @@ public class FileFinder
 
 		
 	}
-			
+
 }

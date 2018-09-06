@@ -42,6 +42,7 @@ import com.iksgmbh.sysnat.common.exception.SkipTestCaseException;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException.SkipReason;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.UnexpectedResultException;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.domain.SysNatTestData;
 import com.iksgmbh.sysnat.domain.SysNatTestData.SysNatDataset;
@@ -179,31 +180,15 @@ public class TestLanguageTemplatesContainer
 	public void createComment(String comment) {
 		executableExample.addReportMessage(COMMENT_IDENTIFIER + comment);
 	}
-	
-	@LanguageTemplate(value = "Keyword-Comment: Arrange test requirements") 
-	@LanguageTemplate(value = "Schlüsselkommentar: Test-Vorbereitungen")
-	public void createKeywordArrangeComment() {
-		executableExample.addReportMessage(COMMENT_IDENTIFIER + ARRANGE_KEYWORD);
-	}
-	
-	@LanguageTemplate(value = "Keyword-Comment: Perform action under test") 
-	@LanguageTemplate(value = "Schlüsselkommentar: Test-Durchführung")
-	public void createKeywordActComment() {
-		executableExample.addReportMessage(COMMENT_IDENTIFIER + ACT_KEYWORD);
-	}
 
-	@LanguageTemplate(value = "Keyword-Comment: Assert expected results") 
-	@LanguageTemplate(value = "Schlüsselkommentar: Überprüfung der Testergebnisse")
-	public void createKeywordAssertComment() {
-		executableExample.addReportMessage(COMMENT_IDENTIFIER + ASSERT_KEYWORD);
+	@LanguageTemplate(value = "Test-Phase: ^^")
+	public void startNewTestPhase(String phase)
+	{
+		if (SysNatConstants.TestPhase.valueOf(phase.trim().toUpperCase()) != null) {
+			throw new SysNatException("Unknown test phase <b>" + phase + "</b>.");
+		}
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + phase);
 	}
-
-	@LanguageTemplate(value = "Keyword-Comment: Reset to start situation")  
-	@LanguageTemplate(value = "Schlüsselkommentar: Wiederherstellen der Ausgangssituation")
-	public void createKeywordCleanupComment() {
-		executableExample.addReportMessage(COMMENT_IDENTIFIER + CLEANUP_KEYWORD);
-	}
-
 	
 	/**
 	 * Makes a single data set available.

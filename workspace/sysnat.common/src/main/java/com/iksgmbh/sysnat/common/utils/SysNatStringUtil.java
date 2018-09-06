@@ -206,4 +206,35 @@ public class SysNatStringUtil
 
 		return toReturn;
 	}
+
+	public static String removeLicenceComment(String s)
+	{
+		if (s.startsWith("/*")) {
+			int pos = s.indexOf("*/");
+			return s.substring(pos+2).trim();
+		}
+		return s;
+	}
+
+	public static String removeWhitespaceLinewise(String s)
+	{
+		String[] splitResult = s.split(System.getProperty("line.separator"));
+		final StringBuffer sb = new StringBuffer();
+		for (String line : splitResult)
+		{
+			sb.append(line.trim()).append(System.getProperty("line.separator"));
+		}
+
+		return sb.toString().trim();
+	}
+
+	public static List<String> toListOfLines(String text)
+	{
+		final List<String> toReturn = new ArrayList<String>();
+		String[] splitResult = text.split(System.getProperty("line.separator"));
+		for (String line : splitResult) {
+			toReturn.add(line);
+		}
+		return toReturn;
+	}
 }

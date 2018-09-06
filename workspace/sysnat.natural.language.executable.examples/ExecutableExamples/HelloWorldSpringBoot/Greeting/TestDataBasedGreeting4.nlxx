@@ -9,33 +9,33 @@ TestData:         MultipleGreetingData
 
 
 # arrange 1
-Keyword-Comment: Arrange test requirements
+Test-Phase: Arrange    # setup all test requirements
 Select "MultipleGreetingData_1:Greeting" in selection field "Greeting".
 Enter "MultipleGreetingData_1:Name" in text field "Name".
 
 # act 1
-Keyword-Comment: Perform action under test
+Test-Phase: Act  # Perform action under test
 Click button "Greet".
 
 # assert 1
-Keyword-Comment: Assert expected results
+Test-Phase: Assert    # check expectations
 Is the displayed text "GreetingResult" equal to "Hi Tim!"?
 
 
 
 
 # arrange 2
-Keyword-Comment: Arrange test requirements
+Test-Phase: Arrange    # setup all test requirements
 Click menu item "Form Page".
 Select "MultipleGreetingData_2:Greeting" in selection field "Greeting".
 Enter "MultipleGreetingData_2:Name" in text field "Name".
 
 # act 2
-Keyword-Comment: Perform action under test
+Test-Phase: Act  # Perform action under test
 Click button "Greet".
 
 # assert 2
-Keyword-Comment: Assert expected results
+Test-Phase: Assert    # check expectations
 Is the displayed text "GreetingResult" equal to "Hello Rose!"?
 
 
@@ -43,15 +43,15 @@ Is the displayed text "GreetingResult" equal to "Hello Rose!"?
 
 
 # arrange 3
-Keyword-Comment: Arrange test requirements
+Test-Phase: Arrange    # setup all test requirements
 Click menu item "Form Page".
 Select "MultipleGreetingData_3:Greeting" in selection field "Greeting".
 Enter "MultipleGreetingData_3:Name" in text field "Name".
 
 # act 3
-Keyword-Comment: Perform action under test
+Test-Phase: Act  # Perform action under test
 Click button "Greet".
 
 # assert 3
-Keyword-Comment: Assert expected results
+Test-Phase: Assert    # check expectations
 Is the displayed text "GreetingResult" equal to "MultipleGreetingData_3:Greeting MultipleGreetingData_3:Name!"?

@@ -23,8 +23,8 @@ import com.iksgmbh.sysnat.test.domain.Order;
 @LanguageTemplateContainer
 public class ComplexInstructionTestApplication_LanguageTemplateContainer 
 {
-	@LanguageTemplate(value = "Rule: ^^")  
-	public void declareXXGroupForRule(String id) {
+	@LanguageTemplate(value = "Behaviour: ^^")
+	public void declareXXGroupForBehaviour(String id) {
 		// do nothing
 	}
 
@@ -35,7 +35,7 @@ public class ComplexInstructionTestApplication_LanguageTemplateContainer
 	
 	
 	@LanguageTemplate(value = "TestData: ^^")  
-	public void importTestData(String multiLineDataTableString) {
+	public void setDatasetObject(String multiLineDataTableString) {
 		// do nothing
 	}
 	
