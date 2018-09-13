@@ -17,6 +17,6 @@ Is page "Error Page" visible?
 Is the displayed text "ErrorMessage" equal to "Invalid User Login Data."?
 
 # clean up so that next test case can start
-Test-Phase: Reset to start situation
+Test-Phase: Cleanup
 Click button "Back".
 Relogin.

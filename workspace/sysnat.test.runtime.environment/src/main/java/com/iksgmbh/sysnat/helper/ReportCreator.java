@@ -21,11 +21,7 @@ import static com.iksgmbh.sysnat.common.utils.SysNatConstants.ORANGE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.RED_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.WHITE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.YELLOW_HTML_COLOR;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ACT_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ARRANGE_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ASSERT_ERROR_TEXT;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ASSERT_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.CLEANUP_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.NO_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.TECHNICAL_ERROR_TEXT;
@@ -43,9 +39,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutableExample;
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.utils.SysNatUtil;
 
 public class ReportCreator 
 {	
@@ -59,7 +56,6 @@ public class ReportCreator
                                                      + Locale.getDefault().getLanguage() + ".txt";
 	private static final String DETAIL_TEMPLATE = "../sysnat.test.runtime.environment/src/main/resources/TestReport.htm.Template." 
                                                    + Locale.getDefault().getLanguage() + ".txt";
-	private static final String[] REPORT_PARAGRAPH_KEYWORDS =  { ARRANGE_KEYWORD, ACT_KEYWORD, ASSERT_KEYWORD, CLEANUP_KEYWORD};
 	
 	private HashMap<String, List<String>> reportMessagesOK;
 	private HashMap<String, List<String>> reportMessagesWRONG;
@@ -333,7 +329,7 @@ public class ReportCreator
 	private void appendCommentLine(StringBuffer sb, String message) 
 	{
 		message = message.substring(2);
-		if (isParagraphKeyword(message))  {
+		if (SysNatUtil.isTestPhaseKeyword(message))  {
 			sb.append("<br>").append(System.getProperty("line.separator"));
 			sb.append("<i><span style='font-size:13.0pt;color:" + BLUE_HTML_COLOR + "'>" + message + "</span></i>");
 		} else {
@@ -441,17 +437,6 @@ public class ReportCreator
 			report = report.replace("PLACEHOLDER_BACKGROUND_FAILED_NUMBER", RED_HTML_COLOR);
 		}
 		return report;
-	}
-
-
-	private boolean isParagraphKeyword(String word)  
-	{
-		for (String keyword : REPORT_PARAGRAPH_KEYWORDS) {
-			if (keyword.equals(word))  {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public static String getFullOverviewReportFilename() {

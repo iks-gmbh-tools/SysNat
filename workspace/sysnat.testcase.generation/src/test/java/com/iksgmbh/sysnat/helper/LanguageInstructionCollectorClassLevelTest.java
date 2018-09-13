@@ -76,7 +76,7 @@ public class LanguageInstructionCollectorClassLevelTest
 	{
 		// arrange
 		final List<String> knownScripts = new ArrayList<>();
-		knownScripts.add("Create an order");
+		knownScripts.add("Create an order.nls");
 		GenerationRuntimeInfo.getInstance().setListOfKnownScriptNames(knownScripts);
 		final File inputFile = new File("../sysnat.testcase.generation/src/test/resources/simpleScriptCall.nlxx");
 

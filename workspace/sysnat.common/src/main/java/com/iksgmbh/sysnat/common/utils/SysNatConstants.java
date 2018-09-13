@@ -19,7 +19,9 @@ public class SysNatConstants
 {
 	public static final String SYS_NAT_VERSION = "0.2";
 
-	public enum TestPhase {PRECONDITION, ARRANGE, ACT, ASSERT, CLEANUP};
+	public enum TestPhase {PRECONDITION, ARRANGE, ACT, ASSERT, CLEANUP, 
+		                   GIVEN, WHEN, THEN, 
+		                   VORBEREITUNG, DURCHFÜHRUNG, ÜBERPRÜFUNG};
 
 	public enum BrowserType { CHROME, IE, FIREFOX, FIREFOX_45_9 };
 

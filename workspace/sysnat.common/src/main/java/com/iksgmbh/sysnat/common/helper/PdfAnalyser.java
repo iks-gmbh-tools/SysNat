@@ -1,18 +1,3 @@
-/*
- * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.iksgmbh.sysnat.common.helper;
 
 import java.io.IOException;
@@ -67,7 +52,27 @@ public class PdfAnalyser
 	public int getPageNumber() {
 		return pages.size();
 	}
-	
+
+	public boolean doesLineContain(int pageNumber, int lineNumber, String toSearch) {
+		return getLine(pageNumber, lineNumber).contains(toSearch);
+	}
+
+	public boolean doesLineEquals(int pageNumber, int lineNumber, String toSearch) {
+		return getLine(pageNumber, lineNumber).equals(toSearch);
+	}
+
+	public String getLine(int pageNumber, int lineNumber)
+	{
+		if (pageNumber < 1 || pageNumber > getPageNumber() ) {
+			throw new IllegalArgumentException("Page number " + pageNumber + " out of range!");
+		}
+
+		List<String> linesOfPage = getLinesOfPage(pageNumber);
+		int index = lineNumber - 1;
+		return linesOfPage.get(index);
+
+	}
+
 	/**
 	 * 
 	 * @param pageNumber

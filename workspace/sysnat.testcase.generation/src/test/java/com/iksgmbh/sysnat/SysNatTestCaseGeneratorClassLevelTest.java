@@ -82,7 +82,6 @@ public class SysNatTestCaseGeneratorClassLevelTest
 		final String filename = result.get(0).getName();
 		assertEquals("Name of java file", "ComplexInstructionSequenzTest.java", filename);
 		
-		final List<String> fileContent = SysNatFileUtil.readTextFile(result.get(0));
 		String actualFileContent = SysNatStringUtil.removeLicenceComment( SysNatFileUtil.readTextFileToString(result.get(0)) );
 		actualFileContent = SysNatStringUtil.removeWhitespaceLinewise(actualFileContent);
 		String expectedFileContent = SysNatFileUtil.readTextFileToString("../sysnat.testcase.generation/src/test/resources/expectedResults/" +

@@ -182,10 +182,10 @@ public class LanguageInstructionCollector
 
 	private boolean isKnownScript(String instruction)
 	{
-		if (instruction.trim().endsWith(".")) {
-			instruction = instruction.substring(0, instruction.length()-1);
+		if (! instruction.trim().endsWith(".")) {
+			instruction += ".";
 		}
-		return GenerationRuntimeInfo.getInstance().getListOfKnownScriptNames().contains(instruction);
+		return GenerationRuntimeInfo.getInstance().getListOfKnownScriptNames().contains(instruction + "nls");
 	}
 
 	private boolean doesContainPlaceholder(String instruction) {

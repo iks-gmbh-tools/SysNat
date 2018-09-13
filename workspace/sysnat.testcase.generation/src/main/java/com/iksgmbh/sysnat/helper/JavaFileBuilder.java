@@ -307,35 +307,9 @@ public class JavaFileBuilder
 
 	private void addToJavaFile(final String line, final List<String> javaFileContent) 
 	{
-		if (line.contains(".startNewTestPhase(\"Precondition") )
+		if (line.contains(".startNewTestPhase(") )
 		{
-			javaFileContent.add( "" );
-			javaFileContent.add( "// precondition block" );
-			javaFileContent.add(line);
-		}
-		else if (line.contains(".startNewTestPhase(\"Arrange") )
-		{
-			javaFileContent.add( "" );
-			javaFileContent.add( "// arrange block" );
-			javaFileContent.add(line);
-		}
-		else if (line.contains(".startNewTestPhase(\"Act") )
-		{
-			javaFileContent.add( "" );
-			javaFileContent.add( "// act block" );
-			javaFileContent.add(line);
-		}
-		else if (line.contains(".startNewTestPhase(\"Assert") )
-		{
-			javaFileContent.add( "" );
-			javaFileContent.add( "// assert block" );
-			javaFileContent.add(line);
-		}
-		else if (line.contains(".startNewTestPhase(\"Cleanup") )
-		{
-			javaFileContent.add( "" );
-			javaFileContent.add( "// cleanup block" );
-			javaFileContent.add(line);
+			handleNewTestPhase(line, javaFileContent);
 		}
 		else if (line.contains(" = " ) )
 		{
@@ -345,6 +319,40 @@ public class JavaFileBuilder
 			javaFileContent.add(line);
 		}
 
+	}
+
+	private void handleNewTestPhase(String line, List<String> javaFileContent) 
+	{
+		if (line.contains("Precondition") )
+		{
+			javaFileContent.add( "" );
+			javaFileContent.add( "// precondition block" );
+			javaFileContent.add(line);
+		}
+		else if (line.contains("Arrange") || line.contains("Vorbereitung"))
+		{
+			javaFileContent.add( "" );
+			javaFileContent.add( "// arrange block" );
+			javaFileContent.add(line);
+		}
+		else if (line.contains("Act") || line.contains("Durchführung"))
+		{
+			javaFileContent.add( "" );
+			javaFileContent.add( "// act block" );
+			javaFileContent.add(line);
+		}
+		else if (line.contains("Assert") || line.contains("Überprüfung"))
+		{
+			javaFileContent.add( "" );
+			javaFileContent.add( "// assert block" );
+			javaFileContent.add(line);
+		}
+		else if (line.contains("Cleanup") )
+		{
+			javaFileContent.add( "" );
+			javaFileContent.add( "// cleanup block" );
+			javaFileContent.add(line);
+		}
 	}
 
 	private String buildStoreDataObjectLine(String line)

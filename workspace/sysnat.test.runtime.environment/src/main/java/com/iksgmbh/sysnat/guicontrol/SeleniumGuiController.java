@@ -40,6 +40,11 @@ public class SeleniumGuiController implements GuiControl
 	private enum TAGNAME { select, input };
 	
 	@Override
+	public void reloadCurrentPage() {
+		webDriver.navigate().refresh();
+	}
+
+	@Override
 	public boolean openGUI() 
 	{
 		try {

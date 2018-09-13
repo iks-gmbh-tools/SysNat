@@ -27,6 +27,7 @@ import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.domain.FileList;
+import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.PdfAnalyser;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
@@ -72,6 +73,16 @@ public class LanguageTemplatesPrint
 			return null;
 		}
 		return latestPdfFile;
+	}
+	
+	@LanguageTemplate("Enthält das Dokument ^^ genau ^^ Seite(n)?")
+	public void doesDocumentWithNameContainExcactNumberOfPages(String documentName, int expectedPageNumber) 
+	{
+		File file = (File) executableExample.getTestObject(documentName);
+		if (file == null) {
+			throw new SysNatTestDataException("The document <b>" + documentName + "</b> is unknown and must be defined as return value before this instruction is called.");
+		}
+		doesDocumentContainExcactNumberOfPages(file, expectedPageNumber);
 	}
 	
 	@LanguageTemplate("Enthält das Dokument '' genau ^^ Seite(n)?")

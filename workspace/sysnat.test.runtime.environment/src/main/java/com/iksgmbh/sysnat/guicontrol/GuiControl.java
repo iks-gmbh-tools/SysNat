@@ -30,6 +30,8 @@ import org.openqa.selenium.WebElement;
  */
 public interface GuiControl 
 {
+	void reloadCurrentPage();
+
 	Object getWebDriver();
 	void closeGUI();
 	boolean openGUI();

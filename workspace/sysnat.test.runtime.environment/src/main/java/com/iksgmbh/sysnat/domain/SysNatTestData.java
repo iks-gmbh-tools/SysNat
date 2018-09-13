@@ -1,18 +1,3 @@
-/*
- * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.iksgmbh.sysnat.domain;
 
 import java.util.ArrayList;
@@ -163,7 +148,8 @@ public class SysNatTestData
 			String datasetName = datasets.keySet().iterator().next();
 			datasets.get(datasetName).setProperty(fieldName, value);
 		} else {			
-			throw new SysNatTestDataException("Es gibt " + size() + " Testdatensätze. Zu welchem soll der Wert für <b>" + fieldName + "</b> zugefügt werden?");
+			//throw new SysNatTestDataException("Es gibt " + size() + " Testdatensätze. Zu welchem soll der Wert für <b>" + fieldName + "</b> zugefügt werden?");
+			datasets.get(DEFAULT_TEST_DATA).setProperty(fieldName, value);
 		}
 	}
 
@@ -193,6 +179,12 @@ public class SysNatTestData
 			throw new SysNatTestDataException("Es wurden keine Testdatensätze geladen!");
 		}
 		
+		try {
+			return getValue(DEFAULT_TEST_DATA, fieldName);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
 		throw new SysNatTestDataException("Es gibt " + size() + " Testdatensätze. Von welchem wird der Wert für <b>" + fieldName + "</b> benötigt?");
 	}
 
@@ -204,7 +196,12 @@ public class SysNatTestData
 			throw new SysNatTestDataException("Name of dataset <b>" + aDatasetName + "</b> is unknown.");
 		}
 		
-		return dataset.getProperty(fieldName);
+		String value = dataset.getProperty(fieldName);
+		if (value == null) {
+			throw new SysNatTestDataException("Field <b>" + fieldName + "</b> in dataset <b>" + aDatasetName + "</b> is unknown.");
+		}
+		
+		return value;
 	}
 		
 
@@ -224,6 +221,23 @@ public class SysNatTestData
 		return "SysNatTestData [" + getAllDatasets() + "]";
 	}
 
+		
+	public String findDatasetNameForDatasetReference(final String dataSetReference) 
+	{
+		Set<String> keySet = datasets.keySet();
+		List<String> datasetMatches = keySet.stream().filter(key -> key.contains(dataSetReference))
+				                                     .collect(Collectors.toList());
+		if (datasetMatches.size() == 1) {
+			return datasetMatches.get(0);
+		}
+		
+		if (size() == 0)
+			throw new SysNatTestDataException("Es gibt " + size() + " Testdatensätze. Es passt keiner zu Datensatz-Reference <b>" + dataSetReference + "</b>.");
+		
+		throw new SysNatTestDataException("Es gibt für <b>" + dataSetReference + "</b> <b>" + datasetMatches.size() + "</b> matchende Testdatensätze. Es passt keiner zu Datensatz-Reference <b>" + dataSetReference + "</b>.");
+
+	}
+	
 	/**
 	 * Searches in all datasets for the given valueReference 
 	 * in order to replace it by the corresponding value
@@ -348,3 +362,4 @@ public class SysNatTestData
 	}
 
 }
+

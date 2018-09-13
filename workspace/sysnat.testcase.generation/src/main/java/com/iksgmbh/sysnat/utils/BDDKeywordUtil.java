@@ -18,7 +18,6 @@ package com.iksgmbh.sysnat.utils;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.iksgmbh.sysnat.common.exception.SysNatConfigurationException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class BDDKeywordUtil 

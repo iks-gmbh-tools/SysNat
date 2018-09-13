@@ -30,12 +30,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException.SkipReason;
+import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.exception.UnexpectedResultException;
 import com.iksgmbh.sysnat.common.exception.UnsupportedGuiEventException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
@@ -73,8 +80,8 @@ abstract public class ExecutableExample
 
     protected ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
     protected DateTime startTime = new DateTime();
-	protected SysNatTestData testDataSets = new SysNatTestData(); 	// Container for data used within a test or script
-	protected HashMap<String, Object> testObjects = new HashMap<>();
+	protected SysNatTestData testDataSets = new SysNatTestData(); 	     // preexisting data imported from extern files
+	protected HashMap<String, Object> testObjects = new HashMap<>();     // data created during test execution
     protected TestDataImporter testDataImporter;
     
     private List<String> testCategories;
@@ -98,6 +105,7 @@ abstract public class ExecutableExample
 			initExecution();
 		} else {
 			setGuiController(executionInfo.getGuiController());
+	        getGuiController().reloadCurrentPage();  // prepare gui for next test
 		}
 	}
 	
@@ -112,6 +120,8 @@ abstract public class ExecutableExample
 			executionInfo.setGuiController( getGuiController() );
 			login();
 			PopupHandler.setTestCase(this);
+		} else {
+			executionInfo.setApplicationStarted(true);
 		}
 	}
 
@@ -835,17 +845,21 @@ abstract public class ExecutableExample
 			return valueCandidate; 
 		}
 
-		String fieldName = valueCandidate;
-		if (valueCandidate.startsWith(":")) {
-			fieldName = valueCandidate.substring(1);
+		String valueReference = valueCandidate;
+		if (valueReference.startsWith(":")) {
+			String fieldName = valueReference.substring(1);
+			return testDataSets.findValueForValueReference(fieldName);
 		}
 		
-//		while (fieldName.contains(":")) {
-//			fieldName = testDataSets.findValueForValueReference(fieldName);
-//		}
-//
-//		return testDataSets.getValue(fieldName);
-		return testDataSets.findValueForValueReference(fieldName);
+		String[] splitResult = valueReference.split(":");
+		
+		if (splitResult.length != 2) {
+			throw new SysNatTestDataException("Cannot parse reference to value: " + valueReference);
+		}
+
+		String datasetName = testDataSets.findDatasetNameForDatasetReference(splitResult[0]);
+		String fieldName = splitResult[1];
+		return testDataSets.getValue(datasetName, fieldName);
 	}
 	
 	
@@ -926,11 +940,19 @@ abstract public class ExecutableExample
 
 
 	public void storeTestObject(String name, Object o) {
-		testObjects.put(name, o);
+		testObjects.put(name.toUpperCase(), o);
 	}
 
 	public Object getTestObject(String name) {
-		return testObjects.get(name);
+		return testObjects.get(name.toUpperCase());
 	}
 
+	public HashMap<String, Object> getTestObjects() {
+		return testObjects;
+	}
+	
+	public void setTestObjects(HashMap<String, Object> hashMap) {
+		testObjects = hashMap;
+	}
+		
 }

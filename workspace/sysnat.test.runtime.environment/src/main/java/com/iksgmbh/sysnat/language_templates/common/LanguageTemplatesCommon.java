@@ -17,10 +17,6 @@ package com.iksgmbh.sysnat.language_templates.common;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.COMMENT_IDENTIFIER;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.NO_FILTER;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ACT_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ARRANGE_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ASSERT_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.CLEANUP_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.FROM_FILENAME;
 
@@ -43,11 +39,11 @@ import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException.SkipReason;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.SysNatTestData;
+import com.iksgmbh.sysnat.utils.SysNatUtil;
 
 /**
  * Contains the implementation of the most basic language templates available in the nlxx files.
@@ -244,7 +240,10 @@ public class LanguageTemplatesCommon
 		}
 		
 		if (executionInfo.isXXIdAlreadyUsed(xxid))  {
-			executableExample.failWithMessage(BUNDLE.getString("Ambiguous") + " XXId: " + xxid);
+			String message = BUNDLE.getString("Error") + ": " + BUNDLE.getString("Ambiguous") + " XXId: " + xxid;
+			executableExample.addReportMessage(message);
+			executionInfo.addTestMessagesFAILED(xxid, executableExample.getReportMessages());
+			executableExample.terminateTestCase(message);
 		}
 
 		executableExample.setXXID( xxid.trim() );
@@ -302,7 +301,7 @@ public class LanguageTemplatesCommon
 	@LanguageTemplate(value = "Test-Phase: ^^")
 	public void startNewTestPhase(String phase)
 	{
-		if (SysNatConstants.TestPhase.valueOf(phase.trim().toUpperCase()) == null) {
+		if ( ! SysNatUtil.isTestPhaseKeyword(phase) ) {
 			throw new SysNatException("Unknown test phase <b>" + phase + "</b>.");
 		}
 		executableExample.addReportMessage(COMMENT_IDENTIFIER + phase);

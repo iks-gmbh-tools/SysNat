@@ -68,5 +68,6 @@ Instructions read from LanguageTemplatesPrint
 Die Liste der PDF-Dateien im Download-Verzeichnis ^^ als <> festgehalten.
 Die jüngste PDF-Datei im Download-Verzeichnis ^^ wird als <> festgehalten.
 Enthält das Dokument '' genau ^^ Seite(n)?
+Enthält das Dokument ^^ genau ^^ Seite(n)?
 Ist die aktuelle Zahl der PDF-Dateien im Download-Verzeichnis um ^^ höher als in der ^^?
 Schließe das PDF-Fenster ^^.

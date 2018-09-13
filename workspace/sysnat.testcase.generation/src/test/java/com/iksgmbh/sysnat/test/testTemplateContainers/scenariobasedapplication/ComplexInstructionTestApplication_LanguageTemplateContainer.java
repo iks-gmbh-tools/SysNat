@@ -17,8 +17,6 @@ package com.iksgmbh.sysnat.test.testTemplateContainers.scenariobasedapplication;
 
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
-import com.iksgmbh.sysnat.test.domain.Invoice;
-import com.iksgmbh.sysnat.test.domain.Order;
 
 @LanguageTemplateContainer
 public class ComplexInstructionTestApplication_LanguageTemplateContainer 

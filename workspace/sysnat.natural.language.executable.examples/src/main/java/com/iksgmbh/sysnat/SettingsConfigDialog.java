@@ -117,7 +117,7 @@ public class SettingsConfigDialog extends JFrame
 		executionInfo = ExecutionRuntimeInfo.getInstance();
 		analyseConfigSettings();
 		setMinimumSize(new Dimension(frameWidth,frameHeight));
-		setTitle("SysNatTesting Start Dialog");
+		setTitle("SysNat Settings Dialog");
 		setLocationRelativeTo(null);
 		parentPanel = new JPanel(null);
 		parentPanel.setBounds(0,0,frameWidth,frameHeight);

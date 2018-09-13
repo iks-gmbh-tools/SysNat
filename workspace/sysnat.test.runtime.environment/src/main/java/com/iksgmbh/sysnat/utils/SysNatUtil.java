@@ -25,6 +25,7 @@ import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.TestPhase;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class SysNatUtil 
@@ -76,6 +77,7 @@ public class SysNatUtil
 		target.setReportMessages(source.getReportMessages());
 		target.setTestCategories(source.getTestCategories());
 		target.setTestData(source.getTestData());
+		target.setTestObjects(source.getTestObjects());
 	}
 	public static String getPathToFirefoxBinary() {
 		return getPathToFirefoxBinary("sysnat.path.to.firefox.dir");
@@ -163,6 +165,20 @@ public class SysNatUtil
 	{
 		for (String testApp : knownTestApplications) {
 			if (value.equals(testApp)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
+
+
+	public static boolean isTestPhaseKeyword(String word) 
+	{
+		TestPhase[] values = TestPhase.values();
+		for (TestPhase testPhase : values) {
+			if (testPhase.name().equals(word.toUpperCase())) {
 				return true;
 			}
 		}

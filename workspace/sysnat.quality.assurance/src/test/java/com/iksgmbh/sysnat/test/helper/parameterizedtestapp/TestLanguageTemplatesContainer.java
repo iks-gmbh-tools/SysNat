@@ -16,10 +16,6 @@
 package com.iksgmbh.sysnat.test.helper.parameterizedtestapp;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.COMMENT_IDENTIFIER;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ACT_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ARRANGE_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ASSERT_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.CLEANUP_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.FROM_FILENAME;
 
@@ -34,8 +30,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutableExample;
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException;
