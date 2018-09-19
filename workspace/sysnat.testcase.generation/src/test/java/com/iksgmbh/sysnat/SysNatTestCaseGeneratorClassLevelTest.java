@@ -133,7 +133,7 @@ public class SysNatTestCaseGeneratorClassLevelTest
 		assertEquals("Number of java files", 4, result.size());
 
 		final String testdataFilename = result.get(3).getName();
-		assertEquals("Name of java file", "XX2.java", testdataFilename);
+		assertEquals("Name of java file", "XX2_Test.java", testdataFilename);
 		final String actualFileContent = SysNatStringUtil.removeWhitespaceLinewise(
 				                         SysNatFileUtil.readTextFileToString(result.get(3)));
 		final String expected = "complexInstructionTestApplication_LanguageTemplateContainer.declareXXGroupForBehaviour(\"TestExampleGroup\");"

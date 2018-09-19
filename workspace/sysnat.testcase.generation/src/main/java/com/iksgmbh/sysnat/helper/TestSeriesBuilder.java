@@ -120,7 +120,7 @@ public class TestSeriesBuilder
 		}
 		
 		int pos = filename.value.lastIndexOf('/');
-		return new Filename(filename.value.substring(0, pos) + "/" + xxGroup.toLowerCase() + "/" + xxid + ".java");
+		return new Filename(filename.value.substring(0, pos) + "/" + xxGroup.toLowerCase() + "/" + xxid + "_Test.java");
 	}
 
 	private HashMap<String, List<JavaCommand>> cutXXGroupIntoSeparateXX(final List<JavaCommand> commandsOfGroup,

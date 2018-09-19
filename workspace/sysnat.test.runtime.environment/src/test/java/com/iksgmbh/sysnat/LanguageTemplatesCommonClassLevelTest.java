@@ -41,6 +41,7 @@ public class LanguageTemplatesCommonClassLevelTest
 	public void setup() {
 		ExecutionRuntimeInfo.reset();
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.runtime.environment/src/test/resources/AvailableNaturalLanguageScripts.properties");
+		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		ExecutionRuntimeInfo.getInstance();
 	}
 	

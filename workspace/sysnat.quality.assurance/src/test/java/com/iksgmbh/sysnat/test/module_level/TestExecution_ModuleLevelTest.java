@@ -52,8 +52,7 @@ public class TestExecution_ModuleLevelTest
 		System.setProperty("sysnat.dummy.test.run", "true");
 		System.setProperty("sysnat.autolaunch.report", "false");
 	}
-	
-	
+		
 	@Test
 	public void compilesAndExecutes_FakeTestCase_InTestExecutionDir() throws Exception
 	{

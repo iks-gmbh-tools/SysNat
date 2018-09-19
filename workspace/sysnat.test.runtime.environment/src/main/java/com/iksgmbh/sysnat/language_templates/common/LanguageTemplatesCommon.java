@@ -32,6 +32,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.openqa.selenium.remote.AddRemoteTouchScreen;
+
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
@@ -221,12 +223,17 @@ public class LanguageTemplatesCommon
 	//##########################################################################################
 
 	@LanguageTemplate(value = "Behaviour: ^^")
-	@LanguageTemplate(value = "Verhalten: ^^")
-	public void declareXXGroupForBehaviour(String behaviourID)
-	{
-		// TODO
+	public void declareXXGroupForBehaviour(String aBehaviourID) {
+		executableExample.setBehaviorID(aBehaviourID);
+		executableExample.addBehaviourReportMessage("<b>Behaviour</b>: " + aBehaviourID);
 	}
-	
+
+	@LanguageTemplate(value = "Verhalten: ^^")
+	public void declareXXGroupForBehaviour_in_German(String aBehaviourID) {
+		executableExample.setBehaviorID(aBehaviourID);
+		executableExample.addBehaviourReportMessage("<b>Verhalten</b>: " + aBehaviourID);
+	}
+
 	@LanguageTemplate(value = "XXID: ^^")
 	public void startNewXX(String xxid) 
 	{

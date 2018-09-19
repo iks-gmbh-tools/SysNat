@@ -41,7 +41,11 @@ public class SeleniumGuiController implements GuiControl
 	
 	@Override
 	public void reloadCurrentPage() {
-		webDriver.navigate().refresh();
+		try {
+			webDriver.navigate().refresh();
+		} catch (Exception e) {
+			System.err.println("Error reloading current page. Presumably the endpoint is not available.");
+		}
 	}
 
 	@Override

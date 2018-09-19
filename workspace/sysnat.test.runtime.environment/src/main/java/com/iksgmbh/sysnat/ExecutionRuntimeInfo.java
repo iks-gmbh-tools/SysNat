@@ -108,7 +108,8 @@ public class ExecutionRuntimeInfo {
 		return instance;
 	}
 
-	protected ExecutionRuntimeInfo() {
+	protected ExecutionRuntimeInfo() 
+	{
 		// load test properties
 		addToSystemProperties(getExecutionPropertiesAsString());
 		addToSystemProperties(getSettingsConfigAsString());
@@ -274,7 +275,8 @@ public class ExecutionRuntimeInfo {
 
 	}
 
-	public static void setSysNatSystemProperty(String key, String value) {
+	public static void setSysNatSystemProperty(String key, String value) 
+	{
 		if (System.getProperty(key.toString()) == null) {
 			// add only if not yet present
 			System.setProperty(key, value);
@@ -282,7 +284,8 @@ public class ExecutionRuntimeInfo {
 		}
 	}
 
-	public String getInactiveTestListAsString() {
+	public String getInactiveTestListAsString() 
+	{
 		if (inactiveXXIDs.size() == 0) {
 			return "-";
 		}

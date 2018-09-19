@@ -143,12 +143,48 @@ public class PdfComparerClassLevelTest
 	{
 		cut = new PdfComparer( "../sysnat.test.runtime.environment/src/test/resources/PdfAnalyserTest/CIV05_Privat_Antrag_Vertrag_01129750_Karaagacli_Hamit_013040280.pdf" );
 		List<String> result = cut.getAllDifferingLinesOnPage("../sysnat.test.runtime.environment/src/test/resources/PdfAnalyserTest/CIV05_Privat_Antrag_Vertrag_01129751_Karaagacli_Hamit_013040280.pdf", 3);
-		assertEquals("Seite 3, Zeile 3: Antragsnummer 1129750  # Antragsnummer 1129751 ", result.get(0)); 
-		assertEquals("Seite 3, Zeile 14:    lebenslange Garantierente 77,59 EUR #    lebenslange Garantierente 77,61 EUR", result.get(1));
-		assertEquals("Seite 3, Zeile 18:    Garantiekapital 29.700 EUR #    Garantiekapital 29.709 EUR", result.get(2));
-		assertEquals("Seite 3, Zeile 24: Beitrag monatlich 125,00 EUR  # Beitrag monatlich 125,04 EUR ", result.get(3));
+		assertEquals("Seite 3, Zeile 3: [Antragsnummer 1129750 ] # [Antragsnummer 1129751 ]", result.get(0)); 
+		assertEquals("Seite 3, Zeile 14: [   lebenslange Garantierente 77,59 EUR] # [   lebenslange Garantierente 77,61 EUR]", result.get(1));
+		assertEquals("Seite 3, Zeile 18: [   Garantiekapital 29.700 EUR] # [   Garantiekapital 29.709 EUR]", result.get(2));
+		assertEquals("Seite 3, Zeile 24: [Beitrag monatlich 125,00 EUR ] # [Beitrag monatlich 125,04 EUR ]", result.get(3));
 	}
 
+	@Test
+	public void returnsDifferingLines_with_UnequalLineNumbers() throws Exception
+	{
+		cut = new PdfComparer( "../sysnat.test.runtime.environment/src/test/resources/PdfAnalyserTest/CIV05_Privat_Antrag_Vertrag_01129750_Karaagacli_Hamit_013040280.pdf" );
+		final List<String> linesA = new ArrayList<>();
+		linesA.add("Line1");
+		linesA.add("Line2a");
+		linesA.add("Line3");
+		final List<String> linesB = new ArrayList<>();
+		linesB.add("Line1");
+		linesB.add("Line2b");
+		linesB.add("Line3");
+		linesB.add("Line4");
+		
+		final List<String> result = cut.getDifferingLines(linesA, linesB, 1);
+		assertEquals("Number of differing lines", 2, result.size());
+		assertEquals("First Difference", "Seite 1, Zeile 2: [Line2a] # [Line2b]", result.get(0)); 
+		assertEquals("Second Difference", "Seite 1, Zeile 4: [] # [Line4]", result.get(1)); 
+	}
+
+	@Test
+	public void returnsDifferingLines_with_EmptyPage() throws Exception
+	{
+		cut = new PdfComparer( "../sysnat.test.runtime.environment/src/test/resources/PdfAnalyserTest/CIV05_Privat_Antrag_Vertrag_01129750_Karaagacli_Hamit_013040280.pdf" );
+		final List<String> linesA = new ArrayList<>();
+		linesA.add("Line1");
+		linesA.add("Line2");
+		final List<String> linesB = new ArrayList<>();
+		
+		final List<String> result = cut.getDifferingLines(linesA, linesB, 1);
+		assertEquals("Number of differing lines", 2, result.size());
+		assertEquals("First Difference", "Seite 1, Zeile 1: [Line1] # []", result.get(0)); 
+		assertEquals("Second Difference", "Seite 1, Zeile 2: [Line2] # []", result.get(1)); 
+	}
+	
+	
 	@Test
 	public void returnsFullDifferenceReport() throws Exception
 	{

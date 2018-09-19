@@ -19,9 +19,9 @@ public class PruefeHauptmenuepunkte_1_Test extends TestCaseTemplateParent
 	protected LanguageTemplatesCommon languageTemplatesCommon;
 	protected LanguageTemplatesHomePageIKSBasics languageTemplatesHomePageIKSBasics;
 	protected LanguageTemplatesPrint languageTemplatesPrint;
-
+	
 	@Before
-	public void setUp()
+	public void setUp() 
 	{
 		super.setUp();
 		languageTemplatesCommon = new LanguageTemplatesCommon(this);
@@ -30,7 +30,7 @@ public class PruefeHauptmenuepunkte_1_Test extends TestCaseTemplateParent
 	}
 
 	@After
-	public void shutdown()
+	public void shutdown() 
 	{
 		if ( ! isSkipped() && executionInfo.isApplicationStarted()) {
 			if (languageTemplatesHomePageIKSBasics != null) languageTemplatesHomePageIKSBasics.gotoStartPage();
@@ -43,7 +43,7 @@ public class PruefeHauptmenuepunkte_1_Test extends TestCaseTemplateParent
 
 	@Test
 	@Override
-	public void executeTestCase()
+	public void executeTestCase() 
 	{
 		try {
 			languageTemplatesCommon.declareXXGroupForBehaviour("PruefeHauptmenuepunkte");

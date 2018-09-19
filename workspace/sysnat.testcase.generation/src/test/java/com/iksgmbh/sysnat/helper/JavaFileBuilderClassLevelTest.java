@@ -27,6 +27,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
@@ -47,6 +48,7 @@ public class JavaFileBuilderClassLevelTest
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.languageTemplateContainer.source.dir", 
 		           "../sysnat.testcase.generation/src/test/java/com/iksgmbh/sysnat/test/testTemplateContainers/testcasegeneratortestapplication");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.generation.target.dir", targetDir);
+		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		GenerationRuntimeInfo.getInstance();
 		javaFieldData = LanguageTemplateContainerFinder.findLanguageTemplateContainers("");
 	}

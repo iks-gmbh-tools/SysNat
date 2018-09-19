@@ -3,6 +3,9 @@
 # Wenn accessing the datafield, this test case must specify which dataset to take for testing.
 # Therefore, the script "EnterGreetingData" cannot be used, because it depends on only one dataset loaded!
 
+# Note: This use of test data (more than one Arrange-Act-Assert series in one file) represents an Anti-Pattern.
+#       It is used here only for test purpose. Build parametrized XX instead!
+
 XXID:          <Dateiname>
 Kategorie-Filter: <Pfad>
 TestData:         MultipleGreetingData
@@ -54,4 +57,4 @@ Click button "Greet".
 
 # assert 3
 Test-Phase: Assert    # check expectations
-Is the displayed text "GreetingResult" equal to "MultipleGreetingData_3:Greeting MultipleGreetingData_3:Name!"?
+Is the displayed text "GreetingResult" equal to "Hi Abdul!"?

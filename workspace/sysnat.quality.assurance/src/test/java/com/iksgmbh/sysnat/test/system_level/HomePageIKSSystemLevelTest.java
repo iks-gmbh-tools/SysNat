@@ -71,7 +71,7 @@ public class HomePageIKSSystemLevelTest extends SysNatSystemTest
 	private void writesCorrectErrorMessageInReportForUnreachableURL(int numberErrorMessagesOccurrences, 
 			                                                        String report) 
 	{
-		final int numberOfTestCases = 2; 
+		final int numberOfTestCases = 7; 
 		if (numberOfTestCases != numberErrorMessagesOccurrences) {
 			System.err.println(report);
 		}

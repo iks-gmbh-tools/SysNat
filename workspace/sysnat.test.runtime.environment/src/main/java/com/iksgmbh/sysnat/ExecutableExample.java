@@ -48,6 +48,7 @@ import com.iksgmbh.sysnat.common.exception.UnsupportedGuiEventException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.SysNatTestData;
 import com.iksgmbh.sysnat.domain.TestApplication;
@@ -93,6 +94,7 @@ abstract public class ExecutableExample
 	private List<String> reportMessages = new ArrayList<>();
 	private String setScriptToExecute;
 	private String bddKeyword = "";
+	private String behaviourID;
 
     abstract public void executeTestCase();
     abstract public String getTestCaseFileName();
@@ -118,7 +120,8 @@ abstract public class ExecutableExample
 		{
 			setGuiController(new SeleniumGuiController());
 			executionInfo.setGuiController( getGuiController() );
-			login();
+			boolean applicationStarted = login();
+    		executionInfo.setApplicationStarted(applicationStarted);
 			PopupHandler.setTestCase(this);
 		} else {
 			executionInfo.setApplicationStarted(true);
@@ -153,12 +156,30 @@ abstract public class ExecutableExample
 	public String getXXID() {
 		return XXID;
 	}
+
+	public void addBehaviourReportMessage(String message) 
+	{
+		if (message.startsWith("<b>Behaviour")
+			&& bddKeyword.equals("Feature")) 
+		{
+				message.replace("Behaviour", "Feature");
+				reportMessages.add(message.trim());
+		}
+		
+		if (message.startsWith("<b>Verhalten")
+			&& bddKeyword.equals("Feature")) 
+		{
+			message.replace("Verhalten", "Feature");
+			reportMessages.add(message.trim());
+		}
+	}
     
-	public void addReportMessage(String message) {
+	public void addReportMessage(String message) 
+	{
 		if (bddKeyword == null || bddKeyword.isEmpty()) {
 			reportMessages.add(message.trim());
 		} else {
-			reportMessages.add(bddKeyword + " " + message.trim());
+			reportMessages.add("<b>" + bddKeyword + "</b> " + message.trim());
 		}
 	}
 
@@ -358,18 +379,20 @@ abstract public class ExecutableExample
         clickLink(id);
     }
     
-    private void login() 
+    private boolean login() 
     {
+    	boolean applicationStarted;
     	if ("false".equalsIgnoreCase( System.getProperty("sysnat.dummy.test.run"))) 
     	{
     		final TestApplication testApplication = executionInfo.getTestApplication();
-    		boolean applicationStarted = getGuiController().init(testApplication.getStartParameter().get(StartParameter.URL));
-    		executionInfo.setApplicationStarted(applicationStarted);
+    		applicationStarted = getGuiController().init(testApplication.getStartParameter().get(StartParameter.URL));
     		getApplicationSpecificLanguageTemplates().doLogin(testApplication.getStartParameter());
     	} else {
     		System.out.println("This is a dummy test run!");
     		executionInfo.setApplicationStarted(true);
+    		applicationStarted = true;
     	}
+    	return applicationStarted;
     }
 	
 	
@@ -953,6 +976,9 @@ abstract public class ExecutableExample
 	
 	public void setTestObjects(HashMap<String, Object> hashMap) {
 		testObjects = hashMap;
+	}
+	public void setBehaviorID(String aBehaviourID) {
+		behaviourID = aBehaviourID;
 	}
 		
 }

@@ -212,19 +212,39 @@ public class PdfComparer
 	public List<String> getAllDifferingLinesOnPage(String anotherPdf, int page) 
 	{
 		PdfAnalyser cut = new PdfAnalyser( pdfFileName );
-		List<String> linesA = cut.getLinesOfPage(page);
+		final List<String> linesA = cut.getLinesOfPage(page);
 		cut = new PdfAnalyser( anotherPdf );
-		List<String> linesB = cut.getLinesOfPage(page);
+		final List<String> linesB = cut.getLinesOfPage(page);
+		
+		return getDifferingLines(linesA, linesB, page);
+	}
 
+	List<String> getDifferingLines(final List<String> linesA, 
+			                       final List<String> linesB,
+			                       final int page) 
+	{
 		List<String> toReturn = new ArrayList<>();
-		for (int i = 0; i < linesA.size(); i++) {
-			if ( ! linesA.get(i).equals(linesB.get(i)) ) {
-				toReturn.add("Seite " + page + ", Zeile " + (i+1) + ": " +linesA.get(i) + " # " + linesB.get(i));
+		int numberOfLines = linesA.size(); 
+		if (linesB.size() > numberOfLines) {
+			numberOfLines = linesB.size(); 
+		}
+
+		for (int i = 0; i < numberOfLines; i++) 
+		{
+			if (i > linesA.size()-1) {
+				toReturn.add("Seite " + page + ", Zeile " + (i+1) + ": [] # [" + linesB.get(i) + "]");
+			}
+			else if (i > linesB.size()-1) {
+				toReturn.add("Seite " + page + ", Zeile " + (i+1) + ": [" +linesA.get(i) + "] # []");
+			}
+			else if ( ! linesA.get(i).trim().equals(linesB.get(i).trim()) ) {
+				toReturn.add("Seite " + page + ", Zeile " + (i+1) + ": [" +linesA.get(i) + "] # [" + linesB.get(i) + "]");
 			}
 		}
 		
 		return toReturn;
 	}
+
 
 	/**
 	 * Lines that are different between the PDFs but start with one of the line prefixes to ignore
