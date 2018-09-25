@@ -47,8 +47,12 @@ under the License.
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
- <localRepository>./mavenRepo</localRepository>
+		  <!--
+<localRepository>C:\dev\SysNatTesting2\maven\localRepository</localRepository>
+    -->
+ <localRepository>../../maven/localRepository</localRepository>
 
+    
   <!-- interactiveMode
    | This will determine whether maven prompts you when it needs input. If set to false,
    | maven will use a sensible default value, perhaps based on some other setting, for
