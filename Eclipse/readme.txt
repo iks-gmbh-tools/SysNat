@@ -2,7 +2,8 @@ If you plan to use SysNat with Eclipse, put a Photon Eclipse IDE for Java Develo
 Use SysNatEclipse.bat to start Eclipse with the SysNat workspace.
 SysNatEclipse.bat expects to find the eclipse.exe with the relative path "./SysNat/Exclipse/eclipse.exe".
 
-To make SysNat running correctly follow the following steps:
+The workspace directory in the SysNat GitHub repository contains Eclipse-project and settings file as well as a complete Eclipse workspace (.metadata). Either you can use this predefined workspace or you build your own. In the later case consider the following steps:
+
 
 Before starting eclipse, assure to keep the following preconditions:
 
