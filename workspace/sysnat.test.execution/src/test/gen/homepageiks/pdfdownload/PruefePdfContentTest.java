@@ -47,7 +47,7 @@ public class PruefePdfContentTest extends TestCaseTemplateParent
 	{
 		try {
 			languageTemplatesCommon.startNewXX("<Dateiname>");
-			languageTemplatesCommon.checkFilterCategory("Smoketest");
+			languageTemplatesCommon.defineExecutionFilter("Smoketest");
 
 			// arrange block
 			languageTemplatesCommon.startNewTestPhase("Arrange");

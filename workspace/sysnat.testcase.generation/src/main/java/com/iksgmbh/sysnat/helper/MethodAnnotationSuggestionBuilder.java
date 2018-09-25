@@ -34,6 +34,7 @@ public class MethodAnnotationSuggestionBuilder
 		return "@LanguageTemplate(value = \"" + annotationValueString + "\")" + System.getProperty("line.separator") +
 		       "public " + returnValueString + " replaceByAnExpressiveMethodName(" + paramsString + ")" + System.getProperty("line.separator") +
 		       "    // Implement here code that corresponds to the Language Template's promise." + System.getProperty("line.separator") +
+		       "    // And don't forget to create a report message entry!" + System.getProperty("line.separator") +
 		       "}";
 	}
 
@@ -111,24 +112,24 @@ public class MethodAnnotationSuggestionBuilder
 		return new ParseParamResult("Object " + s.substring(0, pos), s.substring(pos+1));
 	}
 
-	static String buildAnnotationValue(String s) 
+	public static String buildAnnotationValue(String instruction) 
 	{
-		String toReturn = deleteAllCharsBetween(s, "<", ">");
+		String toReturn = deleteAllCharsBetween(instruction, "<", ">");
 		
 		boolean goOn = true;
 		while (goOn) 
 		{
-			s=toReturn;
+			instruction=toReturn;
 			toReturn = deleteAllCharsBetween(toReturn, "'", "'");
-			goOn = ! toReturn.equals(s);
+			goOn = ! toReturn.equals(instruction);
 		}
 		
 		goOn = true;
 		while (goOn) 
 		{
 			toReturn = deleteAllCharsBetween(toReturn, "^", "^");
-			goOn = ! toReturn.equals(s);
-			s=toReturn;
+			goOn = ! toReturn.equals(instruction);
+			instruction=toReturn;
 		}
 		
 		return toReturn;

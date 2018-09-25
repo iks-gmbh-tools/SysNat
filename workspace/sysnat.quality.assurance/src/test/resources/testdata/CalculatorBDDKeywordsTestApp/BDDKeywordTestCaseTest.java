@@ -49,7 +49,7 @@ public class BDDKeywordTestCaseTest extends TestCaseTemplateParent
 		String testCaseName = this.getClass().getSimpleName();
 		languageTemplatesCommon.startNewXX(testCaseName);
 		languageTemplatesCommon.setBddKeyword("Feature");
-		languageTemplatesCommon.declareXXGroupForBehaviour("MyFeature");
+		languageTemplatesCommon.declareXXGroupForBehaviour("<filename>");
 		languageTemplatesCommon.setBddKeyword("Scenario");
 		languageTemplatesCommon.startNewXX("XX1");
 		languageTemplatesCommon.setBddKeyword("Given");

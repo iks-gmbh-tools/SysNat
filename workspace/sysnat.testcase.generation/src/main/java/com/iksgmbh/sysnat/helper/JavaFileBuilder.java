@@ -154,7 +154,7 @@ public class JavaFileBuilder
 		fileContent = fileContent.replace("javafiletemplatepackage", getPackage(instructionFilename)); 
 		fileContent = fileContent.replace("package ;", ""); 
 		if (isTestcaseInactive(fileContent)) {
-			fileContent = fileContent.replace("super.setUp();", "// super.setUp();     do not setUp inactive test cases !"); 
+			fileContent = fileContent.replace("super.setUp();", "super.initShutDownHook();"); // do not setUp inactive XX !
 			fileContent = fileContent.replace("languageTemplatesCommon.startNewXX(", "setXXIdForInactiveTests("); 
 		}
 		

@@ -123,48 +123,48 @@ public class LanguageTemplatesCommonClassLevelTest
 		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		ExecutableExample executableExample =  new TestCaseCallingMainScriptCallingSubscript();
 		LanguageTemplatesCommon cut = new LanguageTemplatesCommonTestImpl(executableExample);
-		List<String> testCategoriesOfExecutableExample =  new ArrayList<>();
-		testCategoriesOfExecutableExample.add("A");
-		testCategoriesOfExecutableExample.add("B");
-		List<String> testCategoriesToExecute = new ArrayList<>();
+		List<String> execFilterOfExecutableExample =  new ArrayList<>();
+		execFilterOfExecutableExample.add("A");
+		execFilterOfExecutableExample.add("B");
+		List<String> execFilterToExecute = new ArrayList<>();
 
 		// act
-		boolean result1 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		boolean result1 = cut.isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 
-		testCategoriesToExecute.add("A");
-		boolean result2 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		execFilterToExecute.add("A");
+		boolean result2 = cut.isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 		
-		testCategoriesToExecute.clear();
-		testCategoriesToExecute.add("NICHT-C");
-		boolean result3 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		execFilterToExecute.clear();
+		execFilterToExecute.add("NICHT-C");
+		boolean result3 = cut.isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 
-		testCategoriesToExecute.clear();
-		testCategoriesToExecute.add("A");
-		testCategoriesToExecute.add("NICHT-C");
-		boolean result4 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		execFilterToExecute.clear();
+		execFilterToExecute.add("A");
+		execFilterToExecute.add("NICHT-C");
+		boolean result4 = cut.isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 		
-		testCategoriesToExecute.clear();
-		testCategoriesToExecute.add("X");
-		testCategoriesToExecute.add("NICHT-Y");
-		boolean result5 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		execFilterToExecute.clear();
+		execFilterToExecute.add("X");
+		execFilterToExecute.add("NICHT-Y");
+		boolean result5 = cut.isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 
-		testCategoriesToExecute.clear();
-		testCategoriesToExecute.add("D");
-		testCategoriesToExecute.add("NICHT-B");
-		boolean result6 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		execFilterToExecute.clear();
+		execFilterToExecute.add("D");
+		execFilterToExecute.add("NICHT-B");
+		boolean result6 = cut.isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 		
-		testCategoriesToExecute.clear();
-		testCategoriesToExecute.add("A");
-		testCategoriesToExecute.add("NICHT-B");
-		boolean result7 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		execFilterToExecute.clear();
+		execFilterToExecute.add("A");
+		execFilterToExecute.add("NICHT-B");
+		boolean result7 = cut.isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 		
-		testCategoriesToExecute.clear();
-		testCategoriesToExecute.add("X");
-		boolean result8 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		execFilterToExecute.clear();
+		execFilterToExecute.add("X");
+		boolean result8 = cut.isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 
-		testCategoriesToExecute.clear();
-		testCategoriesToExecute.add("NICHT-Y");
-		boolean result9 = cut.isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		execFilterToExecute.clear();
+		execFilterToExecute.add("NICHT-Y");
+		boolean result9 = cut.isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 		
 		// assert
 		assertTrue( result1 );

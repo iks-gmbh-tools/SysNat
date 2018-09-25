@@ -120,11 +120,8 @@ public class TestExecution_ModuleLevelTest
 		final File detailReportFile = new File(reportFolder, "com-LOCAL-Alle/" + ReportCreator.DETAIL_RESULT_FILENAME);
 		SysNatTestUtils.assertFileExists( detailReportFile );
 		final String report = SysNatFileUtil.readTextFileToString(detailReportFile); 
-		final String expectedText = "1.2 Script MiniTestScript has been executed!";
-		if ( ! report.contains(expectedText)) {			
-			System.err.println(report);
-		}
-		assertTrue("Unexpected report content.", report.contains(expectedText));		
+		final String expectedText = "Script MiniTestScript has been executed!";
+		SysNatTestUtils.assertReportContains(report, expectedText);
 	}
 
 	

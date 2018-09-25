@@ -100,6 +100,14 @@ public class SysNatTestUtils
 		filelist.forEach(f -> SysNatFileUtil.deleteFolder(f));
 		Optional<File> oldReportFolder = Arrays.asList( new File( System.getProperty("sysnat.report.dir") ).listFiles() ).stream().filter(f->f.getName().startsWith("MiniTestCaseTestReport") && f.isDirectory()).findFirst();
 		assertFalse("A old report folder still exists!", oldReportFolder.isPresent());
+	}
+
+	public static void assertReportContains(String report, String expected) 
+	{
+		if ( ! report.contains(expected)) {			
+			System.err.println(report);
+		}
+		assertTrue("Unexpected report content.", report.contains(expected));		
 	}	
 	
 }

@@ -20,12 +20,10 @@ import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWOR
 import java.io.File;
 
 import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
 
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo.TestStatistics;
-import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
@@ -34,7 +32,7 @@ import com.iksgmbh.sysnat.common.exception.UnsupportedGuiEventException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.helper.ReportCreator;
-import com.iksgmbh.sysnat.utils.SysNatUtil;
+import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
  * This class represents the parent class for all TestCaseTemplates.
@@ -45,14 +43,12 @@ import com.iksgmbh.sysnat.utils.SysNatUtil;
  */
 public abstract class TestCaseTemplateParent extends ExecutableExample
 {
-	@Before
 	public void setUp() 
 	{
 		super.setUp();
 		System.out.println(SysNatConstants.SYS_OUT_SEPARATOR);
 	}
 
-	@After
 	public void shutdown() 
 	{
 		if ( ! isSkipped() ) 
@@ -80,12 +76,6 @@ public abstract class TestCaseTemplateParent extends ExecutableExample
 		System.out.println("Intermediate Result: " + executionInfo.getIntermediateResultLogText() + ".");
 	}
 	
-	/**
-	 * This method is filled by NatSpec with the concrete code that is defined
-	 * by the .natspec file for which this template is instantiated. The comment
-	 * <code>@MethodBody</code> is replaced with the generated code for all the
-	 * sentences in the NatSpec scenario.
-	 */
 	protected void handleThrowable(Throwable t)  
 	{
 		try {
@@ -93,23 +83,23 @@ public abstract class TestCaseTemplateParent extends ExecutableExample
 		} catch (SkipTestCaseException e) {
 			finishSkippedTestCase(e.getSkipReason());
 		} catch (UnexpectedResultException e) {
-			takeScreenshot(SysNatUtil.getScreenshotFailureFileName(this.getClass().getSimpleName()));
+			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotFailureFileName(this.getClass().getSimpleName()));
 			terminateWrongTestCase();
 		} catch (SysNatTestDataException e) {
-			takeScreenshot(SysNatUtil.getScreenshotFailureFileName(this.getClass().getSimpleName()));
+			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotFailureFileName(this.getClass().getSimpleName()));
 			failWithMessage(e.getMessage());
 		} catch ( UnsupportedGuiEventException e) {
 			e.printStackTrace();		
-			takeScreenshot(SysNatUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
+			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
 			failWithMessage(ERROR_KEYWORD 
 					        + ": Folgendes grafisches Element ist nicht verfügbar:" 
 		                    + extractSelectorValue(e.getMessage())); 
 		} catch (SysNatException e) {
-			takeScreenshot(SysNatUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
+			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
 			failWithMessage(e.getMessage());
 		} catch (Throwable e) {
 			e.printStackTrace();
-			takeScreenshot(SysNatUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
+			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
 			failWithMessage("Unerwarteter " + ERROR_KEYWORD + ": " 
 		                    + e.getClass().getSimpleName() + ": " 
 					        + System.getProperty("line.separator")
@@ -133,7 +123,7 @@ public abstract class TestCaseTemplateParent extends ExecutableExample
 	
 	@Override
 	public boolean doesTestBelongToApplicationUnderTest() {
-		return SysNatUtil.doesTestBelongToApplicationUnderTest(this);
+		return SysNatTestRuntimeUtil.doesTestBelongToApplicationUnderTest(this);
 	}
 
 	protected void setXXIdForInactiveTests(String xxid) {

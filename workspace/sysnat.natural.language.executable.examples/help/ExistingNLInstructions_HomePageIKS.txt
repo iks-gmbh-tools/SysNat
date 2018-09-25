@@ -3,9 +3,9 @@ Instructions read from LanguageTemplatesCommon
 .
 Active: ^^
 Aktiv: ^^
+Ausführungsfilter: ^^
 Beep ^^ times.
 Behaviour: ^^
-Category-Filter: ^^
 Comment: ^^
 Das heutige Datum wird als <> festgehalten.
 Date of today is stored as <>.
@@ -19,6 +19,7 @@ Execute script ^^.
 Execute with
 Execute with ^^
 Execute with all ^^
+Filter: ^^
 Führe das Skript ^^ aus mit
 Führe das Skript ^^ aus mit den Eingabedaten
 Führe das Skript ^^ aus.
@@ -26,12 +27,12 @@ Führe das Skript ^^ mit den Eingabedaten ^^ aus.
 Führe mit
 Führe mit ^^
 Führe mit allen ^^
-Kategorie-Filter: ^^
 Kommentar: ^^
 Piepse ^^ mal.
 Save screenshot now as ^^.
 Save screenshot now if test case is categorized as mitBildnachweis.
 Set BDD-Keyword ^^.
+Tags: ^^
 Test-Parameter: ^^
 Test-Phase: ^^
 TestData: ^^

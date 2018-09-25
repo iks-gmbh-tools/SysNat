@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import com.iksgmbh.sysnat.utils.SysNatUtil;
+import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
  * Utility, to delete all png files in the screenshot dir.
@@ -31,7 +31,7 @@ public class ScreenshotDeleter extends FileFinder
 	public static void main(String[] args) throws IOException 
 	{
 		System.out.println("");
-		final File folder = new File( SysNatUtil.getScreenshotDir() );
+		final File folder = new File( SysNatTestRuntimeUtil.getScreenshotDir() );
 		
 		int counter = 0;
 		List<File> toDelete = findFiles(folder, null, null, ".png", null);

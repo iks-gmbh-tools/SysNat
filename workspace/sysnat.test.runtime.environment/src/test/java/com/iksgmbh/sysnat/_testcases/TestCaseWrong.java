@@ -34,7 +34,7 @@ public class TestCaseWrong extends TestCaseTestImpl
 	public void executeTestCase() 
 	{
 		languageTemplatesCommon.startNewXX("Orange Test");
-		languageTemplatesCommon.checkFilterCategory(SysNatConstants.NO_FILTER);
+		languageTemplatesCommon.defineExecutionFilter(SysNatConstants.NO_FILTER);
 		terminateWrongTestCase(); 
 	}
 }

@@ -7,7 +7,7 @@
 #       It is used here only for test purpose. Build parametrized XX instead!
 
 XXID:          <Dateiname>
-Kategorie-Filter: <Pfad>
+Filter: <Pfad>
 TestData:         MultipleGreetingData
 
 

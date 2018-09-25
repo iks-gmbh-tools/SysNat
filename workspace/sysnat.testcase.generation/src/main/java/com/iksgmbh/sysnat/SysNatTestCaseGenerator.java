@@ -30,7 +30,7 @@ import com.iksgmbh.sysnat.helper.JavaFileWriter;
 import com.iksgmbh.sysnat.helper.LanguageInstructionCollector;
 import com.iksgmbh.sysnat.helper.LanguageTemplateCollector;
 import com.iksgmbh.sysnat.helper.LanguageTemplateContainerFinder;
-import com.iksgmbh.sysnat.helper.TestSeriesBuilder;
+import com.iksgmbh.sysnat.helper.XXGroupBuilder;
 import com.iksgmbh.sysnat.helper.PatternMergeJavaCommandGenerator;
 import com.iksgmbh.sysnat.helper.CommandLibraryCreator;
 import com.iksgmbh.sysnat.helper.JavaFileBuilder;
@@ -78,7 +78,7 @@ public class SysNatTestCaseGenerator
 		
 		// step 5: build test cases for Parameter-Tests
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollection = 
-				TestSeriesBuilder.doYourJob(javaCommandCollectionRaw);
+				XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
 		
 		// step 6: inject java commands in testCaseJavaTemplate and 
 		//         create a JUnit test case

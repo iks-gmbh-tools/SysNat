@@ -31,7 +31,7 @@ import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaCommand;
 
-public class TestSeriesBuilderClassLevelTest 
+public class XXGroupBuilderClassLevelTest 
 {
 	
 	@Before
@@ -54,7 +54,7 @@ public class TestSeriesBuilderClassLevelTest
 		
 		// act
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollection = 
-				TestSeriesBuilder.doYourJob(javaCommandCollectionRaw);
+				XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
 		
 		// arrange
 		assertEquals("Number of testcases", 3, javaCommandCollection.size());
@@ -71,7 +71,7 @@ public class TestSeriesBuilderClassLevelTest
 		
 		try {
 			// act
-			TestSeriesBuilder.doYourJob(javaCommandCollectionRaw);
+			XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
 			fail("Expected exception not thrown!");
 		} catch (SysNatException e) {
 			// assert
@@ -89,7 +89,7 @@ public class TestSeriesBuilderClassLevelTest
 		
 		try {
 			// act
-			TestSeriesBuilder.doYourJob(javaCommandCollectionRaw);
+			XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
 			fail("Expected exception not thrown!");
 		} catch (SysNatException e) {
 			// assert
@@ -107,7 +107,7 @@ public class TestSeriesBuilderClassLevelTest
 		
 		try {
 			// act
-			TestSeriesBuilder.doYourJob(javaCommandCollectionRaw);
+			XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
 			fail("Expected exception not thrown!");
 		} catch (SysNatException e) {
 			// assert
@@ -126,7 +126,7 @@ public class TestSeriesBuilderClassLevelTest
 		
 		try {
 			// act
-			TestSeriesBuilder.doYourJob(javaCommandCollectionRaw);
+			XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
 			fail("Expected exception not thrown!");
 		} catch (SysNatException e) {
 			// assert

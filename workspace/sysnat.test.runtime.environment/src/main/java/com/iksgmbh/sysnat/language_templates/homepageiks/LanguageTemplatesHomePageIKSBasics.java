@@ -33,9 +33,7 @@ import com.iksgmbh.sysnat.language_templates.homepageiks.pageobject.Zeiterfassun
 /**
  * Contains the basic language templates for IKS-Online tests.
  * 
- * Note: Java interitance is not possible to use with NatSpec
- *       because SyntaxPattern methods of parent LanguageTemplates classes 
- *       are NOT available in NatSpec files.
+ * @author Reik Oberrath
  */
 @LanguageTemplateContainer
 public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates

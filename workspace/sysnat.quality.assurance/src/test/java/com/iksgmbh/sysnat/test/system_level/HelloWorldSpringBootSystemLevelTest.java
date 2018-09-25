@@ -124,7 +124,7 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 	}
 
 	@Test
-	public void runsOneFilterCategory_HelloWorldSpringBoot_Tests() throws Exception
+	public void runsOneExecFilter_HelloWorldSpringBoot_Tests() throws Exception
 	{
 		// arrange
 		settingsConfigToUseInSystemTest = "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HelloWorldSpringBoot_Smoketests.config";

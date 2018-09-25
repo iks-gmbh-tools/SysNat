@@ -23,7 +23,7 @@ public class InactiveExampleTestTest extends TestCaseTemplateParent
 	@Before
 	public void setUp() 
 	{
-		// super.setUp();     do not setUp inactive test cases !
+		super.initShutDownHook();
 		languageTemplatesCommon = new LanguageTemplatesCommon(this);
 		languageTemplatesHomePageIKSBasics = new LanguageTemplatesHomePageIKSBasics(this);
 		languageTemplatesPrint = new LanguageTemplatesPrint(this);

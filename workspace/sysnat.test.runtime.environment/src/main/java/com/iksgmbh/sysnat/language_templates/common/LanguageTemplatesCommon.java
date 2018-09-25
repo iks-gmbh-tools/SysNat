@@ -32,8 +32,6 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.openqa.selenium.remote.AddRemoteTouchScreen;
-
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
@@ -45,7 +43,7 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.SysNatTestData;
-import com.iksgmbh.sysnat.utils.SysNatUtil;
+import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
  * Contains the implementation of the most basic language templates available in the nlxx files.
@@ -81,57 +79,57 @@ public class LanguageTemplatesCommon
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();
 	}
 
-	public boolean isThisTestToExecute(final List<String> testCategoriesOfExecutableExample,
-			                           final List<String> testCategoriesToExecute) 
+	public boolean isThisTestToExecute(final List<String> execFilterOfExecutableExample,
+			                           final List<String> execFilterToExecute) 
 	{
-		if (testCategoriesToExecute.isEmpty()) {
+		if (execFilterToExecute.isEmpty()) {
 			return true;
 		}
 		
-		if (testCategoriesToExecute.contains(executableExample.getXXID())) {
+		if (execFilterToExecute.contains(executableExample.getXXID())) {
 			return true;
 		}
 
-		final List<String> listOfNegativeMatchingCategories = new ArrayList<>();
-		final List<String> listOfPositiveMatchingCategories = new ArrayList<>();
-		final List<String> listOfPositiveCategoriesToExecute = new ArrayList<>();
+		final List<String> listOfNegativeMatchingFilters = new ArrayList<>();
+		final List<String> listOfPositiveMatchingFilters = new ArrayList<>();
+		final List<String> listOfPositiveFilterToExecute = new ArrayList<>();
 
-		for (String categoryToExecute : testCategoriesToExecute)
+		for (String filterToExecute : execFilterToExecute)
 		{
-			if (categoryToExecute.startsWith(SysNatLocaleConstants.NON_KEYWORD + ""))
+			if (filterToExecute.startsWith(SysNatLocaleConstants.NON_KEYWORD + ""))
 			{
-				final String excludedCategory = SysNatStringUtil.cutPrefix(categoryToExecute,
+				final String excludedFilter = SysNatStringUtil.cutPrefix(filterToExecute,
 						SysNatLocaleConstants.NON_KEYWORD);
 
-				if (testCategoriesOfExecutableExample.contains(excludedCategory)) {
-					listOfNegativeMatchingCategories.add(excludedCategory);
+				if (execFilterOfExecutableExample.contains(excludedFilter)) {
+					listOfNegativeMatchingFilters.add(excludedFilter);
 				}
 			}
 			else
 			{
-				listOfPositiveCategoriesToExecute.add(categoryToExecute);
-				if (testCategoriesOfExecutableExample.contains(categoryToExecute)) {
-					listOfPositiveMatchingCategories.add(categoryToExecute);
+				listOfPositiveFilterToExecute.add(filterToExecute);
+				if (execFilterOfExecutableExample.contains(filterToExecute)) {
+					listOfPositiveMatchingFilters.add(filterToExecute);
 				}
 			}
 		}
 
-		if (listOfPositiveCategoriesToExecute.isEmpty()) {
-			// at least one negative category is set - now check whether it is a
+		if (listOfPositiveFilterToExecute.isEmpty()) {
+			// at least one negative filter is set - now check whether it is a
 			// match:
-			return listOfNegativeMatchingCategories.isEmpty();
+			return listOfNegativeMatchingFilters.isEmpty();
 		}
 		else
 		{
-			if (listOfPositiveMatchingCategories.isEmpty()) {
-				return false; // at least one positive category is set but there
+			if (listOfPositiveMatchingFilters.isEmpty()) {
+				return false; // at least one positive filter is set but there
 								// is no match
 			}
 
-			// at least one positive matching category is set - now check
-			// negative categories:
+			// at least one positive matching filter is set - now check
+			// negative filters:
 
-			return listOfNegativeMatchingCategories.isEmpty();
+			return listOfNegativeMatchingFilters.isEmpty();
 
 		}
 	}
@@ -223,15 +221,21 @@ public class LanguageTemplatesCommon
 	//##########################################################################################
 
 	@LanguageTemplate(value = "Behaviour: ^^")
-	public void declareXXGroupForBehaviour(String aBehaviourID) {
+	public void declareXXGroupForBehaviour(String aBehaviourID) 
+	{
+		if (aBehaviourID.equals("<filename>"))  {
+			aBehaviourID = executableExample.getTestCaseFileName();
+		}
 		executableExample.setBehaviorID(aBehaviourID);
-		executableExample.addBehaviourReportMessage("<b>Behaviour</b>: " + aBehaviourID);
 	}
 
 	@LanguageTemplate(value = "Verhalten: ^^")
-	public void declareXXGroupForBehaviour_in_German(String aBehaviourID) {
+	public void declareXXGroupForBehaviour_in_German(String aBehaviourID) 
+	{
+		if (aBehaviourID.equals("<Dateiname>"))  {
+			aBehaviourID = executableExample.getTestCaseFileName();
+		}
 		executableExample.setBehaviorID(aBehaviourID);
-		executableExample.addBehaviourReportMessage("<b>Verhalten</b>: " + aBehaviourID);
 	}
 
 	@LanguageTemplate(value = "XXID: ^^")
@@ -249,7 +253,7 @@ public class LanguageTemplatesCommon
 		if (executionInfo.isXXIdAlreadyUsed(xxid))  {
 			String message = BUNDLE.getString("Error") + ": " + BUNDLE.getString("Ambiguous") + " XXId: " + xxid;
 			executableExample.addReportMessage(message);
-			executionInfo.addTestMessagesFAILED(xxid, executableExample.getReportMessages());
+			executionInfo.addTestMessagesFAILED(xxid, executableExample.getReportMessages(), executableExample.getBehaviorID());
 			executableExample.terminateTestCase(message);
 		}
 
@@ -263,26 +267,27 @@ public class LanguageTemplatesCommon
 		}
 	}
 
-	@LanguageTemplate(value = "Kategorie-Filter: ^^")
-	@LanguageTemplate(value = "Category-Filter: ^^")
-	public void checkFilterCategory(String testCategoriesOfThisTestCase) 
+	@LanguageTemplate(value = "Filter: ^^")
+	@LanguageTemplate(value = "Ausführungsfilter: ^^")
+	@LanguageTemplate(value = "Tags: ^^")
+	public void defineExecutionFilter(String executionFilterOfThisTestCase) 
 	{
 		boolean executeThisTest = true;
-		final List<String> testCategoriesOfExecutableExample = executableExample.buildTestCategories(testCategoriesOfThisTestCase);
-		testCategoriesOfExecutableExample.addAll(executableExample.getPackageNames());
-		final List<String> testCategoriesToExecute = executionInfo.getTestCategoriesToExecute();
-		if (testCategoriesToExecute.size() > 1 || ! testCategoriesToExecute.get(0).equalsIgnoreCase(NO_FILTER)) {
-			executeThisTest = isThisTestToExecute(testCategoriesOfExecutableExample, testCategoriesToExecute);
+		final List<String> execFilterOfExecutableExample = executableExample.buildExecutionFilterList(executionFilterOfThisTestCase);
+		execFilterOfExecutableExample.addAll(executableExample.getPackageNames());
+		final List<String> execFilterToExecute = executionInfo.getExecutionFilterList();
+		if (execFilterToExecute.size() > 1 || ! execFilterToExecute.get(0).equalsIgnoreCase(NO_FILTER)) {
+			executeThisTest = isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 		}
 		
-		for (String category : testCategoriesOfExecutableExample) {
-			executionInfo.addCategoryToCollection(category);
+		for (String filter : execFilterOfExecutableExample) {
+			executionInfo.addFilterToCollection(filter);
 		}	
 		
 		if (executeThisTest) {
 			executionInfo.countExcecutedTestCase(); 
 		} else {
-			throw new SkipTestCaseException(SkipReason.CATEGORY_FILTER);
+			throw new SkipTestCaseException(SkipReason.EXECUTION_FILTER);
 		}
 	}
 
@@ -294,7 +299,7 @@ public class LanguageTemplatesCommon
 			|| value.trim().equalsIgnoreCase("no"))  
 		{
 			executionInfo.uncountAsExecutedTestCases();  // undo previously added 
-			executionInfo.addInactiveTestCase( executableExample.getXXID() );
+			executionInfo.addInactiveTestCase( executableExample.getXXID(), executableExample.getBehaviorID() );
 			throw new SkipTestCaseException(SkipReason.ACTIVATION_STATE);
 		}
 	}
@@ -308,7 +313,7 @@ public class LanguageTemplatesCommon
 	@LanguageTemplate(value = "Test-Phase: ^^")
 	public void startNewTestPhase(String phase)
 	{
-		if ( ! SysNatUtil.isTestPhaseKeyword(phase) ) {
+		if ( ! SysNatTestRuntimeUtil.isTestPhaseKeyword(phase) ) {
 			throw new SysNatException("Unknown test phase <b>" + phase + "</b>.");
 		}
 		executableExample.addReportMessage(COMMENT_IDENTIFIER + phase);

@@ -41,7 +41,7 @@ public class SysNatUtilTest
 		prefixesToIgnore.add("aX");
 
 		// act
-		final List<String> result = SysNatUtil.removeLinesToBeIgnoreByPrefix(lines, prefixesToIgnore);
+		final List<String> result = SysNatTestRuntimeUtil.removeLinesToBeIgnoreByPrefix(lines, prefixesToIgnore);
 		
 		// assert
 		assertFalse("Lines contain unexpected entries", result.contains("abXXX"));

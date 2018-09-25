@@ -41,7 +41,7 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
-import com.iksgmbh.sysnat.utils.SysNatUtil;
+import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
  * Graphical User Interface to export or import test application specific files.
@@ -257,7 +257,7 @@ public class TestApplicationExImportDialog extends JFrame
 	{
 		@Override public void actionPerformed(ActionEvent e) 
 		{
-			JFileChooser fileChooser = new JFileChooser(SysNatUtil.getSysNatRootDir());
+			JFileChooser fileChooser = new JFileChooser(SysNatTestRuntimeUtil.getSysNatRootDir());
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			fileChooser.setDialogTitle("Folder Selector");
 			fileChooser.showSaveDialog(parentPanel);

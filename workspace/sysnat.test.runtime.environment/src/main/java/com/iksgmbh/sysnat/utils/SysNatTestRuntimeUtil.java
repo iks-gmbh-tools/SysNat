@@ -21,14 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutableExample;
-import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.TestPhase;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
-public class SysNatUtil 
+public class SysNatTestRuntimeUtil 
 {
 	public static boolean doesTestBelongToApplicationUnderTest(ExecutableExample executableExample) 
 	{
@@ -75,30 +74,11 @@ public class SysNatUtil
 		target.setXXID(source.getXXID());
 		target.setGuiController(source.getGuiController());
 		target.setReportMessages(source.getReportMessages());
-		target.setTestCategories(source.getTestCategories());
+		target.setExecutionFilter(source.getExecutionFilterList());
 		target.setTestData(source.getTestData());
 		target.setTestObjects(source.getTestObjects());
 	}
-	public static String getPathToFirefoxBinary() {
-		return getPathToFirefoxBinary("sysnat.path.to.firefox.dir");
-	}
 
-	public static String getPathToFirefoxBinary(final String systemPropertyKey) 
-	{
-    	final String pathToFirefoxExe = System.getProperty(systemPropertyKey);
-		if (pathToFirefoxExe == null) {
-			// file execution.properties misses values or has not been loaded !
-			throw new SysNatException("Location of firefox binary not defined.");
-		}
-		if (pathToFirefoxExe.startsWith(".") 
-			|| pathToFirefoxExe.startsWith("/")
-			|| pathToFirefoxExe.startsWith("\\")) 
-		{
-			return System.getProperty("user.dir") + '/' + pathToFirefoxExe; 
-		}
-		
-		return pathToFirefoxExe;  // path is alreafy absolute
-	}
 
 	public static String getSysNatRootDir() 
 	{

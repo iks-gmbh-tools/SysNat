@@ -30,9 +30,10 @@ import org.openqa.selenium.ie.InternetExplorerOptions;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.common.helper.HtmlLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.BrowserType;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
-import com.iksgmbh.sysnat.utils.SysNatUtil;
+import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 public class BrowserStarter 
 {
@@ -187,7 +188,7 @@ public class BrowserStarter
 	
     private FirefoxBinary getFireFoxBinary(final String systemPropertyKey) 
     {
-		final File firefoxExe = new File( SysNatUtil.getPathToFirefoxBinary(systemPropertyKey) + "\\firefox.exe");
+		final File firefoxExe = new File( HtmlLauncher.getPathToFirefoxBinary(systemPropertyKey) + "\\firefox.exe");
 		if (! firefoxExe.exists()) {
 			throw new RuntimeException("Firefox Executable not found: " + firefoxExe.getAbsolutePath());
 		}
@@ -201,7 +202,7 @@ public class BrowserStarter
 	
 	private String getExecutable(final String executableType) 
 	{
-		return SysNatUtil.getSysNatRootDir() 
+		return SysNatTestRuntimeUtil.getSysNatRootDir() 
 				+ "/webdriver/" 
 				+ System.getProperty( executableType );
 	}

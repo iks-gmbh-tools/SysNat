@@ -51,7 +51,7 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
-import com.iksgmbh.sysnat.utils.SysNatUtil;
+import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
  * Graphical User Interface to ask user for configuration settings.
@@ -102,11 +102,11 @@ public class SettingsConfigDialog extends JFrame
 
 	private JPanel parentPanel;
 	private JLabel lblArchiveDir;
-	private JTextField txtFilterCategories, txtReportName, txtArchiveDir;
+	private JTextField txtExecutionFilter, txtReportName, txtArchiveDir;
 	private JComboBox<String> cbxTestApplication, cbxEnvironments, cbxExecSpeeds, cbxBrowsers;
 	private JButton startButton, btnReset, btnFileSelect;
 	private JCheckBox chbArchiving;
-	private String filterCategoriesToolTipText;
+	private String executionFilterToolTipText;
 
 	public SettingsConfigDialog() throws Exception
 	{
@@ -183,9 +183,9 @@ public class SettingsConfigDialog extends JFrame
 				values.clear();
 				tooltip = getNewTookTipStringBuffer();
 			}
-			else if (line.contains(SysNatLocaleConstants.FILTER_CATEGORIES_TO_EXECUTE))
+			else if (line.contains(SysNatLocaleConstants.EXECUTION_FILTER))
 			{
-				filterCategoriesToolTipText = tooltip.append("</html>").toString();
+				executionFilterToolTipText = tooltip.append("</html>").toString();
 				values.clear();
 				tooltip = getNewTookTipStringBuffer();
 			}
@@ -219,10 +219,10 @@ public class SettingsConfigDialog extends JFrame
 		cbxEnvironments.addActionListener(reportNameListener);
 
 		yPos += deltaY;
-		initLabel("FILTER_CATEGORIES_TO_EXECUTE", yPos, filterCategoriesToolTipText);
-		txtFilterCategories = initTextField(yPos, executionInfo.getTestCategories());
-		txtFilterCategories.setToolTipText(filterCategoriesToolTipText);
-		txtFilterCategories.addKeyListener(reportNameListener);
+		initLabel("EXECUTION_FILTER", yPos, executionFilterToolTipText);
+		txtExecutionFilter = initTextField(yPos, executionInfo.getExecutionFilters());
+		txtExecutionFilter.setToolTipText(executionFilterToolTipText);
+		txtExecutionFilter.addKeyListener(reportNameListener);
 
 		yPos += deltaY;
 		initSectionLabel("SECTION_2_LABEL", yPos);
@@ -416,7 +416,7 @@ public class SettingsConfigDialog extends JFrame
 		// section 1 values
 		executionInfo.setTestApplicationName(cbxTestApplication.getSelectedItem().toString());
 		executionInfo.setTargetEnv(cbxEnvironments.getSelectedItem().toString());
-		executionInfo.setTestCategoriesToExecute(SysNatStringUtil.getTestCategoriesAsList(txtFilterCategories.getText().trim(), ""));
+		executionInfo.setExecutionFilterList(SysNatStringUtil.getExecutionFilterAsList(txtExecutionFilter.getText().trim(), ""));
 		
 		// section 2 values
 		executionInfo.setBrowserTypeToUse(cbxBrowsers.getSelectedItem().toString());
@@ -563,17 +563,17 @@ public class SettingsConfigDialog extends JFrame
 	
 	public String buildDefaultReportName() 
 	{
-		String testCategories = txtFilterCategories.getText();
-		if (testCategories.equals(NO_FILTER)) {
-			testCategories = CONSTANTS_BUNDLE.getString("All");
+		String filters = txtExecutionFilter.getText();
+		if (filters.equals(NO_FILTER)) {
+			filters = CONSTANTS_BUNDLE.getString("All");
 		} 
 		
-		if (testCategories.length() != 0) {
-			testCategories = "-" + testCategories;
+		if (filters.length() != 0) {
+			filters = "-" + filters;
 		}
 		
 		return cbxTestApplication.getSelectedItem().toString() + "-"
-				+ cbxEnvironments.getSelectedItem().toString() + testCategories;
+				+ cbxEnvironments.getSelectedItem().toString() + filters;
 	}
 
 
@@ -595,7 +595,7 @@ public class SettingsConfigDialog extends JFrame
 	{
 		@Override public void actionPerformed(ActionEvent e) 
 		{
-			JFileChooser fileChooser = new JFileChooser(SysNatUtil.getSysNatRootDir());
+			JFileChooser fileChooser = new JFileChooser(SysNatTestRuntimeUtil.getSysNatRootDir());
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			fileChooser.setDialogTitle(BUNDLE.getString("FILE_SELECT_DIALOG_TITLE"));
 			fileChooser.showSaveDialog(parentPanel);
@@ -638,8 +638,8 @@ public class SettingsConfigDialog extends JFrame
              newFileContent.append(SysNatLocaleConstants.BROWSER_SETTING_KEY + " = " + cbxBrowsers.getSelectedItem().toString());
          } else if (line.startsWith(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY + " = " + cbxExecSpeeds.getSelectedItem().toString());
-         } else if (line.startsWith(SysNatLocaleConstants.FILTER_CATEGORIES_TO_EXECUTE)) {
-             newFileContent.append(SysNatLocaleConstants.FILTER_CATEGORIES_TO_EXECUTE + " = " + txtFilterCategories.getText());
+         } else if (line.startsWith(SysNatLocaleConstants.EXECUTION_FILTER)) {
+             newFileContent.append(SysNatLocaleConstants.EXECUTION_FILTER + " = " + txtExecutionFilter.getText());
          } else if (line.startsWith(SysNatLocaleConstants.REPORT_NAME_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.REPORT_NAME_SETTING_KEY + " = " + txtReportName.getText());
          } else if (line.startsWith(SysNatLocaleConstants.ARCHIVE_DIR_SETTING_KEY)) {

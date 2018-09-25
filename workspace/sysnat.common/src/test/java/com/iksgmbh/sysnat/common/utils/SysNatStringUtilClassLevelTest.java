@@ -30,6 +30,19 @@ public class SysNatStringUtilClassLevelTest
 	}
 
 	@Test
+	public void calcStringSimilarity() {
+		assertEquals("String similarity", "1.0", ""+SysNatStringUtil.calcSimilatity("", ""));
+		assertEquals("String similarity", "1.0", ""+SysNatStringUtil.calcSimilatity("A", "A"));
+		assertEquals("String similarity", "0.0", ""+SysNatStringUtil.calcSimilatity("a", "A"));
+		assertEquals("String similarity", "0.5", ""+SysNatStringUtil.calcSimilatity("ab", "a"));
+		assertEquals("String similarity", "0.0", ""+SysNatStringUtil.calcSimilatity("ab", "ba"));
+		assertEquals("String similarity", "0.75", ""+SysNatStringUtil.calcSimilatity("xx ab yy", "xx ba yy"));
+		assertEquals("String similarity", "0.75", ""+SysNatStringUtil.calcSimilatity("xx ab yy", "xx AB yy"));
+		assertEquals("String similarity", "0.875", ""+SysNatStringUtil.calcSimilatity("xx ab yy", "xx as yy"));
+	}
+	
+	
+	@Test
 	public void countsOccurrences() 
 	{
 		final String searchSubString = "xyz";

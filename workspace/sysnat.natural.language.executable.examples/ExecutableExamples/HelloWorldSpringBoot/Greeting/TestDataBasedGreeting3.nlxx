@@ -4,7 +4,7 @@
 # when accessing the datafields and the script EnterGreetingData cannot be used.
 
 XXID:          <Dateiname>
-Kategorie-Filter: <Pfad>
+Filter: <Pfad>
 TestData:         MultipleGreetingData_1  # Note: this dataset does not contain a Greeting Result!
 TestData:         MultipleValidationData_1 
 

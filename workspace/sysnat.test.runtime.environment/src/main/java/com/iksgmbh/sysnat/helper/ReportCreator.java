@@ -15,6 +15,7 @@
  */
 package com.iksgmbh.sysnat.helper;
 
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.BLACK_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.BLUE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.GREEN_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.ORANGE_HTML_COLOR;
@@ -38,14 +39,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
-import com.iksgmbh.sysnat.utils.SysNatUtil;
+import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 public class ReportCreator 
 {	
+	private static final String HTML_LIST_SEPARATOR = "&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;";
+
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/ReportCreator", Locale.getDefault());
 
 	public static final String FULL_REPORT_RESULT_FILENAME = "FullOverview.html"; 
@@ -57,13 +62,21 @@ public class ReportCreator
 	private static final String DETAIL_TEMPLATE = "../sysnat.test.runtime.environment/src/main/resources/TestReport.htm.Template." 
                                                    + Locale.getDefault().getLanguage() + ".txt";
 	
+	private enum ReportStatus { OK, FAILED, WRONG };
+	
 	private HashMap<String, List<String>> reportMessagesOK;
 	private HashMap<String, List<String>> reportMessagesWRONG;
 	private HashMap<String, List<String>> reportMessagesFAILED;
+	private HashMap<String, String> xxidGroupMap;  
+	private HashMap<String, List<String>> executedXXGroups;  // contains list of XX for each group (both feature and behaviour)
+	private HashMap<String, String> groupReportStatus;  // contains for each group the overall status (e.g. failed if at least one XX of the group failed)
+	private List<String> knownFeatures;  // contains XXGroup-IDs that are defined as Features
 
-	private int testCounter = 0;
+	private int xxCounter = 0;
+	private int xxGroupCounter = 0;
 	private int messageCounter = 0;
 	private ExecutionRuntimeInfo executionInfo;
+
 
 	public static String createFullOverviewReport() {
 		return new ReportCreator().createFullOverview();
@@ -77,12 +90,65 @@ public class ReportCreator
 		return new ReportCreator().createDetailReport(testcase);
 	}
 
-	private ReportCreator() 
+	ReportCreator() 
 	{
 		executionInfo = ExecutionRuntimeInfo.getInstance();
+		xxidGroupMap = executionInfo.getXXidBehaviourMap();
+		knownFeatures = executionInfo.getKnownFeatures();
+		
 		reportMessagesOK = executionInfo.getReportMessagesOK();
 		reportMessagesWRONG = executionInfo.getReportMessagesWRONG();
 		reportMessagesFAILED = executionInfo.getReportMessagesFAILED();
+
+		executedXXGroups = collectXXGroups();
+		groupReportStatus = collectGroupReportStatus();
+	}
+
+	private HashMap<String, String> collectGroupReportStatus() 
+	{
+		final HashMap<String, String> toReturn = new HashMap<>();
+		executedXXGroups.keySet().stream()
+		                .filter(groupID -> ! groupID.equals(ExecutionRuntimeInfo.UNNAMED_XX_GROUP))
+		                .forEach(groupID -> toReturn.put(groupID, determineGroupReportStatus(groupID)));
+		return toReturn;
+	}
+
+	private String determineGroupReportStatus(String groupID) 
+	{
+		long failedNumber = executedXXGroups.get(groupID).stream().filter(xxid -> reportMessagesFAILED.keySet().contains(xxid)).count();
+		if (failedNumber > 0) {
+			return ReportStatus.FAILED.name() + "(" + failedNumber + "/" + executedXXGroups.get(groupID).size() + ")";
+		}
+
+		long wrongNumber = executedXXGroups.get(groupID).stream().filter(xxid -> reportMessagesWRONG.keySet().contains(xxid)).count();
+		if (wrongNumber > 0) {
+			return ReportStatus.WRONG.name() + "(" + wrongNumber + "/" + executedXXGroups.get(groupID).size() + ")";
+		}
+		
+		long okNumber = executedXXGroups.get(groupID).stream().filter(xxid -> reportMessagesOK.keySet().contains(xxid)).count();
+		return ReportStatus.OK.name() + "(" + okNumber + "/" + executedXXGroups.get(groupID).size() + ")";
+	}
+
+	private HashMap<String, List<String>> collectXXGroups() 
+	{
+		final HashMap<String, List<String>> toReturn = new HashMap<>();
+		xxidGroupMap.keySet().forEach(xxid -> collectXXID(toReturn, xxid));
+		return toReturn;
+	}
+
+	private void collectXXID(HashMap<String, List<String>> toReturn, String xxid) 
+	{
+		 String behaviourId = xxidGroupMap.get(xxid);
+		
+		if (behaviourId == null) {
+			behaviourId = ExecutionRuntimeInfo.UNNAMED_XX_GROUP;
+		}
+		
+		if (! toReturn.containsKey(behaviourId)) {
+			toReturn.put(behaviourId, new ArrayList<>());
+		}
+		
+		toReturn.get(behaviourId).add(xxid);
 	}
 
 	private String createFullOverview() 
@@ -111,7 +177,7 @@ public class ReportCreator
 		} else if (executionInfo.getReportMessagesWRONG().containsKey(xxid)) {
 			color = RED_HTML_COLOR;
 		}
-		return report.replace("PLACEHOLDER_DETAILS", getReportDetailsForSingleTestcase(xxid, executableExample.getReportMessages(), color, false));
+		return report.replace("PLACEHOLDER_DETAILS", getReportDetailsForXX(xxid, null, executableExample.getReportMessages(), color, false));
 	}
 
 
@@ -121,23 +187,76 @@ public class ReportCreator
 		report = report.replace("PLACEHOLDER_TARGET_ENV", executionInfo.getTargetEnv().name());
 		report = report.replace("PLACEHOLDER_TIME", executionInfo.getStartPointOfTimeAsString());
 		report = report.replace("PLACEHOLDER_DURATION", executionInfo.getExecutionDurationAsString());
-		report = report.replace("PLACEHOLDER_CATEGORIES", executionInfo.getTestCategories());
+		report = report.replace("PLACEHOLDER_EXECUTION_FILTER", executionInfo.getExecutionFilters());
 		
 		report = replacePlaceholdersOverallResult(report);
 		report = replaceTestStatiticsPlaceholder(report);
-		report = replaceFoundCategoriesPlaceholder(report);
-		report = replaceExecutedTestsPlaceholder(report);
+		report = replaceFoundFilterPlaceholder(report);
+		report = replaceExecutedPlaceholders(report);
 		
-		report = report.replace("PLACEHOLDER_INACTIVE_TEST_CASES", executionInfo.getInactiveTestListAsString());
+		String inactiveXXidList = buildHtmlList( executionInfo.getInactiveXXIDs() );
+		report = report.replace("PLACEHOLDER_INACTIVE_TEST_CASES", inactiveXXidList);
 		
 		return report;
 	}
 
-	private String replaceFoundCategoriesPlaceholder(String report) 
+	private String buildHtmlList(List<String> idList) 
+	{
+		if (idList.size() == 0) {
+			return "-";
+		}
+		
+		final List<String> inactiveList = createInactiveList(idList);
+		final StringBuffer sb = new StringBuffer();
+		int counter = 0;
+		for (String xxid : inactiveList) 
+		{
+			if (counter > 0) {
+				sb.append(HTML_LIST_SEPARATOR);
+			}
+			counter++;
+			sb.append(xxid);
+			
+			if (counter == 3)
+			{
+				sb.append(System.getProperty("line.separator"))
+				  .append("<br>")
+				  .append(System.getProperty("line.separator"));			
+				counter = 0;
+			}
+		}
+		
+		return sb.toString();
+	}
+
+	private List<String> createInactiveList(List<String> inactiveXXIDs) 
+	{
+		List<String> inactiveXXGroups = inactiveXXIDs.stream()
+				                                     .map(xxid -> xxidGroupMap.get(xxid))
+				                                     .filter(behaviour -> behaviour != null)
+				                                     .filter(behaviour -> ! ExecutionRuntimeInfo.UNNAMED_XX_GROUP.equals(behaviour))
+				                                     .distinct()
+                                                     .collect(Collectors.toList());
+		
+		List<String> standaloneXX = inactiveXXIDs.stream()
+                                                 .filter(xxid -> xxidGroupMap.get(xxid) == null 
+                                                                 || ExecutionRuntimeInfo.UNNAMED_XX_GROUP.equals( xxidGroupMap.get(xxid) ))
+                                                 .collect(Collectors.toList());
+	
+
+		final List<String> inactiveList = new ArrayList<>();
+		inactiveList.addAll(inactiveXXGroups);
+		inactiveList.addAll(standaloneXX);
+		Collections.sort(inactiveList);
+		
+		return inactiveList;
+	}
+
+	private String replaceFoundFilterPlaceholder(String report) 
 	{
 		final StringBuffer sb = new StringBuffer();
 
-		executionInfo.getCategoriesFromCollection().forEach(s->sb.append(s).append(", "));
+		executionInfo.getExecutionFilterFromMap().forEach(s->sb.append(s).append(", "));
 
 		String s = sb.toString().trim();
 		if (s.length() > 0) 
@@ -146,135 +265,282 @@ public class ReportCreator
 			if (s.startsWith(",")) {
 				s = s.substring(1).trim();
 			}
-			report = report.replace("PLACEHOLDER_AVAILABLE_CATEGORIES", s);
+			report = report.replace("PLACEHOLDER_AVAILABLE_EXECUTION_FILTER", s);
 		}
 		
 		return report;
 	}
 	
-	private String replaceExecutedTestsPlaceholder(String report) 
+	String replaceExecutedPlaceholders(String report) 
 	{
-		if (reportMessagesOK.isEmpty()) {
-			report = report.replace("PLACEHOLDER_GREEN_EXECUTED_TESTS", "");
-		} else {
-			report = report.replace("PLACEHOLDER_GREEN_EXECUTED_TESTS", createExecutedTestList(reportMessagesOK));
-		}		
-		
-		if (reportMessagesWRONG.isEmpty()) {
-			report = report.replace("PLACEHOLDER_ORANGE_EXECUTED_TESTS", "");
-		} else {
-			report = report.replace("PLACEHOLDER_ORANGE_EXECUTED_TESTS", createExecutedTestList(reportMessagesWRONG));
-		}
+		report = replaceExecPlaceholder(report, ReportStatus.FAILED, "PLACEHOLDER_RED_EXECUTED_TESTS");
+		report = replaceExecPlaceholder(report, ReportStatus.WRONG, "PLACEHOLDER_ORANGE_EXECUTED_TESTS");
+		report = replaceExecPlaceholder(report, ReportStatus.OK, "PLACEHOLDER_GREEN_EXECUTED_TESTS");
 
-		if (reportMessagesFAILED.isEmpty()) {
-			report = report.replace("PLACEHOLDER_RED_EXECUTED_TESTS", "");
+		return report;
+	}
+
+	private String replaceExecPlaceholder(String report, ReportStatus reportStatus, String placeholder) 
+	{
+		final List<String> idList = getGroupListWithStatus(reportStatus);
+		idList.addAll( getStandAloneXXsWithStatus(reportStatus) );
+		Collections.sort(idList);
+		
+		if (idList.isEmpty()) {
+			report = report.replace(placeholder, "");
 		} else {			
-			report = report.replace("PLACEHOLDER_RED_EXECUTED_TESTS", createExecutedTestList(reportMessagesFAILED));
+			report = report.replace(placeholder, buildHtmlList(idList));
 		}
-
 		return report;
 	}
 	
-	
-	private CharSequence createExecutedTestList(HashMap<String, List<String>> messages) 
+	private List<String> getStandAloneXXsWithStatus(ReportStatus reportStatus) 
 	{
-		ExecutedTestData data = new ExecutedTestData(); 
-		messages.keySet().forEach(s-> appendExecutedXXIds(data, s));		
-		return data.sb.toString();
-	}
-	
-	private class ExecutedTestData {
-		StringBuffer sb;
-		Integer counter;
-		public ExecutedTestData() {
-			this.sb = new StringBuffer();
-			this.counter = 0;
-		}
+		final Set<String> xxids;
 		
-	}
-
-	private void appendExecutedXXIds(ExecutedTestData data, String s) 
-	{
-		data.counter = data.counter + 1;
-		
-		if (data.counter == 1) {
-			data.sb.append(s);
+		if (reportStatus == ReportStatus.FAILED) {
+			xxids = reportMessagesFAILED.keySet();
+		} else if (reportStatus == ReportStatus.WRONG) {
+			xxids = reportMessagesWRONG.keySet();
 		} else {
-			data.sb.append("&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;")
-			       .append(s);
-		} 
-		
-		if (data.counter == 3)
-		{
-			data.sb.append(System.getProperty("line.separator"))
-			       .append("<br>")
-			       .append(System.getProperty("line.separator"));			
-			data.counter = 0;
+			xxids = reportMessagesOK.keySet();
 		}
+		
+		if (executedXXGroups.get(ExecutionRuntimeInfo.UNNAMED_XX_GROUP) == null) {
+			return new ArrayList<>();
+		}
+		
+		return executedXXGroups.get(ExecutionRuntimeInfo.UNNAMED_XX_GROUP)
+				               .stream()
+					           .filter(xxid -> xxids.contains(xxid))
+					           .collect(Collectors.toList());
 	}
 
-	private String buildDetailPart() 
+	private List<String> getGroupListWithStatus(ReportStatus reportStatus) 
+	{
+		return groupReportStatus.keySet().stream()
+				                .filter(groupID -> groupReportStatus.get(groupID).startsWith(reportStatus.name()))
+				                .map(groupID -> getDisplayText(groupID) )
+				                .collect(Collectors.toList());
+	}
+
+	private String getDisplayText(String groupID) 
+	{
+		String status = groupReportStatus.get(groupID);
+		int pos = status.indexOf("(");
+		return groupID + " " + status.substring(pos);
+	}
+
+	String buildDetailPart() 
 	{
 		final StringBuffer sb = new StringBuffer();
 
+		sb.append(buildReportDetailsForXXGroups());
+		
+		if (executedXXGroups.containsKey(ExecutionRuntimeInfo.UNNAMED_XX_GROUP)
+			&& executedXXGroups.size() > 1) 
+		{
+			addHtmlXXGroupSeparationLine(sb);
+			sb.append("<b><span style='font-size:16.0pt;color:" 
+			           + BLACK_HTML_COLOR + "'>" 
+					   + "Standalone Executable Examples</span></b>");
+			sb.append(System.getProperty("line.separator"));
+			sb.append("<br>");
+		}
+		  
+		xxCounter = 0;
+		
 		sb.append("<br>")
 		  .append(System.getProperty("line.separator"))
-		  .append(buildReportDetailsForTestCaseGroup(reportMessagesFAILED, RED_HTML_COLOR))
-		  .append(buildReportDetailsForTestCaseGroup(reportMessagesWRONG, ORANGE_HTML_COLOR))
-		  .append(buildReportDetailsForTestCaseGroup(reportMessagesOK, GREEN_HTML_COLOR));
+		  .append(buildReportDetailsForStandAloneXX(reportMessagesFAILED, RED_HTML_COLOR))
+		  .append(buildReportDetailsForStandAloneXX(reportMessagesWRONG, ORANGE_HTML_COLOR))
+		  .append(buildReportDetailsForStandAloneXX(reportMessagesOK, GREEN_HTML_COLOR));
 		
 		return sb.toString();
 	}
 
-	private String buildReportDetailsForTestCaseGroup(final HashMap<String, List<String>> reportMessages, 
-			                          final String color) 
+	private StringBuffer buildReportDetailsForXXGroups() 
+	{
+		final StringBuffer sb = new StringBuffer();
+		final List<String> groupsIds = executedXXGroups.keySet().stream()
+                                                       .filter(groupID -> ! groupID.equals(ExecutionRuntimeInfo.UNNAMED_XX_GROUP))
+				                                       .sorted()
+				                                       .collect(Collectors.toList());
+		xxGroupCounter = 0;
+		
+		for (String groupID : groupsIds) 
+		{
+			xxGroupCounter++;
+			
+			if (xxGroupCounter > 1) {
+				addHtmlXXGroupSeparationLine(sb);
+			} else {
+				sb.append("<br>")
+				  .append(System.getProperty("line.separator"));
+			}
+			
+			sb.append("<b><span style='font-size:16.0pt;color:" 
+			           + getGroupStatusColor(groupID) + "'>" 
+					   + xxGroupCounter + ". " + getGroupType(groupID) 
+					   + ": " + groupID + "</span></b>");
+
+			sb.append("<br>")
+			  .append(System.getProperty("line.separator"))
+			  .append("<br>")
+			  .append(System.getProperty("line.separator"));
+
+			final List<String> xxids = executedXXGroups.get(groupID);
+			Collections.sort(xxids);
+			xxCounter = 0;
+			for (String xxid : xxids) 
+			{
+				xxCounter++;
+				
+				if (xxCounter > 1) {
+					addHtmlXXSeparationLine(sb);
+				}
+				
+				if (reportMessagesOK.containsKey(xxid)) {
+					sb.append( getReportDetailsForXX(xxid, xxGroupCounter,
+							                        reportMessagesOK.get(xxid), 
+							                        GREEN_HTML_COLOR, 
+							                        true));
+				} else if (reportMessagesWRONG.containsKey(xxid)) {
+					sb.append( getReportDetailsForXX(xxid, xxGroupCounter, 
+							                        reportMessagesWRONG.get(xxid), 
+							                        ORANGE_HTML_COLOR, 
+							                        true));					
+				} else if (reportMessagesFAILED.containsKey(xxid)) {
+					sb.append( getReportDetailsForXX(xxid, xxGroupCounter, 
+							                         reportMessagesFAILED.get(xxid), 
+							                         RED_HTML_COLOR, 
+							                         true));					
+				}
+			}
+		}
+
+		return sb;
+	}
+
+	private String getGroupType(String groupID) 
+	{
+		if (knownFeatures.contains(groupID)) {
+			return "Feature";
+		}
+		return "Behaviour";
+	}
+
+	private String getGroupStatusColor(String groupID) 
+	{
+		String color = GREEN_HTML_COLOR;
+		if (groupReportStatus.get(groupID).startsWith(ReportStatus.WRONG.name())) {
+			color = ORANGE_HTML_COLOR;
+		} else if (groupReportStatus.get(groupID).startsWith(ReportStatus.FAILED.name())) {
+			color = RED_HTML_COLOR;
+		}
+		return color;
+	}
+
+	private StringBuffer buildReportDetailsForStandAloneXX(
+			final HashMap<String, List<String>> reportMessages, 
+			final String color) 
 	{
 		final StringBuffer sb = new StringBuffer();
 		
 		final ArrayList<String> keys = new ArrayList<>(reportMessages.keySet());
 		Collections.sort(keys);
 		
-		for (String xxid : keys) {
-			sb.append( getReportDetailsForSingleTestcase(xxid, reportMessages.get(xxid), color, true) );
+		for (String xxid : keys) 
+		{
+			if (xxidGroupMap.get(xxid).equals(ExecutionRuntimeInfo.UNNAMED_XX_GROUP)) 
+			{
+				xxCounter++;
+				if (xxCounter > 1) {
+					addHtmlXXGroupSeparationLine(sb);
+				}
+				
+				if (xxidGroupMap.get(xxid).equals(ExecutionRuntimeInfo.UNNAMED_XX_GROUP)) 
+				{				
+					sb.append( getReportDetailsForXX(xxid, null,
+							reportMessages.get(xxid), 
+							color, true) );
+				}
+			}
 		}
 		
-		return sb.toString();
+		return sb;
 	}
 
-	private String getReportDetailsForSingleTestcase(final String xxid, 
-			                                         final List<String> messages, 
-			                                         final String color,
-			                                         final boolean withTestCounter) 
+	private String getReportDetailsForXX(final String xxid,
+			                             final Integer groupCounter,
+			                             final List<String> messages, 
+			                             final String color,
+			                             final boolean withTestCounter) 
 	{
 		final StringBuffer sb = new StringBuffer();
+		String htmlTab = "";
 		messageCounter = 0;
-		testCounter++;
 		
 		String counterText = "";
 		if (withTestCounter) {
-			counterText = testCounter + ". ";
+			if (groupCounter == null) {
+				counterText = xxCounter + ". ";
+			} else {
+				htmlTab = "&nbsp;&nbsp;&nbsp;&nbsp;";
+				
+				if ( knownFeatures.contains( xxidGroupMap.get(xxid) ) ) {
+					counterText = groupCounter + "." + xxCounter + " Scenario: ";
+				} else {					
+					counterText = groupCounter + "." + xxCounter + " XXID: ";
+				}
+			}
 		}
 		
-		sb.append("<b><span style='font-size:14.0pt;color:" + color + "'>" + counterText + xxid + ":</span></b>")
+		sb.append(htmlTab + "<b><span style='font-size:14.0pt;color:" + color + "'>" + counterText + xxid + ":</span></b>")
 		  .append(System.getProperty("line.separator"))
 		  .append("<br>")
 		  .append(System.getProperty("line.separator"));
 
 		for (String message : messages) {
-			appendMessageLine(sb, message);
+			appendMessageLine(sb, message, htmlTab);
 		}
-		
-		sb.append("<br>")
-		  .append(System.getProperty("line.separator"))
-		  .append("<hr/>")
-		  .append(System.getProperty("line.separator"))
-		  .append("<br>")
-		  .append(System.getProperty("line.separator"));
 		
 		return sb.toString();
 	}
+	
+	private void addHtmlHorizontalLine(final StringBuffer sb) {
+		sb.append("<hr/>");
+	}
+	
+	private void addHtmlDashedHorizontalLine(final StringBuffer sb) {
+		sb.append("<hr style=\"border-style: dashed\">");
+	}
+	
+	private void addHtmlXXSeparationLine(final StringBuffer sb) 
+	{
+		sb.append("<br>")
+		  .append(System.getProperty("line.separator"));
+		  
+		addHtmlDashedHorizontalLine(sb);  
+		  
+		sb.append(System.getProperty("line.separator"))
+		  .append("<br>")
+		  .append(System.getProperty("line.separator"));
+	}
 
-	private void appendMessageLine(StringBuffer sb, String message) 
+	private void addHtmlXXGroupSeparationLine(final StringBuffer sb) 
+	{
+		sb.append("<br>")
+		  .append(System.getProperty("line.separator"));
+		  
+		addHtmlHorizontalLine(sb);  
+		  
+		sb.append(System.getProperty("line.separator"))
+		  .append("<br>")
+		  .append(System.getProperty("line.separator"));
+	}
+
+	private void appendMessageLine(StringBuffer sb, String message, String htmlTab) 
 	{
 		if (message.startsWith("//")) {
 			appendCommentLine(sb, message);
@@ -282,17 +548,22 @@ public class ReportCreator
 		} 
 		
 		messageCounter++;
-		message = testCounter + "." + messageCounter + " " + message;
+		
+		if (xxGroupCounter == 0) {
+			message = xxCounter + "." + messageCounter + " " + message;
+		} else {
+			message = xxGroupCounter + "." + xxCounter + "." + messageCounter + " " + message;
+		}
 		
 		if (message.contains(YES_KEYWORD)) {
-			sb.append(buildOkMessageLine(message));
+			sb.append(htmlTab + buildOkMessageLine(message));
 		} else if (message.contains(NO_KEYWORD)) {
-			sb.append(buildWrongMessageLine(message));
+			sb.append(htmlTab + buildWrongMessageLine(message));
 		} else if (message.contains(ERROR_KEYWORD)) {
 			message = message + " " + ExecutableExample.SMILEY_FAILED;
-			sb.append("<span style='font-size:12.0pt;color:" + RED_HTML_COLOR + "'>" + message + "</span>");
+			sb.append("<span style='font-size:12.0pt;color:" + RED_HTML_COLOR + "'>" + htmlTab +  message + "</span>");
 		} else {
-			sb.append("<span style='font-size:12.0pt'>" + message + "</span>");
+			sb.append("<span style='font-size:12.0pt'>" + htmlTab + message + "</span>");
 		}
 		
 		sb.append(System.getProperty("line.separator"))
@@ -329,7 +600,7 @@ public class ReportCreator
 	private void appendCommentLine(StringBuffer sb, String message) 
 	{
 		message = message.substring(2);
-		if (SysNatUtil.isTestPhaseKeyword(message))  {
+		if (SysNatTestRuntimeUtil.isTestPhaseKeyword(message))  {
 			sb.append("<br>").append(System.getProperty("line.separator"));
 			sb.append("<i><span style='font-size:13.0pt;color:" + BLUE_HTML_COLOR + "'>" + message + "</span></i>");
 		} else {

@@ -3,7 +3,7 @@
 # and the script EnterGreetingData can be used.
 
 XXID:          <Dateiname>
-Kategorie-Filter: <Pfad>
+Filter: <Pfad>
 TestData:         HelloWorldTestData_GreetingValidationData1
 
 # arrange

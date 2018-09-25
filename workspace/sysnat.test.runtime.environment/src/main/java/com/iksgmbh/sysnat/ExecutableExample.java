@@ -45,10 +45,10 @@ import com.iksgmbh.sysnat.common.exception.SkipTestCaseException.SkipReason;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.exception.UnexpectedResultException;
 import com.iksgmbh.sysnat.common.exception.UnsupportedGuiEventException;
+import com.iksgmbh.sysnat.common.helper.HtmlLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
-import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.SysNatTestData;
 import com.iksgmbh.sysnat.domain.TestApplication;
@@ -60,11 +60,9 @@ import com.iksgmbh.sysnat.helper.WindowHelper;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
 import com.iksgmbh.sysnat.testdataimport.TableDataParser;
 import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
-import com.iksgmbh.sysnat.utils.SysNatUtil;
 
 /**
- * Mother of all NatSpec test classes in this project
- * and referenced in "_NatSpecTemplate.java".
+ * Mother of all test classes.
  * 
  * All technical but technological unspecific stuff belongs in here.
  * 
@@ -85,7 +83,7 @@ abstract public class ExecutableExample
 	protected HashMap<String, Object> testObjects = new HashMap<>();     // data created during test execution
     protected TestDataImporter testDataImporter;
     
-    private List<String> testCategories;
+    private List<String> executionFilterList;
     private String XXID = null; // unique id of the executable example
 	private boolean skipped = false;
 	private boolean alreadyTerminated = false;
@@ -96,6 +94,7 @@ abstract public class ExecutableExample
 	private String bddKeyword = "";
 	private String behaviourID;
 
+
     abstract public void executeTestCase();
     abstract public String getTestCaseFileName();
     abstract public Package getTestCasePackage();
@@ -103,15 +102,15 @@ abstract public class ExecutableExample
     
 	public void setUp() 
 	{
-		if (executionInfo.getGuiController() == null) {
-			initExecution();
+		if ( ! executionInfo.isTestEnvironmentInitialized() ) {
+			initTestEnvironment();
 		} else {
 			setGuiController(executionInfo.getGuiController());
 	        getGuiController().reloadCurrentPage();  // prepare gui for next test
 		}
 	}
 	
-	private void initExecution() 
+	private void initTestEnvironment() 
 	{
 		testDataImporter = new TestDataImporter(executionInfo.getTestdataDir());
 		initShutDownHook();
@@ -126,6 +125,9 @@ abstract public class ExecutableExample
 		} else {
 			executionInfo.setApplicationStarted(true);
 		}
+	
+		
+		executionInfo.setTestEnvironmentInitialized();
 	}
 
 	protected boolean isSkipped() {
@@ -155,23 +157,6 @@ abstract public class ExecutableExample
 	
 	public String getXXID() {
 		return XXID;
-	}
-
-	public void addBehaviourReportMessage(String message) 
-	{
-		if (message.startsWith("<b>Behaviour")
-			&& bddKeyword.equals("Feature")) 
-		{
-				message.replace("Behaviour", "Feature");
-				reportMessages.add(message.trim());
-		}
-		
-		if (message.startsWith("<b>Verhalten")
-			&& bddKeyword.equals("Feature")) 
-		{
-			message.replace("Verhalten", "Feature");
-			reportMessages.add(message.trim());
-		}
 	}
     
 	public void addReportMessage(String message) 
@@ -251,13 +236,13 @@ abstract public class ExecutableExample
 	{
 		if (reportMessages != null)  {
 			System.out.println("Test Result: OK");
-			executionInfo.addTestMessagesOK(getCheckedXXId(), reportMessages);
+			executionInfo.addTestMessagesOK(getCheckedXXId(), reportMessages, behaviourID);
 		}
 	}
 
 	public void terminateWrongTestCase() {
 		System.out.println("Test Result: Failed Assertion");
-		executionInfo.addTestMessagesWRONG(getCheckedXXId(), reportMessages);
+		executionInfo.addTestMessagesWRONG(getCheckedXXId(), reportMessages, behaviourID);
 	}
 
 	public void finishSkippedTestCase(SkipReason skipReason) 
@@ -269,8 +254,8 @@ abstract public class ExecutableExample
 			System.out.println("Skipped because set inactive.");
 		}
 		
-		if (skipReason == SkipReason.CATEGORY_FILTER) {
-			System.out.println("Skipped due to current category filter(s) " + executionInfo.getTestCategoriesToExecute());
+		if (skipReason == SkipReason.EXECUTION_FILTER) {
+			System.out.println("Skipped due to current execution filter(s) " + executionInfo.getExecutionFilterList());
 		}
 		
 		if (skipReason == SkipReason.APPLICATION_TO_TEST) {
@@ -288,7 +273,7 @@ abstract public class ExecutableExample
 		}
 		System.out.println("Test Result: Technical Error");
 		reportMessages.add(message);
-		executionInfo.addTestMessagesFAILED(getCheckedXXId(), reportMessages);
+		executionInfo.addTestMessagesFAILED(getCheckedXXId(), reportMessages, behaviourID);
 		terminateTestCase(message);
 	}
 
@@ -635,8 +620,14 @@ abstract public class ExecutableExample
 		return XXID;
 	}
 
-	private void initShutDownHook() 
+	protected void initShutDownHook() 
 	{
+		if (executionInfo.isShutDownHookAdded()) {
+			return;
+		}
+			
+		executionInfo.setShutDownHookAdded();
+		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() 
 			{
@@ -645,7 +636,7 @@ abstract public class ExecutableExample
 				createReportHtml();
 				
 				if (executionInfo.getNumberOfAllExecutedTestCases() == 0) {
-					System.out.println("No test executed. Check filter categories and executable examples.");
+					System.out.println("No test executed. Check execution filter and executable examples.");
 				} else {
 					System.out.println("Done with executing " + executionInfo.getReportName() + ".");
 				}
@@ -674,21 +665,8 @@ abstract public class ExecutableExample
 				                 ReportCreator.createShortOverviewReport());
 
 		if ("true".equalsIgnoreCase( System.getProperty("sysnat.autolaunch.report"))) {    		
-    		launchHtmlReport( fullOverviewReportFilename );
+			HtmlLauncher.doYourJob( fullOverviewReportFilename );
     	}
-	}
-	
-	private void launchHtmlReport(final String reportFileName) 
-	{
-	    Runtime rt = Runtime.getRuntime();
-	    try {
-	    	File reportFile = new File( reportFileName );
-	    	String pathToHtml = reportFile.getCanonicalPath();
-	        String pathToFirefoxExe = SysNatUtil.getPathToFirefoxBinary();
-			rt.exec(new String[]{ pathToFirefoxExe + "//firefox.exe","-url", "file:///" + pathToHtml });
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
 	}
 
 	public void answerQuestion(final String question, final boolean  ok)
@@ -803,8 +781,8 @@ abstract public class ExecutableExample
 	
 	public boolean hasBildnachweisCategory() 
 	{
-		for (String category : getTestCategories()) {
-			if (CATEGORY_BILDNACHWEIS.equals(category)) {
+		for (String filter : getExecutionFilterList()) {
+			if (CATEGORY_BILDNACHWEIS.equals(filter)) {
 				return true;
 			}
 		}
@@ -812,18 +790,18 @@ abstract public class ExecutableExample
 		return false;
 	}
 	
-	public List<String> buildTestCategories(String testCategoriesOfThisTestCase) 
+	public List<String> buildExecutionFilterList(String executionFilterOfThisTestCase) 
 	{
-		setTestCategories(SysNatStringUtil.getTestCategoriesAsList(testCategoriesOfThisTestCase, getXXID()));
-		return getTestCategories();
+		setExecutionFilter(SysNatStringUtil.getExecutionFilterAsList(executionFilterOfThisTestCase, getXXID()));
+		return getExecutionFilterList();
 	}
 	
-	public List<String> getTestCategories() {
-		return testCategories;
+	public List<String> getExecutionFilterList() {
+		return executionFilterList;
 	}
 	
-	public void setTestCategories(List<String> testCategories) {
-		this.testCategories = testCategories;
+	public void setExecutionFilter(List<String> filters) {
+		this.executionFilterList = filters;
 	}
 	
 	public GuiControl getGuiController() {
@@ -977,8 +955,17 @@ abstract public class ExecutableExample
 	public void setTestObjects(HashMap<String, Object> hashMap) {
 		testObjects = hashMap;
 	}
-	public void setBehaviorID(String aBehaviourID) {
+
+	public void setBehaviorID(String aBehaviourID) 
+	{
 		behaviourID = aBehaviourID;
+		if (bddKeyword != null && ! bddKeyword.isEmpty() ) {
+			executionInfo.addToKnownFeatures(aBehaviourID);
+		}
 	}
-		
+	
+	public String getBehaviorID() {
+		return behaviourID;
+	}
+
 }

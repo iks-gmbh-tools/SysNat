@@ -4,7 +4,7 @@
 # Therefore, the script "EnterGreetingData" cannot be used, because it depends on only one dataset loaded!
 
 XXID:          <Dateiname>
-Kategorie-Filter: <Pfad>
+Filter: <Pfad>
 TestData:         HelloWorldTestData
 
 # arrange

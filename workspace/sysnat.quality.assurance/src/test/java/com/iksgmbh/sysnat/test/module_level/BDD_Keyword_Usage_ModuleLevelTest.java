@@ -17,12 +17,18 @@ package com.iksgmbh.sysnat.test.module_level;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.util.Arrays;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.SysNatTestingExecutor;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.helper.ReportCreator;
+import com.iksgmbh.sysnat.test.utils.SysNatTestUtils;
 
 /**
  * Tests for the interaction of sysnat.testcase.generation and sysnat.test.execution.
@@ -33,17 +39,22 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
  */
 public class BDD_Keyword_Usage_ModuleLevelTest 
 {
-	private static final String EXECUTION_DIR = "../sysnat.test.execution/src/test/gen/";
+	private static final String EXECUTION_MAIN_DIR = "../sysnat.test.execution/src/main";
+	private static final String EXECUTION_TEST_DIR = "../sysnat.test.execution/src/test/gen/";
 	private static final String TESTDATA_DIR = "../sysnat.quality.assurance/src/test/resources/testdata/";
-
-	private String testInputDir;
 
 	@Before
 	public void setup() {
-		SysNatFileUtil.deleteFolder(EXECUTION_DIR);
+		SysNatFileUtil.deleteFolder(EXECUTION_TEST_DIR);
 		GenerationRuntimeInfo.reset();
 		System.setProperty("sysnat.dummy.test.run", "true");
 		System.setProperty("sysnat.autolaunch.report", "false");
+	}
+	
+	@After
+	public void cleanup() {
+		SysNatFileUtil.deleteFolder(EXECUTION_MAIN_DIR);
+		SysNatFileUtil.deleteFolder(EXECUTION_TEST_DIR);
 	}
 
 	@Test
@@ -51,18 +62,20 @@ public class BDD_Keyword_Usage_ModuleLevelTest
 	{
 		// arrange
 		final String testAppName = "CalculatorBDDKeywordsTestApp";
+		Arrays.asList( new File( "./target" ).listFiles() ).stream().filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory()).forEach(SysNatFileUtil::deleteFolder);
+
 		System.setProperty("sysnat.properties.path", TESTDATA_DIR + testAppName);
 		System.setProperty("settings.config", TESTDATA_DIR + testAppName + "/settings.config");
 
 		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName,
 				"Calculator.java", 
-				"../sysnat.test.execution/src/main/java/com/iksgmbh/sysnat/test");
+				EXECUTION_MAIN_DIR + "/java/com/iksgmbh/sysnat/test");
 		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName, 
 				"CalculatorLanguageTemplatesContainer.java", 
-                EXECUTION_DIR + "com/iksgmbh/sysnat/test/bddkeywordstestapp");
+                EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/bddkeywordstestapp");
 		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName, 
 				"BDDKeywordTestCaseTest.java", 
-                EXECUTION_DIR + "com/iksgmbh/sysnat/test/bddkeywordstestapp");
+                EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/bddkeywordstestapp");
 		
 		GenerationRuntimeInfo.getInstance();
 		
@@ -71,6 +84,16 @@ public class BDD_Keyword_Usage_ModuleLevelTest
 
 		// assert
 		assertEquals("Maven result", SysNatTestingExecutor.MAVEN_OK, result);
+		File reportFolder = Arrays.asList( new File( "./target" ).listFiles() ).stream().filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory()).findFirst().get();
+		final File fullReportFile = new File(reportFolder, ReportCreator.FULL_REPORT_RESULT_FILENAME);
+		SysNatTestUtils.assertFileExists( fullReportFile );
+		final String report = SysNatFileUtil.readTextFileToString(fullReportFile); 
+		SysNatTestUtils.assertReportContains(report, "1. Feature: BDDKeywordTestCase");
+		SysNatTestUtils.assertReportContains(report, "1.1 Scenario: XX1");
+		SysNatTestUtils.assertReportContains(report, "1.1.1 <b>Given</b> Number <b>1</b> has been entered.");
+		SysNatTestUtils.assertReportContains(report, "1.1.2 <b>Given</b> Number <b>2</b> has been entered.");
+		SysNatTestUtils.assertReportContains(report, "1.1.3 <b>When</b> Entered numbers has been summed up.");
+		SysNatTestUtils.assertReportContains(report, "1.1.4 <b>Then</b> The result equals <b>3</b>.");
 	}
 
 }

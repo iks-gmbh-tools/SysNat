@@ -16,10 +16,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
 <center><b><span style='font-size:36.0pt;line-height:200%;float:center'>SysNat-Test-Report</span></b></center>
 
-<div style='mso-element:para-border-div;border:none;border-bottom:solid windowtext 1.5pt;
-padding:0cm 0cm 1.0pt 0cm'>
-
-</div>
+<div style='mso-element:para-border-div;border:none;border-bottom:solid windowtext 3pt;padding:0cm 0cm 1.0pt 0cm'></div>
 
 <p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
 padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><b style='mso-bidi-font-weight:
@@ -76,11 +73,11 @@ normal'><span style='font-size:8.0pt;line-height:105%'><o:p>&nbsp;</o:p></span><
  <tr style='mso-yfti-irow:2'>
   <td width=267 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span
-  style='font-size:20.0pt;line-height:105%'>Kategorien-Filter:<span
+  style='font-size:20.0pt;line-height:105%'>Ausführungsfilter:<span
   style='color:#00B050'></span></span></b></p>
   </td>
   <td width=299 valign=top style='width:225.4pt;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal><span style='font-size:20.0pt;line-height:105%'>PLACEHOLDER_CATEGORIES<b
+  <p class=MsoNormal><span style='font-size:20.0pt;line-height:105%'>PLACEHOLDER_EXECUTION_FILTER<b
   style='mso-bidi-font-weight:normal'></b></span></p>
   </td>
  </tr>
@@ -194,11 +191,12 @@ normal'><span style='font-size:8.0pt;line-height:105%'><o:p>&nbsp;</o:p></span><
 
 </div>
 
-<hr/>
+<hr style="border-style: dashed; size: 5px;">
+
 
 
 <br>
-<b><span style='font-size:14.0pt'>Liste der ausgeführten Tests:</span></b>
+<b><span style='font-size:14.0pt'>Ausgeführt wurden</span></b>
 <br>
 
 <p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
@@ -227,21 +225,23 @@ line-height:106%'>PLACEHOLDER_INACTIVE_TEST_CASES</span></p>
 <hr/>
 
 <br>
-<b><span style='font-size:14.0pt'>In den nlxx-Dateien definierte Filterkategorien:</span></b>
+<b><span style='font-size:14.0pt'>Verfügbare Ausführungsfilter:</span></b>
 <br>
 
 <p style='border:none;mso-border-bottom-alt:solid windowtext 1.5pt;
 padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;
-line-height:106%'>PLACEHOLDER_AVAILABLE_CATEGORIES</span></p>
+line-height:106%'>PLACEHOLDER_AVAILABLE_EXECUTION_FILTER</span></p>
 
-<hr/>
+<div style='mso-element:para-border-div;border:none;border-bottom:solid windowtext 3pt;padding:0cm 0cm 1.0pt 0cm'></div>
 
 
 <br>
-<b><span style='font-size:18.0pt'>Details der Testausführung:</span></b>
+<b><span style='font-size:18.0pt'>Details:</span></b>
 <br>
 
 PLACEHOLDER_DETAILS
+
+<div style='mso-element:para-border-div;border:none;border-bottom:solid windowtext 3pt;padding:0cm 0cm 1.0pt 0cm'></div>
 
 </body>
 

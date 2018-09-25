@@ -19,12 +19,15 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
 import com.iksgmbh.sysnat.common.utils.ExceptionHandlingUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaCommand;
@@ -38,6 +41,8 @@ import com.iksgmbh.sysnat.domain.LanguageTemplatePattern;
  */
 public class PatternMergeJavaCommandGenerator 
 {
+	public static ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/UserErrorMessages", Locale.getDefault());
+
 	private static final String TEST_DATA_COMMAND_TEMPLATE = "setDatasetObject(\"-\");";
 	private static final String TEST_PARAMETER_COMMAND_TEMPLATE = "applyTestParameter(\"-\");";
 	
@@ -129,14 +134,89 @@ public class PatternMergeJavaCommandGenerator
 			}
 		}
 		
-		if (! matchFound) 
-		{
-			final String methodSuggestion = MethodAnnotationSuggestionBuilder.
-					buildAnnotationSuggestion(instructionPattern.getInstructionLine());
-			ExceptionHandlingUtil.throwClassifiedException(ErrorCode.MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION, 
-					                                       instructionPattern.getInstructionLine(), 
-					                                       instructionPattern.getFileName(),
-					                                       methodSuggestion);
+		if (! matchFound) {
+			handleNoMatchFoundProblem(instructionPattern);
+		}
+	}
+
+	private void handleNoMatchFoundProblem(final LanguageInstructionPattern instructionPattern) 
+	{
+		final String methodSuggestion = MethodAnnotationSuggestionBuilder.
+				buildAnnotationSuggestion(instructionPattern.getInstructionLine());
+		
+		String userErrorMessage = 
+		        System.getProperty("line.separator") + "<br>"
+		        + BUNDLE.getString("MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION__ERROR_MESSAGE");
+		userErrorMessage = userErrorMessage.replace("x1", 
+				                            instructionPattern.getInstructionLine());
+		
+		String file = instructionPattern.getFileName();
+		int pos = file.lastIndexOf('\\') + 1;
+		String filename = file.substring(pos);
+		String path = file.substring(0, pos); 
+		userErrorMessage = userErrorMessage.replace("x2", filename);
+		userErrorMessage = userErrorMessage.replace("x3", path)
+				            + System.getProperty("line.separator") + "<br>"
+				            + System.getProperty("line.separator") + "<br>"
+									            + System.getProperty("line.separator");
+
+		String testApp = System.getProperty(SysNatLocaleConstants.TESTAPP_SETTING_KEY);
+		String libraryFilename = System.getProperty("sysnat.help.command.list.file")
+				                 .replace("<testapp>", testApp);
+		
+		String similarInstructions = getFindSimilarInstructions(instructionPattern.getInstructionLine());
+		
+		String userHelpMessage = "";
+		
+		if (! similarInstructions.equals("<br>")) {
+			userHelpMessage += System.getProperty("line.separator") + "<br>"
+					+ BUNDLE.getString("MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION__HELP_MESSAGE_1")
+			        + System.getProperty("line.separator") + "<br>"
+					+ getFindSimilarInstructions(instructionPattern.getInstructionLine())
+					+ System.getProperty("line.separator") + "<br>";
+					
+		}
+		userHelpMessage += System.getProperty("line.separator") + "<br>"
+				+ BUNDLE.getString("MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION__HELP_MESSAGE_2")
+				+ "<b>" + libraryFilename + "</b>"
+				+ System.getProperty("line.separator") + "<br>"
+				+ System.getProperty("line.separator") + "<br>"
+				+ BUNDLE.getString("MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION__HELP_MESSAGE_3")
+		        + System.getProperty("line.separator") + "<br>";
+		
+		ExceptionHandlingUtil.throwClassifiedException(ErrorCode.MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION, 
+				                                       instructionPattern.getInstructionLine(), 
+				                                       instructionPattern.getFileName(),
+				                                       methodSuggestion,
+				                                       userErrorMessage,
+				                                       userHelpMessage);
+	}
+
+	private String getFindSimilarInstructions(String instructionLine) 
+	{
+		final String languageTemplateToCompare = MethodAnnotationSuggestionBuilder.buildAnnotationValue(instructionLine);
+		List<String> similarLanguageTemplates = new ArrayList<>();
+		languageTemplateCollection.entrySet().forEach(filename -> findSimilarInstructions(languageTemplateToCompare, similarLanguageTemplates, filename.getValue()));
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append(System.getProperty("line.separator") + "<br>");
+		similarLanguageTemplates.forEach(template -> sb.append(template).append(System.getProperty("line.separator") + "<br>"));
+		
+		return sb.toString().trim();
+	}
+
+	private void findSimilarInstructions(String languageTemplateToCompare,
+			                             List<String> similarLanguageTemplates, 
+			                             List<LanguageTemplatePattern> knownLanguageTemplates) {
+		knownLanguageTemplates.forEach(languageTemplate -> findSimilarInstruction(languageTemplate, languageTemplateToCompare, similarLanguageTemplates));
+	}
+
+	private void findSimilarInstruction(LanguageTemplatePattern languageTemplate, 
+			                            String languageTemplateToCompare,
+			                            List<String> similarLanguageTemplates) 
+	{
+		if (SysNatStringUtil.calcSimilatity(languageTemplateToCompare, languageTemplate.getAnnotationValue()) > 0.8d) {
+			similarLanguageTemplates.add(languageTemplate.getAnnotationValue());
 		}
 	}
 

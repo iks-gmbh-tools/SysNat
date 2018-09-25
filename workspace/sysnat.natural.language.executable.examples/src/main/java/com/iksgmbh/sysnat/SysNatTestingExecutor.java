@@ -122,7 +122,7 @@ public class SysNatTestingExecutor
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
 		propertyKey = BUNDLE.getString("ENVIRONMENT_SETTING_KEY");
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
-		propertyKey = BUNDLE.getString("FILTER_CATEGORIES_TO_EXECUTE");
+		propertyKey = BUNDLE.getString("EXECUTION_FILTER");
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
 		propertyKey = BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY");
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
@@ -130,7 +130,6 @@ public class SysNatTestingExecutor
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
 		propertyKey = BUNDLE.getString("ARCHIVE_DIR_SETTING_KEY");
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
-		
 		propertyKey = "sysnat.dummy.test.run";
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
 		propertyKey = "sysnat.autolaunch.report";

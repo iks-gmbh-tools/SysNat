@@ -17,7 +17,7 @@ package com.iksgmbh.sysnat.common.exception;
 
 public class SkipTestCaseException extends SysNatException 
 {
-	public enum SkipReason {APPLICATION_TO_TEST, CATEGORY_FILTER, ACTIVATION_STATE};
+	public enum SkipReason {APPLICATION_TO_TEST, EXECUTION_FILTER, ACTIVATION_STATE};
 	private static final long serialVersionUID = 1L;
 
 	private SkipReason reason;

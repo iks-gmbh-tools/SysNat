@@ -28,6 +28,7 @@ import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.test.system_level.common.SysNatSystemTest;
+import com.iksgmbh.sysnat.test.utils.SysNatTestUtils;
 
 public class HomePageIKSSystemLevelTest extends SysNatSystemTest 
 {	
@@ -89,6 +90,9 @@ public class HomePageIKSSystemLevelTest extends SysNatSystemTest
 		}
 		assertEquals("Number of error message occurrences.", 
 				      expectedOccurrences, actualOccurrences);
+		SysNatTestUtils.assertReportContains(report, "background:#CDE301;" + System.getProperty("line.separator") +
+				"padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;" + System.getProperty("line.separator") +
+				"line-height:106%'>InactiveTestExample<");
 	}
 
 }

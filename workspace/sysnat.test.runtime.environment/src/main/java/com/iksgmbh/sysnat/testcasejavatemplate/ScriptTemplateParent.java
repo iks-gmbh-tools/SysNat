@@ -16,7 +16,7 @@
 package com.iksgmbh.sysnat.testcasejavatemplate;
 
 import com.iksgmbh.sysnat.ExecutableExample;
-import com.iksgmbh.sysnat.utils.SysNatUtil;
+import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
  * This class is the parent of all script templates (.nls files). 
@@ -36,7 +36,7 @@ public abstract class ScriptTemplateParent extends ExecutableExample
 	protected void adoptContextDataFrom(ExecutableExample callingExecutableExample) 
 	{
 		testCaseFileName = callingExecutableExample.getTestCaseFileName();
-		SysNatUtil.copyContextData(callingExecutableExample, this);
+		SysNatTestRuntimeUtil.copyContextData(callingExecutableExample, this);
 	}
 
 	@Override

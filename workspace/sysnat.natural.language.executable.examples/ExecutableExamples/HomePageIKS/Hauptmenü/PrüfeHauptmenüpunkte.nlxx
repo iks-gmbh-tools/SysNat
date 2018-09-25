@@ -1,38 +1,38 @@
 Behaviour: <Dateiname>
 
 XXID: Dienstleistungen
-Kategorie-Filter: Smoketest
+Filter: Smoketest
 Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Dienstleistungen".
 Wird die Seite "Dienstleistungen" angezeigt?
 
 XXID:         <Dateiname>
-Kategorie-Filter: Smoketest
-Wird die Seite "Home" angezeigt?
+Filter: Smoketest
+#Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Unternehmen".
 Wird die Seite "Unternehmen" angezeigt?
 
 XXID:         <Dateiname>
-Kategorie-Filter: Smoketest
-Wird die Seite "Home" angezeigt?
+Filter: Smoketest
+#Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Downloads".
 Wird die Seite "Downloads" angezeigt?
 
 XXID:         <Dateiname>
-Kategorie-Filter: Smoketest
-Wird die Seite "Home" angezeigt?
+Filter: Smoketest
+#Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Karriere".
 Wird die Seite "Karriere" angezeigt?
 
 XXID:         <Dateiname>
-Kategorie-Filter: Smoketest
-Wird die Seite "Home" angezeigt?
+Filter: Smoketest
+#Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Kontakt".
 Wird die Seite "Kontakt" angezeigt?
 
 XXID:         <Dateiname>
-Kategorie-Filter: Smoketest
-Wird die Seite "Home" angezeigt?
+Filter: Smoketest
+#Wird die Seite "Home" angezeigt?
 Klicke Hauptmenüpunkt "Kontakt".
 Wird die Seite "Kontakt" angezeigt?
 

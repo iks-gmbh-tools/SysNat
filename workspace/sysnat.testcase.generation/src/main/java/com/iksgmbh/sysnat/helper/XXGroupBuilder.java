@@ -45,7 +45,7 @@ import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
  * 
  * @author Reik Oberrath
  */
-public class TestSeriesBuilder 
+public class XXGroupBuilder 
 {
 	private static final String PARAMETER_IDENTIFIER_METHOD_CALL = ".applyTestParameter(";
 	private static final String BEHAVIOUR_IDENTIFIER_METHOD_CALL = ".declareXXGroupForBehaviour(";
@@ -61,13 +61,13 @@ public class TestSeriesBuilder
 	private String nameOfCurrentFile;
 	private int xxCounter = 0;
 	
-	private TestSeriesBuilder(final HashMap<Filename, List<JavaCommand>> aJavaCommandCollectionRaw) {
+	private XXGroupBuilder(final HashMap<Filename, List<JavaCommand>> aJavaCommandCollectionRaw) {
 		this.javaCommandCollectionRaw = aJavaCommandCollectionRaw;
 		this.testDataImporter = new TestDataImporter(GenerationRuntimeInfo.getInstance().getTestdataDir());
 	}
 	
 	public static HashMap<Filename, List<JavaCommand>> doYourJob(final HashMap<Filename, List<JavaCommand>> aJavaCommandCollectionRaw) {
-		return new TestSeriesBuilder(aJavaCommandCollectionRaw).buildTestCaseSeriesIfNecessary();
+		return new XXGroupBuilder(aJavaCommandCollectionRaw).buildTestCaseSeriesIfNecessary();
 	}
 	
 	private HashMap<Filename, List<JavaCommand>> buildTestCaseSeriesIfNecessary() 

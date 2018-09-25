@@ -1,10 +1,12 @@
 XXID:         <Dateiname>
-Kategorie-Filter: Smoketest
+Filter: Smoketest
 
 # Arrange
 Test-Phase: Arrange    # setup all test requirements
 Klicke Hauptmenüpunkt "Downloads".
 Klicke Link "Alle Fachartikel zeigen". 
+
+Klicke Hauptmenüpunkt.
 
 # Act
 Test-Phase: Act  # Perform action under test

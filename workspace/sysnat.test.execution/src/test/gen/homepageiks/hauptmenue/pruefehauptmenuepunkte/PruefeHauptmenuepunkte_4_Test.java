@@ -48,8 +48,7 @@ public class PruefeHauptmenuepunkte_4_Test extends TestCaseTemplateParent
 		try {
 			languageTemplatesCommon.declareXXGroupForBehaviour("PruefeHauptmenuepunkte");
 			languageTemplatesCommon.startNewXX("PruefeHauptmenuepunkte_4");
-			languageTemplatesCommon.checkFilterCategory("Smoketest");
-			languageTemplatesHomePageIKSBasics.isPageVisible("Home");
+			languageTemplatesCommon.defineExecutionFilter("Smoketest");
 			languageTemplatesHomePageIKSBasics.clickMainMenuItem("Kontakt");
 			languageTemplatesHomePageIKSBasics.isPageVisible("Kontakt");
 			

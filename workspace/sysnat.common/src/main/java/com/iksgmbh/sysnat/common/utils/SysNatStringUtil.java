@@ -31,29 +31,29 @@ public class SysNatStringUtil
 		return firstChar.toLowerCase() + s.substring(1);
 	}
 	
-	public static List<String> getTestCategoriesAsList(String testCategoriesAsString, String xxid) 
+	public static List<String> getExecutionFilterAsList(String executionFilterAsString, String xxid) 
 	{
 		List<String> toReturn = new ArrayList<>();
 		
-		if (testCategoriesAsString != null)  
+		if (executionFilterAsString != null)  
 		{
-			String[] splitResult = testCategoriesAsString.split(",");
+			String[] splitResult = executionFilterAsString.split(",");
 			if (splitResult.length == 1 && splitResult[0].trim().length() == 0) {				
 				toReturn.add(NO_FILTER);
-				testCategoriesAsString = NO_FILTER;
+				executionFilterAsString = NO_FILTER;
 			} else 
 			{				
-				for (String category : splitResult) 
+				for (String filter : splitResult) 
 				{
-					category = category.replace('_', ' ');
-					if (SysNatLocaleConstants.FROM_PACKAGE.equals(category)) 
+					filter = filter.replace('_', ' ');
+					if (SysNatLocaleConstants.FROM_PACKAGE.equals(filter)) 
 					{
 						String[] splitResult2 = xxid.split("_");
-						for (String category2 : splitResult2) {
-							toReturn.add(category2);
+						for (String filter2 : splitResult2) {
+							toReturn.add(filter2);
 						}
 					} else {
-						toReturn.add(category);
+						toReturn.add(filter);
 					}
 				}
 			}
@@ -237,4 +237,48 @@ public class SysNatStringUtil
 		}
 		return toReturn;
 	}
+	
+	public static double calcSimilatity(String s1, String s2) 
+	{
+		String longer = s1;
+		String shorter = s2;
+		
+		if (s1.length() < s2.length()) { 
+			longer = s2; 
+			shorter = s1; // longer should always have greater length
+		}
+		
+		final int longerLength = longer.length();
+		if (longerLength == 0) { 
+			return 1.0; // both strings are zero length
+		}
+		
+		return (longerLength - editDistance(longer, shorter)) / (double) longerLength;
+	}	
+	
+	private static int editDistance(String s1, String s2) 
+	{
+	    int[] costs = new int[s2.length() + 1];
+	    for (int i = 0; i <= s1.length(); i++) {
+	      int lastValue = i;
+	      for (int j = 0; j <= s2.length(); j++) {
+	        if (i == 0)
+	          costs[j] = j;
+	        else {
+	          if (j > 0) {
+	            int newValue = costs[j - 1];
+	            if (s1.charAt(i - 1) != s2.charAt(j - 1))
+	              newValue = Math.min(Math.min(newValue, lastValue),
+	                  costs[j]) + 1;
+	            costs[j - 1] = lastValue;
+	            lastValue = newValue;
+	          }
+	        }
+	      }
+	      if (i > 0)
+	        costs[s2.length()] = lastValue;
+	    }
+	    return costs[s2.length()];
+	}	
+	
 }

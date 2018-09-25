@@ -3,7 +3,7 @@
 # and the script EnterGreetingData can be used.
 
 XXID:          <Dateiname>
-Kategorie-Filter: <Pfad>
+Filter: <Pfad>
 TestData:         SingleGreetingData # Note: this dataset does not contain a Greeting Result!
 
 # arrange

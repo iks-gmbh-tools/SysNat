@@ -50,6 +50,7 @@ public class SysNatConstants
 	public static final String RED_HTML_COLOR = "#FF0000";
 	public static final String WHITE_HTML_COLOR = "#FFFFFF";
 	public static final String BLUE_HTML_COLOR = "#0000FF";
+	public static final String BLACK_HTML_COLOR = "#000000";
 	
 	public static final String SYS_OUT_SEPARATOR = "--------------------------------------------------------------------";
 

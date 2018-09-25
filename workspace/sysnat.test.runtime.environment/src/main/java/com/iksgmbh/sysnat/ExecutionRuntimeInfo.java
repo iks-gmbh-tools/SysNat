@@ -50,11 +50,13 @@ import com.iksgmbh.sysnat.helper.VirtualTestCase;
  * 
  * @author Reik Oberrath
  */
-public class ExecutionRuntimeInfo {
+public class ExecutionRuntimeInfo 
+{
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
-
-	public static final String PROPERTIES_PATH = "../sysnat.test.runtime.environment/src/main/resources/execution_properties";
 	private static final Hashtable<String, String> sysNatProperties = new Hashtable<>();
+
+	public static final String UNNAMED_XX_GROUP = "UNNAMED_XX_GROUP";
+	public static final String PROPERTIES_PATH = "../sysnat.test.runtime.environment/src/main/resources/execution_properties";
 
 	// common technical settings
 	public static final String PROPERTIES_FILENAME = "execution.properties";
@@ -71,6 +73,7 @@ public class ExecutionRuntimeInfo {
 	private static final SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
+
 	private static ExecutionRuntimeInfo instance;
 
 	private String screenShotDir;
@@ -80,11 +83,13 @@ public class ExecutionRuntimeInfo {
 	private HashMap<String, List<String>> reportMessagesOK = new HashMap<>();
 	private HashMap<String, List<String>> reportMessagesWRONG = new HashMap<>(); // assertion failed (fachliches Problem)
 	private HashMap<String, List<String>> reportMessagesFAILED = new HashMap<>(); // excecption thrown (technisches Problem)
-	private HashMap<String, Integer> testCategoryCollection = new HashMap<>(); // categories defined by the natspec files
+	private HashMap<String, Integer> executionFilterMap = new HashMap<>(); // execution filter defined in the nlxx files
 	private HashMap<String, TestStatistics> testStatistics = new HashMap<>();
-
-	private String testCategories;
-	private List<String> testCategoriesToExecute;
+	private HashMap<String, String> xxidBehaviourMap = new HashMap<>();   // stores for each XXID the named Behaviour if defined
+	private List<String> knownFeatures = new ArrayList<>();   // stores behaviour with Feature-Keyword
+	
+	private String executionFilters;
+	private List<String> executionFilterList;
 	private List<String> inactiveXXIDs = new ArrayList<>();
 	private File reportFolder;
 	private int totalNumberOfTestCases = 0; // known for the given application/product under test
@@ -98,10 +103,12 @@ public class ExecutionRuntimeInfo {
 	private boolean applicationStarted;
 	private boolean archiveResults;
 	private boolean settingsOk;
+	private boolean testEnvironmentInitialized = false;
+	private boolean shutDownHookAdded;
 
 	public static ExecutionRuntimeInfo getInstance() {
 		if (instance == null) {
-			System.out.println("SysNatTesting v" + SysNatConstants.SYS_NAT_VERSION
+			System.out.println("SysNat v" + SysNatConstants.SYS_NAT_VERSION
 					+ " test environment initialisation...");
 			instance = new ExecutionRuntimeInfo();
 		}
@@ -127,41 +134,41 @@ public class ExecutionRuntimeInfo {
 			System.err.println("Unknown Environment in config.settings: " + getSystemProperty("Environment"));
 		}
 
-		testCategories = getSystemProperty(BUNDLE.getString("FILTER_CATEGORIES_TO_EXECUTE"));
-		testCategoriesToExecute = SysNatStringUtil.getTestCategoriesAsList(testCategories, "");
-		assertPositiveCategoriesInFrontOfNegativeOnes(testCategoriesToExecute);
-		if (testCategories.length() == 0) {
-			testCategories = NO_FILTER;
+		executionFilters = getSystemProperty(BUNDLE.getString("EXECUTION_FILTER"));
+		executionFilterList = SysNatStringUtil.getExecutionFilterAsList(executionFilters, "");
+		assertPositiveFiltersInFrontOfNegativeOnes(executionFilterList);
+		if (executionFilters.length() == 0) {
+			executionFilters = NO_FILTER;
 		}
 
 		osName = getOsName();
-		screenShotDir = System.getProperty("screenshot.dir", "screenshots");
+		screenShotDir = System.getProperty("sysnat.screenshot.dir", "screenshots");
 
 		System.out.println("Starting " + getTestApplicationName() + " on " + targetEnvironment + " at "
 				+ getStartPointOfTimeAsFileStringForFileName() + "...");
 	}
 
-	void assertPositiveCategoriesInFrontOfNegativeOnes(List<String> testCategories) {
-		int indexOfLastPositiveCategory = 0;
-		int indexOfFirstNegativeCategory = 0;
+	void assertPositiveFiltersInFrontOfNegativeOnes(List<String> filterList) {
+		int indexOfLastPositiveFilter = 0;
+		int indexOfFirstNegativeFilter = 0;
 		int indexCounter = 0;
 
-		for (String category : testCategories) {
-			if (category.startsWith(SysNatLocaleConstants.NON_KEYWORD)) {
-				if (indexOfFirstNegativeCategory < indexCounter) {
-					indexOfFirstNegativeCategory = indexCounter;
+		for (String filter : filterList) {
+			if (filter.startsWith(SysNatLocaleConstants.NON_KEYWORD)) {
+				if (indexOfFirstNegativeFilter < indexCounter) {
+					indexOfFirstNegativeFilter = indexCounter;
 				}
 			} else {
-				if (indexOfLastPositiveCategory > indexCounter) {
-					indexOfLastPositiveCategory = indexCounter;
+				if (indexOfLastPositiveFilter > indexCounter) {
+					indexOfLastPositiveFilter = indexCounter;
 				}
 
 			}
 			indexCounter++;
 		}
 
-		if (indexOfLastPositiveCategory > indexOfFirstNegativeCategory) {
-			throw new RuntimeException("Negative categories must not be defined before positive ones.");
+		if (indexOfLastPositiveFilter > indexOfFirstNegativeFilter) {
+			throw new RuntimeException("Negative execution filters must not be defined before positive ones.");
 		}
 	}
 
@@ -212,28 +219,43 @@ public class ExecutionRuntimeInfo {
 		totalNumberOfTestCases++;
 	}
 
-	public void addInactiveTestCase(String inactiveXXId) {
+	public void addInactiveTestCase(String inactiveXXId, String behaviourID) {
 		inactiveXXIDs.add(inactiveXXId);
+		addToBehaviourXXMapping(inactiveXXId, behaviourID);
 	}
 
-	public void addTestMessagesOK(String xxid, List<String> messagesOK) {
-		reportMessagesOK.put(xxid, messagesOK);
+	public void addTestMessagesOK(String xxid, List<String> messagesOK, String behaviourID) 
+	{
+		reportMessagesOK.put(xxid, messagesOK);			
+		addToBehaviourXXMapping(xxid, behaviourID);
 	}
 
-	public void addTestMessagesWRONG(String xxid, List<String> messagesWRONG) {
+	public void addTestMessagesWRONG(String xxid, List<String> messagesWRONG, String behaviourID) 
+	{
 		reportMessagesWRONG.put(xxid, messagesWRONG);
+		addToBehaviourXXMapping(xxid, behaviourID);
 	}
 
-	public void addTestMessagesFAILED(String xxid, List<String> messagesFAILED) {
+	public void addTestMessagesFAILED(String xxid, List<String> messagesFAILED, String behaviourID) 
+	{
 		reportMessagesFAILED.put(xxid, messagesFAILED);
+		addToBehaviourXXMapping(xxid, behaviourID);
 	}
 
-	public List<String> getTestCategoriesToExecute() {
-		return testCategoriesToExecute;
+	private void addToBehaviourXXMapping(String xxid, String behaviourID) 
+	{
+		if (behaviourID == null || behaviourID.isEmpty()) {
+			behaviourID = UNNAMED_XX_GROUP;
+		}
+		xxidBehaviourMap.put(xxid, behaviourID);
 	}
 
-	public void setTestCategoriesToExecute(List<String> testCategoriesToExecute) {
-		this.testCategoriesToExecute = testCategoriesToExecute;
+	public List<String> getExecutionFilterList() {
+		return executionFilterList;
+	}
+
+	public void setExecutionFilterList(List<String> filterList) {
+		this.executionFilterList = filterList;
 	}
 
 	public boolean isAlreadyLoggedIn() {
@@ -284,19 +306,8 @@ public class ExecutionRuntimeInfo {
 		}
 	}
 
-	public String getInactiveTestListAsString() 
-	{
-		if (inactiveXXIDs.size() == 0) {
-			return "-";
-		}
-
-		final StringBuffer sb = new StringBuffer();
-		for (String xxid : inactiveXXIDs) {
-			sb.append(xxid).append(", ");
-		}
-
-		String toReturn = sb.toString();
-		return toReturn.substring(0, toReturn.length() - 2);
+	public List<String> getInactiveXXIDs() {
+		return inactiveXXIDs;
 	}
 
 	public boolean isXXIdAlreadyUsed(String xxid) {
@@ -304,6 +315,11 @@ public class ExecutionRuntimeInfo {
 				|| reportMessagesFAILED.containsKey(xxid)
 				|| reportMessagesWRONG.containsKey(xxid)
 				|| inactiveXXIDs.contains(xxid);
+	}
+
+	
+	public HashMap<String, String> getXXidBehaviourMap() {
+		return xxidBehaviourMap;
 	}
 
 	public HashMap<String, List<String>> getReportMessagesOK() {
@@ -322,8 +338,8 @@ public class ExecutionRuntimeInfo {
 		return inactiveXXIDs.size();
 	}
 
-	public String getTestCategories() {
-		return testCategories;
+	public String getExecutionFilters() {
+		return executionFilters;
 	}
 
 	public String getExecutionDurationAsString() {
@@ -455,19 +471,19 @@ public class ExecutionRuntimeInfo {
 		return getOsName().startsWith("Windows");
 	}
 
-	public void addCategoryToCollection(String category) {
-		Integer frequency = testCategoryCollection.get(category);
+	public void addFilterToCollection(String filter) {
+		Integer frequency = executionFilterMap.get(filter);
 
 		if (frequency != null) {
 			frequency = frequency + 1;
-			testCategoryCollection.put(category, frequency);
+			executionFilterMap.put(filter, frequency);
 		} else {
-			testCategoryCollection.put(category, 1);
+			executionFilterMap.put(filter, 1);
 		}
 	}
 
-	public List<String> getCategoriesFromCollection() {
-		return new ArrayList<>(testCategoryCollection.keySet());
+	public List<String> getExecutionFilterFromMap() {
+		return new ArrayList<>(executionFilterMap.keySet());
 	}
 
 	public Locale getLocale() {
@@ -565,13 +581,13 @@ public class ExecutionRuntimeInfo {
 	}
 
 	public String buildDefaultReportName() {
-		String testCategories = getTestCategories();
-		if (testCategories.equals(NO_FILTER)) {
-			testCategories = BUNDLE.getString("All");
+		String filters = getExecutionFilters();
+		if (filters.equals(NO_FILTER)) {
+			filters = BUNDLE.getString("All");
 		}
 		return getTestApplicationName() + "-"
 				+ getTargetEnv().name() + "-"
-				+ testCategories;
+				+ filters;
 	}
 
 	public String getArchiveDir() {
@@ -658,4 +674,29 @@ public class ExecutionRuntimeInfo {
 
 		return numTotal + " tests executed so far - of these " + getReportMessagesOK().size() + " successful";
 	}
+	
+	public void addToKnownFeatures(String feature) {
+		knownFeatures.add(feature);
+	}
+	
+	public List<String> getKnownFeatures() {
+		return knownFeatures;
+	}
+
+	public boolean isTestEnvironmentInitialized() {
+		return testEnvironmentInitialized;
+	}
+
+	public void setTestEnvironmentInitialized() {
+		this.testEnvironmentInitialized = true;
+	}
+
+	public void setShutDownHookAdded() {
+		this.shutDownHookAdded = true;
+	}
+
+	public boolean isShutDownHookAdded() {
+		return shutDownHookAdded;
+	}
+
 }

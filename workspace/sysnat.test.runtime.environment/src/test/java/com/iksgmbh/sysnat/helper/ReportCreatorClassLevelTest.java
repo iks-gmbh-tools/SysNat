@@ -22,6 +22,7 @@ import static com.iksgmbh.sysnat.common.utils.SysNatConstants.WHITE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.YELLOW_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ASSERT_ERROR_TEXT;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.TECHNICAL_ERROR_TEXT;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -30,12 +31,17 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutableExample;
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat._testcases.TestCaseFailed;
 import com.iksgmbh.sysnat._testcases.TestCaseInactive;
+import com.iksgmbh.sysnat._testcases.TestCaseInactive1Behaviour;
+import com.iksgmbh.sysnat._testcases.TestCaseInactive1Feature;
+import com.iksgmbh.sysnat._testcases.TestCaseInactive2Behaviour;
+import com.iksgmbh.sysnat._testcases.TestCaseInactive2Feature;
 import com.iksgmbh.sysnat._testcases.TestCaseOK;
 import com.iksgmbh.sysnat._testcases.TestCaseWrong;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class ReportCreatorClassLevelTest 
 {
@@ -69,7 +75,7 @@ public class ReportCreatorClassLevelTest
 		executableExamples.add(new TestCaseInactive());
 
 		// act
-		executeAllTestCases();
+		executeAllExamples();
 		result = ReportCreator.createFullOverviewReport();
 		//System.out.println(result);
 
@@ -85,7 +91,7 @@ public class ReportCreatorClassLevelTest
 		executableExamples.add(new TestCaseOK());
 
 		// act
-		executeAllTestCases();
+		executeAllExamples();
 		result = ReportCreator.createFullOverviewReport();
 		System.out.println(result);
 
@@ -101,7 +107,7 @@ public class ReportCreatorClassLevelTest
 		executableExamples.add(new TestCaseWrong());
 
 		// act
-		executeAllTestCases();
+		executeAllExamples();
 		result = ReportCreator.createFullOverviewReport();
 		System.out.println(result);
 
@@ -117,7 +123,7 @@ public class ReportCreatorClassLevelTest
 		executableExamples.add(new TestCaseFailed());
 
 		// act
-		executeAllTestCases();
+		executeAllExamples();
 		result = ReportCreator.createFullOverviewReport();
 		System.out.println(result);
 
@@ -135,7 +141,7 @@ public class ReportCreatorClassLevelTest
 		executableExamples.add(new TestCaseWrong());
 
 		// act
-		executeAllTestCases();
+		executeAllExamples();
 		result = ReportCreator.createFullOverviewReport();
 		System.out.println(result);
 
@@ -154,7 +160,7 @@ public class ReportCreatorClassLevelTest
 		executableExamples.add(new TestCaseInactive());
 
 		// act
-		executeAllTestCases();
+		executeAllExamples();
 		result = ReportCreator.createFullOverviewReport();
 		System.out.println(result);
 
@@ -171,7 +177,7 @@ public class ReportCreatorClassLevelTest
 		executableExamples.add(new TestCaseOK());
 
 		// act
-		executeAllTestCases();
+		executeAllExamples();
 		result = ReportCreator.createFullOverviewReport();
 		System.out.println(result);
 
@@ -179,8 +185,195 @@ public class ReportCreatorClassLevelTest
 		assertReportOverview(2, 2, 0, 1, 0, 1);
 		assertTrue("Expected error message not found.", result.contains("Fehler: Uneindeutige XXId"));
 	}
+
+	@Test
+	public void createReportWithInactiveTestsFeaturesAndBehaviour() 
+	{
+		// arrange
+		ExecutionRuntimeInfo.getInstance();
+		executableExamples.add(new TestCaseInactive());
+		executableExamples.add(new TestCaseOK());
+		executableExamples.add(new TestCaseInactive1Behaviour());
+		executableExamples.add(new TestCaseInactive2Behaviour());
+		executableExamples.add(new TestCaseInactive1Feature());
+		executableExamples.add(new TestCaseInactive2Feature());
+
+		// act
+		executeAllExamples();
+		result = ReportCreator.createFullOverviewReport();
+		SysNatFileUtil.writeFile("./target/Test.html", result);
+
+		// assert
+		assertReportOverview(6, 1, 5, 1, 0, 0);
+		assertReportContains(result, "background:#CDE301;" + 
+                System.getProperty("line.separator") +
+				"padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;" +
+                System.getProperty("line.separator") +
+				"line-height:106%'>Inactive Behaviour&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;Inactive Feature&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;Inactive Test" +
+                System.getProperty("line.separator") + "<br>");
+	}
+
+	@Test
+	public void buildsExcecutedHtmlSection() 
+	{
+		// arrange
+		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		List<String> messages = new ArrayList<>();
+		executionInfo.addTestMessagesFAILED("FailedXX1", messages, null);
+		executionInfo.addTestMessagesFAILED("FailedXX2a", messages, "aFailedFeature");
+		executionInfo.addTestMessagesFAILED("FailedXX2b", messages, "aFailedFeature");
+		executionInfo.addTestMessagesWRONG("WrongXX1", messages, null);
+		executionInfo.addTestMessagesWRONG("WrongXX2", messages, "aFailedFeature");
+		executionInfo.addTestMessagesWRONG("WrongXX3", messages, "aWrongBehaviour");
+		executionInfo.addTestMessagesOK("OkXX1", messages, null);
+		executionInfo.addTestMessagesOK("OkXX2", messages, "aFailedFeature");
+		executionInfo.addTestMessagesOK("OkXX3", messages, "aWrongBehaviour");
+		executionInfo.addTestMessagesOK("OkXX5", messages, "aOkGroup");
+		executionInfo.addTestMessagesOK("OkXX6", messages, "aOkGroup");
+		executionInfo.addTestMessagesOK("OkXX7", messages, null);
+		executionInfo.addTestMessagesOK("OkXX8", messages, null);
+		executionInfo.addTestMessagesOK("OkXX9", messages, null);
+		executionInfo.addTestMessagesOK("OkXX10", messages, null);
+
+		String report = "PLACEHOLDER_RED_EXECUTED_TESTS" + System.getProperty("line.separator") +
+						"PLACEHOLDER_ORANGE_EXECUTED_TESTS" + System.getProperty("line.separator") +
+						"PLACEHOLDER_GREEN_EXECUTED_TESTS" + System.getProperty("line.separator");
+		
+		// act
+		result = new ReportCreator().replaceExecutedPlaceholders(report);
+
+		// assert
+		result = result.replaceAll("&nbsp;", "").replaceAll("#", " # ").trim();
+		String expectedFileContent = SysNatFileUtil.readTextFileToString(
+				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/executionPlaceholderTest.txt");
+        assertEquals("Expected report", expectedFileContent, result);
+	}
 	
-	private void executeAllTestCases() 
+	@Test
+	public void buildsDetailHtmlSectionForGreenBehaviour() 
+	{
+		// arrange
+		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		List<String> messages = new ArrayList<>();
+		messages.add("First action.");
+		messages.add("Second action.");
+		messages.add("Third action.");
+		executionInfo.addTestMessagesOK("XX_A1", messages, "OkGroup1");
+		executionInfo.addTestMessagesOK("XX_A2", messages, "OkGroup1");
+		executionInfo.addTestMessagesOK("XX_B", messages, "OkGroup2");
+		
+		// act
+		result = new ReportCreator().buildDetailPart();
+
+		// assert
+		String expectedFileContent = SysNatFileUtil.readTextFileToString(
+				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/DetailsWithTwoOkBehaviors.txt");
+        assertEquals("Expected report", expectedFileContent.trim(), result.trim());
+	}
+	
+	@Test
+	public void buildsDetailHtmlSectionForBehaviourWithOneFailedAndOneWrongXX() 
+	{
+		// arrange
+		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		List<String> messages = new ArrayList<>();
+		messages.add("First action.");
+		messages.add("Second action.");
+		messages.add("Third action.");
+		executionInfo.addTestMessagesOK("XX_A1", messages, "FailedGroup1");
+		executionInfo.addTestMessagesFAILED("XX_A2", messages, "FailedGroup1");
+		executionInfo.addTestMessagesWRONG("XX_A3", messages, "FailedGroup1");
+		
+		// act
+		result = new ReportCreator().buildDetailPart();
+
+		// assert
+		String expectedFileContent = SysNatFileUtil.readTextFileToString(
+				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/DetailsForBehaviorWithFailedXX.txt");
+        assertEquals("Expected report", expectedFileContent.trim(), result.trim());
+	}
+
+	@Test
+	public void buildsDetailHtmlSectionForFeatureWithOneWrongXX() 
+	{
+		// arrange
+		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		final String feature = "WrongGroup1";
+		executionInfo.addToKnownFeatures(feature);
+		List<String> messages = new ArrayList<>();
+		messages.add("First action.");
+		messages.add("Second action.");
+		messages.add("Third action.");
+		executionInfo.addTestMessagesOK("XX_A1", messages, feature);
+		executionInfo.addTestMessagesWRONG("XX_A2", messages, feature);
+		executionInfo.addTestMessagesOK("XX_A3", messages, feature);
+		
+		// act
+		result = new ReportCreator().buildDetailPart();
+
+		// assert
+		String expectedFileContent = SysNatFileUtil.readTextFileToString(
+				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/DetailsForFeatureWithWrongXX.txt");
+        assertEquals("Expected report", expectedFileContent.trim(), result.trim());
+	}
+
+	@Test
+	public void buildsDetailHtmlSectionForSixStandaloneXX() 
+	{
+		// arrange
+		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		List<String> messages = new ArrayList<>();
+		messages.add("First action.");
+		messages.add("Second action.");
+		messages.add("Third action.");
+		executionInfo.addTestMessagesOK("XX_A1", messages, null);
+		executionInfo.addTestMessagesWRONG("XX_A2", messages, null);
+		executionInfo.addTestMessagesFAILED("XX_A3", messages, null);
+		executionInfo.addTestMessagesOK("XX_A4", messages, null);
+		executionInfo.addTestMessagesWRONG("XX_A5", messages, null);
+		executionInfo.addTestMessagesFAILED("XX_A6", messages, null);
+		
+		// act
+		result = new ReportCreator().buildDetailPart();
+
+		// assert
+		String expectedFileContent = SysNatFileUtil.readTextFileToString(
+				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/DetailsForStandAloneXX.txt");
+        assertEquals("Expected report", expectedFileContent.trim(), result.trim());
+	}
+	
+	@Test
+	public void buildsDetailHtmlSectionWithBehaviourFeatureAndStandaloneXX() 
+	{
+		// arrange
+		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		executionInfo.addToKnownFeatures("Feature");
+		List<String> messages = new ArrayList<>();
+		messages.add("First action.");
+		messages.add("Second action.");
+		messages.add("Third action.");
+		executionInfo.addTestMessagesOK("XX_A1", messages, "Feature");
+		executionInfo.addTestMessagesOK("XX_A2", messages, "Feature");
+		executionInfo.addTestMessagesOK("XX_A3", messages, "Behaviour");
+		executionInfo.addTestMessagesOK("XX_A4", messages, "Behaviour");
+		executionInfo.addTestMessagesOK("XX_A5", messages, null);
+		executionInfo.addTestMessagesOK("XX_A6", messages, null);
+		
+		// act
+		result = new ReportCreator().buildDetailPart();
+
+		// assert
+		String expectedFileContent = SysNatFileUtil.readTextFileToString(
+				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/DetailsForMixedSituation.txt");
+        assertEquals("Expected report", expectedFileContent.trim(), result.trim());
+	}
+	
+	private void assertReportContains(String report, String expected) {
+		assertTrue("Unexpected report content.", report.contains(expected));		
+	}	
+
+	
+	private void executeAllExamples() 
 	{
 		for (ExecutableExample executableExample : executableExamples) {
 			executableExample.executeTestCase();
@@ -204,7 +397,7 @@ public class ReportCreatorClassLevelTest
 		assertTrue("Report with unexpected timestamp line", result.contains(">Ausführungszeitpunkt:<"));
 		assertTrue("Report with unexpected duration line", result.contains(">Ausführungsdauer:<"));
 		
-		assertTrue("Report with unexpected filter line", result.contains(">Kategorien-Filter:<"));
+		assertTrue("Report with unexpected filter line", result.contains(">Ausführungsfilter:<"));
 		
 		assertTrue("Report with unexpected result line", result.contains(">Gesamtergebnis:<"));
 		String resultCompressed = result.replaceAll(" ", "").replaceAll("\\n", "").replaceAll("\\r", "");

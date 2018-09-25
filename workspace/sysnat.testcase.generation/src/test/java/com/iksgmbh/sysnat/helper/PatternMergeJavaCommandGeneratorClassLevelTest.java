@@ -257,6 +257,7 @@ public class PatternMergeJavaCommandGeneratorClassLevelTest
 				LanguageTemplateCollector.doYourJob(createJavaFieldData("DummyApplication"));
 		final HashMap<Filename, List<LanguageInstructionPattern>> languageInstructionCollection = 
 				LanguageInstructionCollector.doYourJob("ComplexInstructionTestApplication");
+		System.setProperty("sysnat.dummy.test.run", "true");
 		
 		// act
 		try {

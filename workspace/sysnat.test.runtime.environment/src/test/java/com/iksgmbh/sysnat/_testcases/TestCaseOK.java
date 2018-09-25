@@ -34,7 +34,7 @@ public class TestCaseOK extends TestCaseTestImpl
 	public void executeTestCase() 
 	{
 		languageTemplatesCommon.startNewXX("Green Test");
-		languageTemplatesCommon.checkFilterCategory(SysNatConstants.NO_FILTER);
+		languageTemplatesCommon.defineExecutionFilter(SysNatConstants.NO_FILTER);
 		closeCurrentTestCaseWithSuccess();
 	}
 }

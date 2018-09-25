@@ -17,6 +17,7 @@ package com.iksgmbh.sysnat.common.utils;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
+import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 
 public class ExceptionHandlingUtil 
 {	
@@ -80,13 +81,29 @@ public class ExceptionHandlingUtil
 			throw new SysNatException(errorCode, errorData[0]);
 			
 		case MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION:
-			System.err.println("The natural language statement \"" + errorData[0] + "\"");
-			System.err.println("in file \"" + errorData[1] + "\"");
-			System.err.println("could not be mapped on any known LanguageTemplate!");
-			System.err.println("");
-			System.err.println("You may wish to add a new method with a matching LanguageTemplate which could look like this:");
-			System.err.println("");
-			System.err.println(errorData[2]);
+			StringBuffer errorMessage = new StringBuffer(System.getProperty("line.separator"));
+			
+			
+			errorMessage.append("The natural language statement")
+			            .append(System.getProperty("line.separator"))
+					    .append(errorData[0])
+			            .append(System.getProperty("line.separator"))
+			            .append("in file")
+			            .append(System.getProperty("line.separator"))
+			            .append(errorData[1])
+			            .append(System.getProperty("line.separator"))
+			            .append("could not be mapped on any known LanguageTemplate!")
+                        .append(System.getProperty("line.separator"))
+                        .append(System.getProperty("line.separator"))
+			            .append("You may wish to add a new method with a matching LanguageTemplate which could look like this:")
+                        .append(System.getProperty("line.separator"))
+                        .append(System.getProperty("line.separator"))
+                        .append(errorData[2]);
+			System.err.println(errorMessage.toString());			
+			
+			ErrorPageLauncher.doYourJob(errorData[3], errorData[4]);
+
+			
 			throw new SysNatException(errorCode);
 
 		case JAVA_CODE_VERIFICATION__UNKNOWN_VARIABLE_NAME:

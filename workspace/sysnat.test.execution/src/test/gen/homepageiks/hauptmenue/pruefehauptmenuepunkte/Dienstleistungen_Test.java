@@ -48,7 +48,7 @@ public class Dienstleistungen_Test extends TestCaseTemplateParent
 		try {
 			languageTemplatesCommon.declareXXGroupForBehaviour("PruefeHauptmenuepunkte");
 			languageTemplatesCommon.startNewXX("Dienstleistungen");
-			languageTemplatesCommon.checkFilterCategory("Smoketest");
+			languageTemplatesCommon.defineExecutionFilter("Smoketest");
 			languageTemplatesHomePageIKSBasics.isPageVisible("Home");
 			languageTemplatesHomePageIKSBasics.clickMainMenuItem("Dienstleistungen");
 			languageTemplatesHomePageIKSBasics.isPageVisible("Dienstleistungen");

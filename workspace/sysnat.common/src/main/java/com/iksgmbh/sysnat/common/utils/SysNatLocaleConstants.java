@@ -37,7 +37,7 @@ public class SysNatLocaleConstants
 	public static final String FROM_PACKAGE = BUNDLE.getString("FROM_PACKAGE");
 	public static final String NON_KEYWORD = BUNDLE.getString("NON") + "-";
 
-	public static final String FILTER_CATEGORIES_TO_EXECUTE = BUNDLE.getString("FILTER_CATEGORIES_TO_EXECUTE");
+	public static final String EXECUTION_FILTER = BUNDLE.getString("EXECUTION_FILTER");
 	public static final String POSSIBLE_VALUE_IDENTIFIER = BUNDLE.getString("POSSIBLE_VALUE_IDENTIFIER");
 	public static final String ENVIRONMENT_SETTING_KEY = BUNDLE.getString("ENVIRONMENT_SETTING_KEY");
 	public static final String TESTAPP_SETTING_KEY = BUNDLE.getString("TESTAPP_SETTING_KEY");

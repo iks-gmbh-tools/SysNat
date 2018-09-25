@@ -28,7 +28,9 @@ public class MethodAnnotationSuggestionBuilderClassLevelTest
 	                                 System.getProperty("line.separator") + 
 				                     "public Object replaceByAnExpressiveMethodName(String param1, Object param2)" + 
 	                                 System.getProperty("line.separator") + 
-				                     "    // Implement here code that corresponds to the Language Template's promise." + 
+				                     "    // Implement here code that corresponds to the Language Template's promise." +
+	                                 System.getProperty("line.separator") + 
+	                                 "    // And don't forget to create a report message entry!" + 
 		                             System.getProperty("line.separator") + 
 		                             "}";
 		assertEquals(expectedValue, 
