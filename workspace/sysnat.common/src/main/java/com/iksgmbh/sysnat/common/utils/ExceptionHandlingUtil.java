@@ -81,8 +81,8 @@ public class ExceptionHandlingUtil
 			throw new SysNatException(errorCode, errorData[0]);
 			
 		case MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION:
-			StringBuffer errorMessage = new StringBuffer(System.getProperty("line.separator"));
 			
+			StringBuffer errorMessage = new StringBuffer(System.getProperty("line.separator"));
 			
 			errorMessage.append("The natural language statement")
 			            .append(System.getProperty("line.separator"))

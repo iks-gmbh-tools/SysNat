@@ -15,7 +15,8 @@
  */
 package com.iksgmbh.sysnat.helper;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -42,15 +43,14 @@ public class CommandLibraryCreatorClassLevelTest {
 		languageTemplateCollection.put(new Filename("LanguageTemplateContainerTestImpl"), patternList);
 		
 		// act
-		String result = CommandLibraryCreator.buildFileContent(languageTemplateCollection);
+		String result = new CommandLibraryCreator(languageTemplateCollection).buildFileContent();
 		
 		// assert
-		String expectedContent = "Instructions read from LanguageTemplateContainerTestImpl" 
-		                          + System.getProperty("line.separator") 
-				                  + CommandLibraryCreator.CONTAINER_NAME_UNDERLINE 
-		                          + System.getProperty("line.separator") 
-				                  + "Natural language instruction without parameter.";
-		assertEquals("Content of command library file", expectedContent, result);
+		String expectedContent = CommandLibraryCreator.BUNDLE.getString("LanguageTemplatesFrom") 
+				                  + "LanguageTemplateContainerTestImpl:"; 
+		assertTrue("Unexpected content of library", result.contains(expectedContent));
+		expectedContent = "Natural language instruction without parameter.";
+		assertTrue("Unexpected content of library", result.contains(expectedContent));
 	}
 
 	@Test
@@ -72,23 +72,17 @@ public class CommandLibraryCreatorClassLevelTest {
 		languageTemplateCollection.put(new Filename("LanguageTemplateContainer2TestImpl"), patternList);
 		
 		// act
-		String result = CommandLibraryCreator.buildFileContent(languageTemplateCollection);
+		String result = new CommandLibraryCreator(languageTemplateCollection).buildFileContent();
 		
 		// assert
-		String expectedContent = "Instructions read from LanguageTemplateContainer2TestImpl" 
-				                + System.getProperty("line.separator") 
-								+ "-------------------------------------------------------" 
-				                + System.getProperty("line.separator") 
-								+ "Natural ^^ language ^^ instruction ^^ with ^^ parameters."
-				                + System.getProperty("line.separator") 
-								+ "" 
-				                + System.getProperty("line.separator") 
-								+ "Instructions read from LanguageTemplateContainerTestImpl"
-				                + System.getProperty("line.separator") 
-								+ "-------------------------------------------------------"
-				                + System.getProperty("line.separator") 
-								+ "Natural language instruction without parameter.";
-		assertEquals("Content of command library file", expectedContent, result);
+		String expectedContent = "LanguageTemplateContainer2TestImpl:";
+		assertTrue("Unexpected Content of library ", result.contains(expectedContent));
+		expectedContent = "Natural ^^ language ^^ instruction ^^ with ^^ parameters.";
+		assertTrue("Unexpected Content of library ", result.contains(expectedContent));
+		expectedContent = "LanguageTemplateContainerTestImpl:";
+		assertTrue("Unexpected Content of library ", result.contains(expectedContent));
+		expectedContent = "Natural language instruction without parameter.";
+		assertTrue("Unexpected Content of library ", result.contains(expectedContent));
 	}
 	
 	

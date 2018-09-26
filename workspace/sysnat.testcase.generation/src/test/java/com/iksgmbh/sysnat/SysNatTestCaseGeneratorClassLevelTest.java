@@ -40,7 +40,7 @@ public class SysNatTestCaseGeneratorClassLevelTest
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.languageTemplateContainer.source.dir", "../sysnat.testcase.generation/src/test/java/com/iksgmbh/sysnat/test/testTemplateContainers");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.execution/AvailableNaturalLanguageScripts.properties");
 		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.testcase.generation/src/test/resources/testSettingConfigs/TestCaseGeneratorTestApplication.config");
-		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.help.command.list.file", "../sysnat.testcase.generation/target/CommandTestLibrary.txt");
+		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.help.command.list.file", "../sysnat.testcase.generation/target/CommandTestLibrary.html");
 		GenerationRuntimeInfo.getInstance();
 	}
 
@@ -111,7 +111,7 @@ public class SysNatTestCaseGeneratorClassLevelTest
 		SysNatTestCaseGenerator.doYourJob();
 		
 		// assert
-		String content = SysNatFileUtil.readTextFileToString("../sysnat.testcase.generation/target/CommandTestLibrary.txt");
+		String content = SysNatFileUtil.readTextFileToString("../sysnat.testcase.generation/target/CommandTestLibrary.html");
 		String expected = SysNatFileUtil.readTextFileToString("../sysnat.testcase.generation/src/test/resources/expectedResults/CommandLibrary.txt");
 		assertEquals("File content", expected, content);	
 	}

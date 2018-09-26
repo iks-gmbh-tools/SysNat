@@ -20,25 +20,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 <div style='mso-element:para-border-div;border:none;border-bottom:solid windowtext 3pt;padding:0cm 0cm 1.0pt 0cm'></div>
 <br>
 
-<br><span style='font-size:14.0pt'>
-Satzschablonen aus ComplexInstructionTestApplication_LanguageTemplateContainer: 
-</span>
-<br>
-<br>
-Behaviour: ^^
-<br>
-Erzeuge Auftrag <> aus '' und '' und Wert ^^.
-<br>
-Erzeuge eine Rechnung <>.
-<br>
-Erzeuge einen Auftrag <>.
-<br>
-Füge dem Auftrag '' den Wert ^^ zu.
-<br>
-TestData: ^^
-<br>
-XXID: ^^
-<br>
+LANGUAGE_TEMPLATE_LIBRARY_PLACEHOLDER
 
 <br>
 <div style='mso-element:para-border-div;border:none;border-bottom:solid windowtext 3pt;padding:0cm 0cm 1.0pt 0cm'></div>

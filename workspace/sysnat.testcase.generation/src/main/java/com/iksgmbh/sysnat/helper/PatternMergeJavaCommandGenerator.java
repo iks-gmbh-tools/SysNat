@@ -41,8 +41,7 @@ import com.iksgmbh.sysnat.domain.LanguageTemplatePattern;
  */
 public class PatternMergeJavaCommandGenerator 
 {
-	public static ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/UserErrorMessages", Locale.getDefault());
-
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/UserMessages", Locale.getDefault());
 	private static final String TEST_DATA_COMMAND_TEMPLATE = "setDatasetObject(\"-\");";
 	private static final String TEST_PARAMETER_COMMAND_TEMPLATE = "applyTestParameter(\"-\");";
 	
@@ -163,9 +162,10 @@ public class PatternMergeJavaCommandGenerator
 		String testApp = System.getProperty(SysNatLocaleConstants.TESTAPP_SETTING_KEY);
 		String libraryFilename = System.getProperty("sysnat.help.command.list.file")
 				                 .replace("<testapp>", testApp);
+		String languageTemplatesList = BUNDLE.getString("LanguageTemplatesList");
+		String link = "<a href=\"../" + libraryFilename + "\">" + languageTemplatesList + "</a>";
 		
 		String similarInstructions = getFindSimilarInstructions(instructionPattern.getInstructionLine());
-		
 		String userHelpMessage = "";
 		
 		if (! similarInstructions.equals("<br>")) {
@@ -178,7 +178,7 @@ public class PatternMergeJavaCommandGenerator
 		}
 		userHelpMessage += System.getProperty("line.separator") + "<br>"
 				+ BUNDLE.getString("MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION__HELP_MESSAGE_2")
-				+ "<b>" + libraryFilename + "</b>"
+				+ link + "."
 				+ System.getProperty("line.separator") + "<br>"
 				+ System.getProperty("line.separator") + "<br>"
 				+ BUNDLE.getString("MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION__HELP_MESSAGE_3")
