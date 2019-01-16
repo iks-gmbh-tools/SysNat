@@ -21,6 +21,12 @@
   	  <version>0.0.1-SNAPSHOT</version>
   	</dependency>
 
+   	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.testresult.archiving</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+
 	<dependency>
 	    <groupId>net.java.dev.jna</groupId>
 	    <artifactId>jna</artifactId>

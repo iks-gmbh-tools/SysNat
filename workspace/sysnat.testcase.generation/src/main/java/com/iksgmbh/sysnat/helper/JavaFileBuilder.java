@@ -21,15 +21,23 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaCommand;
+import com.iksgmbh.sysnat.domain.JavaCommand.CommandType;
 import com.iksgmbh.sysnat.domain.JavaFieldData;
 
 /**
  * Helper that builds complete JUnit classes ready for compilation.
+ * This is done by injecting the java commands provides as input parameters
+ * into predefined java file templates. 
+ * There are two types of java file templates: 
+ * a template file for JUnit test cases and 
+ * template file for script files.
  * 
  * @author Reik Oberrath
  */
@@ -94,6 +102,10 @@ public class JavaFileBuilder
 		return toReturn;
 	}
 	
+	/**
+	 * This file is used during test runtime to find
+	 * the location of a script file references in a XX.
+	 */
 	private void createScriptMappingPropertiesFile() 
 	{
 		StringBuffer sb = new StringBuffer();
@@ -187,22 +199,155 @@ public class JavaFileBuilder
 	{
 		final HashMap<String,List<String>> placeHolderBlocks = new HashMap<>();
 
+		final List<String> constantsBlock = getConstantsBlock(instructionFilename);
+		placeHolderBlocks.put("/* TO BE REPLACED: constants */", constantsBlock);
+
 		final List<String> importBlock = getImportBlock();
 		placeHolderBlocks.put("/* TO BE REPLACED: imports */", importBlock);
 		
 		final List<String> fieldsBlock = getFieldBlock();
 		placeHolderBlocks.put("/* TO BE REPLACED: fields for language template containers */", fieldsBlock);
-
-		final List<String> commandBlock = getCommandBlockFor(instructionFilename);
-		placeHolderBlocks.put("/* TO BE REPLACED: Command Block */", commandBlock);
 		
 		final List<String> setupBlock = getSetupBlock();
 		placeHolderBlocks.put("/* TO BE REPLACED: field initialization */", setupBlock);
 		
 		final List<String> shutdownBlock = getTearDownBlock();
-		placeHolderBlocks.put("/* TO BE REPLACED: cleanup */", shutdownBlock);
+		placeHolderBlocks.put("/* TO BE REPLACED: technical cleanup */", shutdownBlock);
+
+		final List<String> constructorBlock = getConstructorBlock(instructionFilename);
+		placeHolderBlocks.put("/* TO BE REPLACED: constructor */", constructorBlock);
+		
+		final List<String> preconditionMethodBlock = getPreconditionMethodBlock(instructionFilename);
+		placeHolderBlocks.put("/* TO BE REPLACED: business precondition */", preconditionMethodBlock);
+		
+		final List<String> testExecutionBlock = getTestExecutionBlockFor(instructionFilename);
+		placeHolderBlocks.put("/* TO BE REPLACED: Command Block */", testExecutionBlock);
+
+		final List<String> cleanupMethodBlock = getCleanUpMethodBlock(instructionFilename);
+		placeHolderBlocks.put("/* TO BE REPLACED: business cleanup */", cleanupMethodBlock);
 
 		return placeHolderBlocks;
+	}
+
+	private List<String> getConstantsBlock(Filename filename) 
+	{
+		List<JavaCommand> commands = javaCommandCollection.get(filename);
+
+		return commands.stream()
+			       .filter(command -> command.commandType == CommandType.Constant)
+			       .map(command -> command.value)
+	               .collect(Collectors.toList());
+	}
+
+	private List<String> getPreconditionMethodBlock(Filename filename) 
+	{
+		List<String> toReturn = new ArrayList<>();
+		List<JavaCommand> commands = javaCommandCollection.get(filename);
+		List<JavaCommand> onetimePreconditions = getOnetimePreconditions(commands);
+
+		if ( ! onetimePreconditions.isEmpty() ) 
+		{
+			toReturn.add("private void prepareOnceIfNeeded()");
+			toReturn.add("{");
+			toReturn.add("    if (executionInfo.isFirstXXOfGroup(BEHAVIOUR_ID))");
+			toReturn.add("    {");
+			onetimePreconditions.forEach(javaCommand -> addToJavaFile("        " + javaCommand.value, toReturn));
+			toReturn.add("        languageTemplatesCommon.createComment(ReportCreator.END_OF_ONETIME_PRECONDTIONS_COMMENT);");
+			toReturn.add("    }");
+			toReturn.add("}");
+		}
+
+		return toReturn;
+	}
+
+	private List<JavaCommand> getOnetimePreconditions(List<JavaCommand> commands) 
+	{
+		return commands.stream()
+				       .filter(command -> command.commandType == CommandType.OneTimePrecondition)
+		               .collect(Collectors.toList());
+	}
+
+	private List<String> getCleanUpMethodBlock(Filename filename) 
+	{
+		List<String> toReturn = new ArrayList<>();
+		List<JavaCommand> commands = javaCommandCollection.get(filename);		
+		List<JavaCommand> onetimeCleanups = getOnetimeCleanups(commands);
+
+		if ( ! onetimeCleanups.isEmpty() ) {
+			toReturn.add("private void cleanupOnceIfNeeded()");
+			toReturn.add("{");
+			toReturn.add("    if (executionInfo.isLastXXOfGroup(BEHAVIOUR_ID))");
+			toReturn.add("    {");
+			toReturn.add("        languageTemplatesCommon.createComment(ReportCreator.START_OF_ONETIME_CLEANUPS_COMMENT);");
+			onetimeCleanups.forEach(javaCommand -> addToJavaFile("        " + javaCommand.value, toReturn));
+			toReturn.add("    }");
+			toReturn.add("}");
+		}
+
+		return toReturn;
+	}
+
+	private List<JavaCommand> getOnetimeCleanups(List<JavaCommand> commands) {
+		return commands.stream()
+				       .filter(command -> command.commandType == CommandType.OneTimeCleanup)
+		               .collect(Collectors.toList());
+	}
+
+	private List<String> getConstructorBlock(Filename filename) 
+	{
+		List<JavaCommand> commands = javaCommandCollection.get(filename);
+		List<String> constructorCode = new ArrayList<>();
+		
+		boolean constructorNeeded = 
+		commands.stream().filter(command -> command.commandType == CommandType.OneTimePrecondition
+		                         || command.commandType == CommandType.OneTimeCleanup)
+		                 .findAny()
+		                 .isPresent();
+		
+		if (constructorNeeded) 
+		{
+			String testName = getSimpleFileName(filename);
+			String behaviourId = getBehaviourIdFor(filename);
+			int xxGroupSize = getXXGroupSize(behaviourId);
+			constructorCode.add("public " + testName + "() {");
+			constructorCode.add("\texecutionInfo.register(BEHAVIOUR_ID, " + xxGroupSize + ");");
+			constructorCode.add("}");
+		} 
+		
+		return constructorCode;
+	}
+
+	private int getXXGroupSize(String behaviourId) 
+	{
+		return (int) javaCommandCollection.entrySet().stream()
+				                          .filter(entry -> belongsToXXGroup(entry, behaviourId))
+				                          .count();
+	}
+
+	private boolean belongsToXXGroup(final Entry<Filename, List<JavaCommand>> entry, 
+			                         final String behaviourId) 
+	{
+		return ! entry.getValue().stream()
+		              .filter(command -> command.commandType == CommandType.Constant)
+		              .map(command -> command.value)
+		              .filter(commandLine -> commandLine.startsWith(XXGroupBuilder.BEHAVIOUR_CONSTANT_DECLARATION))
+		              .filter(commandLine -> commandLine.contains(behaviourId))
+		              .findFirst().get().isEmpty();
+		
+	}
+
+	private String getBehaviourIdFor(Filename filename) 
+	{
+		List<JavaCommand> commands = javaCommandCollection.get(filename);
+		String declareBehaviorCommand = findDeclareBehaviorCommand(commands).value;
+	
+		if (declareBehaviorCommand == null) {
+			return "";
+		}
+		
+		int pos1 = declareBehaviorCommand.indexOf("\"");
+		int pos2 = declareBehaviorCommand.lastIndexOf("\"");
+		return declareBehaviorCommand.substring(pos1+1, pos2);
 	}
 
 	private List<String> getFieldBlock() 
@@ -221,7 +366,6 @@ public class JavaFileBuilder
 
 		final List<String> typesToImport = findImportTypes();
 		typesToImport.forEach(s -> toReturn.add("import " + s+ ";"));
-		
 		return toReturn;
 	}
 
@@ -230,18 +374,33 @@ public class JavaFileBuilder
 		final List<String> typesToImport = new ArrayList<>();
 		
 		javaCommandCollection.forEach( (filename, javaCommandList) -> 
-		                                    addReturnTypeIfNecessary(typesToImport, 
-		                                    		                 javaCommandList));
-		
+		                                addReturnTypeIfNecessary(typesToImport, 
+		                                  		                 javaCommandList));
+
+		javaCommandCollection.forEach( (filename, javaCommandList) -> 
+                                        addReportCreatorReturnTypeIfNecessary(typesToImport, 
+        		                        javaCommandList));
+	
 		return typesToImport;
+	}
+
+	private void addReportCreatorReturnTypeIfNecessary(List<String> typesToImport,
+			                                           List<JavaCommand> javaCommandList) 
+	{
+		boolean add =  javaCommandList.stream()
+				                      .map(command -> command.commandType)
+		                              .filter(type -> type == CommandType.OneTimeCleanup 
+		                                           || type == CommandType.OneTimePrecondition)
+		                              .findFirst().isPresent();
+		if (add) typesToImport.add("ReportCreator");
 	}
 
 	private void addReturnTypeIfNecessary(final List<String> typesToImport,
 			                              final List<JavaCommand> javaCommandList) 
 	{
 		javaCommandList.stream()
-		               .filter( javaCommand -> javaCommand.importType != null)
-		               .map( javaCommand -> javaCommand.importType )
+		               .filter( javaCommand -> javaCommand.returnType != null)
+		               .map( javaCommand -> javaCommand.returnType )
 		               .filter( typeName -> ! IGNORE_IMPORT_TYPES.contains(typeName) )
 		               .forEach( typeName ->  addReturnTypeIfNoDuplicate(typeName, typesToImport) );
 	}
@@ -295,14 +454,74 @@ public class JavaFileBuilder
 		return new File (targetDir,  instructionFilename.value);
 	}
 
-	private List<String> getCommandBlockFor(final Filename instructionFilename) 
+	private List<String> getTestExecutionBlockFor(final Filename instructionFilename) 
 	{
-		final List<JavaCommand> javaCommands = javaCommandCollection.get(instructionFilename);
-		final List<String> toReturn = new ArrayList<>();
+		List<JavaCommand> commands = javaCommandCollection.get(instructionFilename);
+		List<String> toReturn = new ArrayList<>();
+		boolean oneTimePreconditionPresent = isOneTimePreconditionPresent(commands);
+		boolean oneTimeCleanupsPresent = isOnetimeCleanupPresent(commands);
+
+		commands = extractTestExecutionCommands(commands);
+		JavaCommand declareBehaviorCommand = findDeclareBehaviorCommand(commands);
+		JavaCommand defineFeatureCommand = findDefineFetureCommand(commands);
 		
-		javaCommands.forEach(javaCommand -> addToJavaFile(javaCommand.value, toReturn));
+		if (declareBehaviorCommand != null) {
+			if (defineFeatureCommand != null) {
+				commands.remove(defineFeatureCommand);
+				addToJavaFile(defineFeatureCommand.value, toReturn);
+			}
+			commands.remove(declareBehaviorCommand);
+			addToJavaFile(declareBehaviorCommand.value, toReturn);
+		}
+		
+		if (oneTimePreconditionPresent) {
+			toReturn.add("prepareOnceIfNeeded();");
+		}
+
+		commands.forEach(javaCommand -> addToJavaFile(javaCommand.value, toReturn));
+
+		if ( oneTimeCleanupsPresent ) {
+			toReturn.add("cleanupOnceIfNeeded();");
+		}
 
 		return toReturn;
+	}
+
+	private JavaCommand findDefineFetureCommand(List<JavaCommand> commands) 
+	{
+		return commands.stream()
+			       .filter(command -> command.value.contains("setBddKeyword(\"Feature\")"))
+			       .findFirst()
+			       .orElse(null);
+	}
+
+	private JavaCommand findDeclareBehaviorCommand(List<JavaCommand> commands) 
+	{
+		return commands.stream()
+				       .filter(command -> command.value.contains(".declareXXGroupForBehaviour("))
+				       .findFirst()
+				       .orElse(null);
+	}
+
+	private List<JavaCommand> extractTestExecutionCommands(List<JavaCommand> commands) 
+	{
+		List<JavaCommand> toReturn = new ArrayList<>();
+
+		commands.stream()
+		        .filter(command -> command.commandType != CommandType.OneTimePrecondition)
+		        .filter(command -> command.commandType != CommandType.OneTimeCleanup)
+		        .filter(command -> command.commandType != CommandType.Constant)
+		        .forEach(command -> toReturn.add(command));
+
+		return toReturn;
+	}
+
+	private boolean isOnetimeCleanupPresent(final List<JavaCommand> commands) {
+		return ! getOnetimeCleanups(commands).isEmpty();
+	}
+
+	private boolean isOneTimePreconditionPresent(final List<JavaCommand> commands) {
+		return ! getOnetimePreconditions(commands).isEmpty();
 	}
 
 	private void addToJavaFile(final String line, final List<String> javaFileContent) 
@@ -384,7 +603,8 @@ public class JavaFileBuilder
 					toBeReplacedMarker = iterator.next();
 				} else {
 					goOn = false;
-					generatedCode.append(lineToCheckForReplacement).append(System.getProperty("line.separator"));
+					generatedCode.append(lineToCheckForReplacement)
+					             .append(System.getProperty("line.separator"));
 				}
 			}
 		}
@@ -396,7 +616,7 @@ public class JavaFileBuilder
                                                 final List<String> commandBlock)
 	{
 		if (lineToCheckForReplacement.trim().equals(toBeReplacedMarker)) {
-			commandBlock.forEach(command -> appendLine(generatedCode, command, lineToCheckForReplacement)); 
+			commandBlock.forEach(command -> appendLine(generatedCode, command, lineToCheckForReplacement));
 			return false;
 		} else {
 			return true;

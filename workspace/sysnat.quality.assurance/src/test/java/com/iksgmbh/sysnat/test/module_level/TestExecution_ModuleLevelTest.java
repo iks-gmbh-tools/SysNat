@@ -120,10 +120,16 @@ public class TestExecution_ModuleLevelTest
 		final File detailReportFile = new File(reportFolder, "com-LOCAL-Alle/" + ReportCreator.DETAIL_RESULT_FILENAME);
 		SysNatTestUtils.assertFileExists( detailReportFile );
 		final String report = SysNatFileUtil.readTextFileToString(detailReportFile); 
-		final String expectedText = "Script MiniTestScript has been executed!";
+		String expectedText = "Script MiniTestScript has been executed!";
 		SysNatTestUtils.assertReportContains(report, expectedText);
-	}
-
+		expectedText = "Name of PictureProof would be: ..\\sysnat.quality.assurance\\target\\reportFolder/MiniTestCaseBILDNACHWEIS1";
+		expectedText = expectedText.replace("reportFolder", reportFolder.getName());
+		SysNatTestUtils.assertReportContains(report, expectedText);
+	}	
+	
+	// **************************************************************************
+	//                     P R I V A T E   M E T H O D S
+	// **************************************************************************
 	
 	private File makeSureThatExpectedClassFileDoesNotExist(String testCaseName) 
 	{

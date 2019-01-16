@@ -99,8 +99,8 @@ public class JavaFileBuilderClassLevelTest
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
 						"../sysnat.testcase.generation/src/test/resources/expectedResults/TestCaseContent.txt");
 		assertEquals("Generated Java File Content", 
-				     expectedFileContent, 
-				     actualFileContent);
+			 	     SysNatStringUtil.removeWhitespaceLinewise(expectedFileContent), 
+			 	     SysNatStringUtil.removeWhitespaceLinewise(actualFileContent));
 	}
 
 	@Test
@@ -197,6 +197,39 @@ public class JavaFileBuilderClassLevelTest
 				                                                               "import java.io.File;");
 		System.out.println(javaFileContent);
 		assertEquals("Number of File imports", 1, actualOccurrence);
+	}
+
+	@Test
+	public void buildsJUnitClassesWithPreconditionAndCleanup() throws Exception 
+	{
+		// arrange
+		commands.add(new JavaCommand(XXGroupBuilder.BEHAVIOUR_CONSTANT_DECLARATION + " = \"BehaviourId\";", JavaCommand.CommandType.Constant));
+		commands.add(new JavaCommand("languageTemplatesCommon.declareXXGroupForBehaviour(\"BehaviourId\");"));
+		commands.add(new JavaCommand("languageTemplatesCommon.prepareOnce1();", JavaCommand.CommandType.OneTimePrecondition));
+		commands.add(new JavaCommand("languageTemplatesCommon.prepareOnce2();", JavaCommand.CommandType.OneTimePrecondition));
+		commands.add(new JavaCommand("languageTemplatesCommon.prepare1();", JavaCommand.CommandType.Precondition));
+		commands.add(new JavaCommand("languageTemplatesCommon.prepare2();",JavaCommand.CommandType.Precondition));
+		commands.add(new JavaCommand("languageTemplatesCommon.startNewXX(\"XXId\");"));
+		commands.add(new JavaCommand("templateContainer.doSomethingElse();"));
+		commands.add(new JavaCommand("languageTemplatesCommon.cleanup1();", JavaCommand.CommandType.Cleanup));
+		commands.add(new JavaCommand("languageTemplatesCommon.cleanup2();", JavaCommand.CommandType.Cleanup));
+		commands.add(new JavaCommand("languageTemplatesCommon.cleanupOnce1();", JavaCommand.CommandType.OneTimeCleanup));
+		commands.add(new JavaCommand("languageTemplatesCommon.cleanupOnce2();", JavaCommand.CommandType.OneTimeCleanup));
+
+		javaCommandCollection.put(new Filename("com/iksgmbh/sysnat/test/ExampleTest.java"), commands);
+		
+		// act
+		final HashMap<File, String> result = JavaFileBuilder.doYourJob(javaCommandCollection, 
+				                                                       "HomePageIKS",
+				                                                       javaFieldData);
+		
+		// assert
+		assertEquals("Number of test classes", 1, result.size());
+		final File firstElement = result.keySet().iterator().next();
+		final String actualFileContent = result.get(firstElement);
+		final String expectedFileContent = SysNatFileUtil.readTextFileToString(
+				"../sysnat.testcase.generation/src/test/resources/expectedResults/JUnitJavaClassWithPreconditionAndCleanup.txt");
+        assertEquals("Expected report", expectedFileContent.trim(), actualFileContent.trim());
 	}
 	
 }

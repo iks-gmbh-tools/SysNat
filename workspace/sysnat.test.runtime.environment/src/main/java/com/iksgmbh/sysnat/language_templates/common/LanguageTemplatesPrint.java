@@ -28,7 +28,7 @@ import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.domain.FileList;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
-import com.iksgmbh.sysnat.common.helper.PdfAnalyser;
+import com.iksgmbh.sysnat.common.helper.pdftooling.PdfPageContentAnalyser;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 @LanguageTemplateContainer
@@ -88,7 +88,7 @@ public class LanguageTemplatesPrint
 	@LanguageTemplate("Enthält das Dokument '' genau ^^ Seite(n)?")
 	public void doesDocumentContainExcactNumberOfPages(File document, int expectedPageNumber) 
 	{
-		final PdfAnalyser pdfAnalyser = new PdfAnalyser(document.getAbsolutePath());
+		final PdfPageContentAnalyser pdfAnalyser = new PdfPageContentAnalyser(document.getAbsolutePath());
 		final boolean ok = expectedPageNumber == pdfAnalyser.getPageNumber();
 		final String question = "Enhält das Dokument <b>" + document.getName() + "</b> genau <b>" + expectedPageNumber + "</b> Seite(n)" + QUESTION_IDENTIFIER;
 		executableExample.answerQuestion(question, ok);	

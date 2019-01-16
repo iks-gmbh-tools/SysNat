@@ -162,7 +162,7 @@ public class TestLanguageTemplatesContainer
 
 		executableExample.setXXID( xxid.trim() );
 		System.out.println((executionInfo.getTotalNumberOfTestCases() + 1) + ". XXID: " + xxid);
-		executionInfo.countTestCase();
+		executionInfo.countTestCase(executableExample.getBehaviorID());
 		
 		if ( ! executionInfo.isApplicationStarted() ) {
 			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 

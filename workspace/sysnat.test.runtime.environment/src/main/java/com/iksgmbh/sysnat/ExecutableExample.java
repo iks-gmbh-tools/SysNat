@@ -60,6 +60,7 @@ import com.iksgmbh.sysnat.helper.WindowHelper;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
 import com.iksgmbh.sysnat.testdataimport.TableDataParser;
 import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
+import com.iksgmbh.sysnat.testresult.archiving.SysNatTestResultArchiver;
 
 /**
  * Mother of all test classes.
@@ -105,11 +106,18 @@ abstract public class ExecutableExample
 		if ( ! executionInfo.isTestEnvironmentInitialized() ) {
 			initTestEnvironment();
 		} else {
+			reinitTestEnvironment();
+		}
+	}
+	
+	private void reinitTestEnvironment() 
+	{
+		if (System.getProperty("isWebApplication", "false").equals("true"))
+		{
 			setGuiController(executionInfo.getGuiController());
 	        getGuiController().reloadCurrentPage();  // prepare gui for next test
 		}
 	}
-	
 	private void initTestEnvironment() 
 	{
 		testDataImporter = new TestDataImporter(executionInfo.getTestdataDir());
@@ -125,7 +133,6 @@ abstract public class ExecutableExample
 		} else {
 			executionInfo.setApplicationStarted(true);
 		}
-	
 		
 		executionInfo.setTestEnvironmentInitialized();
 	}
@@ -218,7 +225,7 @@ abstract public class ExecutableExample
         }
 
         try {
-            FileUtils.copyFile(scrFile, new File(executionInfo.getScreenShotDir() + File.separator + filename));
+            FileUtils.copyFile(scrFile, new File(executionInfo.getReportFolder() + File.separator + filename));
         } catch (Exception e) {
         	System.out.println("Error saving screenshot: " + e.getMessage());
         } finally {
@@ -652,22 +659,31 @@ abstract public class ExecutableExample
 		});
 	}
 	
-	private void createReportHtml() 
-	{
-		// full overview report
-		final String fullOverviewReportFilename = ReportCreator.getFullOverviewReportFilename();
-		
-		SysNatFileUtil.writeFile(fullOverviewReportFilename, 
-				                 ReportCreator.createFullOverviewReport());
-		
-		// full overview report
-		SysNatFileUtil.writeFile(ReportCreator.getShortOverviewReportFilename(), 
-				                 ReportCreator.createShortOverviewReport());
-
-		if ("true".equalsIgnoreCase( System.getProperty("sysnat.autolaunch.report"))) {    		
+	
+    /**
+    * Creates a big overview report with all details and a short overview report for ALM archiving. 
+     * Note: single detail reports for each test case have been already created in _NatSpecTemplate.shutdown()
+    */
+    private void createReportHtml() 
+    {
+        // full overview report
+        final String fullReport = ReportCreator.createFullOverviewReport();
+        final String fullOverviewReportFilename = ReportCreator.getFullOverviewReportFilename();
+        SysNatFileUtil.writeFile(fullOverviewReportFilename, fullReport);
+  		if ("true".equalsIgnoreCase( System.getProperty("sysnat.autolaunch.report"))) {    		
 			HtmlLauncher.doYourJob( fullOverviewReportFilename );
     	}
-	}
+          
+        // small report
+        final String shortOverview = ReportCreator.createShortOverviewReport();
+        SysNatFileUtil.writeFile( ReportCreator.getShortOverviewReportFilename(), shortOverview);
+          
+         if (executionInfo.areResultsToArchive()) {
+              SysNatTestResultArchiver.doYourJob( executionInfo.getReportFolder() );
+         } else {
+                System.out.println("Archiving test results is omitted.");
+         }
+    }
 
 	public void answerQuestion(final String question, final boolean  ok)
 	{
@@ -769,13 +785,13 @@ abstract public class ExecutableExample
 		}
 	}
 	
-	public String getScreenshotName() 
+	public String getPictureProofName() 
 	{
 		final String fileNamePrefix = getTestCaseFileName() + PICTURE_PROOF;
-		
+		final String reportFolder = ExecutionRuntimeInfo.getInstance().getReportFolder().getAbsolutePath();
 		final int numberOfExistingBildnachweise = 
 				SysNatFileUtil.getNumberOfFilesStartingWith(fileNamePrefix,
-						                                    ExecutionRuntimeInfo.getInstance().getScreenShotDir());
+						                                    reportFolder);
 		return fileNamePrefix + (numberOfExistingBildnachweise + 1);
 	}
 	
@@ -903,10 +919,14 @@ abstract public class ExecutableExample
 	public void addLinewiseToReportMessageAsComment(List<String> commentLines) 
 	{
 		for (String line : commentLines) {
-			addReportMessage("//" + line);
+			addCommentToReport(line);
 		}
 	}
 
+	public void addCommentToReport(String commentLine) {
+		addReportMessage("//" + commentLine);
+	}
+	
 	public List<String> executeCommandAndListOutput(String command) 
 	{
 		List<String> toReturn = new ArrayList<>();

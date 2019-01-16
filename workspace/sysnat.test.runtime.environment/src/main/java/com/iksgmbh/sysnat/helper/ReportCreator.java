@@ -56,11 +56,14 @@ public class ReportCreator
 	public static final String FULL_REPORT_RESULT_FILENAME = "FullOverview.html"; 
 	public static final String SHORT_REPORT_RESULT_FILENAME = "ShortOverview.html"; 
 	public static final String DETAIL_RESULT_FILENAME = "ExecutionDetails.html"; 
+	public static final String END_OF_ONETIME_PRECONDTIONS_COMMENT = "-Onetime-Precondition-Marker-Comment-For-Report-Builder-";
+	public static final String START_OF_ONETIME_CLEANUPS_COMMENT = "-Onetime-Cleanup-Marker-Comment-For-Report-Builder-";
 	
-	private static final String OVERVIEW_TEMPLATE = "../sysnat.test.runtime.environment/src/main/resources/TestReport.htm.Template." 
-                                                     + Locale.getDefault().getLanguage() + ".txt";
-	private static final String DETAIL_TEMPLATE = "../sysnat.test.runtime.environment/src/main/resources/TestReport.htm.Template." 
-                                                   + Locale.getDefault().getLanguage() + ".txt";
+	private static final String HTML_TEMPLATE_DIR = "../sysnat.test.runtime.environment/src/main/resources/htmlTemplates"; 
+
+			
+	private static final String OVERVIEW_TEMPLATE = HTML_TEMPLATE_DIR + "/OverviewReport.htm.Template." + Locale.getDefault().getLanguage() + ".txt";
+	private static final String DETAIL_TEMPLATE = HTML_TEMPLATE_DIR + "/SingleReport.htm.Template." + Locale.getDefault().getLanguage() + ".txt";
 	
 	private enum ReportStatus { OK, FAILED, WRONG };
 	
@@ -389,10 +392,18 @@ public class ReportCreator
 			  .append("<br>")
 			  .append(System.getProperty("line.separator"));
 
-			final List<String> xxids = executedXXGroups.get(groupID);
-			Collections.sort(xxids);
+			final List<String> xxidsOfGroup = executedXXGroups.get(groupID);
+			Collections.sort(xxidsOfGroup);
+			final List<String> onetimePreconditionInstructions = extractOnetimePreconditionInstructions(xxidsOfGroup);
+			final List<String> onetimeCleanupInstructions = extractOnetimeCleanupInstructions(xxidsOfGroup);
+			
+			if (onetimePreconditionInstructions.size() > 0) {
+				addOnetimeBehaviourLevelInstructions(sb, onetimePreconditionInstructions);
+				addHtmlXXGroupSeparationLine(sb);
+			}
+			
 			xxCounter = 0;
-			for (String xxid : xxids) 
+			for (String xxid : xxidsOfGroup) 
 			{
 				xxCounter++;
 				
@@ -416,10 +427,84 @@ public class ReportCreator
 							                         RED_HTML_COLOR, 
 							                         true));					
 				}
+				
+			}
+
+			if (onetimePreconditionInstructions.size() > 0) {
+				addHtmlXXGroupSeparationLine(sb);
+				addOnetimeBehaviourLevelInstructions(sb, onetimeCleanupInstructions);
 			}
 		}
 
+
 		return sb;
+	}
+
+	private void addOnetimeBehaviourLevelInstructions(StringBuffer sb, List<String> onetimeCleanupInstructions) 
+	{
+		char numberingChar = 'a' - 1;
+		for (String message : onetimeCleanupInstructions) {
+			numberingChar++;
+			sb.append("<span style='font-size:12.0pt'>" + numberingChar + ") " + message + "</span>");
+			sb.append(System.getProperty("line.separator"))
+			  .append("<br>")
+			  .append(System.getProperty("line.separator"));
+		}
+	}
+
+	private List<String> extractOnetimeCleanupInstructions(List<String> xxidsOfGroup) 
+	{
+		List<String> toReturn = new ArrayList<>();
+		xxidsOfGroup.forEach(xxid -> addOnetimeCleanups(reportMessagesOK.get(xxid), toReturn));
+		return toReturn;
+	}
+
+	private void addOnetimeCleanups(List<String> list, List<String> toReturn) 
+	{
+		if (list == null) return;
+		int index = getIndexInList(START_OF_ONETIME_CLEANUPS_COMMENT, list);
+		if (index > -1) {
+			for (int i = index+1; i < list.size(); i++) {
+				toReturn.add(list.get(i));
+			}
+			for (int i = 0; i < index; i++) {
+				list.remove(list.get(index));
+			}
+		}
+		
+	}
+
+	private List<String> extractOnetimePreconditionInstructions(List<String> xxidsOfGroup) 
+	{
+		List<String> toReturn = new ArrayList<>();
+		xxidsOfGroup.forEach(xxid -> addOnetimePreconditions(reportMessagesOK.get(xxid), toReturn));
+		return toReturn;
+	}
+
+	private void addOnetimePreconditions(List<String> list, List<String> toReturn) 
+	{
+		if (list == null) return;
+		int index = getIndexInList(END_OF_ONETIME_PRECONDTIONS_COMMENT, list);
+		if (index > -1) {
+			for (int i = 0; i < index; i++) {
+				toReturn.add(list.get(i));
+			}
+			for (int i = index; i >= 0; i--) {
+				list.remove(list.get(i));
+			}
+		}
+		
+	}
+
+	private int getIndexInList(String searchString, List<String> list) 
+	{
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).equals(searchString)) {
+				return i;
+			}
+		}
+		
+		return -1;
 	}
 
 	private String getGroupType(String groupID) 
@@ -502,7 +587,7 @@ public class ReportCreator
 		  .append(System.getProperty("line.separator"));
 
 		for (String message : messages) {
-			appendMessageLine(sb, message, htmlTab);
+			appendDetailMessageLine(sb, message, htmlTab);
 		}
 		
 		return sb.toString();
@@ -540,7 +625,7 @@ public class ReportCreator
 		  .append(System.getProperty("line.separator"));
 	}
 
-	private void appendMessageLine(StringBuffer sb, String message, String htmlTab) 
+	private void appendDetailMessageLine(StringBuffer sb, String message, String htmlTab) 
 	{
 		if (message.startsWith("//")) {
 			appendCommentLine(sb, message);

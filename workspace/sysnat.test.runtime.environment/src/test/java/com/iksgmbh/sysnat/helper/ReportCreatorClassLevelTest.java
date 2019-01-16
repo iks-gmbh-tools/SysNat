@@ -168,6 +168,7 @@ public class ReportCreatorClassLevelTest
 		assertReportOverview(4, 3, 1, 1, 1, 1);
 	}
 	
+	
 	@Test
 	public void createReportForIdenticalXXIDs() 
 	{
@@ -204,6 +205,7 @@ public class ReportCreatorClassLevelTest
 		SysNatFileUtil.writeFile("./target/Test.html", result);
 
 		// assert
+		System.err.println(result);
 		assertReportOverview(6, 1, 5, 1, 0, 0);
 		assertReportContains(result, "background:#CDE301;" + 
                 System.getProperty("line.separator") +
@@ -213,8 +215,44 @@ public class ReportCreatorClassLevelTest
                 System.getProperty("line.separator") + "<br>");
 	}
 
+	
 	@Test
-	public void buildsExcecutedHtmlSection() 
+	public void buildsDetailsHtmlSection_WithOnetimeInstructions() 
+	{
+		// arrange
+		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		List<String> messages1 = new ArrayList<>();
+		messages1.add("This is a OneTimePrecondition instruction.");
+		messages1.add("This is another OneTimePrecondition instruction.");
+		messages1.add(ReportCreator.END_OF_ONETIME_PRECONDTIONS_COMMENT);
+		messages1.add("Something has been done.");
+		List<String> messages2 = new ArrayList<>();
+		messages2.add("Something has been done.");
+		messages2.add("Something else has been done.");
+		List<String> messages3 = new ArrayList<>();
+		messages3.add("Something has been done.");
+		messages3.add("Something else has been done.");
+		messages3.add("Another thing has been done.");
+		messages3.add(ReportCreator.START_OF_ONETIME_CLEANUPS_COMMENT);
+		messages3.add("This is a OneTimeCleanup instruction.");
+		messages3.add("This is another OneTimeCleanup instruction.");
+		executionInfo.addTestMessagesOK("XX1", messages1, "aBehaviour");
+		executionInfo.addTestMessagesOK("XX2", messages2, "aBehaviour");
+		executionInfo.addTestMessagesOK("XX3", messages3, "aBehaviour");
+
+		// act
+		result = new ReportCreator().buildDetailPart();
+
+		// assert
+		result = result.replaceAll("&nbsp;", "").replaceAll("#", " # ").trim();
+		String expectedFileContent = SysNatFileUtil.readTextFileToString(
+				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/onetimeBehaviorInstructionTest.txt");
+        assertEquals("Expected report", expectedFileContent, result);
+	}
+	
+	
+	@Test
+	public void buildsExcecutedHtmlSection_standard() 
 	{
 		// arrange
 		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
@@ -270,6 +308,7 @@ public class ReportCreatorClassLevelTest
 				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/DetailsWithTwoOkBehaviors.txt");
         assertEquals("Expected report", expectedFileContent.trim(), result.trim());
 	}
+		
 	
 	@Test
 	public void buildsDetailHtmlSectionForBehaviourWithOneFailedAndOneWrongXX() 

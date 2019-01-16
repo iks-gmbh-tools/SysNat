@@ -37,8 +37,8 @@ import com.iksgmbh.sysnat.utils.BDDKeywordUtil;
  */
 public class LanguageInstructionCollector 
 {
-	private static final String COMMENT_SEPARATOR = "#";
 	private static final String SET_BDD_KEYWORD = "Set BDD-Keyword";
+	private static final String COMMENT_SEPARATOR = "#";
 
 	private String applicationName;
 
@@ -225,19 +225,32 @@ public class LanguageInstructionCollector
 		if (BDDKeywordUtil.startsWithBDDKeyword(line))
 		{
 			LineData lineData = getLineData(line);
+			translateInSysNatCommands(lineData);
 			instructions.add(SET_BDD_KEYWORD + " \"" + lineData.bddKeyword + "\".");
-			if (lineData.bddKeyword.equals("Feature")) {
-				lineData.instruction = "Behaviour: " + lineData.instruction;
-			} else if (lineData.bddKeyword.equals(SysNatLocaleConstants.SCENARIO_KEYWORD)
-					|| lineData.bddKeyword.equals("Szenario")
-					|| lineData.bddKeyword.equals("Scenario")) {
-				lineData.instruction = "XXID: " + lineData.instruction;
-			}
 			instructions.add(lineData.instruction.trim());
 		} else {
 			instructions.add(line.trim());
 		}
 
+	}
+
+	private void translateInSysNatCommands(LineData lineData) 
+	{
+		if (lineData.bddKeyword.equals("Feature")) {
+			lineData.instruction = "Behaviour: " + lineData.instruction;
+		} else if (lineData.bddKeyword.equals(SysNatLocaleConstants.SCENARIO_KEYWORD)
+				|| lineData.bddKeyword.equals("Szenario")
+				|| lineData.bddKeyword.equals("Scenario")) {
+			lineData.instruction = "XXID: " + lineData.instruction;
+		} else if (lineData.bddKeyword.equals("EinmalHintergrund")) {
+			lineData.instruction = "EinmalVoraussetzung: " + lineData.instruction;
+		} else if (lineData.bddKeyword.equals("OneTimeBackground")) {
+			lineData.instruction = "OneTimePrecondition: " + lineData.instruction;
+		} else if (lineData.bddKeyword.equals("Hintergrund")) {
+			lineData.instruction = "Voraussetzung: " + lineData.instruction;
+		} else if (lineData.bddKeyword.equals("Background")) {
+			lineData.instruction = "Precondition: " + lineData.instruction;
+		}
 	}
 
 	private LineData getLineData(String line)

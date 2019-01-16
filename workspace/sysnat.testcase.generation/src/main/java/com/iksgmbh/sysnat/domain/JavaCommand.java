@@ -22,6 +22,11 @@ package com.iksgmbh.sysnat.domain;
  */
 public class JavaCommand 
 {
+	public static enum CommandType { Constant,  // used for the behaviourId which is defined as a java class constant
+		                             OneTimePrecondition, Precondition, 
+		                             Standard, // identifies common test instructions
+		                             Cleanup, OneTimeCleanup };
+	
 	/**
 	 * One line of Java code for the JUnit test case to create.
 	 */
@@ -30,19 +35,31 @@ public class JavaCommand
 	/**
 	 * Meta information about this Java command line.
 	 */
-	public String importType;
+	public String returnType;
+	public CommandType commandType;
 	
 	public JavaCommand(final String aValue) {
+		this(aValue, CommandType.Standard);
+	}
+
+	public JavaCommand(final String aValue, final CommandType aCommandType) {
 		this.value = aValue;
+		this.commandType = aCommandType;
+	}
+
+	public JavaCommand(final String aValue, final Class<?> returnType) {
+		this(aValue, returnType, CommandType.Standard);
 	}
 
 	public JavaCommand(final String aValue,
-			           final Class<?> returnType) 
+			           final Class<?> returnType,
+			           final CommandType aCommandType) 
 	{
 		this.value = aValue;
 		if (returnType != null) {
-			this.importType = returnType.getName();
+			this.returnType = returnType.getName();
 		}
+		this.commandType = aCommandType;
 	}
 	
 	@Override

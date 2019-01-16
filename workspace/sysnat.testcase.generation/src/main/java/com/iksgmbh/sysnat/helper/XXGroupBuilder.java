@@ -29,29 +29,36 @@ import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaCommand;
+import com.iksgmbh.sysnat.domain.JavaCommand.CommandType;
 import com.iksgmbh.sysnat.testdataimport.TableDataParser;
 import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 
 /**
- * Splits the content of a nlxx file in multiple JUnit java files if the nlxx file defines a test series.
+ * Splits the content of a nlxx file in multiple JUnit java files 
+ * if the nlxx file defines a group of XX (i.e. Behaiviour or feature).
  * 
  * Details:
- * Checks all Executable Examples (XX) (each represented by a list of JavaCommand parsed from the nlxx file) to define a test series.
- * A test series is represented either by a parameterized XX or a by group of XXs defined for a software behaviour.
- * A Behaviour (or feature) has to be declared in a nlxx file by the stage instruction "Behaviour" or "Feature".
- * If any type of test series is detected, for each test case within this series a separate JUnit test class in generated.
- * For parameterized tests they only differ in the test data used, for XX groups they also differ in the executed instructions.
- * All JUnit java files belonging to the same test series will be written together into a specific package created only for the test series.
+ * Checks all Executable Examples (XX each represented by a list of JavaCommand 
+ * parsed from the nlxx file) to define an XX Group.
+ * A XX group is defined either a single XX for which a Test-Parameter is given 
+ * or by a single software behaviour (feature) for which more than one XX are present.
+ * If any type of a XX group is detected, for each XX a separate JUnit test class in generated.
+ * For parameterized XX they only differ in the test data used, 
+ * for Behaviours/Features they also differ in the executed instructions.
+ * All JUnit java files belonging to the same XX group will be written together 
+ * into a separate package.
  * 
  * @author Reik Oberrath
  */
 public class XXGroupBuilder 
 {
+	public static final String BEHAVIOUR_CONSTANT_DECLARATION = "private static final String BEHAVIOUR_ID";
+
 	private static final String PARAMETER_IDENTIFIER_METHOD_CALL = ".applyTestParameter(";
 	private static final String BEHAVIOUR_IDENTIFIER_METHOD_CALL = ".declareXXGroupForBehaviour(";
 	private static final String BDD_KEYWORD_IDENTIFIER_METHOD_CALL = ".setBddKeyword(";
 	private static final String XXID_IDENTIFIER_METHOD_CALL = ".startNewXX(";
-	
+
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw;
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionTemp = new HashMap<>();
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionResult = new HashMap<>();
@@ -60,22 +67,24 @@ public class XXGroupBuilder
 	private TestDataImporter testDataImporter;
 	private String nameOfCurrentFile;
 	private int xxCounter = 0;
+	private List<JavaCommand> groupInstructions;
 	
-	private XXGroupBuilder(final HashMap<Filename, List<JavaCommand>> aJavaCommandCollectionRaw) {
+	private XXGroupBuilder(final HashMap<Filename, List<JavaCommand>> aJavaCommandCollectionRaw) 
+	{
 		this.javaCommandCollectionRaw = aJavaCommandCollectionRaw;
 		this.testDataImporter = new TestDataImporter(GenerationRuntimeInfo.getInstance().getTestdataDir());
 	}
 	
 	public static HashMap<Filename, List<JavaCommand>> doYourJob(final HashMap<Filename, List<JavaCommand>> aJavaCommandCollectionRaw) {
-		return new XXGroupBuilder(aJavaCommandCollectionRaw).buildTestCaseSeriesIfNecessary();
+		return new XXGroupBuilder(aJavaCommandCollectionRaw).buildXXGroupsIfNecessary();
 	}
 	
-	private HashMap<Filename, List<JavaCommand>> buildTestCaseSeriesIfNecessary() 
+	private HashMap<Filename, List<JavaCommand>> buildXXGroupsIfNecessary() 
 	{
-		// split XX groups into separate XXs and put result into javaCommandCollectionTemp
+		// split XX of Behaviour into separate XXs and put result into javaCommandCollectionTemp
 		javaCommandCollectionRaw.keySet().stream().filter(this::isNoScript)
 		                                          .filter(this::doesXXFileCorrectlyDefineAnyBehaviour)
-                                                  .forEach(this::buildTestCaseSeriesForXXGroup);
+                                                  .forEach(this::buildXXGroupForBehaviour);
 
 		// put XX without group into javaCommandCollectionTemp
 		javaCommandCollectionRaw.keySet().stream().filter(filename -> ! xxGroups.containsKey(filename))
@@ -84,7 +93,7 @@ public class XXGroupBuilder
 		// split XX with parameter definition into separate XXs and put result into javaCommandCollectionResult
 		javaCommandCollectionTemp.keySet().stream().filter(this::isNoScript)
                                                    .filter(this::isTestCaseParameterized)
-		                                           .forEach(this::buildTestCaseSeriesForParameter);
+		                                           .forEach(this::buildXXGroupForParameterizedXX);
 
 		// put XX without parameter definition into javaCommandCollectionResult
 		javaCommandCollectionTemp.keySet().stream().filter(filename -> ! testParameter.containsKey(filename))
@@ -97,16 +106,104 @@ public class XXGroupBuilder
 		return ! filename.value.endsWith("Script.java");
 	}
 	
-	private void buildTestCaseSeriesForXXGroup(final Filename filename)
+	private void buildXXGroupForBehaviour(final Filename filename)
 	{
 		nameOfCurrentFile = filename.value;
 		xxCounter = 0;
 		final List<JavaCommand> commands = javaCommandCollectionRaw.get(filename);
-		final HashMap<String, List<JavaCommand>> separatedXXs = cutXXGroupIntoSeparateXX(commands, filename);
+		final HashMap<CommandType, List<JavaCommand>> sortedCommands = sortCommandsForType(commands, filename);
+		final HashMap<String, List<JavaCommand>> separatedXXs = cutXXGroupIntoSeparateXX(sortedCommands, filename);
 		separatedXXs.keySet().forEach(xxid -> javaCommandCollectionTemp.put(createNewFilename(filename, xxid), 
 				                                                            separatedXXs.get(xxid))); 
 	}
 	
+	private HashMap<CommandType, List<JavaCommand>> sortCommandsForType(
+			final List<JavaCommand> commands, 
+			final Filename filename) 
+	{
+		final List<JavaCommand> constantsDeclaration = new ArrayList<>();
+		final List<JavaCommand> oneTimePreconditions = new ArrayList<>();
+		final List<JavaCommand> preconditions = new ArrayList<>();
+		final List<JavaCommand> standards = new ArrayList<>();
+		final List<JavaCommand> cleanups = new ArrayList<>();
+		final List<JavaCommand> oneTimeCleanups = new ArrayList<>();
+		
+		String behaviourId = null;
+		int groupDeclarationCounter = 0;
+		groupInstructions = new ArrayList<>();
+
+		for (JavaCommand javaCommand : commands) 
+		{
+			if (javaCommand.value.endsWith(BDD_KEYWORD_IDENTIFIER_METHOD_CALL + "\"Feature\");")) {
+				groupInstructions.add(javaCommand);
+				continue;
+			}
+
+			if (javaCommand.value.contains(BEHAVIOUR_IDENTIFIER_METHOD_CALL)) 
+			{
+				groupDeclarationCounter++;
+				if (groupDeclarationCounter > 1) {
+					throw new SysNatTestDataException("Behaviour declaration must occur only once in '"
+				               + filename.value + "'.");
+				}
+				if (standards.size() > 1) {
+					throw new SysNatTestDataException("Behaviour declaration must occur before XXID declaration in '"
+				               + filename.value + "'.");
+				}
+				groupInstructions.add(replaceFilenamePlaceholderIfPresent(filename, javaCommand, ""));
+				behaviourId = extractXXGroup(javaCommand.value);
+				continue;
+			}
+
+			switch ( javaCommand.commandType ) 
+			{
+				case OneTimePrecondition:
+					oneTimePreconditions.add(javaCommand);
+					break;
+	
+				case Precondition:
+					preconditions.add(javaCommand);
+					break;
+	
+				case Standard:
+					standards.add(javaCommand);
+					break;
+	
+				case OneTimeCleanup:
+					oneTimeCleanups.add(javaCommand);
+					break;
+	
+				case Cleanup:
+					cleanups.add(javaCommand);
+					break;
+				
+				case Constant:
+					 // ignore here
+					 break;
+				
+				default:
+				break;
+			}
+		}
+		
+		
+		final JavaCommand xxGroupIdentifier = new JavaCommand(BEHAVIOUR_CONSTANT_DECLARATION + " = \"" 
+		                                                      + behaviourId + "\";",
+                                                              CommandType.Constant);
+		constantsDeclaration.add(xxGroupIdentifier);
+
+		final HashMap<CommandType, List<JavaCommand>> sortedCommands = new HashMap<>();
+
+		sortedCommands.put(CommandType.Constant, constantsDeclaration);
+		sortedCommands.put(CommandType.OneTimePrecondition, oneTimePreconditions);
+		sortedCommands.put(CommandType.Precondition, preconditions);
+		sortedCommands.put(CommandType.Standard, standards);
+		sortedCommands.put(CommandType.Cleanup, cleanups);
+		sortedCommands.put(CommandType.OneTimeCleanup, oneTimeCleanups);
+		
+		return sortedCommands;
+	}
+
 	private boolean containsFilenamePlaceholder(String value) {
 		return value.contains("<filename>") || value.contains("<Dateiname>")
 		       || value.equalsIgnoreCase("<filename>") || value.equalsIgnoreCase("<Dateiname>");
@@ -120,49 +217,37 @@ public class XXGroupBuilder
 		}
 		
 		int pos = filename.value.lastIndexOf('/');
+		if (pos == -1) pos = filename.value.length();
+		
 		return new Filename(filename.value.substring(0, pos) + "/" + xxGroup.toLowerCase() + "/" + xxid + "_Test.java");
 	}
 
-	private HashMap<String, List<JavaCommand>> cutXXGroupIntoSeparateXX(final List<JavaCommand> commandsOfGroup,
-																		final Filename filename)
+	private HashMap<String, List<JavaCommand>> cutXXGroupIntoSeparateXX(
+			final HashMap<CommandType, List<JavaCommand>> sortedCommands,
+			final Filename filename)
 	{
 		final HashMap<String, List<JavaCommand>> separatedXXs = new HashMap<>();
-		JavaCommand groupDeclarationCommand = null;
+		final List<JavaCommand> standardCommandsOfGroup = sortedCommands.get(CommandType.Standard);
+
+		List<JavaCommand> standardCommandsOfseparatedXX = new ArrayList<>();
+
 		String xxid = null;
-		List<JavaCommand> commandListOfseparatedXX = null;
 		
-		for (JavaCommand javaCommand : commandsOfGroup) 
+		for (JavaCommand javaCommand : standardCommandsOfGroup) 
 		{
 			if (javaCommand.value.contains(BDD_KEYWORD_IDENTIFIER_METHOD_CALL)) {
-				if (commandListOfseparatedXX == null) {
-					commandListOfseparatedXX = new ArrayList<>();
-				}
-				commandListOfseparatedXX.add(javaCommand);
-				continue;
-			}
-
-			if (javaCommand.value.contains(BEHAVIOUR_IDENTIFIER_METHOD_CALL)) {
-				groupDeclarationCommand = replaceFilenamePlaceholderIfPresent(filename, javaCommand, "");
-				if (commandListOfseparatedXX == null) {
-					commandListOfseparatedXX = new ArrayList<>();
-				}
-				commandListOfseparatedXX.add(groupDeclarationCommand);
+				standardCommandsOfseparatedXX.add(javaCommand);
 				continue;
 			}
 			
 			if (javaCommand.value.contains(XXID_IDENTIFIER_METHOD_CALL)) 
 			{
-				if (xxid != null) {
-					separatedXXs.put(xxid, commandListOfseparatedXX);
-					commandListOfseparatedXX = new ArrayList<>();
-					if (groupDeclarationCommand != null) {
-						commandListOfseparatedXX.add(groupDeclarationCommand);
-					}
-				}
-
-				if (groupDeclarationCommand == null) {
-					throw new SysNatTestDataException("Behaviour declaration must occur before XXID declaration in '"
-				               + filename.value + "'.");
+				if (xxid != null) 
+				{
+					final List<JavaCommand> completeCommandsOfseparatedXX = 
+							buildCompleteCommandList(sortedCommands, standardCommandsOfseparatedXX);
+					separatedXXs.put(xxid, completeCommandsOfseparatedXX);
+					standardCommandsOfseparatedXX = new ArrayList<>();
 				}
 
 				if (containsFilenamePlaceholder(javaCommand.value)) {
@@ -172,16 +257,42 @@ public class XXGroupBuilder
 			}
 			
 			if (xxid != null) {
-				commandListOfseparatedXX.add(javaCommand);
+				standardCommandsOfseparatedXX.add(javaCommand);
 			}
 			
 		}
 
 		if (xxid != null) {
-			separatedXXs.put(xxid, commandListOfseparatedXX);
+			final List<JavaCommand> completeCommandsOfseparatedXX = 
+					buildCompleteCommandList(sortedCommands, standardCommandsOfseparatedXX);
+			separatedXXs.put(xxid, completeCommandsOfseparatedXX);
 		}
 
 		return separatedXXs;
+	}
+
+	private List<JavaCommand> buildCompleteCommandList(
+			final HashMap<CommandType, List<JavaCommand>> sortedCommands,
+			final List<JavaCommand> standardCommandsOfseparatedXX) 
+	{
+		final List<JavaCommand> toReturn = new ArrayList<>();
+		toReturn.addAll(groupInstructions);
+		
+		if ( ! sortedCommands.get(CommandType.OneTimePrecondition).isEmpty() ) {
+			toReturn.addAll(sortedCommands.get(CommandType.OneTimePrecondition));
+			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"End of OneTimePrecondition\");"));			
+		}
+		
+		toReturn.addAll(sortedCommands.get(CommandType.Precondition));
+		toReturn.addAll(standardCommandsOfseparatedXX);
+		toReturn.addAll(sortedCommands.get(CommandType.Cleanup));
+		
+		if ( ! sortedCommands.get(CommandType.OneTimeCleanup).isEmpty() ) {
+			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"Start of OneTimeCleanup\");"));
+			toReturn.addAll(sortedCommands.get(CommandType.OneTimeCleanup));
+		}
+		
+		return toReturn;
 	}
 
 	private JavaCommand replaceFilenamePlaceholderIfPresent(final Filename filename, 
@@ -203,13 +314,17 @@ public class XXGroupBuilder
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void buildTestCaseSeriesForParameter(final Filename filename)
+	private void buildXXGroupForParameterizedXX(final Filename filename)
 	{
 		final List<JavaCommand> commands = javaCommandCollectionTemp.get(filename);
 		final String testParameterValue = testParameter.get(filename);
 		final Hashtable<String, Properties> datasets;
 		final boolean tableDataMode;
 		
+		JavaCommand constant = new JavaCommand("private static final String BEHAVIOR_ID = \"" + testParameterValue + "\";",
+				                                CommandType.Constant);
+		commands.add(0, constant);
+
 		if ( testParameterValue.startsWith(TableDataParser.TABLE_DATA_IDENTIFIER)) 
 		{
 			List<Properties> testParameter = TableDataParser.doYourJob(filename.value, testParameterValue);
@@ -218,7 +333,9 @@ public class XXGroupBuilder
 				datasets.put("TableDataParameter_" + (i+1), testParameter.get(i));
 			}
 			tableDataMode = true;
-		} else {
+		} 
+		else 
+		{
 			datasets = testDataImporter.loadTestdata(testParameterValue);
 			tableDataMode = false;
 		}
@@ -242,13 +359,17 @@ public class XXGroupBuilder
 			if (javaCommand.value.contains( "startNewXX" )) {
 				xxid = extractXXID(javaCommand.value);
 				newCommands.add(new JavaCommand("languageTemplatesCommon.startNewXX(\"" + xxid + "_" + datasetId + "\");"));
-			} else if (javaCommand.value.contains(PARAMETER_IDENTIFIER_METHOD_CALL)) {
+			} 
+			else if (javaCommand.value.contains(PARAMETER_IDENTIFIER_METHOD_CALL)) 
+			{
 				if (tableDataMode) {
 					newCommands.add(new JavaCommand("languageTemplatesCommon.setDatasetObject(\"" + toTableData(dataset) + "\");"));
 				} else {
 					newCommands.add(new JavaCommand("languageTemplatesCommon.setDatasetObject(\"" + datasetName + "\");"));
 				}
-			} else {
+			} 
+			else 
+			{
 				newCommands.add(javaCommand);
 			}
 		}

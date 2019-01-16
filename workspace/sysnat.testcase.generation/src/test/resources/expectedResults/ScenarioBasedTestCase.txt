@@ -13,7 +13,9 @@ import com.iksgmbh.sysnat.test.testTemplateContainers.scenariobasedapplication.C
 */
 public class TestScenario1_Test extends TestCaseTemplateParent
 {
+
 protected ComplexInstructionTestApplication_LanguageTemplateContainer complexInstructionTestApplication_LanguageTemplateContainer;
+
 
 @Before
 public void setUp()
@@ -31,6 +33,7 @@ if (languageTemplatesCommon != null) languageTemplatesCommon.gotoStartPage();
 complexInstructionTestApplication_LanguageTemplateContainer = null;
 super.shutdown();
 }
+
 
 @Test
 @Override
@@ -54,4 +57,5 @@ closeCurrentTestCaseWithSuccess();
 super.handleThrowable(e);
 }
 }
+
 }

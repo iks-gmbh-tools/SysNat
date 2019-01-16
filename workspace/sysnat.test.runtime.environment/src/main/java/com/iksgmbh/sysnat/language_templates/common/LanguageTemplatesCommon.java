@@ -259,7 +259,7 @@ public class LanguageTemplatesCommon
 
 		executableExample.setXXID( xxid.trim() );
 		System.out.println((executionInfo.getTotalNumberOfTestCases() + 1) + ". XXId: " + xxid);
-		executionInfo.countTestCase();
+		executionInfo.countTestCase(executableExample.getBehaviorID());
 		
 		if ( ! executionInfo.isApplicationStarted() ) {
 			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
@@ -505,18 +505,23 @@ public class LanguageTemplatesCommon
 		executableExample.addReportMessage(BUNDLE.getString("ScreenshotSavedComment").replace("x", filename));
 	}
 
-	@LanguageTemplate(value = "Save screenshot now if test case is categorized as mitBildnachweis.")
-	@LanguageTemplate(value = "Ein Screenshot wird gespeichert, falls der Testfall als pictureProof kategorisiert wurde.")
+	@LanguageTemplate(value = "Take a screenshoot as picture proof now if test case is categorized as mitBildnachweis.")
+	@LanguageTemplate(value = "Speichere jetzt einen Screenshot als Bildnachweis, falls der Testfall als pictureProof kategorisiert wurde.")
 	public void savePictureProofIfNecessary() 
 	{
-		if (executableExample.hasBildnachweisCategory()) 
-		{			
-			String fileName = executableExample.getScreenshotName();
-			executableExample.takeScreenshot(fileName);
-			executableExample.addReportMessage(BUNDLE.getString("ScreenshotSavedComment").replace("x", fileName));
+		if (executableExample.hasBildnachweisCategory()) {			
+			takeScreenshotNow( executableExample.getPictureProofName() );
 		}
 	}
 
+	@LanguageTemplate(value = "Take a screenshoot now and save with name ^^.")
+	@LanguageTemplate(value = "Erzeuge jetzt einen Screenshot und speichere ihn unter den Namen ^^.")
+	public void takeScreenshotNow(String screenshotName) {
+		executableExample.takeScreenshot(screenshotName);
+		executableExample.addCommentToReport(BUNDLE.getString("ScreenshotSavedComment").replace("x", screenshotName));
+	}
+	
+	
 	/**
 	 * Marker method to manage parameterized tests.
 	 */

@@ -16,9 +16,11 @@ import java.io.File;
 */
 public class PruefeHauptmenuepunkte_1_Test extends TestCaseTemplateParent
 {
+
 protected LanguageTemplatesCommon languageTemplatesCommon;
 protected LanguageTemplatesHomePageIKSBasics languageTemplatesHomePageIKSBasics;
 protected LanguageTemplatesPrint languageTemplatesPrint;
+
 
 @Before
 public void setUp()
@@ -41,6 +43,7 @@ languageTemplatesPrint = null;
 super.shutdown();
 }
 
+
 @Test
 @Override
 public void executeTestCase()
@@ -57,4 +60,5 @@ closeCurrentTestCaseWithSuccess();
 super.handleThrowable(e);
 }
 }
+
 }

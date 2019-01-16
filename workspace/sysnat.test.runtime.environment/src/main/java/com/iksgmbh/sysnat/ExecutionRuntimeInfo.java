@@ -76,7 +76,6 @@ public class ExecutionRuntimeInfo
 
 	private static ExecutionRuntimeInfo instance;
 
-	private String screenShotDir;
 	private String osName;
 	protected TargetEnv targetEnvironment;
 
@@ -105,6 +104,8 @@ public class ExecutionRuntimeInfo
 	private boolean settingsOk;
 	private boolean testEnvironmentInitialized = false;
 	private boolean shutDownHookAdded;
+	private HashMap<String, Integer> numberOfExistingXXPerGroupMap = new HashMap<>();
+	private HashMap<String, Integer> numberOfExecutedXXPerGroupMap = new HashMap<>();
 
 	public static ExecutionRuntimeInfo getInstance() {
 		if (instance == null) {
@@ -142,7 +143,6 @@ public class ExecutionRuntimeInfo
 		}
 
 		osName = getOsName();
-		screenShotDir = System.getProperty("sysnat.screenshot.dir", "screenshots");
 
 		System.out.println("Starting " + getTestApplicationName() + " on " + targetEnvironment + " at "
 				+ getStartPointOfTimeAsFileStringForFileName() + "...");
@@ -215,7 +215,15 @@ public class ExecutionRuntimeInfo
 		numberOfAllExecutedTestCases++;
 	}
 
-	public void countTestCase() {
+	public void countTestCase(String behaviourId) 
+	{
+		if (behaviourId != null) {
+			Integer oldFrequence = numberOfExecutedXXPerGroupMap.get(behaviourId);
+			if (oldFrequence != null) {
+				int newFrequence = oldFrequence + 1;
+				numberOfExecutedXXPerGroupMap.put(behaviourId, Integer.valueOf(newFrequence));
+			}
+		}
 		totalNumberOfTestCases++;
 	}
 
@@ -357,10 +365,6 @@ public class ExecutionRuntimeInfo
 		}
 
 		return osname;
-	}
-
-	public String getScreenShotDir() {
-		return screenShotDir;
 	}
 
 	public BrowserType getBrowserTypeToUse() {
@@ -697,6 +701,36 @@ public class ExecutionRuntimeInfo
 
 	public boolean isShutDownHookAdded() {
 		return shutDownHookAdded;
+	}
+
+	/**
+	 * Registers a group of XX (i.e. a Behavior or Feature) and counts the
+	 * members of this group as indicator of how many XXs of this group
+	 * are already executed.
+	 * 
+	 * @param behaviorId as id of XX group
+	 * @param number of XX belonging to group <behaviorId>
+	 */
+	public void register(String behaviorId, int numberOfXXInGroup) 
+	{
+		if (numberOfExistingXXPerGroupMap.get(behaviorId) == null) {
+			numberOfExistingXXPerGroupMap.put(behaviorId, Integer.valueOf(numberOfXXInGroup));
+			numberOfExecutedXXPerGroupMap.put(behaviorId, Integer.valueOf(1));
+		} else {
+			Integer xxCounter = numberOfExecutedXXPerGroupMap.get(behaviorId);
+			numberOfExecutedXXPerGroupMap.put(behaviorId, Integer.valueOf( ++xxCounter ));
+		}
+	}
+
+	public boolean isLastXXOfGroup(String behaviorId) 
+	{
+		Integer numberOfExistingXXInGroup = numberOfExistingXXPerGroupMap.get(behaviorId);
+		Integer numberOfExecutedXXInGroup = numberOfExecutedXXPerGroupMap.get(behaviorId);
+		return numberOfExecutedXXInGroup == numberOfExistingXXInGroup;
+	}
+
+	public boolean isFirstXXOfGroup(String behaviorId) {
+		return numberOfExecutedXXPerGroupMap.get(behaviorId) == 1;
 	}
 
 }

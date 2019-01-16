@@ -32,7 +32,11 @@ import com.iksgmbh.sysnat.testcasejavatemplate.TestCaseTemplateParent;
  */
 public class JUnitTestcaseTemplate extends TestCaseTemplateParent
 {
+	/* TO BE REPLACED: constants */
+	
 	/* TO BE REPLACED: fields for language template containers */
+	
+	/* TO BE REPLACED: constructor */
 	
 	@Before
 	public void setUp() 
@@ -47,10 +51,12 @@ public class JUnitTestcaseTemplate extends TestCaseTemplateParent
 		if ( ! isSkipped() && executionInfo.isApplicationStarted()) {
 			//if (languageTemplateContainer != null) languageTemplateContainer.gotoStartPage();
 		}
-		/* TO BE REPLACED: cleanup */			
+		/* TO BE REPLACED: technical cleanup */			
 		super.shutdown();
 	}
 
+	/* TO BE REPLACED: business precondition */		
+	
 	//# The comment line of this method will be replaced 
 	//# when merging this template with the code generated
 	//# from the natural language test case files.
@@ -58,7 +64,7 @@ public class JUnitTestcaseTemplate extends TestCaseTemplateParent
 	@Override
 	public void executeTestCase() 
 	{
-		try {
+		try {		
 			/* TO BE REPLACED: Command Block */		
 			
 			closeCurrentTestCaseWithSuccess();
@@ -66,4 +72,6 @@ public class JUnitTestcaseTemplate extends TestCaseTemplateParent
 			super.handleThrowable(e);
 		}
 	}
+	
+	/* TO BE REPLACED: business cleanup */			
 }

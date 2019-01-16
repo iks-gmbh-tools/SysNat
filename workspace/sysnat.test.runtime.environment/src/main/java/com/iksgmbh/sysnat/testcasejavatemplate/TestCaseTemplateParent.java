@@ -128,7 +128,7 @@ public abstract class TestCaseTemplateParent extends ExecutableExample
 
 	protected void setXXIdForInactiveTests(String xxid) {
 		setXXID("InactiveTestExample");
-		executionInfo.countTestCase();
+		executionInfo.countTestCase(getBehaviorID());
 		executionInfo.countExcecutedTestCase();
 	}
 }

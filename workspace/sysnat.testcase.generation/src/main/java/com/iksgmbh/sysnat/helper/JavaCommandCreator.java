@@ -17,6 +17,7 @@ package com.iksgmbh.sysnat.helper;
 
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.JavaCommand;
+import com.iksgmbh.sysnat.domain.JavaCommand.CommandType;
 import com.iksgmbh.sysnat.domain.LanguageInstructionPattern;
 import com.iksgmbh.sysnat.domain.LanguageTemplatePattern;
 import com.iksgmbh.sysnat.domain.NaturalLanguagePatternPart;
@@ -41,9 +42,6 @@ public class JavaCommandCreator
 	public static JavaCommand doYourJob(final LanguageInstructionPattern instructionPattern,
 			                            final LanguageTemplatePattern templatePattern) 
 	{
-		if (instructionPattern.getInstructionLine().startsWith("TestData")) {
-			System.err.println("");
-		}
 		final StringBuffer sb = new StringBuffer();
 		
 		sb.append(getReturnValue(instructionPattern, templatePattern));
@@ -54,7 +52,30 @@ public class JavaCommandCreator
 		sb.append(getParameters(instructionPattern, templatePattern.getParameterTypes()));
 		sb.append(");");
 		
-		return new JavaCommand(sb.toString(), templatePattern.getReturnType());
+		final CommandType commandType = determineCommandType(instructionPattern.getInstructionLine());
+
+		return new JavaCommand(sb.toString(), templatePattern.getReturnType(), commandType );
+	}
+
+	private static CommandType determineCommandType(String instructionLine) 
+	{
+		if (instructionLine.startsWith("OneTimePrecondition:") || instructionLine.startsWith("EinmalVoraussetzung:")) {
+			return CommandType.OneTimePrecondition;
+		}
+		
+		if (instructionLine.startsWith("Precondition:") || instructionLine.startsWith("Voraussetzung:")) {
+	    	return CommandType.Precondition;
+		}
+		
+		if (instructionLine.startsWith("Cleanup:") || instructionLine.startsWith("Aufräumen:")) {
+	    	return CommandType.Cleanup;
+		} 
+
+		if (instructionLine.startsWith("OneTimeCleanup:") || instructionLine.startsWith("EinmalAufräumen:")) {
+	    	return CommandType.Cleanup;
+		} 
+
+		return CommandType.Standard;
 	}
 
 	private static String getReturnValue(final LanguageInstructionPattern instructionPattern,

@@ -40,7 +40,7 @@ import com.iksgmbh.sysnat.helper.FileFinder;
  * 
  * @author Reik Oberrath
  */
-public class TestcaseGeneration_ModuleLevelTest 
+public class TestCaseGeneration_ModuleLevelTest 
 {
 	private String testInputDir;
 

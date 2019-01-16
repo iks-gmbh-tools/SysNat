@@ -34,7 +34,8 @@ import com.iksgmbh.sysnat.domain.LanguageInstructionPattern;
 public class LanguageInstructionCollectorClassLevelTest 
 {
 	@Before
-	public void setup() {
+	public void setup() 
+	{
 		GenerationRuntimeInfo.reset();
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.executableExample.source.dir", "../sysnat.testcase.generation/src/test/resources/testTestCases");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.executable.examples.source.dir", "../sysnat.testcase.generation/src/test/resources/testTestCases");
@@ -50,12 +51,24 @@ public class LanguageInstructionCollectorClassLevelTest
 		final List<String> list = new ArrayList<String>();
 
 		// act
-		cut.extractInstruction("Given a passenger named \"Bob\".", list);
+		cut.extractInstruction("Feature X", list);
+		cut.extractInstruction("OneTimeBackground Do Somthing in the beginning Once", list);
+		cut.extractInstruction("Background Do Somthing in the beginning", list);
+		cut.extractInstruction("Cleanup Clean this up", list);
+		cut.extractInstruction("OneTimeCleanup Clean this up once", list);
+		cut.extractInstruction("Scenario Y", list);
+		cut.extractInstruction("Given A", list);
+		cut.extractInstruction("But B", list);
+		cut.extractInstruction("When C", list);
+		cut.extractInstruction("* D", list);
+		cut.extractInstruction("But E", list);
+		cut.extractInstruction("Then F", list);
+		cut.extractInstruction("And G", list);
 
 		// assert
-		assertEquals("number of test cases", 2, list.size() );
-		assertEquals("instruction", "Set BDD-Keyword \"Given\".", list.get(0) );
-		assertEquals("instruction", "a passenger named \"Bob\".", list.get(1) );
+		assertEquals("number of test cases", 26, list.size() );
+		assertEquals("instruction", "Set BDD-Keyword \"Given\".", list.get(12) );
+		assertEquals("instruction", "A", list.get(13) );
 	}
 
 	@Test
