@@ -96,14 +96,15 @@ public class SettingsConfigDialog extends JFrame
 	private boolean defaultReportNameMode = true;
 	
 	private List<String> knownEnvironments = new ArrayList<>();
+	private List<String> knownFilters = new ArrayList<>();
 	private List<String> knownTestApplications = new ArrayList<>();
 	private List<String> knownBrowsers = new ArrayList<>();
 	private List<String> knownExecSpeeds = new ArrayList<>();
 
 	private JPanel parentPanel;
 	private JLabel lblArchiveDir;
-	private JTextField txtExecutionFilter, txtReportName, txtArchiveDir;
-	private JComboBox<String> cbxTestApplication, cbxEnvironments, cbxExecSpeeds, cbxBrowsers;
+	private JTextField txtReportName, txtArchiveDir;
+	private JComboBox<String> cbxTestApplication, cbxEnvironments, cbxExecSpeeds, cbxBrowsers, cbxFilters;
 	private JButton startButton, btnReset, btnFileSelect;
 	private JCheckBox chbArchiving;
 	private String executionFilterToolTipText;
@@ -134,7 +135,7 @@ public class SettingsConfigDialog extends JFrame
 		final String toolTipIdentifier = "Tooltip";
 		
 		final List<String> contentOfConfigSettingsFile = executionInfo.getContentOfConfigSettingsFile();		
-		final List<String> values = new ArrayList<>();
+		final List<String> possibleValues = new ArrayList<>();
 		StringBuffer tooltip = getNewTookTipStringBuffer();
 		boolean possibleValueLineDetected = false;
 		
@@ -147,7 +148,7 @@ public class SettingsConfigDialog extends JFrame
 			
 			if (possibleValueLineDetected) {
 				String valueLine = line.substring(1).trim();
-				values.addAll( Arrays.asList( valueLine.split(",") ) );
+				possibleValues.addAll( Arrays.asList( valueLine.split(",") ) );
 				possibleValueLineDetected = false;
 				continue;
 			}
@@ -161,32 +162,34 @@ public class SettingsConfigDialog extends JFrame
 			
 			if (line.contains(SysNatLocaleConstants.ENVIRONMENT_SETTING_KEY))
 			{
-				knownEnvironments.addAll(trim(values));
-				values.clear();
+				knownEnvironments.addAll(trim(possibleValues));
+				possibleValues.clear();
 				tooltip = getNewTookTipStringBuffer();
 			} 
 			else if (line.contains(SysNatLocaleConstants.TESTAPP_SETTING_KEY))
 			{
-				knownTestApplications.addAll(trim(values));
-				values.clear();
+				knownTestApplications.addAll(trim(possibleValues));
+				possibleValues.clear();
 				tooltip = getNewTookTipStringBuffer();
 			}
 			else if (line.contains(SysNatLocaleConstants.BROWSER_SETTING_KEY))
 			{
-				knownBrowsers.addAll(trim(values));
-				values.clear();
+				knownBrowsers.addAll(trim(possibleValues));
+				possibleValues.clear();
 				tooltip = getNewTookTipStringBuffer();
 			}
 			else if (line.contains(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY))
 			{
-				knownExecSpeeds.addAll(trim(values));
-				values.clear();
+				knownExecSpeeds.addAll(trim(possibleValues));
+				possibleValues.clear();
 				tooltip = getNewTookTipStringBuffer();
 			}
 			else if (line.contains(SysNatLocaleConstants.EXECUTION_FILTER))
 			{
+				knownFilters.add("-");
+				knownFilters.addAll(trim(possibleValues));
 				executionFilterToolTipText = tooltip.append("</html>").toString();
-				values.clear();
+				possibleValues.clear();
 				tooltip = getNewTookTipStringBuffer();
 			}
 		}
@@ -220,9 +223,11 @@ public class SettingsConfigDialog extends JFrame
 
 		yPos += deltaY;
 		initLabel("EXECUTION_FILTER", yPos, executionFilterToolTipText);
-		txtExecutionFilter = initTextField(yPos, executionInfo.getExecutionFilters());
-		txtExecutionFilter.setToolTipText(executionFilterToolTipText);
-		txtExecutionFilter.addKeyListener(reportNameListener);
+		cbxFilters = initCombo(knownFilters.toArray(new String[knownFilters.size()]),
+				              yPos, 
+				              executionInfo.getFiltersToExecute());
+		cbxFilters.setToolTipText(executionFilterToolTipText);
+		cbxFilters.addKeyListener(reportNameListener);
 
 		yPos += deltaY;
 		initSectionLabel("SECTION_2_LABEL", yPos);
@@ -334,6 +339,7 @@ public class SettingsConfigDialog extends JFrame
 		return txtField;
 	}
 
+	@SuppressWarnings("unused")
 	private JTextField initTextField(int yPos, String initialText) {
 		return initTextField(yPos, initialText, "");
 	}
@@ -352,15 +358,18 @@ public class SettingsConfigDialog extends JFrame
 		parentPanel.add(txtField);
 	}
 	
-	private JComboBox<String> initCombo(String[] applicationNames, int yPos, String initialSelection) 
+	private JComboBox<String> initCombo(String[] optionList, 
+			                            int yPos, 
+			                            String initialSelection) 
 	{
-		final JComboBox<String> cbx = new JComboBox<String>(applicationNames);
+		final JComboBox<String> cbx = new JComboBox<String>(optionList);
 		
 		cbx.setBounds(xPosSecondColumn,yPos,secondColumnLength,26);
 		cbx.setFont(fieldFont);
 		cbx.addKeyListener(startActionListener);
-		cbx.setSelectedItem(initialSelection);
+		cbx.setEditable(true);
 		cbx.setBackground(Color.WHITE);
+		cbx.setSelectedItem(initialSelection);
 		
 		parentPanel.add(cbx);
 		return cbx;
@@ -416,8 +425,11 @@ public class SettingsConfigDialog extends JFrame
 		// section 1 values
 		executionInfo.setTestApplicationName(cbxTestApplication.getSelectedItem().toString());
 		executionInfo.setTargetEnv(cbxEnvironments.getSelectedItem().toString());
-		executionInfo.setExecutionFilterList(SysNatStringUtil.getExecutionFilterAsList(txtExecutionFilter.getText().trim(), ""));
 		
+		String filterString = cbxFilters.getSelectedItem().toString();
+		executionInfo.setExecutionFilterList(SysNatStringUtil.getExecutionFilterAsList(filterString, ""));
+		executionInfo.setExecutionFilterString(filterString);
+
 		// section 2 values
 		executionInfo.setBrowserTypeToUse(cbxBrowsers.getSelectedItem().toString());
 		executionInfo.setExecSpeed(cbxExecSpeeds.getSelectedItem().toString());
@@ -563,7 +575,7 @@ public class SettingsConfigDialog extends JFrame
 	
 	public String buildDefaultReportName() 
 	{
-		String filters = txtExecutionFilter.getText();
+		String filters = cbxFilters.getSelectedItem().toString();
 		if (filters.equals(NO_FILTER)) {
 			filters = CONSTANTS_BUNDLE.getString("All");
 		} 
@@ -639,7 +651,7 @@ public class SettingsConfigDialog extends JFrame
          } else if (line.startsWith(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY + " = " + cbxExecSpeeds.getSelectedItem().toString());
          } else if (line.startsWith(SysNatLocaleConstants.EXECUTION_FILTER)) {
-             newFileContent.append(SysNatLocaleConstants.EXECUTION_FILTER + " = " + txtExecutionFilter.getText());
+             newFileContent.append(SysNatLocaleConstants.EXECUTION_FILTER + " = " + cbxFilters.getSelectedItem().toString());
          } else if (line.startsWith(SysNatLocaleConstants.REPORT_NAME_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.REPORT_NAME_SETTING_KEY + " = " + txtReportName.getText());
          } else if (line.startsWith(SysNatLocaleConstants.ARCHIVE_DIR_SETTING_KEY)) {

@@ -336,7 +336,7 @@ public class PatternMergeJavaCommandGenerator
 	protected void logInput(final LanguageTemplatePattern templatePattern,
 			                final LanguageInstructionPattern instructionPattern) 
 	{
-		String s = "Test-Phase: Arrange test";
+		String s = "Szenario";
 		if (instructionPattern.getInstructionLine().contains(s)
 			&& templatePattern.getAnnotationValue().contains(s))
 		{

@@ -125,7 +125,7 @@ public class PdfCompareIgnoreConfig
 	{
 		for (String substring : substrings) 
 		{
-			if (lineWithoutSpace.contains(substring)) {
+			if (lineWithoutSpace.contains(substring) || lineWithoutSpace.equals(substring)) {
 				return true;
 			}
 		}
@@ -137,7 +137,7 @@ public class PdfCompareIgnoreConfig
 	{
 		for (String prefix : prefixes) 
 		{
-			if (lineWithoutSpace.startsWith(prefix)) {
+			if (lineWithoutSpace.startsWith(prefix) || lineWithoutSpace.equals(prefix)) {
 				return true;
 			}
 		}

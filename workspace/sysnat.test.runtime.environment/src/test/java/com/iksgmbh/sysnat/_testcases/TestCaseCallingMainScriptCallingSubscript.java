@@ -33,7 +33,7 @@ public class TestCaseCallingMainScriptCallingSubscript extends TestCaseTestImpl
 	{
 		languageTemplatesCommon = new LanguageTemplatesCommonTestImpl(this);
 		languageTemplatesCommon.startNewXX("testXXID");
-		languageTemplatesCommon.loadTestDatasets("Testdata_A");
+		languageTemplatesCommon.loadTestData("Testdata_A");
 		languageTemplatesCommon.setSingleTestDataValue("Menu", "aMenuName");
 		try {
 			languageTemplatesCommon.executeScriptWithData("MainTestScript");

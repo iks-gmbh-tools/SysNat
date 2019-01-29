@@ -261,6 +261,12 @@ public class ExecutionRuntimeInfo
 	public List<String> getExecutionFilterList() {
 		return executionFilterList;
 	}
+	
+	public void setExecutionFilterString(String filter) {
+		if (filter != null) {
+			System.setProperty(BUNDLE.getString("EXECUTION_FILTER"), filter);
+		}
+	}
 
 	public void setExecutionFilterList(List<String> filterList) {
 		this.executionFilterList = filterList;
@@ -346,7 +352,7 @@ public class ExecutionRuntimeInfo
 		return inactiveXXIDs.size();
 	}
 
-	public String getExecutionFilters() {
+	public String getFiltersToExecute() {
 		return executionFilters;
 	}
 
@@ -585,7 +591,7 @@ public class ExecutionRuntimeInfo
 	}
 
 	public String buildDefaultReportName() {
-		String filters = getExecutionFilters();
+		String filters = getFiltersToExecute();
 		if (filters.equals(NO_FILTER)) {
 			filters = BUNDLE.getString("All");
 		}

@@ -87,15 +87,20 @@ public class DatFileReader
 					toReturn.add(properties);
 					properties = new Properties();
 				}
-			} else 
+			} 
+			else 
 			{
-				String[] splitResult = line.split("=");
-				if (splitResult.length != 2) {
-					throw new SysNatTestDataException("Error reading property in <b>" 
-				          + inputFile.getAbsolutePath()
-                          + "</b>, line " + lineCounter + " \"<b>" + line + "\"<b>.");
+				if (line.endsWith("=")) {
+					properties.put(line.subSequence(0, line.length()-1), "");
 				} else {
-					properties.put(splitResult[0], splitResult[1]);
+					String[] splitResult = line.split("=");
+					if (splitResult.length != 2) {
+						throw new SysNatTestDataException("Error reading property in <b>" 
+					          + inputFile.getAbsolutePath()
+	                          + "</b>, line " + lineCounter + " \"<b>" + line + "\"<b>.");
+					} else {
+						properties.put(splitResult[0], splitResult[1]);
+					}
 				}
 			}
 		}

@@ -37,7 +37,7 @@ public class TestCaseForTestPurpose extends ExecutableExample
 	@Override
 	public void executeTestCase() {
 		languageTemplatesCommon.startNewXX("TestCaseForTestPurpose");
-		languageTemplatesCommon.loadTestDatasets("ManyDatasets");
+		languageTemplatesCommon.loadTestData("ManyDatasets");
 		addReportMessage(getTestData().size() + " datasets have been loaded.");
 		closeCurrentTestCaseWithSuccess();
 	}

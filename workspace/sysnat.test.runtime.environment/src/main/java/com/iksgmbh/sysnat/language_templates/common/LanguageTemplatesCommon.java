@@ -167,8 +167,8 @@ public class LanguageTemplatesCommon
 
 	private List<String> getObjectNameList(String objectNames) 
 	{
-		String[] splitResult = objectNames.replaceAll("den_", "").replaceAll("the_", "")
-				                          .replaceAll("_und_", ",").replaceAll("_and_", ",")
+		String[] splitResult = objectNames.replaceAll("den ", "").replaceAll("der ", "").replaceAll("the ", "")
+				                          .replaceAll(" und ", ",").replaceAll(" and ", ",")
 				                          .replaceAll(" ", "").split(",");
 		return new ArrayList<>(Arrays.asList(splitResult));
 	}
@@ -370,24 +370,6 @@ public class LanguageTemplatesCommon
 	}	
 
 	/**
-	 * Removes all existing data sets and makes an data collection available
-	 * that contains those data referenced by 'objectNames'.
-	 * The references test data may be modified by data set with the "setSingleTestDataValue" method!
-	 * 
-	 * @param objectNames one or more (comma separated) references to data sets.
-	 */
-	@LanguageTemplate(value = "Execute with all ^^") 
-	@LanguageTemplate(value = "Führe mit allen ^^")  
-	public void loadTestDatasets(String datatypes) 
-	{
-		executableExample.getTestData().clear();
-		final List<String> datatypesList = getObjectNameList(datatypes);
-		for (String datatype : datatypesList) {
-			executableExample.importTestData(datatype);
-		}
-	}
-
-	/**
 	 * Removes all existing data sets and makes a data collection available
 	 * that contains those data referenced by 'datasetType'.
 	 * Those datasets represent data of the same type (of the same data class) as key-value-pairs.
@@ -398,10 +380,13 @@ public class LanguageTemplatesCommon
 	 */
 	@LanguageTemplate(value = "Execute with ^^") 
 	@LanguageTemplate(value = "Führe mit ^^")
-	public void loadSingleDataSet(String datatype) 
+	public void loadTestData(String datfileNames) 
 	{
 		executableExample.getTestData().clear();
-		executableExample.importTestData(datatype);
+		final List<String> datatypesList = getObjectNameList(datfileNames);
+		for (String datatype : datatypesList) {
+			executableExample.importTestData(datatype);
+		}
 	}	
 
 	@LanguageTemplate(value = "Execute with") 
@@ -418,6 +403,7 @@ public class LanguageTemplatesCommon
 	 * @param value
 	 */
 	@LanguageTemplate(value = "^^=^^") 
+	@LanguageTemplate(value = "^^ = ^^") 
 	public void setSingleTestDataValue(String objectAndfieldName, String value) 
 	{
 		String[] splitResult = objectAndfieldName.split("\\.");

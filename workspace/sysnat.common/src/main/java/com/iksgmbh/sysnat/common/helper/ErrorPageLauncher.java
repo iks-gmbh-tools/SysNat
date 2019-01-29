@@ -27,19 +27,18 @@ public class ErrorPageLauncher
 
 	public static void doYourJob(String errorMessage, String helpMessage) 
 	{
-		if (System.getProperty("sysnat.dummy.test.run").equalsIgnoreCase("true")) {
-			return;
+		if (! "true".equalsIgnoreCase(System.getProperty("sysnat.dummy.test.run"))) 
+		{
+			final String templateText = SysNatFileUtil.readTextFileToString(ERROR_PAGE_TEMPLATE);
+			final String filename = System.getProperty("sysnat.report.dir")
+					+ "/GenerationError.html";
+			
+			final String errorReport = templateText.replace("ERROR_MESSAGE_PLACEHOLDER", errorMessage);
+			SysNatFileUtil.writeFile(filename, errorReport.replace("HELP_MESSAGE_PLACEHOLDER", helpMessage));
+			
+			
+			HtmlLauncher.doYourJob(filename);
 		}
-		
-		final String templateText = SysNatFileUtil.readTextFileToString(ERROR_PAGE_TEMPLATE);
-		final String filename = System.getProperty("sysnat.report.dir")
-				                + "/GenerationError.html";
-		
-		final String errorReport = templateText.replace("ERROR_MESSAGE_PLACEHOLDER", errorMessage);
-		SysNatFileUtil.writeFile(filename, errorReport.replace("HELP_MESSAGE_PLACEHOLDER", helpMessage));
-		
-		
-		HtmlLauncher.doYourJob(filename);
 	}
 
 }

@@ -126,7 +126,7 @@ public class LanguagePatternParser
 				}
 				else if (parseModus == NaturalLanguagePatternPartType.PARAM_VARIABLE)
 				{
-					addParamVariablePart(parameterCount, currentPart);
+					addParamVariablePart(parameterCount, currentPart, naturalLanguageLine);
 					currentPart = "";					
 					parseModus = NaturalLanguagePatternPartType.DEFAULT;
 					parameterCount++;
@@ -227,7 +227,9 @@ public class LanguagePatternParser
 		}
 	}
 
-	private void addParamVariablePart(int paramCounter, String valueInInstruction) 
+	private void addParamVariablePart(int paramCounter, 
+			                          String valueInInstruction,
+			                          String naturalLanguageLine) 
 	{
 		
 		if (parameterTypes != null) {
@@ -236,7 +238,7 @@ public class LanguagePatternParser
 			if (parameterTypes.length > paramCounter) {
 				parameterType = parameterTypes[paramCounter];
 			} else {
-				ExceptionHandlingUtil.throwException("Number of Parameter mismatch!");
+				ExceptionHandlingUtil.throwException("Number of Parameter mismatch for instruction: " + naturalLanguageLine);
 			}
 			patternParts.add(new NaturalLanguagePatternPart(NaturalLanguagePatternPartType.PARAM_VARIABLE, parameterType));
 		} else {

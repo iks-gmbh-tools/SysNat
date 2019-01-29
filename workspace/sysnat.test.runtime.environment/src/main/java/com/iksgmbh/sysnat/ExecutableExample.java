@@ -169,9 +169,10 @@ abstract public class ExecutableExample
 	public void addReportMessage(String message) 
 	{
 		if (bddKeyword == null || bddKeyword.isEmpty()) {
-			reportMessages.add(message.trim());
+			reportMessages.add(message.trim());  
 		} else {
-			reportMessages.add("<b>" + bddKeyword + "</b> " + message.trim());
+			reportMessages.add(message.trim());
+			//reportMessages.add("<b>" + bddKeyword + "</b> " + message.trim()); TODO Decide whether and how the BDD-Keyword enters the report
 		}
 	}
 

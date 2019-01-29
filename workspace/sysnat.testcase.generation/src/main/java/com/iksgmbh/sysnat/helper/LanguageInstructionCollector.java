@@ -111,11 +111,21 @@ public class LanguageInstructionCollector
 	{
 		final List<String> content = SysNatFileUtil.readTextFile(file);
 		List<String> toReturn = new ArrayList<>();
+		String firstLine = content.get(0);
+		final boolean isFeatureBased = firstLine.startsWith("Feature") || 
+				                       firstLine.startsWith("Szenario") || 
+				                       firstLine.startsWith("Scenario");
 
 		boolean behaviourHeaderDetected = false;
 		boolean firstXXDetected = false;
+		
 		for (String line : content)
 		{
+			line = removeComment(line);
+			if ( line.isEmpty() || line.startsWith(COMMENT_SEPARATOR)) { 
+				continue;
+			}
+					
 			if (   line.startsWith("Feature")
 				|| line.startsWith("Behavior")
 				|| line.startsWith("Behaviour")
@@ -131,7 +141,7 @@ public class LanguageInstructionCollector
 				|| line.startsWith("XXID")
 				|| line.startsWith("XX-ID")
 				|| line.startsWith("XX-Id")
-				|| line.startsWith("XXId"))
+				|| line.startsWith("XXId")) 
 			{
 				firstXXDetected = true;
 				extractInstruction(line.trim(), toReturn);
@@ -141,14 +151,51 @@ public class LanguageInstructionCollector
 			if (behaviourHeaderDetected && ! firstXXDetected) {
 				// ignore meta info header lines
 			} else {
-				extractInstruction(line.trim(), toReturn);
+				if (line.isEmpty()) {
+					continue;
+				}
+				
+				if ( isFeatureBased ) {
+					extractInstruction(line.trim(), toReturn);
+				} else {
+					toReturn.add(line);
+				}
 			}
 		}
 
 		toReturn = removeBddKeywordMethodCallsIfPossible(toReturn);
 		toReturn = checkForSimpleScriptCallSyntax(toReturn);
+		toReturn = checkForSingleTestDataValueSetter(toReturn);
 
 		return toReturn;
+	}
+
+	private List<String> checkForSingleTestDataValueSetter(List<String> instructions) 
+	{
+		final List<String> toReturn = new ArrayList<>();
+		for (String line : instructions)
+		{
+			if ( ! line.contains("\"") && 
+				 ! line.contains("<") && 
+				 ! line.contains(">") && 
+				 ! line.contains("'")  )
+			{
+				String[] splitResult = line.split("=");
+				if (splitResult.length == 2) {
+					line = "\"" + splitResult[0].trim() + "\" = \"" + splitResult[1].trim() + "\"";
+				}
+			}
+			toReturn.add(line);
+		}
+
+		return toReturn;
+	}
+
+	private String removeComment(String line) 
+	{
+		int pos = line.indexOf(COMMENT_SEPARATOR);
+		if (pos > 0) line = line.substring(0, pos);
+		return line.trim();
 	}
 
 	/**
@@ -196,7 +243,7 @@ public class LanguageInstructionCollector
 	}
 
 	/**
-	 * If no BDD-Keywordss are used, the SET_BDD_KEYWORD method call are needless
+	 * If no BDD-Keywords are used, the SET_BDD_KEYWORD method call are needless
 	 * and removed here.
      */
 	private List<String> removeBddKeywordMethodCallsIfPossible(List<String> instructions)
@@ -216,12 +263,6 @@ public class LanguageInstructionCollector
 
 	void extractInstruction(String line, List<String> instructions)
 	{
-		if ( line.isEmpty() || line.startsWith(COMMENT_SEPARATOR)) 
-			return;
-		
-		int pos = line.indexOf(COMMENT_SEPARATOR);
-		if (pos > 0) line = line.substring(0, pos).trim();
-		
 		if (BDDKeywordUtil.startsWithBDDKeyword(line))
 		{
 			LineData lineData = getLineData(line);

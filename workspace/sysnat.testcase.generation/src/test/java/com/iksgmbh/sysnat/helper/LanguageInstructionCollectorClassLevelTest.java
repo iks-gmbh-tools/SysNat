@@ -144,11 +144,33 @@ public class LanguageInstructionCollectorClassLevelTest
 		// assert
 		assertEquals("number of test cases", 1, result.size() );
 
+		// the nlxx file here does not use BDD-Keywords because it is Behaviour based not Feature based!
 		final List<LanguageInstructionPattern> instructionLines =
 				(List<LanguageInstructionPattern>) getHashMapValue(result, "Behaviour.nlxx");
-		assertEquals("number of instruction lines", 7, instructionLines.size() );
+		assertEquals("number of instruction lines", "Behaviour: TestBehaviour", instructionLines.get(0).getInstructionLine() );
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void doesNotCutTakeInstructionsStartingWithBDDKeywordAsBDDKeywordLine()
+	{
+		// arrange
+		final LanguageInstructionCollector cut = new LanguageInstructionCollector("BehaviourMetaInfoApplication");  
+
+		// act
+		final HashMap<Filename, List<LanguageInstructionPattern>> result = cut.findAllNaturalLanguageInstruction();
+
+		// assert
+		assertEquals("number of test cases", 1, result.size() );
+
+		// the nlxx file here does not use BDD-Keywords because it is Behaviour based not Feature based!
+		final List<LanguageInstructionPattern> instructionLines =
+				(List<LanguageInstructionPattern>) getHashMapValue(result, "Behaviour.nlxx");
+		assertEquals("Number of instruction lines", 
+				     "Given an instruction that starts with a BDD keyword although this is not supposed to represent a BDD-Keyword then do not cut it.", 
+				     instructionLines.get(2).getInstructionLine() );
+	}
+	
 
 	private Object getHashMapValue(final HashMap<Filename, List<LanguageInstructionPattern>> result,
 			                       final String keyIdentifier) 

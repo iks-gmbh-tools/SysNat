@@ -190,7 +190,7 @@ public class ReportCreator
 		report = report.replace("PLACEHOLDER_TARGET_ENV", executionInfo.getTargetEnv().name());
 		report = report.replace("PLACEHOLDER_TIME", executionInfo.getStartPointOfTimeAsString());
 		report = report.replace("PLACEHOLDER_DURATION", executionInfo.getExecutionDurationAsString());
-		report = report.replace("PLACEHOLDER_EXECUTION_FILTER", executionInfo.getExecutionFilters());
+		report = report.replace("PLACEHOLDER_EXECUTION_FILTER", executionInfo.getFiltersToExecute());
 		
 		report = replacePlaceholdersOverallResult(report);
 		report = replaceTestStatiticsPlaceholder(report);

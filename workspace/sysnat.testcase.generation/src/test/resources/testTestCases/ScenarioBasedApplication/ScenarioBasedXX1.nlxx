@@ -1,7 +1,7 @@
 Feature: TestFeature
 
 Business Rule:
-This a description of a business rule that underlies this feature.
+This is a description of a business rule that underlies this feature.
 This description may last more than one line.
 The description ends with the first line that starts with a BDD-Keyword.
 Typically this keyword is 'Scenario'.

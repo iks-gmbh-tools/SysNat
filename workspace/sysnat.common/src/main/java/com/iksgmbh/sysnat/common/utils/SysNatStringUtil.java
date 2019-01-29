@@ -50,10 +50,10 @@ public class SysNatStringUtil
 					{
 						String[] splitResult2 = xxid.split("_");
 						for (String filter2 : splitResult2) {
-							toReturn.add(filter2);
+							toReturn.add(filter2.trim());
 						}
 					} else {
-						toReturn.add(filter);
+						toReturn.add(filter.trim());
 					}
 				}
 			}

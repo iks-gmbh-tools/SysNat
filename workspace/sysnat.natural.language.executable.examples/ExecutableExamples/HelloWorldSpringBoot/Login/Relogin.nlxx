@@ -1,8 +1,8 @@
-XXID:          <Dateiname>
-Filter: <Pfad>
+XXID:   <Dateiname>
+Filter: <Pfad>,Smoketest
 
 # arrange
-Test-Phase: Arrange    # setup all test requirements
+Test-Phase: Arrange    
 Is page "Form Page" visible?
 Click menu item "Logout".
 Is page "Login Page" visible?

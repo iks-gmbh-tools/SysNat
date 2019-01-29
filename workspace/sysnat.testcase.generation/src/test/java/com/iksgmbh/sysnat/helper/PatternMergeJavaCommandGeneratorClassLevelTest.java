@@ -315,8 +315,8 @@ public class PatternMergeJavaCommandGeneratorClassLevelTest
 		} catch (SysNatException e) {
 			// assert
 			assertEquals("Error Code", 
-					     ErrorCode.JAVA_CODE_VERIFICATION__WRONG_VARIABLE_TYPE, 
-					     e.getErrorCode());
+					     ErrorCode.JAVA_CODE_VERIFICATION__WRONG_VARIABLE_TYPE.name(), 
+					     e.getErrorCode().name());
 		}
 	}
 	
