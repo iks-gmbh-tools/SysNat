@@ -36,6 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import com.iksgmbh.sysnat.common.domain.FileList;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
@@ -365,7 +367,7 @@ public class SysNatFileUtil
 		final String sourceFolderName = sourceDir.getName();
 		final String targetFolderName = targetDir.getName();
 		final int lengthOfRootPath = buildCanonicalPath(sourceDir).length();
-		final List<File> result = FileFinder.findFiles(sourceDir, null, null, null, null);
+		final List<File> result = FileFinder.findFiles(sourceDir, null, null, null, null, null);
 
 		if ( ! sourceFolderName.equals(targetFolderName)) {
 			targetDir = new File (targetDir, sourceFolderName);
@@ -500,7 +502,6 @@ public class SysNatFileUtil
            }
     }
 
-
 	public static File createFolder(final String toCreate) 
 	{
 		final File folder = new File( toCreate );
@@ -511,5 +512,36 @@ public class SysNatFileUtil
 		return folder;
 		
 	}
+
+	public static void createZipFile(File directoryToZip, File targetZipFile)
+	{
+		List<File> filesToZip = FileFinder.findFiles(directoryToZip, null, null, null, ".zip", null);
+		String rootZipDir = directoryToZip.getName();
+		
+        byte[] buffer = new byte[1024];
+        try (FileOutputStream fos = new FileOutputStream(targetZipFile);
+        	 ZipOutputStream zos = new ZipOutputStream(fos)) 
+        {
+            for (File file: filesToZip) 
+            {
+                String filename = file.getAbsolutePath();
+                int pos = filename.indexOf(rootZipDir);
+                String zipEntryPath = filename.substring(pos+1+rootZipDir.length());
+				ZipEntry ze = new ZipEntry(zipEntryPath);
+                zos.putNextEntry(ze);
+                try (FileInputStream in = new FileInputStream(file);)
+                {
+                    int len;
+                    while ((len = in .read(buffer)) > 0) {
+                        zos.write(buffer, 0, len);
+                    }
+                }
+            }
+        } catch (FileNotFoundException ex) {
+        	throw new SysNatException(ex.getMessage());
+        } catch (Exception ex) {
+            throw new SysNatException("Error zipping directory: " + directoryToZip.getAbsolutePath());
+        }
+    }	
 	
 }

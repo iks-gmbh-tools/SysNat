@@ -52,7 +52,9 @@ public class CalculatorApp_ModuleLevelTest
 		System.setProperty("sysnat.dummy.test.run", "true");
 		System.setProperty("sysnat.autolaunch.report", "false");
 
-		Arrays.asList( new File( "./target" ).listFiles() ).stream().filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory()).forEach(SysNatFileUtil::deleteFolder);
+		Arrays.asList( new File( "./target" ).listFiles() ).stream()
+		      .filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory())
+		      .forEach(SysNatFileUtil::deleteFolder);
 
 		System.setProperty("sysnat.properties.path", TESTDATA_DIR + testAppName);
 		System.setProperty("settings.config", TESTDATA_DIR + testAppName + "/settings.config");

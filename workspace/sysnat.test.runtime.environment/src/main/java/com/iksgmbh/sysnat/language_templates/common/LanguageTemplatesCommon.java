@@ -175,6 +175,7 @@ public class LanguageTemplatesCommon
 	
 	protected void executeScript(String scriptName, ExecutableExample aExecutableExample)
 	{
+		executionInfo.registerExecutedNLFile(scriptName + ".nls");
 		scriptName = SysNatStringUtil.toFileName(scriptName);
 		Method executeTestMethod = null;
 		Object newInstance = null;

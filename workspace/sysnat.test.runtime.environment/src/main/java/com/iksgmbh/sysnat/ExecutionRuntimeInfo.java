@@ -86,6 +86,7 @@ public class ExecutionRuntimeInfo
 	private HashMap<String, TestStatistics> testStatistics = new HashMap<>();
 	private HashMap<String, String> xxidBehaviourMap = new HashMap<>();   // stores for each XXID the named Behaviour if defined
 	private List<String> knownFeatures = new ArrayList<>();   // stores behaviour with Feature-Keyword
+	private List<String> executedNLFiles = new ArrayList<>();   // list of executed natural language files
 	
 	private String executionFilters;
 	private List<String> executionFilterList;
@@ -308,7 +309,6 @@ public class ExecutionRuntimeInfo
 		for (Object key : properties.keySet()) {
 			setSysNatSystemProperty((String) key, properties.getProperty((String) key));
 		}
-
 	}
 
 	public static void setSysNatSystemProperty(String key, String value) 
@@ -737,6 +737,21 @@ public class ExecutionRuntimeInfo
 
 	public boolean isFirstXXOfGroup(String behaviorId) {
 		return numberOfExecutedXXPerGroupMap.get(behaviorId) == 1;
+	}
+
+	public void registerExecutedNLFile(String filename) 
+	{
+		if (! executedNLFiles.contains(filename)) {
+			executedNLFiles.add(filename);
+		}
+	}
+	
+	public List<String> getExecutedNLFiles() {
+		return executedNLFiles;
+	}
+
+	public String getTestCaseDir() {
+		return System.getProperty("sysnat.executable.examples.source.dir");
 	}
 
 }

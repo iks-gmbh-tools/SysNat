@@ -43,7 +43,7 @@ public class SysNatFileUtilTest {
 
 		// assert
 		assertTrue(expectedTargetDir.exists());
-		List<File> filesInExpTarget = FileFinder.findFiles(expectedTargetDir, null, null, null, null);
+		List<File> filesInExpTarget = FileFinder.findFiles(expectedTargetDir, null, null, null, null, null);
 		assertEquals("Number of files", 4, filesInExpTarget.size());
 	}
 

@@ -26,14 +26,14 @@ import com.iksgmbh.sysnat.domain.JavaFieldData;
 import com.iksgmbh.sysnat.domain.LanguageInstructionPattern;
 import com.iksgmbh.sysnat.domain.LanguageTemplatePattern;
 import com.iksgmbh.sysnat.domain.TestApplication;
+import com.iksgmbh.sysnat.helper.CommandLibraryCreator;
+import com.iksgmbh.sysnat.helper.JavaFileBuilder;
 import com.iksgmbh.sysnat.helper.JavaFileWriter;
 import com.iksgmbh.sysnat.helper.LanguageInstructionCollector;
 import com.iksgmbh.sysnat.helper.LanguageTemplateCollector;
 import com.iksgmbh.sysnat.helper.LanguageTemplateContainerFinder;
-import com.iksgmbh.sysnat.helper.XXGroupBuilder;
 import com.iksgmbh.sysnat.helper.PatternMergeJavaCommandGenerator;
-import com.iksgmbh.sysnat.helper.CommandLibraryCreator;
-import com.iksgmbh.sysnat.helper.JavaFileBuilder;
+import com.iksgmbh.sysnat.helper.XXGroupBuilder;
 
 /**
  * Generates java test code from nlxx-files and executes it.

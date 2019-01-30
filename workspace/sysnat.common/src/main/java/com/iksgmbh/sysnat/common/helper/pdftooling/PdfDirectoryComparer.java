@@ -17,17 +17,16 @@ package com.iksgmbh.sysnat.common.helper.pdftooling;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * Compares two directories and finds PDF-files that correspond to each other by name.
- * Corresponding PDFs are linewise compared with each other.
+ * Corresponding PDFs are compared with each other line by line using the {@link PdfFileComparer}.
+ * The IGNORE_CONFIG can be configurated to define lines to be excluded from this comparison.
  * 
- * @author xi325560
+ * @author Reik Oberrath
  */
 public class PdfDirectoryComparer 
 {
@@ -46,30 +45,16 @@ public class PdfDirectoryComparer
 		}
 	}
 
-
-	public static PdfCompareIgnoreConfig buildIgnoreConfig() 
-	{
-		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		
-		List<String> substringList = new ArrayList<>();
-		substringList.add("Original für");  // ignore footer line
-		substringList.add("Ausdruck für"); // ignore footer line
-		substringList.add("mit folgendem Passwort");
-		
-		// ignore lines with date values
-		substringList.add("-T,");  // ignoriert Ort-Datum-Felder, die mit "Mönchengladbach-T, <Tagesdatum>" gefüllt sind
-		substringList.add("fällig am");
-		substringList.add("beginnend ab");
-		substringList.add("bis zum");
-		substringList.add("ab dem");
-		substringList.add("jeweils zum");
-
-		List<String> regexList = new ArrayList<>();
-		regexList.add("K[0-9]{1,3}-[0-9]{6,10}-V[0-9]{1,3}");  // ignore id below barcode 
-		
-		return new PdfCompareIgnoreConfig(dateFormat, substringList, null, regexList);
+	public static PdfCompareIgnoreConfig buildIgnoreConfig() {
+		// configure the PdfCompareIgnoreConfig using its with-methods
+		// in order to customize your comparison
+		return new PdfCompareIgnoreConfig();
 	}
 
+	// #################################################################
+	//               P U B L I C    M E T H O D S
+	// #################################################################
+	
 
 	public static List<String> doYourJob(String dir1, String dir2) 
 	{
@@ -100,10 +85,15 @@ public class PdfDirectoryComparer
 		return result;
 	}
 
+	
+	// #################################################################
+	//               P R I V A T E    M E T H O D S
+	// #################################################################
+	
 
 	private static void compare(FilePair filePair, List<String> result) throws IOException 
 	{
-		PdfComparer pdfComparer = new PdfComparer(filePair.f1.getAbsolutePath());
+		PdfFileComparer pdfComparer = new PdfFileComparer(filePair.f1.getAbsolutePath());
 		String differenceReport = pdfComparer.getDifferenceReport(filePair.f2.getAbsolutePath(), IGNORE_CONFIG);
 		String comparisonResult = "Comparing " + filePair.f1.getName() + " with " + filePair.f2.getName() + ": "; 
 		if ( differenceReport.isEmpty() ) {

@@ -86,7 +86,7 @@ public class FileFinder
 		final List<File> toReturn = new ArrayList<File>();
 
 		if (! folder.exists()) {
-			System.err.println("Folder does not extist: " + folder.getAbsolutePath());
+			System.err.println("Folder does not exist: " + folder.getAbsolutePath());
 			return toReturn;
 		}
 

@@ -18,99 +18,141 @@ package com.iksgmbh.sysnat.common.helper.pdftooling;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Data used to identify lines that have to be ignored for comparing. 
  */
 public class PdfCompareIgnoreConfig 
 {
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Comparer", Locale.getDefault());
 	private static final boolean sysoutIgnoredLines = false;
 	
-	public DateFormat dateformat;  
+	public List<DateFormat> dateformats;  
 	public List<String> substrings;
 	public List<String> prefixes;
-	public List<String> patterns;
+	public List<String> regexPatterns;
+	public List<String> lineDefinitions;
 	
+
+	// Builder Methods
 	
-	public PdfCompareIgnoreConfig(DateFormat aDateformat, 
-			            		  List<String> aSubstringList, 
-			            		  List<String> aPrefixeList,
-			            		  List<String> aPatternList) 
-	{
-		this.dateformat = aDateformat;
-		if (dateformat != null) dateformat.setLenient(false);
+	public PdfCompareIgnoreConfig withDateformats(List<DateFormat> aDateFormatList) {
+		this.dateformats = aDateFormatList;
+		return this;
+	}
+
+	public PdfCompareIgnoreConfig withSubstrings(List<String> aSubstringList) {
 		this.substrings = aSubstringList;
-		this.prefixes = aPrefixeList;
-		this.patterns = aPatternList;
+		return this;
 	}
 	
+	public PdfCompareIgnoreConfig withPrefixes(List<String> aPrefixeList) {
+		this.prefixes = aPrefixeList;
+		return this;
+	}
+
+	public PdfCompareIgnoreConfig withRegexPatterns(List<String> aRegexPatternList) {
+		this.regexPatterns = aRegexPatternList;
+		return this;
+	}
+	
+	public PdfCompareIgnoreConfig withLineDefinitions(List<String> aLineDefinitionsList) {
+		this.lineDefinitions = aLineDefinitionsList;
+		return this;
+	}
+
+	
+	// Builder Methods	
+	
 	public boolean checkForDateLines() {
-		return dateformat != null;
+		return dateformats != null && ! dateformats.isEmpty();
 	}
 
 	public boolean checkForPrefixes() {
-		return prefixes != null;
+		return prefixes != null && ! prefixes.isEmpty();
 	}
 	
 	public boolean checkForSubstrings() {
-		return substrings != null;
+		return substrings != null && ! substrings.isEmpty();
 	}
 
 	public boolean checkForPatterns() {
-		return patterns != null;
+		return regexPatterns != null && ! regexPatterns.isEmpty();
 	}
 
-	public boolean ignoreThisLineForComparison(String line) 
+	public boolean checkForLineDefinitions() {
+		return lineDefinitions != null && ! lineDefinitions.isEmpty();
+	}
+	
+	public boolean ignoreThisLineForComparison(int pageNo, int lineNo, String line) 
 	{
-		if ( checkForDateLines() && isDateLine(line, dateformat)) 
+		if ( checkForDateLines() && isDateLine(line)) 
 		{
 			return true;
 		} 
-		else if ( checkForPatterns()  && doesLineMatchAnyPattern(line.replaceAll(" ", ""), patterns)) 
+		else if ( checkForPatterns()  && doesLineMatchAnyPattern(line)) 
 		{
 			return true;
 		} 
-		else if ( checkForPrefixes() && doesLineStartsWithAnyPrefix(line, prefixes)) 
+		else if ( checkForSubstrings() && doesLineContainsAnySubstring(line)) 
+		{
+			return true;
+		}
+		else if ( checkForPrefixes() && doesLineStartsWithAnyPrefix(line)) 
 		{
 			return true;
 		} 
-		else if ( checkForSubstrings() && doesLineContainsAnySubstring(line, substrings)) 
+		else if ( checkForLineDefinitions() && doesLineMatchAnyLineDefinition(pageNo, lineNo)) 
 		{
-			return true;
+				return true;
 		}
 		
 		return false;
 	}
 
-	public String applyIgnoreConfig(String page, String filename) 
+	/**
+	 * @param pageNo number of page in file
+	 * @param pageContent
+	 * @param name of file the pageContent is read from
+	 * @return pageContent without ignored lines as String 
+	 */
+	public String removeLinesToIgnore(int pageNo, String pageContent, String filename) 
 	{
 		if (sysoutIgnoredLines) {
 			System.out.println("");
 			System.out.println("Ignored lines in " + filename + ":");
 		}
-		String[] splitResult = page.split("\\r?\\n");
+		String[] splitResult = pageContent.split("\\r?\\n");
 		StringBuffer sb = new StringBuffer();
-		@SuppressWarnings("unused")
-		int counter = 0;
+		int lineCounter = 0;
 		for (String line : splitResult) 
 		{
-			counter++;
-			if (ignoreThisLineForComparison(line) ) 
+			lineCounter++;
+			if (ignoreThisLineForComparison(pageNo, lineCounter, line) ) 
 			{
-				if (sysoutIgnoredLines) System.out.println(counter + ": " + line);
+				if (sysoutIgnoredLines) System.out.println(lineCounter + ": " + line);
 			} else {
 				sb.append(line).append(System.getProperty("line.separator"));
 			}
 		}
 		return sb.toString().trim();
 	}
-
-	public List<String> removeLinesToIgnore(List<String> lines) 
+	
+	/**
+	 * 
+	 * @param pageNo number of page the lines are read from the input file
+	 * @param page content as list of lines
+	 * @return lines not ignored
+	 */
+	public List<String> removeLinesToIgnore(int pageNo, List<String> lines) 
 	{
 		final List<String> toReturn = new ArrayList<String>();
+		int lineCounter = 0;
 		for (String line : lines) 
 		{
-			if (ignoreThisLineForComparison(line) ) 
+			if (ignoreThisLineForComparison(pageNo, lineCounter, line) ) 
 			{
 				// do nothing
 			} else {
@@ -120,8 +162,31 @@ public class PdfCompareIgnoreConfig
 		
 		return toReturn;
 	}
+
+	/**
+	 * 
+	 * @param pageNo number of page the lines are read from the input file
+	 * @param page content as list of lines
+	 * @return lines not ignored
+	 */
+	public List<Integer> getLinesToIgnore(PdfPageContent pageContent) 
+	{
+		final List<Integer> toReturn = new ArrayList<>();
+		int lineCounter = 0;
+		List<String> lines = pageContent.getLines();
+		for (String line : lines) 
+		{
+			lineCounter++;
+			if (ignoreThisLineForComparison(pageContent.getPageNumber(), lineCounter, line) ) {
+				toReturn.add(pageContent.getLineNumber(lineCounter-1));
+			}
+		}
+		
+		return toReturn;
+	}
 	
-	private boolean doesLineContainsAnySubstring(String lineWithoutSpace, List<String> substrings) 
+	
+	private boolean doesLineContainsAnySubstring(String lineWithoutSpace) 
 	{
 		for (String substring : substrings) 
 		{
@@ -133,7 +198,7 @@ public class PdfCompareIgnoreConfig
 		return false;
 	}
 	
-	private boolean doesLineStartsWithAnyPrefix(String lineWithoutSpace, List<String> prefixes) 
+	private boolean doesLineStartsWithAnyPrefix(String lineWithoutSpace) 
 	{
 		for (String prefix : prefixes) 
 		{
@@ -145,9 +210,10 @@ public class PdfCompareIgnoreConfig
 		return false;
 	}
 	
-	private boolean doesLineMatchAnyPattern(String lineWithoutSpace, List<String> patterns) 
+	private boolean doesLineMatchAnyPattern(String line) 
 	{
-		for (String pattern : patterns) 
+		String lineWithoutSpace = line.replaceAll(" ", "");
+		for (String pattern : regexPatterns) 
 		{
 			if (lineWithoutSpace.matches(pattern)) {
 				return true;
@@ -157,6 +223,34 @@ public class PdfCompareIgnoreConfig
 		return false;
 	}
 
+
+	private boolean doesLineMatchAnyLineDefinition(int pageNo, int lineNo) 
+	{
+		String lineDefinitionIdentifier = buildLineDefinitionIdentifier(pageNo, lineNo); 
+		for (String lineDefinition : lineDefinitions) 
+		{
+			if (lineDefinitionIdentifier.equals(lineDefinition)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	
+	private String buildLineDefinitionIdentifier(int pageNo, int lineNo) {
+		return BUNDLE.getString("PAGE") + " " + pageNo + ", " + BUNDLE.getString("LINE") + " " + lineNo;
+	}
+
+	private boolean isDateLine(String lineWithoutSpace) 
+	{
+		return dateformats.stream()
+				          .filter(dateformat -> isDateLine(lineWithoutSpace, dateformat))
+				          .findFirst()
+				          .isPresent();
+	}
+	
+	
 	private boolean isDateLine(String lineWithoutSpace, DateFormat dateformat) 
 	{
         try {

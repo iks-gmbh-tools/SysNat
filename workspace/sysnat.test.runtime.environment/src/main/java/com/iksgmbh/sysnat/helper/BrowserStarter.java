@@ -125,7 +125,6 @@ public class BrowserStarter
 		}
 	}
 
-
 	private void initFireFoxWebDriver() throws MalformedURLException 
 	{
 		System.out.println("Initializing Firefox web driver using geckodriver...");
@@ -138,7 +137,7 @@ public class BrowserStarter
 		{
 			System.setProperty("webdriver.gecko.driver", getExecutable("sysnat.webdriver.executable.firefox.gecko"));
 			System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
-			//System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
+			System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
 			webDriver = new FirefoxDriver(firefoxOptions);
 			
 		} else {

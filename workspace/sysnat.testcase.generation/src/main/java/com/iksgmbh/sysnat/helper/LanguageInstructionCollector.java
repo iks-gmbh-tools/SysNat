@@ -111,11 +111,20 @@ public class LanguageInstructionCollector
 	{
 		final List<String> content = SysNatFileUtil.readTextFile(file);
 		List<String> toReturn = new ArrayList<>();
-		String firstLine = content.get(0);
+		String  firstLine= content.get(0);
 		final boolean isFeatureBased = firstLine.startsWith("Feature") || 
 				                       firstLine.startsWith("Szenario") || 
 				                       firstLine.startsWith("Scenario");
 
+		
+		
+		File f = new File(SysNatFileUtil.getDownloadDir(), "LogINFO.txt");
+		f.delete();
+		SysNatFileUtil.writeFile(f, ""+firstLine);
+		System.err.println("######################## 1");
+		System.out.println("######################## 2");
+		
+		
 		boolean behaviourHeaderDetected = false;
 		boolean firstXXDetected = false;
 		

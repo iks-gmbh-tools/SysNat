@@ -119,5 +119,19 @@ public class SysNatStringUtilClassLevelTest
 		assertEquals("Text1", "0123456789", result1);
 		assertEquals("Text2", "", result2);
 	}
+
+	@Test
+	public void replacesCommaInStringAmount() throws Exception 
+	{
+		assertEquals("Unexpected Replacement", "0.00", SysNatStringUtil.replaceCommaInStringAmount("0,00"));
+		assertEquals("Unexpected Replacement", "0.00", SysNatStringUtil.replaceCommaInStringAmount("0.00"));
+		assertEquals("Unexpected Replacement", "1000.00", SysNatStringUtil.replaceCommaInStringAmount("1,000.00"));
+		assertEquals("Unexpected Replacement", "1000.00", SysNatStringUtil.replaceCommaInStringAmount("1.000,00"));
+		assertEquals("Unexpected Replacement", "1.000", SysNatStringUtil.replaceCommaInStringAmount("1,000"));  // true if comma is system's decimal separator 
+		assertEquals("Unexpected Replacement", "1.00", SysNatStringUtil.replaceCommaInStringAmount("1,00")); 
+		assertEquals("Unexpected Replacement", "1.0", SysNatStringUtil.replaceCommaInStringAmount("1,0")); 
+		assertEquals("Unexpected Replacement", "1", SysNatStringUtil.replaceCommaInStringAmount("1"));
+		
+	}
 	
 }

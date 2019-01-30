@@ -34,18 +34,22 @@ public class FileFinder
 		}
 	};
 
-
 	public static List<File> findFiles(final File mainFolder, 
 			                           final List<String> subdirsToSearch,
-			                           final List<String> subdirsToIgnore,
-			                           final String fileExtension,
+                                       final List<String> subdirsToIgnore,
+			                           final String fileExtensionToSearch,
+			                           final String fileExtensionToIgnore,
 			                           final String partOfFileName) 
 	{
 		if (mainFolder == null || mainFolder.isFile() || ! mainFolder.exists())
 		{
 			throw new RuntimeException("Mainfolder is not valid!");
 		}
-		return searchFilesRecursively(mainFolder, new CustomizedFileFilter(subdirsToSearch, subdirsToIgnore, fileExtension, partOfFileName));
+		return searchFilesRecursively(mainFolder, new CustomizedFileFilter(subdirsToSearch, 
+				                                                           subdirsToIgnore, 
+				                                                           fileExtensionToSearch, 
+				                                                           fileExtensionToIgnore,
+				                                                           partOfFileName));
 	}	
 	
 
@@ -76,7 +80,7 @@ public class FileFinder
 		final List<File> toReturn = new ArrayList<File>();
 		
 		if (! folder.exists()) {
-			System.err.println("Folder does not extist: " + folder.getAbsolutePath());
+			System.err.println("Folder does not exist: " + folder.getAbsolutePath());
 			return toReturn;
 		}
 		
@@ -108,21 +112,30 @@ public class FileFinder
 	{
 		private List<String> subdirsToSearch;
 		private List<String> subdirsToIgnore;
-		private String fileExtension;
+		private String fileExtensionToSearch;
+		private String fileExtensionToIgnore;
 		private String partOfFileName;
 		
 		public CustomizedFileFilter(final List<String> subdirsToSearch,
 									final List<String> subdirsToIgnore, 
-									final String fileExtension, 
-									final String partOfFileName) 
+									final String aFileExtensionToSearch, 
+									final String aFileExtensionToIgnore, 
+									final String aPartOfFileName) 
 		{
 			this.subdirsToSearch = unifyPaths(subdirsToSearch);
 			this.subdirsToIgnore = unifyPaths(subdirsToIgnore);
-			this.partOfFileName = partOfFileName;
-			this.fileExtension = fileExtension;
-			if (fileExtension != null && ! fileExtension.startsWith("."))
+			this.partOfFileName = aPartOfFileName;
+			
+			this.fileExtensionToSearch = aFileExtensionToSearch;
+			if (fileExtensionToSearch != null && ! fileExtensionToSearch.startsWith("."))
 			{
-				this.fileExtension = "." + fileExtension;
+				this.fileExtensionToSearch = "." + fileExtensionToSearch;
+			}
+
+			this.fileExtensionToIgnore = aFileExtensionToIgnore;
+			if (fileExtensionToIgnore != null && ! fileExtensionToIgnore.startsWith("."))
+			{
+				this.fileExtensionToIgnore = "." + fileExtensionToIgnore;
 			}
 		}
 		
@@ -162,7 +175,11 @@ public class FileFinder
 				}
 			}
 	
-			if (fileExtension != null && ! name.endsWith(fileExtension))  {				
+			if (fileExtensionToSearch != null && ! name.endsWith(fileExtensionToSearch))  {				
+				return false;
+			}
+			
+			if (fileExtensionToIgnore != null && name.endsWith(fileExtensionToIgnore))  {				
 				return false;
 			}
 			

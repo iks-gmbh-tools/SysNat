@@ -46,6 +46,7 @@ public abstract class TestCaseTemplateParent extends ExecutableExample
 	public void setUp() 
 	{
 		super.setUp();
+		executionInfo.registerExecutedNLFile(getTestCaseFileName() + ".nlxx");
 		System.out.println(SysNatConstants.SYS_OUT_SEPARATOR);
 	}
 
@@ -58,8 +59,8 @@ public abstract class TestCaseTemplateParent extends ExecutableExample
 			final TestStatistics testStatistics = new ExecutionRuntimeInfo.TestStatistics(startTime, new DateTime());
 			executionInfo.addTestStatistics(getXXID(), testStatistics );
 			
-			final String reportName = executionInfo.buildDefaultReportName();
-			final String detailReportFilename = ReportCreator.buildDetailReportFilename(reportName);
+			final String detailReportName = getTestCaseFileName();
+			final String detailReportFilename = ReportCreator.buildDetailReportFilename(detailReportName);
 			final File detailReportFile = new File(detailReportFilename);
 			detailReportFile.getParentFile().mkdirs();
 			SysNatFileUtil.writeFile(detailReportFile, ReportCreator.createSingleTestReport(this));

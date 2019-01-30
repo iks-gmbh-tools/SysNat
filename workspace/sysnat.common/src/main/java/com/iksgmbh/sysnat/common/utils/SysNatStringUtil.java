@@ -15,13 +15,16 @@
  */
 package com.iksgmbh.sysnat.common.utils;
 
-import static com.iksgmbh.sysnat.common.utils.SysNatConstants.*;
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.NO_FILTER;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SysNatStringUtil 
 {
+	final static char DECIMAL_SEPARATOR = ((DecimalFormat) DecimalFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
+	
 	public static String replaceSpacesByUnderscore(final String s) {
 		return s.replaceAll(" ", "_");
 	}
@@ -279,6 +282,25 @@ public class SysNatStringUtil
 	        costs[s2.length()] = lastValue;
 	    }
 	    return costs[s2.length()];
+	}
+
+	public static String replaceCommaInStringAmount(String amountAsString) 
+	{
+		String[] splitResult = amountAsString.split(",");
+		
+		if (splitResult.length == 2 && splitResult[1].length() <= 3) 
+		{
+			if (splitResult[1].length() == 3) 
+			{
+				if (DECIMAL_SEPARATOR == ',') {
+					return splitResult[0] + "." + splitResult[1];
+				} else {
+					return amountAsString;
+				}
+			}
+			return splitResult[0].replaceAll("\\.", "") + "." + splitResult[1];
+		}
+		return amountAsString.replace(",", "");
 	}	
 	
 }

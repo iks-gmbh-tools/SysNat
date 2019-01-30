@@ -27,11 +27,13 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -54,6 +56,7 @@ import com.iksgmbh.sysnat.domain.SysNatTestData;
 import com.iksgmbh.sysnat.domain.TestApplication;
 import com.iksgmbh.sysnat.guicontrol.GuiControl;
 import com.iksgmbh.sysnat.guicontrol.SeleniumGuiController;
+import com.iksgmbh.sysnat.helper.FileFinder;
 import com.iksgmbh.sysnat.helper.PopupHandler;
 import com.iksgmbh.sysnat.helper.ReportCreator;
 import com.iksgmbh.sysnat.helper.WindowHelper;
@@ -226,7 +229,10 @@ abstract public class ExecutableExample
         }
 
         try {
-            FileUtils.copyFile(scrFile, new File(executionInfo.getReportFolder() + File.separator + filename));
+            String screenshotFileName = executionInfo.getReportFolder() 
+            		                    + File.separator + XXID
+            		                    + File.separator + filename;
+			FileUtils.copyFile(scrFile, new File(screenshotFileName));
         } catch (Exception e) {
         	System.out.println("Error saving screenshot: " + e.getMessage());
         } finally {
@@ -684,8 +690,58 @@ abstract public class ExecutableExample
          } else {
                 System.out.println("Archiving test results is omitted.");
          }
+         
+         // save executed Scripts to document what exactly has been executed for further analysis
+         copyExecutedNLFilesToReportDir();
+         String zipFileName = executionInfo.getReportName() + "-" +
+        		              executionInfo.getStartPointOfTimeAsFileStringForFileName() + ".zip";
+         
+         SysNatFileUtil.createZipFile(executionInfo.getReportFolder(), 
+        		                      new File(executionInfo.getReportFolderAsString(), 
+        		                    		   zipFileName));
     }
 
+	private void copyExecutedNLFilesToReportDir() 
+	{
+		String reportDir = executionInfo.getReportFolder().getAbsolutePath();
+        String scriptDir = reportDir + "/executedNLFiles";
+        new File(scriptDir).mkdirs();
+        
+        final List<File> nlsFiles = collectExecutedNLFiles();
+        nlsFiles.forEach(file -> SysNatFileUtil.copyFileToTargetDir(file.getAbsolutePath(), scriptDir));
+	}
+	
+	private List<File> collectExecutedNLFiles() 
+	{
+		final List<File> toReturn = new ArrayList<>();
+		List<String> executedNLFiles = executionInfo.getExecutedNLFiles();
+		executedNLFiles.forEach(filename -> toReturn.add(findExecutedNLFile(filename)));
+		toReturn.removeAll(Collections.singleton(null));
+		return toReturn;
+	}
+	
+	private File findExecutedNLFile(final String filename) 
+	{
+		String testCaseDir = executionInfo.getTestCaseDir() + "/" + executionInfo.getTestApplicationName();
+		
+		FilenameFilter scriptFileFilter = new FilenameFilter() {
+			
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.equals(filename);
+			}
+		};
+		
+		List<File> result = FileFinder.searchFilesRecursively(new File(testCaseDir), scriptFileFilter);
+		
+		if (result.size() != 1) {
+			System.err.println("Cannot find unique file '" + filename + "' in directory: " + testCaseDir);
+			return null;
+		}
+		
+		return result.get(0);
+	}
+	
 	public void answerQuestion(final String question, final boolean  ok)
 	{
 		if (ok) { 
