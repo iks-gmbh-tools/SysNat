@@ -1,12 +1,14 @@
-# SysNatTesting
+# SysNat
 
-SysNatTesting (or in short: SysNat or SNT) stands for a BDD testing tool to perform system tests in natural language. 
+SysNat (or SysNatTesting or in short SNT) is a tool to test software systems in natural language. It is designed to support ATDD, BDD and DDD.
 
 * * *
 
 Its main features are
 
 - It let you formulate instructions in natural language that operates your application under test and asserts the corresponding expectations.
+- It let you write natural language scripts designed for reuse in multiple test cases and for low level system descriptions 
+- It comes with full Selenium support for testing web applications
 - It creates a test report with a test result overview as well as detailed information about any instruction, expectations and results - all presented in natural language.
 
 With these main features, SysNatTesting is perfectly suitable to support cross functional teams and collaboration between domain experts and developers. Applying SysNat leads towards a Domain Specific Language (DSL) in natural language.
@@ -14,11 +16,11 @@ Once established, this DSL enables domain experts to modify existing tests, to c
 
 Minor features of the SysNatTesting are:
 
-- **DSL Scripting** (allows creation of natural language scripts that can be reused for different test cases - calling scripts in other scripts is possible as well)
 - Easy **test data import** (".dat" files for data structured as key-value pairs or Excel-data for data structured as tables)
 - **Test Parametrization** (write one test and execute it many times with different datasets)
 - Support of both **declarative style** (using BDD Keywords as with e.g. Gherkin) and **imperative style**
-
+- Means to archive / backup test results
+- Allows to create screenshots triggered by a natural language instruction
 
 [Have a closer look...](https://github.com/iks-github/SysNatTesting/wiki)
 
