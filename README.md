@@ -1,6 +1,6 @@
 # SysNat
 
-SysNat (or SysNatTesting or in short SNT) is a tool to test software systems in natural language. It is designed to support ATDD, BDD and DDD.
+SysNat is a tool to manage the quality of software systems in natural language. It is designed to support ATDD, BDD and DDD as well as to combine the effects of theses three approaches to software development.
 
 * * *
 
@@ -38,8 +38,6 @@ Technical Requirements:
 Copyright by [IKS GmbH](https://www.iks-gmbh.com)
 
 Licenced under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
-
-Current version: **0.0.1**
 
 
 * * *
