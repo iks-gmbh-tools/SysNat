@@ -117,7 +117,7 @@ public class TestExecution_ModuleLevelTest
 		SysNatTestUtils.assertFileExists(reportFolder);
 		SysNatTestUtils.assertFileExists( new File(reportFolder, ReportCreator.FULL_REPORT_RESULT_FILENAME) );
 		SysNatTestUtils.assertFileExists( new File(reportFolder, ReportCreator.SHORT_REPORT_RESULT_FILENAME) );
-		final File detailReportFile = new File(reportFolder, "com-LOCAL-Alle/" + ReportCreator.DETAIL_RESULT_FILENAME);
+		final File detailReportFile = new File(reportFolder, "MiniTestCase/" + ReportCreator.DETAIL_RESULT_FILENAME);
 		SysNatTestUtils.assertFileExists( detailReportFile );
 		final String report = SysNatFileUtil.readTextFileToString(detailReportFile); 
 		String expectedText = "Script MiniTestScript has been executed!";

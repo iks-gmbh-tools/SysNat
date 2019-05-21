@@ -27,7 +27,7 @@ import java.util.List;
  * 
  * @author  Reik Oberrath
  */
-public class FileFinder 
+public class FileFinder2 
 {
 	private static final FilenameFilter DIRECTORY_FILTER = new FilenameFilter() {
 		@Override public boolean accept(File dir, String name) {

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
+import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.domain.JavaFieldData;
 
 /**

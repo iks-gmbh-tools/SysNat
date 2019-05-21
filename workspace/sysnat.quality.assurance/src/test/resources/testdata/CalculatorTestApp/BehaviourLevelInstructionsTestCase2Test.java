@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import com.iksgmbh.sysnat.helper.ReportCreator;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
+import com.iksgmbh.sysnat.test.language_container.CalculatorLanguageTemplatesContainer;
 import com.iksgmbh.sysnat.testcasejavatemplate.TestCaseTemplateParent;
 
 public class BehaviourLevelInstructionsTestCase2Test extends TestCaseTemplateParent

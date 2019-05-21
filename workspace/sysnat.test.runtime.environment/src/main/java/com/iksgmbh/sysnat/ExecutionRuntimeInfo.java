@@ -442,7 +442,7 @@ public class ExecutionRuntimeInfo
 		return getSystemProperty(BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY"));
 	}
 
-	public int getMilliesForWaitState() {
+	public int getMaxMilliesForWaitState() {
 		String executionSpeed = getExecutionSpeed();
 
 		if ("verySlow".equals(executionSpeed)) {

@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
+import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.domain.Filename;
@@ -116,15 +117,6 @@ public class LanguageInstructionCollector
 				                       firstLine.startsWith("Szenario") || 
 				                       firstLine.startsWith("Scenario");
 
-		
-		
-		File f = new File(SysNatFileUtil.getDownloadDir(), "LogINFO.txt");
-		f.delete();
-		SysNatFileUtil.writeFile(f, ""+firstLine);
-		System.err.println("######################## 1");
-		System.out.println("######################## 2");
-		
-		
 		boolean behaviourHeaderDetected = false;
 		boolean firstXXDetected = false;
 		

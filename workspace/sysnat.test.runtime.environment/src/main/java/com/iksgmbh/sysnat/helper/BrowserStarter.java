@@ -18,6 +18,10 @@ package com.iksgmbh.sysnat.helper;
 import java.io.File;
 import java.net.MalformedURLException;
 
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import com.iksgmbh.sysnat.common.helper.HtmlLauncher;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -28,181 +32,197 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
-import com.iksgmbh.sysnat.common.helper.HtmlLauncher;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.BrowserType;
-import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
-import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 public class BrowserStarter 
 {
-	private ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
-	private WebDriver webDriver;
-	
-	public static WebDriver doYourJob() 
+   private ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+   private WebDriver webDriver;
+   
+   public static WebDriver doYourJob() 
+   {
+      try {
+         BrowserStarter browserStarter = new BrowserStarter();
+         browserStarter.startBrowserAndInitWebDriver();
+         return browserStarter.webDriver;
+      } catch (Exception e) {
+         e.printStackTrace();
+         throw new RuntimeException(e);
+      }
+   }
+   
+	public void closeCurrentUI()
 	{
 		try {
-			BrowserStarter browserStarter = new BrowserStarter();
-			browserStarter.startBrowserAndInitWebDriver();
-			return browserStarter.webDriver;
+			webDriver.close();
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			// ignore exception
+		}
+
+		try {
+			webDriver.quit();
+		} catch (Exception e) {
+			// ignore exception
 		}
 	}
-	
 	
     private void startBrowserAndInitWebDriver() throws MalformedURLException
     {
-		if (webDriver != null) {
-			webDriver.quit();
-		}
-		
-		if (BrowserType.FIREFOX.equals(executionInfo.getBrowserTypeToUse()))
-		{
-			initFireFoxWebDriver();
-		}
-		else if (BrowserType.CHROME == executionInfo.getBrowserTypeToUse())
-		{
-			initChromeWebDriver();
-		} 
-		else if (BrowserType.IE == executionInfo.getBrowserTypeToUse())
-		{
-			initInternetExplorerWebDriver();
-		}
-		else if (BrowserType.FIREFOX_45_9 == executionInfo.getBrowserTypeToUse())
-		{
-			initFireFoxWeb_45_9_Driver();
-		}
-		else 
-		{
-			throw new SysNatException("Unknown browser type: '" + executionInfo.getBrowserTypeToUse().name() + "'.");
-		}
-		
-		webDriver.manage().window().maximize();
+      closeCurrentUI();
+      
+      if (SysNatConstants.BrowserType.FIREFOX.equals(executionInfo.getBrowserTypeToUse()))
+      {
+         initFireFoxWebDriver();
+      }
+      else if (SysNatConstants.BrowserType.CHROME == executionInfo.getBrowserTypeToUse())
+      {
+         initChromeWebDriver();
+      } 
+      else if (SysNatConstants.BrowserType.IE == executionInfo.getBrowserTypeToUse())
+      {
+         initInternetExplorerWebDriver();
+      }
+      else if (SysNatConstants.BrowserType.FIREFOX_45_9 == executionInfo.getBrowserTypeToUse())
+      {
+         initFireFoxWeb_45_9_Driver();
+      }
+      else 
+      {
+         throw new SysNatException("Unknown browser type: '" + executionInfo.getBrowserTypeToUse().name() + "'.");
+      }
+      
+      webDriver.manage().window().maximize();
     }
 
-	private void initInternetExplorerWebDriver() throws MalformedURLException 
-	{
-		System.out.println("Initializing Internet Explorer web driver...");
+   private void initInternetExplorerWebDriver() throws MalformedURLException 
+   {
+      System.out.println("Initializing Internet Explorer web driver...");
 
-		final InternetExplorerOptions options = new InternetExplorerOptions();
-		options.withInitialBrowserUrl("www.google.com");
-		options.ignoreZoomSettings();
-		options.introduceFlakinessByIgnoringSecurityDomains();
-		//options.withAttachTimeout(5, TimeUnit.SECONDS );
-		//options.requireWindowFocus();
-		//options.enableNativeEvents();
-		//options.setPageLoadStrategy(PageLoadStrategy.EAGER);
-		//options.destructivelyEnsureCleanSession();
-		
+      final InternetExplorerOptions options = new InternetExplorerOptions();
+      options.withInitialBrowserUrl("www.google.com");
+      options.ignoreZoomSettings();
+      options.introduceFlakinessByIgnoringSecurityDomains();
+      //options.withAttachTimeout(5, TimeUnit.SECONDS );
+      //options.requireWindowFocus();
+      //options.enableNativeEvents();
+      //options.setPageLoadStrategy(PageLoadStrategy.EAGER);
+      //options.destructivelyEnsureCleanSession();
+      
 
-	    if (executionInfo.isOS_Windows())  {
-	    	//System.setProperty("java.net.preferIPv4Stack", "true");
-			System.setProperty("webdriver.ie.driver", getExecutable("sysnat.webdriver.executable.ie"));
-			webDriver = new InternetExplorerDriver(options);
-			//webDriver.switchTo().defaultContent();
-		} else {
-			throw new RuntimeException("Non-Windows systems not yet implemented.");
-		}
-	}
+       if (executionInfo.isOS_Windows())  {
+          //System.setProperty("java.net.preferIPv4Stack", "true");
+         System.setProperty("webdriver.ie.driver", getExecutable("sysnat.webdriver.executable.ie"));
+         webDriver = new InternetExplorerDriver(options);
+         //webDriver.switchTo().defaultContent();
+      } else {
+         throw new RuntimeException("Non-Windows systems not yet implemented.");
+      }
+   }
 
-	private void initChromeWebDriver() throws MalformedURLException 
-	{
-		System.out.println("Initializing Chrome web driver...");
+   private void initChromeWebDriver() throws MalformedURLException 
+   {
+      System.out.println("Initializing Chrome web driver...");
 
-		final ChromeOptions options = new ChromeOptions();
-		options.addArguments("--start-maximized");
-	    options.addArguments("--test-type");
-	    options.addArguments("--disable-extensions"); //to disable browser extension popup
-	    
-		if (executionInfo.isOS_Windows())  {
-			System.setProperty("webdriver.chrome.driver", getExecutable("sysnat.webdriver.executable.chrome"));
-			webDriver = new ChromeDriver(options);
-		} else {
-			throw new RuntimeException("Non-Windows systems not yet implemented.");
-		}
-	}
-
-	private void initFireFoxWebDriver() throws MalformedURLException 
-	{
-		System.out.println("Initializing Firefox web driver using geckodriver...");
-
-		final FirefoxOptions firefoxOptions = new FirefoxOptions();
-		firefoxOptions.setBinary(getFireFoxBinary("sysnat.path.to.firefox.dir"));
-		firefoxOptions.setProfile(createFirefoxProfile());
-
-		if (executionInfo.isOS_Windows())  
-		{
-			System.setProperty("webdriver.gecko.driver", getExecutable("sysnat.webdriver.executable.firefox.gecko"));
-			System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
-			System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
-			webDriver = new FirefoxDriver(firefoxOptions);
-			
-		} else {
-			throw new RuntimeException("Non-Windows systems not yet implemented.");
-		}
-	}
-
-	private void initFireFoxWeb_45_9_Driver() throws MalformedURLException 
-	{
-		System.out.println("Initializing Firefox v45.9 web driver...");
-
-		final FirefoxOptions firefoxOptions = new FirefoxOptions();
-		firefoxOptions.setBinary(getFireFoxBinary("sysnat.path.to.firefox_45_9.dir"));
-		firefoxOptions.setProfile(createFirefoxProfile());
-
-		if (executionInfo.isOS_Windows())  
-		{
-			System.setProperty("webdriver.gecko.driver", getExecutable("sysnat.webdriver.executable.firefox_45_9.gecko"));
-			System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "false");
-			webDriver = new FirefoxDriver(firefoxOptions);
-			
-		} else {
-			throw new RuntimeException("Non-Windows systems not yet implemented.");
-		}
-	}
+      final ChromeOptions options = new ChromeOptions();
+      options.addArguments("--start-maximized");
+       options.addArguments("--test-type");
+       options.addArguments("--disable-extensions"); //to disable browser extension popup
+       
+      if (executionInfo.isOS_Windows())  {
+         System.setProperty("webdriver.chrome.driver", getExecutable("sysnat.webdriver.executable.chrome"));
+         webDriver = new ChromeDriver(options);
+      } else {
+         throw new RuntimeException("Non-Windows systems not yet implemented.");
+      }
+   }
 
 
-	private FirefoxProfile createFirefoxProfile() 
-	{
-		FirefoxProfile profile = new FirefoxProfile();
-		profile.setAcceptUntrustedCertificates(true);
-		profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf");
-		profile.setPreference("browser.download.folderList", 1);
-		profile.setPreference("browser.download.dir", SysNatFileUtil.getDownloadDir().getAbsolutePath()); 
-		profile.setPreference("browser.download.useDownloadDir", true);
-		profile.setPreference("browser.download.manager.useWindow", false);
-		profile.setPreference("browser.download.manager.closeWhenDone", true);
-		profile.setPreference("browser.download.manager.showWhenStarting", false);
-		profile.setPreference("pdfjs.disabled", true);
-		/*
-		profile.setPreference("browser.download.folderList", 2);
-		profile.setPreference("services.sync.prefs.sync.browser.download.manager.showWhenStarting", false);
-		profile.setPreference("plugin.disable_full_page_plugin_for_types", "application/rtf");
-		*/
-		return profile;
-	}
-	
+   private void initFireFoxWebDriver() throws MalformedURLException 
+   {
+      System.out.println("Initializing Firefox web driver using geckodriver...");
+
+      final FirefoxOptions firefoxOptions = new FirefoxOptions();
+      firefoxOptions.setBinary(new FirefoxBinary(SysNatFileUtil.getFirefoxExecutable()));
+      firefoxOptions.setProfile(createFirefoxProfile());
+
+      if (executionInfo.isOS_Windows())  
+      {
+         System.setProperty("webdriver.gecko.driver", getExecutable("sysnat.webdriver.executable.firefox.gecko"));
+         System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
+         System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
+         webDriver = new FirefoxDriver(firefoxOptions);
+         
+      } else {
+         throw new RuntimeException("Non-Windows systems not yet implemented.");
+      }
+   }
+
+   private void initFireFoxWeb_45_9_Driver() throws MalformedURLException 
+   {
+      System.out.println("Initializing Firefox v45.9 web driver...");
+
+      final FirefoxOptions firefoxOptions = new FirefoxOptions();
+      firefoxOptions.setBinary(getFireFoxBinary("sysnat.path.to.firefox_45_9.dir"));
+      firefoxOptions.setProfile(createFirefoxProfile());
+
+      if (executionInfo.isOS_Windows())  
+      {
+         System.setProperty("webdriver.gecko.driver", getExecutable("sysnat.webdriver.executable.firefox_45_9.gecko"));
+         System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "false");
+         webDriver = new FirefoxDriver(firefoxOptions);
+         
+      } else {
+         throw new RuntimeException("Non-Windows systems not yet implemented.");
+      }
+   }
+
+
+   private FirefoxProfile createFirefoxProfile() 
+   {
+      FirefoxProfile profile = new FirefoxProfile();
+      profile.setAcceptUntrustedCertificates(true);
+
+      profile.setPreference("browser.download.folderList", 2);
+      profile.setPreference("browser.download.useDownloadDir", true);
+      profile.setPreference("browser.download.dir", SysNatFileUtil.getDownloadDir().getAbsolutePath());
+      profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "application/pdf");
+
+      profile.setPreference("browser.download.manager.useWindow", false);
+      profile.setPreference("browser.download.manager.closeWhenDone", true);
+      profile.setPreference("browser.download.manager.showWhenStarting", false);
+      profile.setPreference("pdfjs.disabled", true);
+
+
+      /*
+      profile.setPreference("browser.download.folderList", 2);
+      profile.setPreference("services.sync.prefs.sync.browser.download.manager.showWhenStarting", false);
+      profile.setPreference("plugin.disable_full_page_plugin_for_types", "application/rtf");
+      */
+      return profile;
+   }
+   
     private FirefoxBinary getFireFoxBinary(final String systemPropertyKey) 
     {
-		final File firefoxExe = new File( HtmlLauncher.getPathToFirefoxBinary(systemPropertyKey) + "\\firefox.exe");
-		if (! firefoxExe.exists()) {
-			throw new RuntimeException("Firefox Executable not found: " + firefoxExe.getAbsolutePath());
-		}
-		try {
-			return new FirefoxBinary(firefoxExe);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw t;
-		}
-	}
-	
-	private String getExecutable(final String executableType) 
-	{
-		return SysNatTestRuntimeUtil.getSysNatRootDir() 
-				+ "/webdriver/" 
-				+ System.getProperty( executableType );
-	}
+      final File firefoxExe = new File( HtmlLauncher.getPathToFirefoxBinary(systemPropertyKey) + "\\firefox.exe");
+      if (! firefoxExe.exists()) {
+         throw new RuntimeException("Firefox Executable not found: " + firefoxExe.getAbsolutePath());
+      }
+      try {
+         return new FirefoxBinary(firefoxExe);
+      } catch (Throwable t) {
+         t.printStackTrace();
+         throw t;
+      }
+   }
+   
+   private String getExecutable(final String executableType)
+   {
+      String path = System.getProperty("path.to.webdrivers").replace("<root.path>", System.getProperty("root.path"));
+      String toReturn = path + "/" + System.getProperty( executableType );
+      if ( ! new File(toReturn).exists() ) {
+         throw new RuntimeException("Could not find: " + executableType);
+      }
+      return toReturn;
+   }
 }
+

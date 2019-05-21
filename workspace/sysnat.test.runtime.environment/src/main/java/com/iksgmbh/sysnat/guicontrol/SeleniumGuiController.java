@@ -35,8 +35,11 @@ import com.iksgmbh.sysnat.helper.BrowserStarter;
 
 public class SeleniumGuiController implements GuiControl 
 {
+	private static final int MILLIS_TO_WAIT_PER_TRY = 10;
+
 	private WebDriver webDriver;
 	private ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+
 	private enum TAGNAME { select, input };
 	
 	@Override
@@ -83,8 +86,19 @@ public class SeleniumGuiController implements GuiControl
 	}
 
 	@Override
-	public void closeGUI() {
-		webDriver.quit();
+	public void closeGUI()
+	{
+		try {
+			webDriver.close();
+		} catch (Exception e) {
+			// ignore exception
+		}
+
+		try {
+			webDriver.quit();
+		} catch (Exception e) {
+			// ignore exception
+		}
 	}
 	
 	@Override
@@ -345,8 +359,37 @@ public class SeleniumGuiController implements GuiControl
 	public boolean isTextCurrentlyDisplayed(String text) 
 	{
 		List<WebElement> list = webDriver.findElements(By.xpath("//*[contains(normalize-space(text()),'" + text + "')]"));
-		return list.size() > 0;
+		for (WebElement we: list) {
+			if (we.isDisplayed()) {
+				return true;
+			}
+		}
+		return false;
 	}
+
+	@Override
+	public void waitToDisappear(String text, int maxSecondsToWait)
+	{
+		boolean goOn = true;
+		int counterWaitState = 0;
+		int maxAttemptsToFindElement = maxSecondsToWait * 1000 / MILLIS_TO_WAIT_PER_TRY;
+
+		while (goOn)
+		{
+			sleep(MILLIS_TO_WAIT_PER_TRY);
+
+			if ( ! isTextCurrentlyDisplayed(text) ) {
+				goOn = false;
+			}
+			counterWaitState++;
+
+			if (counterWaitState > maxAttemptsToFindElement) {
+				goOn = false;
+			}
+		}
+
+	}
+
 
 	@Override
 	public WebDriver getWebDriver() {
@@ -364,6 +407,38 @@ public class SeleniumGuiController implements GuiControl
 	//                        (Selenium specific accesses to GUI)
 	// ####################################################################################################
 
+	public String getXPathForElementWithGuiText(String textPart1, String textPart2, String avoidText)
+	{
+		List<WebElement> matches1 = webDriver.findElements(By.xpath("//*[contains(text(),'" + textPart1 + "')]"));
+		List<WebElement> matches2 = webDriver.findElements(By.xpath("//*[contains(text(),'" + textPart2 + "')]"));
+		for (WebElement match : matches1) {
+			if ( matches2.contains(match)) {
+			    if ( ! match.getText().contains(avoidText)) {
+                    return generateXPATH(match);
+                }
+			}
+		}
+		return "<not found>";
+	}
+	public String getXPathForElementWithGuiText(String text)
+	{
+		List<WebElement> toAvoid = webDriver.findElements(By.xpath("//*[contains(normalize-space(text()),'" + text + ":" + "')]"));
+		List<WebElement> matches = webDriver.findElements(By.xpath("//*[contains(normalize-space(text()),'" + text + "')]"));
+		List<WebElement> list = new ArrayList<>();
+		for (WebElement match : matches) {
+			if ( ! toAvoid.contains(match)) {
+				list.add(match);
+			}
+		}
+		if (list.size() > 1) {
+			throw new RuntimeException("Text " + text + " is nicht eindeutig!");
+		};
+
+		if (list.size() == 0) {
+			return "<not found>";
+		}
+		return generateXPATH(list.get(0));
+	}
 
 	public String getPageSource() {
 		return webDriver.getPageSource();
@@ -469,11 +544,11 @@ public class SeleniumGuiController implements GuiControl
         WebElement toReturn = null;
 		boolean goOn = true;
 		int counterWaitState = 0;
-		int maxAttemptsToFindElement = 1000 * timeOutInSeconds / executionInfo.getMilliesForWaitState(); 
+		int maxAttemptsToFindElement = executionInfo.getMaxMilliesForWaitState() / MILLIS_TO_WAIT_PER_TRY;
 		
 		while (goOn)
 		{
-			sleep(executionInfo.getMilliesForWaitState());
+			sleep(MILLIS_TO_WAIT_PER_TRY);
 			
 			toReturn = findElement(elementIdentifier);
 			if (toReturn != null) {
@@ -578,11 +653,11 @@ public class SeleniumGuiController implements GuiControl
     {
     	boolean goOn = true;
 		int counterWaitState = 0;
-		int maxAttemptsToFindElement = executionInfo.getMilliesForWaitState() / executionInfo.getMilliesForWaitState(); 
+		int maxAttemptsToFindElement = executionInfo.getMaxMilliesForWaitState() / MILLIS_TO_WAIT_PER_TRY;
 		
 		while (goOn)
 		{
-			sleep(executionInfo.getMilliesForWaitState());
+			sleep(MILLIS_TO_WAIT_PER_TRY);
 		
 			try {
 				element.click();
@@ -625,5 +700,29 @@ public class SeleniumGuiController implements GuiControl
     	throw new RuntimeException("Now Window Handle found.");
     }
 
-    
+	private String generateXPATH(WebElement element) {
+		return generateXPATH(element, "");
+	}
+
+	private String generateXPATH(WebElement childElement, String current)
+	{
+		String childTag = childElement.getTagName();
+		if(childTag.equals("html")) {
+			return "/html[1]"+current;
+		}
+		WebElement parentElement = childElement.findElement(By.xpath(".."));
+		List<WebElement> childrenElements = parentElement.findElements(By.xpath("*"));
+		int count = 0;
+		for(int i=0;i<childrenElements.size(); i++) {
+			WebElement childrenElement = childrenElements.get(i);
+			String childrenElementTag = childrenElement.getTagName();
+			if(childTag.equals(childrenElementTag)) {
+				count++;
+			}
+			if(childElement.equals(childrenElement)) {
+				return generateXPATH(parentElement, "/" + childTag + "[" + count + "]"+current);
+			}
+		}
+		return null;
+	}
 }

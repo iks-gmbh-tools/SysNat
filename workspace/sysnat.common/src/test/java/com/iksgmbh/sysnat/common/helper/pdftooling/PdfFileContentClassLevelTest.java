@@ -19,9 +19,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class PdfFileContentTest 
+public class PdfFileContentClassLevelTest 
 {
-
 	private PdfFileContent cut = new PdfFileContent("../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf0.pdf");
 	
 	@Test

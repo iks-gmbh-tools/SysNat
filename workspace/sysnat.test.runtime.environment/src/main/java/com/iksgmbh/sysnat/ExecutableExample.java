@@ -47,6 +47,7 @@ import com.iksgmbh.sysnat.common.exception.SkipTestCaseException.SkipReason;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.exception.UnexpectedResultException;
 import com.iksgmbh.sysnat.common.exception.UnsupportedGuiEventException;
+import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.helper.HtmlLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
@@ -56,7 +57,6 @@ import com.iksgmbh.sysnat.domain.SysNatTestData;
 import com.iksgmbh.sysnat.domain.TestApplication;
 import com.iksgmbh.sysnat.guicontrol.GuiControl;
 import com.iksgmbh.sysnat.guicontrol.SeleniumGuiController;
-import com.iksgmbh.sysnat.helper.FileFinder;
 import com.iksgmbh.sysnat.helper.PopupHandler;
 import com.iksgmbh.sysnat.helper.ReportCreator;
 import com.iksgmbh.sysnat.helper.WindowHelper;
@@ -174,8 +174,8 @@ abstract public class ExecutableExample
 		if (bddKeyword == null || bddKeyword.isEmpty()) {
 			reportMessages.add(message.trim());  
 		} else {
-			reportMessages.add(message.trim());
-			//reportMessages.add("<b>" + bddKeyword + "</b> " + message.trim()); TODO Decide whether and how the BDD-Keyword enters the report
+			// reportMessages.add(message.trim());  TODO Decide whether and how the BDD-Keyword enters the report
+			reportMessages.add("<b>" + bddKeyword + "</b> " + message.trim()); 
 		}
 	}
 
@@ -655,13 +655,9 @@ abstract public class ExecutableExample
 					System.out.println("Done with executing " + executionInfo.getReportName() + ".");
 				}
 		    	
-		    	try {
-		    		if (getGuiController() != null)  {
-		    			getGuiController().closeGUI();
-		    		}
-		    	} catch (Throwable e)  {
-		    		// ignore 
-		    	}
+	    		if (executionInfo.getGuiController() != null)  {
+	    			executionInfo.getGuiController().closeGUI();
+	    		}
 			}
 		});
 	}
@@ -677,7 +673,8 @@ abstract public class ExecutableExample
         final String fullReport = ReportCreator.createFullOverviewReport();
         final String fullOverviewReportFilename = ReportCreator.getFullOverviewReportFilename();
         SysNatFileUtil.writeFile(fullOverviewReportFilename, fullReport);
-  		if ("true".equalsIgnoreCase( System.getProperty("sysnat.autolaunch.report"))) {    		
+  		
+        if ("true".equalsIgnoreCase( System.getProperty("sysnat.autolaunch.report"))) {    		
 			HtmlLauncher.doYourJob( fullOverviewReportFilename );
     	}
           
@@ -884,6 +881,7 @@ abstract public class ExecutableExample
 	public void setGuiController(GuiControl guiController) {
 		this.guiController = guiController;
 	}
+	
 	public String getTagName(String elementIdentifier) {
 		return guiController.getTagName(elementIdentifier);
 	}

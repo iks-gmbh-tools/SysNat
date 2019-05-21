@@ -24,14 +24,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.SysNatTestCaseGenerator;
+import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
-import com.iksgmbh.sysnat.helper.FileFinder;
+import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 
 /**
  * Tests for the interaction of sysnat.testcase.generation and sysnat.test.execution.
@@ -89,7 +89,7 @@ public class TestCaseGeneration_ModuleLevelTest
 				return name.endsWith(".java");
 			}
 		});
-		assertEquals("Number", 9, result.size());
+		assertEquals("Number of generated Java files", 9, result.size());
 		
 		// check content of test case file
 		String expectedFileContent = SysNatStringUtil.removeWhitespaceLinewise(
@@ -117,17 +117,17 @@ public class TestCaseGeneration_ModuleLevelTest
 		String filePath = (String)System.getProperty("sysnat.generation.target.dir");
 		List<File> result = FileFinder.searchFilesRecursively(new File(filePath), new FilenameFilter() {
 			@Override public boolean accept(File dir, String name) {
-				return name.endsWith(".java");
+				return name.endsWith("Script.java");
 			}
 		});
-		assertEquals("Number of java files in target dir", 9, result.size());
+		assertEquals("Number of generated Java files representing a script", 1, result.size());
 				
 		// check content of script file
 		String expectedFileContent = 
 				SysNatFileUtil.readTextFileToString(
 						"src/test/resources/HomePageIKS_ExpectedScriptContent.txt");
 		String actualFileContent = 
-				SysNatFileUtil.readTextFileToString( result.get(7) );
+				SysNatFileUtil.readTextFileToString( result.get(0) );
 		assertEquals("Generated Java File Content", 
 				     expectedFileContent, 
 				     actualFileContent);		

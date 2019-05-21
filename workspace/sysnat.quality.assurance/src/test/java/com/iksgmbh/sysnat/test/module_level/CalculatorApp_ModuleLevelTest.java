@@ -39,7 +39,7 @@ import com.iksgmbh.sysnat.test.utils.SysNatTestUtils;
  */
 public class CalculatorApp_ModuleLevelTest 
 {
-	private static final String EXECUTION_MAIN_DIR = "../sysnat.test.execution/src/main";
+	private static final String EXECUTION_MAIN_DIR = "../sysnat.test.execution/src/main/java/";
 	private static final String EXECUTION_TEST_DIR = "../sysnat.test.execution/src/test/gen/";
 	private static final String TESTDATA_DIR = "../sysnat.quality.assurance/src/test/resources/testdata/";
 	private static final String testAppName = "CalculatorTestApp";
@@ -61,10 +61,10 @@ public class CalculatorApp_ModuleLevelTest
 
 		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName,
 				"Calculator.java", 
-				EXECUTION_MAIN_DIR + "/java/com/iksgmbh/sysnat/test");
+				EXECUTION_MAIN_DIR + "com/iksgmbh/sysnat/test");
 		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName, 
 				"CalculatorLanguageTemplatesContainer.java", 
-                EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/calculatortestapp");
+				EXECUTION_MAIN_DIR + "com/iksgmbh/sysnat/test/language_container");
 	}
 	
 	@After
@@ -79,7 +79,7 @@ public class CalculatorApp_ModuleLevelTest
 		// arrange
 		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName, 
 				"BDDKeywordTestCaseTest.java", 
-                EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/bddkeywordstestapp");
+                EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/calculatortestapp");
 		
 		GenerationRuntimeInfo.getInstance();
 		

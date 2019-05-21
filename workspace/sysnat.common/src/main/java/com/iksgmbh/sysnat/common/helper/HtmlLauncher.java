@@ -18,6 +18,7 @@ package com.iksgmbh.sysnat.common.helper;
 import java.io.File;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class HtmlLauncher 
 {
@@ -28,8 +29,8 @@ public class HtmlLauncher
 	    try {
 	    	File reportFile = new File( reportFileAsString );
 	    	String pathToHtml = reportFile.getCanonicalPath();
-	        String pathToFirefoxExe = getPathToFirefoxBinary();
-			rt.exec(new String[]{ pathToFirefoxExe + "//firefox.exe","-url", "file:///" + pathToHtml });
+	    	String firefoxExeWithPath = SysNatFileUtil.getFirefoxExecutable().getAbsolutePath();
+			rt.exec(new String[]{ firefoxExeWithPath, "-url", "file:///" + pathToHtml });
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }

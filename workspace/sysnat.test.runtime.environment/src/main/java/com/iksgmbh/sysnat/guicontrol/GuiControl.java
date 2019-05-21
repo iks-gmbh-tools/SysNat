@@ -92,9 +92,10 @@ public interface GuiControl
 	int getNumberOfOpenTabs();  // in all frames !
 	void switchToFirstWindow();
 
-
+	// misc
 	boolean isTextCurrentlyDisplayed(String text);
-	
+	void waitToDisappear(String text, int maxSecondsToWait);
+
 	public default void performDoubleClickOnPosition(int x, int y) 
 	{
 		try {
@@ -122,5 +123,5 @@ public interface GuiControl
 		}
 
 	}
-	
+
 }

@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 
-public class SysNatFileUtilTest {
+public class SysNatFileUtilClassLevelTest {
 
 	@Test
 	public void copiesFolderWithAllSubfoldersAndFiles() 

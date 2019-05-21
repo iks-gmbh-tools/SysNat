@@ -53,23 +53,45 @@ public class FileFinder
 	}	
 	
 
+	/**
+	 * Returns list of x-files found in the target folder and its subfolders (and
+	 * their subfolders...) where x is any file extension.
+	 * 
+	 * @param folder
+	 * @param fileExtensions
+	 * @return file list
+	 */
 	public static List<File> searchFilesRecursively(final String folder, 
- 		                                            final String fileExtension)
+											        final String... fileExtensions) 
 	{
-		return searchFilesRecursively(new File(folder), new FilenameFilter() {
-			@Override public boolean accept(File dir, String name) {
-				return name.endsWith(fileExtension);
-			}
-		});
+		return searchFilesRecursively(new File(folder), fileExtensions);
 	}
-	
-	public static List<File> searchFilesRecursively(final File folder, 
-			                                        final String fileExtension) 
+
+	public static List<File> searchFilesRecursively(final File folder, final String... fileExtensions) 
 	{
-		return searchFilesRecursively(folder, new FilenameFilter() {
+		List<String> extensions = new ArrayList<>();
+		for (String extension : fileExtensions) 
+		{
+			if (extension.startsWith(".")) {
+				extensions.add(extension);
+			} else {
+				extensions.add("." + extension);
+			}
+		}
+
+		return searchFilesRecursively(folder, new FilenameFilter() 
+		{
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.endsWith(fileExtension);
+				if (new File(dir, name).isDirectory())
+					return false;
+				if (extensions.stream().filter(extension -> extension.equals(".*")).findFirst().isPresent()) {
+					return true;
+				}
+				if (extensions.stream().filter(extension -> name.endsWith(extension)).findFirst().isPresent()) {
+					return true;
+				}
+				return false;
 			}
 		});
 	}
