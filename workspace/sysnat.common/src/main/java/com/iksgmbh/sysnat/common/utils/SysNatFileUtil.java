@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -42,6 +41,7 @@ import java.util.zip.ZipOutputStream;
 
 import com.iksgmbh.sysnat.common.domain.FileList;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
  
 public class SysNatFileUtil 
@@ -282,19 +282,35 @@ public class SysNatFileUtil
  
        public static void loadPropertyFile(File f, Properties properties) 
        {
-             try {
-                    properties.load(new InputStreamReader(new FileInputStream (f), "UTF-8"));
-             } catch (FileNotFoundException e) {
-                    String message = "Die benötigte Date " + f.getAbsolutePath() + " ist nicht vorhanden.";
-                    System.err.println(message);
-                    throw new SysNatException(message);
-             } catch (Exception e) {
-                    String message = "Fehler beim Laden von " + f.getAbsolutePath() + ".";
-                    System.err.println(message);
-                    throw new SysNatException(message);
-             }
+    	   List<String> lines;
+    	   try {
+    	      lines = readTextFile(f);
+    	   } catch (Exception e) {
+    	      String message = "Error loading file <b>" + f.getAbsolutePath() + "</b>.";
+    	      System.err.println(message);
+    	      throw new SysNatTestDataException(message);
+    	   }
+    	   
+ 	      lines.forEach(line -> toProperty(line, properties, f));
        }
  
+       private static void toProperty(String line, Properties properties, File inputFile)
+       {
+          line = line.trim();
+          if (line.isEmpty() || line.startsWith("#")) {
+             return;
+          }
+
+          int pos = line.indexOf('=');
+          if (pos == -1) {
+             throw new SysNatTestDataException("Line <b>" + line + "</b> in der Datei <b>" + inputFile.getAbsolutePath() + " represents no valid property line.");
+          }
+
+          String key = line.substring(0, pos).trim();
+          String value = line.substring(pos + 1).trim();
+          properties.setProperty(key, value);
+       }
+
        
        public static int getNumberOfFilesStartingWith(String fileNamePrefix, String searchDir) 
        {

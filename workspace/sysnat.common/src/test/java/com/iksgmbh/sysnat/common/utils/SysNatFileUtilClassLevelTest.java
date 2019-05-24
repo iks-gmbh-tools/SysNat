@@ -18,12 +18,15 @@ package com.iksgmbh.sysnat.common.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.Test;
 
+import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 
 public class SysNatFileUtilClassLevelTest {
@@ -47,4 +50,37 @@ public class SysNatFileUtilClassLevelTest {
 		assertEquals("Number of files", 4, filesInExpTarget.size());
 	}
 
+	
+	@Test
+	public void loadsPropertyFile() 
+	{
+		// arrange
+		final File propertiesFile = new File("../sysnat.common/src/test/resources/test.properties");
+		final Properties properties = new Properties();
+		
+		// act
+		SysNatFileUtil.loadPropertyFile(propertiesFile, properties);
+
+		// assert
+		assertEquals("Number of properties", 4, properties.size());
+		assertEquals("Property value", "v4", properties.get("p4"));
+	}
+
+	@Test
+	public void throwsExceptionForUnreadablePropertyLine() 
+	{
+		// arrange
+		final File propertiesFile = new File("../sysnat.common/src/test/resources/test.err.properties");
+		final Properties properties = new Properties();
+		
+		try {			
+			// act
+			SysNatFileUtil.loadPropertyFile(propertiesFile, properties);
+			fail("Expected exception not thrown!");
+		} catch (SysNatTestDataException e) {
+			// assert
+			assertTrue("Unexpected error message", e.getMessage().endsWith("no valid property line."));
+		}
+	}
+	
 }
