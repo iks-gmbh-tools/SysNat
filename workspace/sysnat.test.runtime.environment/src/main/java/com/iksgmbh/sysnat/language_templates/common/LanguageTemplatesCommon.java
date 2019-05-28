@@ -395,7 +395,7 @@ public class LanguageTemplatesCommon
 	public void initDefaultTestDataset() 
 	{
 		executableExample.getTestData().clear();
-		executableExample.getTestData().addEmptyDataset(SysNatTestData.DEFAULT_TEST_DATA);
+		executableExample.getTestData().addEmptyDataset(SysNatTestData.SINGLE_TEST_DATA_VALUES);
 	}	
 
 	/**

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.InvalidArgumentException;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
@@ -31,6 +32,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.helper.BrowserStarter;
 
 public class SeleniumGuiController implements GuiControl 
@@ -41,6 +43,20 @@ public class SeleniumGuiController implements GuiControl
 	private ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
 
 	private enum TAGNAME { select, input };
+
+	public String getCurrentURL() {
+	   return webDriver.getCurrentUrl();
+	}
+	
+	@Override
+	public void loadPage(String url)
+	{
+	   try {
+	      webDriver.get(url);
+	   } catch (InvalidArgumentException e) {
+	      throw new SysNatException("Die URL <b>" + url + "</b> ist keine gültige Webadresse.");
+	   }
+	}
 	
 	@Override
 	public void reloadCurrentPage() {

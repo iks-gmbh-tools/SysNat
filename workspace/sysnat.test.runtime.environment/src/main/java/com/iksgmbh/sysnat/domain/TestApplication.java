@@ -21,7 +21,7 @@ import java.util.Properties;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.PropertiesUtil;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 
 /**
  * Holds attributes of the application under test.
@@ -29,77 +29,96 @@ import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
  */
 public class TestApplication 
 {
-	private String applicationUnderTest;
-	private boolean isWebApplication;
-	private boolean withLogin;
-	private HashMap<StartParameter,String> startParameter = new HashMap<>();
-	private String targetEnvironmentAsString;
+   private String name;
+   private String targetEnvironmentAsString;
+   private boolean isWebApplication;
+   private boolean withLogin;
+   private Properties applicationProperties;
+   private HashMap<SysNatConstants.WebLoginParameter,String> loginParameter = new HashMap<>();
 
+   public TestApplication(final String anApplicationName,
+                          final String propertiesFileName,
+                          final String atargetEnvironmentAsString)
+   {
+      this.name = anApplicationName;
+      this.targetEnvironmentAsString = atargetEnvironmentAsString;
 
-	public TestApplication(final String aApplicationUnderTest, 
-			               final String propertiesFileName, 
-			               final String atargetEnvironmentAsString) 
-	{
-		this.targetEnvironmentAsString = atargetEnvironmentAsString;
-		this.applicationUnderTest = aApplicationUnderTest;
-		
-		final Properties applicationProperties = PropertiesUtil.loadProperties(propertiesFileName);
-		String result = (String) applicationProperties.get("isWebApplication");
-		isWebApplication = "true".equalsIgnoreCase(result);
-		result = (String) applicationProperties.get("withLogin");
-		withLogin = "true".equalsIgnoreCase(result);
-		addStartParameter(applicationProperties);
-	}
+      applicationProperties = PropertiesUtil.loadProperties(propertiesFileName);
+      String result = (String) applicationProperties.get("isWebApplication");
+      isWebApplication = "true".equalsIgnoreCase(result);
+      result = (String) applicationProperties.get("withLogin");
+      withLogin = "true".equalsIgnoreCase(result);
 
-	public TestApplication(final String aApplicationUnderTest) 
-	{
-		this(aApplicationUnderTest, 
-		     ExecutionRuntimeInfo.getInstance().getPropertiesPath() + "/" + aApplicationUnderTest + ".properties", 
-		     ExecutionRuntimeInfo.getInstance().getTargetEnv().name());
-	}
-	
-	
+      if (withLogin) {
+         addStartParameter(applicationProperties);
+      }
+   }
 
-	private void addStartParameter(final Properties applicationProperties) 
-	{
-		if (isWebApplication) {			
-			startParameter.put(StartParameter.URL, getParameter(applicationProperties, StartParameter.URL));
-		}
-		if (withLogin) {			
-			startParameter.put(StartParameter.LOGINID, getParameter(applicationProperties, StartParameter.LOGINID));
-			startParameter.put(StartParameter.PASSWORD, getParameter(applicationProperties, StartParameter.PASSWORD));
-		}
-	}
+   public String getProperty(String key)
+   {
+      String propertyKey = ( name + "." +
+                           targetEnvironmentAsString + "." +
+                               key
+                           ).toLowerCase();
 
-	private String getParameter(final Properties applicationProperties, 
-			                    final StartParameter parameter) 
-	{
-		String propertyKey = (getName() + "." +
-				             targetEnvironmentAsString + 
-				             ".login." +
-				             parameter.name()).toLowerCase();
-		String propertyValue = applicationProperties.getProperty(propertyKey);
-		if (propertyValue == null) {
-			//ExceptionHandlingUtil.throwException("Missing application property '" + propertyKey + "'.");
-			throw new SysNatException("Missing application property '" + propertyKey + "'.");
-		}
-		return propertyValue.trim();
-	}
+      return applicationProperties.getProperty(propertyKey);
+   }
 
-	public boolean isWebApplication() {
-		return isWebApplication;
-	}
+   public TestApplication(final String aApplicationUnderTest)
+   {
+      this(aApplicationUnderTest,
+           ExecutionRuntimeInfo.getInstance().getPropertiesPath() + "/" + aApplicationUnderTest + ".properties",
+           ExecutionRuntimeInfo.getInstance().getTargetEnv().name());
+   }
 
-	@Override
-	public String toString() {
-		return getName();
-	}
+   private void addStartParameter(final Properties applicationProperties)
+   {
+      if (isWebApplication) {
+         loginParameter.put(SysNatConstants.WebLoginParameter.URL, getLoginParameter(applicationProperties, SysNatConstants.WebLoginParameter.URL));
+      }
+      if (withLogin) {
+         loginParameter.put(SysNatConstants.WebLoginParameter.LOGINID, getLoginParameter(applicationProperties, SysNatConstants.WebLoginParameter.LOGINID));
+         loginParameter.put(SysNatConstants.WebLoginParameter.PASSWORD, getLoginParameter(applicationProperties, SysNatConstants.WebLoginParameter.PASSWORD));
+      }
+   }
 
-	public String getName() {
-		return applicationUnderTest;
-	}
+   private String getLoginParameter(final Properties applicationProperties,
+                            final SysNatConstants.WebLoginParameter parameter)
+   {
+      String propertyKey = ( name + "." +
+                             targetEnvironmentAsString +
+                             ".login." +
+                             parameter.name()
+                           ).toLowerCase();
 
-	public HashMap<StartParameter, String> getStartParameter() {
-		return startParameter;
-	}
+      String propertyValue = applicationProperties.getProperty(propertyKey);
+      if (propertyValue == null) {
+         //ExceptionHandlingUtil.throwException("Missing application property '" + propertyKey + "'.");
+         throw new SysNatException("Missing application property '" + propertyKey + "'.");
+      }
+      return propertyValue.trim();
+   }
+
+   public boolean isWebApplication() {
+      return isWebApplication;
+   }
+
+   @Override
+   public String toString() {
+      return getName();
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public HashMap<SysNatConstants.WebLoginParameter, String> getLoginParameter() {
+      return loginParameter;
+   }
+
+    public String getStartParameterValue()
+    {
+        String startParameter = applicationProperties.get("StartParameter").toString();
+        return getProperty(startParameter);
+    }
 }

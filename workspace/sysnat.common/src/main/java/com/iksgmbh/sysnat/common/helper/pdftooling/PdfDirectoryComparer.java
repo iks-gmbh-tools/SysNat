@@ -34,6 +34,8 @@ public class PdfDirectoryComparer
 	private static final String DIR2 = "";
 	private static final PdfCompareIgnoreConfig IGNORE_CONFIG = buildIgnoreConfig();
 	
+	private static boolean allOK;
+	
 	public static void main(String[] args) 
 	{
 		if (args.length == 0) {
@@ -58,6 +60,8 @@ public class PdfDirectoryComparer
 
 	public static List<String> doYourJob(String dir1, String dir2) 
 	{
+		System.out.println("Comparing directory " + dir1);
+		System.out.println("     with directory " + dir2);
 		final List<FilePair> filesToCompare = findFilesToCompare(dir1, dir2);
 		final List<String> result = new ArrayList<String>();
 		
@@ -67,29 +71,30 @@ public class PdfDirectoryComparer
 		}
 		
 		if (filesToCompare.size() == 0) {
+			System.out.println("There no files found to compare!");
 			result.add("No matching files found in directories !");
 			return result;
 		}
 		
+		System.out.println("");
 		System.out.println("There are " + filesToCompare.size() + " files to compare:");
-		
+		allOK = true;
+
 		filesToCompare.forEach(filePair -> {
 			try {
-				System.out.print(".");
+				//System.out.print(".");
+				System.out.println(filePair.f1.getName());
 				compare(filePair, result);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		});
 		
+		System.out.println("");
+		if (allOK) System.out.println("There are no relevant differences between the " + filesToCompare.size() + " PDF-files compared.");
 		return result;
 	}
 
-	
-	// #################################################################
-	//               P R I V A T E    M E T H O D S
-	// #################################################################
-	
 
 	private static void compare(FilePair filePair, List<String> result) throws IOException 
 	{
@@ -99,7 +104,8 @@ public class PdfDirectoryComparer
 		if ( differenceReport.isEmpty() ) {
 			comparisonResult += " OK";
 		} else {
-			comparisonResult += System.getProperty("line.separator") + differenceReport;  
+			comparisonResult += System.getProperty("line.separator") + differenceReport;
+			allOK = false;
 		}
 		result.add(comparisonResult);
 	}
@@ -123,7 +129,9 @@ public class PdfDirectoryComparer
 			for (File child2 : children2) 
 			{
 				if (child1.getName().equals(child2.getName())) {
-					comparisons.add(new FilePair(child1, child2));
+					if (child1.getName().toLowerCase().endsWith(".pdf")) {
+						comparisons.add(new FilePair(child1, child2));
+					}
 					break;
 				}
 			}

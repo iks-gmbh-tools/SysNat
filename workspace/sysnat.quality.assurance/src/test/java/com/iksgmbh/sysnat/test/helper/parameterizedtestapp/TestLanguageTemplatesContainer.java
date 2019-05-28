@@ -268,7 +268,7 @@ public class TestLanguageTemplatesContainer
 		String[] splitResult = objectAndfieldName.split("\\.");
 		
 		if (splitResult.length == 1) {
-			executableExample.getTestData().addValue(SysNatTestData.DEFAULT_TEST_DATA, 
+			executableExample.getTestData().addValue(SysNatTestData.SINGLE_TEST_DATA_VALUES, 
 					                                 splitResult[0], value);
 		} else {			
 			String objectName = splitResult[0];

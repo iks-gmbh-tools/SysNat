@@ -43,7 +43,14 @@ import com.iksgmbh.sysnat.common.domain.FileList;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
- 
+
+/**
+ * Utils to handle file operations in SysNat
+ * 
+ * TODO: Introduce bundle to support german error messages
+ * 
+ * @author Reik Oberrath
+ */
 public class SysNatFileUtil 
 {
        private static File downloadDir = null;

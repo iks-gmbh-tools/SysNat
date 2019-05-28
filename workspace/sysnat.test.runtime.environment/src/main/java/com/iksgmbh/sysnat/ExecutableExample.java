@@ -50,7 +50,6 @@ import com.iksgmbh.sysnat.common.exception.UnsupportedGuiEventException;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.helper.HtmlLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.SysNatTestData;
@@ -384,8 +383,8 @@ abstract public class ExecutableExample
     	if ("false".equalsIgnoreCase( System.getProperty("sysnat.dummy.test.run"))) 
     	{
     		final TestApplication testApplication = executionInfo.getTestApplication();
-    		applicationStarted = getGuiController().init(testApplication.getStartParameter().get(StartParameter.URL));
-    		getApplicationSpecificLanguageTemplates().doLogin(testApplication.getStartParameter());
+    		applicationStarted = getGuiController().init(testApplication.getStartParameterValue());
+    		getApplicationSpecificLanguageTemplates().doLogin(testApplication.getLoginParameter());
     	} else {
     		System.out.println("This is a dummy test run!");
     		executionInfo.setApplicationStarted(true);
@@ -940,7 +939,7 @@ abstract public class ExecutableExample
 	}
 	
 	
-	public void importTestData(final String testdata) 
+	public Hashtable<String, Properties> importTestData(final String testdata) 
 	{
 		final Hashtable<String, Properties> loadedDatasets;
 		
@@ -955,9 +954,11 @@ abstract public class ExecutableExample
 			loadedDatasets = getTestDataImporter().loadTestdata(testdata);
 		}
 		loadedDatasets.forEach( (datasetName, dataset) -> testDataSets.addDataset(datasetName, dataset));	
+		
+		return loadedDatasets;
 	}
 	
-	private TestDataImporter getTestDataImporter() 
+	protected TestDataImporter getTestDataImporter() 
 	{
 		if (testDataImporter == null) {
 			testDataImporter = new TestDataImporter(executionInfo.getTestdataDir());
@@ -1025,6 +1026,10 @@ abstract public class ExecutableExample
 
 	public HashMap<String, Object> getTestObjects() {
 		return testObjects;
+	}
+
+	public boolean doesTestObjectExist(String objectName) {
+		return getTestObject(objectName) != null;
 	}
 	
 	public void setTestObjects(HashMap<String, Object> hashMap) {

@@ -2,6 +2,7 @@ package homepageiks.pdfdownload;
 
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
 import com.iksgmbh.sysnat.language_templates.homepageiks.LanguageTemplatesHomePageIKSBasics;
+import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesPDF;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesPrint;
 import java.io.File;
 
@@ -16,6 +17,7 @@ public class DownloadPdfAndCheckContentScript extends ScriptTemplateParent
 {
 	protected LanguageTemplatesCommon languageTemplatesCommon;
 	protected LanguageTemplatesHomePageIKSBasics languageTemplatesHomePageIKSBasics;
+	protected LanguageTemplatesPDF languageTemplatesPDF;
 	protected LanguageTemplatesPrint languageTemplatesPrint;
 
 	public DownloadPdfAndCheckContentScript(ExecutableExample callingTestCase)
@@ -23,6 +25,7 @@ public class DownloadPdfAndCheckContentScript extends ScriptTemplateParent
 		super(callingTestCase);
 		languageTemplatesCommon = new LanguageTemplatesCommon(this);
 		languageTemplatesHomePageIKSBasics = new LanguageTemplatesHomePageIKSBasics(this);
+		languageTemplatesPDF = new LanguageTemplatesPDF(this);
 		languageTemplatesPrint = new LanguageTemplatesPrint(this);
 	}
 

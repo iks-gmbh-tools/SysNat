@@ -41,7 +41,7 @@ public class GenerationRuntimeInfoClassLevelTest
 		// arrange
 		assertEquals("Application under test", "HelloWorldSpringBoot", result.getName() );
 		assertEquals("isWebApplication", "true", "" + result.isWebApplication() );
-		assertEquals("Application under test", 3, result.getStartParameter().size() );
+		assertEquals("Application under test", 3, result.getLoginParameter().size() );
 	}
 
 

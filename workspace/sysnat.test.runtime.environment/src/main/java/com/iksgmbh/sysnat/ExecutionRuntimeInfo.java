@@ -293,11 +293,13 @@ public class ExecutionRuntimeInfo
 		numberOfAllExecutedTestCases--;
 	}
 
-	private void addToSystemProperties(final String propertiesFilename) {
+	private void addToSystemProperties(final String propertiesFilename)  
+	{
 		System.out.println("Properties filename in use: " + propertiesFilename);
 
 		final File f = new File(propertiesFilename);
-		if (!f.exists()) {
+		if ( ! f.exists() ) 
+		{
 			RuntimeException e = new RuntimeException("The following necessary file is missing: " + f.getAbsolutePath());
 			e.printStackTrace();
 			throw e;

@@ -23,7 +23,7 @@ import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
 import com.iksgmbh.sysnat.domain.TestApplication;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
 import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.ErrorPageObject;
@@ -62,10 +62,10 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	//##########################################################################################
 	
 	@Override
-	public void doLogin(final HashMap<StartParameter,String> startParameter) 
+	public void doLogin(final HashMap<WebLoginParameter,String> startParameter) 
 	{
-		executableExample.inputText("username", startParameter.get(StartParameter.LOGINID));
-		executableExample.inputText("password", startParameter.get(StartParameter.PASSWORD));
+		executableExample.inputText("username", startParameter.get(WebLoginParameter.LOGINID));
+		executableExample.inputText("password", startParameter.get(WebLoginParameter.PASSWORD));
 		executableExample.clickButton("login_button");			
 	}
 
@@ -112,9 +112,9 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	@LanguageTemplate(value = "Login with ^^, ^^.")
 	public void loginWith(String username, String password)  
 	{
-		final HashMap<StartParameter, String> startParameter = new HashMap<>();
-		startParameter.put(StartParameter.LOGINID, username);
-		startParameter.put(StartParameter.PASSWORD, password);
+		final HashMap<WebLoginParameter, String> startParameter = new HashMap<>();
+		startParameter.put(WebLoginParameter.LOGINID, username);
+		startParameter.put(WebLoginParameter.PASSWORD, password);
 		doLogin(startParameter);
 		executableExample.addReportMessage("Login performed with <b>" + username + "</b>.");		
 	}
@@ -150,7 +150,7 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	public void relogin() 
 	{
 		TestApplication testApp = executionInfo.getTestApplication();
-		doLogin(testApp.getStartParameter());
+		doLogin(testApp.getLoginParameter());
 		executableExample.addReportMessage("Login has been perfomed with DefaultLoginData.");
 	}
 

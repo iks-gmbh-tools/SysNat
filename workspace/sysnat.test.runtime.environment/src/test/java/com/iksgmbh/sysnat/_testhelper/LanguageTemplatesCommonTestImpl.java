@@ -20,7 +20,7 @@ import java.util.HashMap;
 import org.junit.Before;
 
 import com.iksgmbh.sysnat.ExecutableExample;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
 
@@ -58,7 +58,7 @@ public class LanguageTemplatesCommonTestImpl extends LanguageTemplatesCommon imp
 	}
 
 	@Override
-	public void doLogin(HashMap<StartParameter, String> startParameter) {
+	public void doLogin(HashMap<WebLoginParameter, String> startParameter) {
 	}
 	
 }

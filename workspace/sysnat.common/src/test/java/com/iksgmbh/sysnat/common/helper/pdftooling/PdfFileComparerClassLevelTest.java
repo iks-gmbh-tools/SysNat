@@ -34,7 +34,9 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
  */
 public class PdfFileComparerClassLevelTest 
 {
-	private PdfFileComparer cut = new PdfFileComparer("../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf0.pdf");
+	private static final String TEST_DATA_DIR = "../sysnat.common/src/test/resources/PdfPageContentTestData";
+	
+	private PdfFileComparer cut = new PdfFileComparer(TEST_DATA_DIR + "/Pdf0.pdf");
 	
 	@Test
 	public void analysesPdfWithoutWhitespace() throws Exception 
@@ -49,13 +51,13 @@ public class PdfFileComparerClassLevelTest
 	@Test
 	public void comparesSimplePdfFiles() throws Exception 
 	{
-		final String[] pdfs = { "../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf0.pdf",
-								"../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf1.pdf",
-								"../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf2.pdf",
-								"../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf3.pdf",
-								"../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf4.pdf",
-								"../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf5.pdf",
-								"../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf6.pdf" };
+		final String[] pdfs = { TEST_DATA_DIR + "/Pdf0.pdf",
+								TEST_DATA_DIR + "/Pdf1.pdf",
+								TEST_DATA_DIR + "/Pdf2.pdf",
+								TEST_DATA_DIR + "/Pdf3.pdf",
+								TEST_DATA_DIR + "/Pdf4.pdf",
+								TEST_DATA_DIR + "/Pdf5.pdf",
+								TEST_DATA_DIR + "/Pdf6.pdf" };
 		
 		cut = new PdfFileComparer( pdfs[1] );
 		assertTrue("File contents of first two Pdfs are not equal.", cut.isContentIdenticalTo(pdfs[1]));
@@ -68,31 +70,31 @@ public class PdfFileComparerClassLevelTest
 	@Test
 	public void returnsPageWiseDifferences() throws Exception
 	{
-		cut = new PdfFileComparer( "../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_A.pdf" );
-		String result = cut.getDifferingPagesAsString("../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_B.pdf");
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_A.pdf" );
+		String result = cut.getDifferingPagesAsString(TEST_DATA_DIR + "/PDF_B.pdf");
 		assertEquals("Differences between PDFs", "PDFs unterscheiden sich auf den Seiten 2 und 3.", result);
 	}
 
 	@Test
 	public void returnsMessageForDifferentPageNumbers() throws Exception
 	{
-		String result = cut.getDifferingPagesAsString("../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_A.pdf");
+		String result = cut.getDifferingPagesAsString(TEST_DATA_DIR + "/PDF_A.pdf");
 		assertEquals("Differences between PDFs", "Die PDFs unterscheiden sich in der Seitenzahl.", result);
 	}
 
 	@Test
 	public void returnsFirstDifference() throws Exception
 	{
-		cut = new PdfFileComparer( "../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_A.pdf" );
-		String result = cut.getFirstDifference("../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_B.pdf");
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_A.pdf" );
+		String result = cut.getFirstDifference(TEST_DATA_DIR + "/PDF_B.pdf");
 		assertEquals("First difference between PDFs", "Seite 2, Zeile 2: [Two] # [2]", result);
 	}
 
 	@Test
 	public void returnsAllDifferingWords() throws Exception
 	{
-		cut = new PdfFileComparer( "../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_A.pdf" );
-		List<String> result = cut.getAllDifferingWordsOnPage(2, "../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_B.pdf");
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_A.pdf" );
+		List<String> result = cut.getAllDifferingWordsOnPage(2, TEST_DATA_DIR + "/PDF_B.pdf");
 		
 		assertEquals("On page 2 is 'Two' not equal to '2'.", result.get(0));
 		assertEquals("On page 2 is 'Five' not equal to '5'.", result.get(1));
@@ -102,10 +104,10 @@ public class PdfFileComparerClassLevelTest
 	public void returnsAllDifferingLinesOnPage() throws Exception
 	{
 		// arrange
-		cut = new PdfFileComparer( "../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_A.pdf" );
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_A.pdf" );
 		
 		// act
-		List<String> result = cut.getDifferingLinesOnPage("../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_B.pdf", 
+		List<String> result = cut.getDifferingLinesOnPage(TEST_DATA_DIR + "/PDF_B.pdf", 
 				                                          2, new PdfCompareIgnoreConfig());
 		
 		// assert
@@ -162,14 +164,14 @@ public class PdfFileComparerClassLevelTest
 	public void returnsFullDifferenceReport() throws Exception
 	{
 		// arrange
-		cut = new PdfFileComparer( "../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_A.pdf" );
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_A.pdf" );
 		
 		// act
-		String result = cut.getFullDifferenceReport("../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_B.pdf");
+		String result = cut.getFullDifferenceReport(TEST_DATA_DIR + "/PDF_B.pdf");
 		
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
-						"../sysnat.common/src/test/resources/PdfAnalyserTest/expectedDifferenceReport.txt");
+						TEST_DATA_DIR + "/expectedDifferenceReport.txt");
 		assertEquals("Difference report", expectedFileContent, result);
 	}
 
@@ -177,7 +179,7 @@ public class PdfFileComparerClassLevelTest
 	public void returnsDifferenceReport_IgnoreWithDateAndRegex() throws Exception
 	{
 		// arrange
-		cut = new PdfFileComparer( "../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_C.pdf" );
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_C.pdf" );
 		final List<DateFormat> dateFormatsToIgnore = new ArrayList<>();
 		dateFormatsToIgnore.add(new SimpleDateFormat("MM-yyyy"));
 		dateFormatsToIgnore.add(DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.GERMAN));
@@ -188,7 +190,7 @@ public class PdfFileComparerClassLevelTest
 				                                                          .withRegexPatterns(regexToIgnore);
 
 		// act
-		String result = cut.getDifferenceReport("../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_D.pdf",
+		String result = cut.getDifferenceReport(TEST_DATA_DIR + "/PDF_D.pdf",
 				                                ignoreConfig);
 		
 		// assert
@@ -202,7 +204,7 @@ public class PdfFileComparerClassLevelTest
 	public void returnsDifferenceReport_IgnoreWithLineDefinitions() throws Exception
 	{
 		// arrange
-		cut = new PdfFileComparer( "../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_C.pdf" );
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_C.pdf" );
 		final List<String> lineDefinitionsToIgnore = new ArrayList<>();
 		lineDefinitionsToIgnore.add("Seite 1, Zeile 1");
 		lineDefinitionsToIgnore.add("Seite 1, Zeile 2");
@@ -213,7 +215,7 @@ public class PdfFileComparerClassLevelTest
 		PdfCompareIgnoreConfig ignoreConfig = new PdfCompareIgnoreConfig().withLineDefinitions(lineDefinitionsToIgnore);
 
 		// act
-		String result = cut.getDifferenceReport("../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_D.pdf",
+		String result = cut.getDifferenceReport(TEST_DATA_DIR + "/PDF_D.pdf",
 				                                ignoreConfig);
 		
 		// assert
@@ -229,7 +231,7 @@ public class PdfFileComparerClassLevelTest
 	public void returnsDifferenceReport_IgnoreWithPrefixesAndSubstrings() throws Exception
 	{
 		// arrange
-		cut = new PdfFileComparer( "../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_A.pdf" );
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_A.pdf" );
 		final List<String> linePrefixesToIgnore = new ArrayList<>();
 		linePrefixesToIgnore.add("Gree");
 		linePrefixesToIgnore.add("5");
@@ -241,7 +243,7 @@ public class PdfFileComparerClassLevelTest
 				                                                          .withPrefixes(linePrefixesToIgnore);
 
 		// act
-		String result = cut.getDifferenceReport("../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_B.pdf",
+		String result = cut.getDifferenceReport(TEST_DATA_DIR + "/PDF_B.pdf",
 				                                ignoreConfig);
 		
 		// assert

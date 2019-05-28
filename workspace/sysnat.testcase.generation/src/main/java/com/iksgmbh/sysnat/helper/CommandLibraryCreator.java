@@ -61,7 +61,7 @@ public class CommandLibraryCreator
 		final String fileContent = buildFileContent();
 		String commandLibraryFilename = System.getProperty("sysnat.help.command.list.file");
 		if (commandLibraryFilename == null) {
-			System.err.println("Warning: cannor save Command Library File because its filename is not specified in the execution properties.");
+			System.err.println("Warning: Cannot save Command Library File because its filename is not specified in the execution properties.");
 		} else {
 			commandLibraryFilename = commandLibraryFilename.replace("<testapp>", 
 					                 GenerationRuntimeInfo.getInstance().getTestApplicationName());

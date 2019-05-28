@@ -18,6 +18,7 @@ package com.iksgmbh.sysnat.guicontrol;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import org.openqa.selenium.WebElement;
  */
 public interface GuiControl 
 {
+	void loadPage(String url);
 	void reloadCurrentPage();
 
 	Object getWebDriver();
@@ -124,4 +126,14 @@ public interface GuiControl
 
 	}
 
+	public default void pressEnter()
+	{
+	   try {
+	      Robot robot = new Robot();
+	      robot.keyPress(KeyEvent.VK_ENTER);
+	      robot.keyRelease(KeyEvent.VK_ENTER);
+	   } catch (AWTException e) {
+	      e.printStackTrace();
+	   }
+	}	
 }

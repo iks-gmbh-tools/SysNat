@@ -25,7 +25,7 @@ public class SysNatConstants
 
 	public enum BrowserType { CHROME, IE, FIREFOX, FIREFOX_45_9 };
 
-	public enum StartParameter { URL, LOGINID, PASSWORD };
+	public enum WebLoginParameter { URL, LOGINID, PASSWORD };
 	
 	public enum GuiType { Button, 
 		                  TextField,   // single line input field

@@ -17,7 +17,7 @@ package com.iksgmbh.sysnat.language_templates;
 
 import java.util.HashMap;
 
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
 
 /**
  * Contains methods to be implemented in the LanguageTemplate file that is specific to the TestApplication.
@@ -29,7 +29,7 @@ public interface LanguageTemplates
 {	
 	boolean isLoginPageVisible();
 	
-	public void doLogin(HashMap<StartParameter,String> startParameter);
+	public void doLogin(HashMap<WebLoginParameter,String> startParameter);
 	
 	public void doLogout();
 

@@ -95,7 +95,7 @@ public class TestExecution_ModuleLevelTest
 		fileList.add("MiniTestScript.java");
 		createJavaSourceFileInExecutionDir( testAppName, fileList, "com/iksgmbh/sysnat/test/integration/testcase/");
 
-		GenerationRuntimeInfo.getInstance();  // inits System properties
+		GenerationRuntimeInfo.getInstance();  // init System properties
 		SysNatTestUtils.assertReportFolderNotExistsBeginningWith("MiniTestCaseTestReport");
 		
 		final File resultFile = makeSureThatResultFileDoesNotExist("MiniTestScriptResult.txt");

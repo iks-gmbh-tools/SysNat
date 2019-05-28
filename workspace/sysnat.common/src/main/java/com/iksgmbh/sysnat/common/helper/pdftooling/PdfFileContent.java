@@ -44,13 +44,29 @@ public class PdfFileContent
 	//               P U B L I C    M E T H O D S
 	// #################################################################
 
+	public String getPdfFileName() {
+		return pdfFileName;
+	}
 	
 	public int getPageNumber() {
 		return pageContentList.size();
 	}
+	
+	public boolean doesFileContain(String text) {
+		return pageContentList.stream().filter(pageContent -> pageContent.getOriginalPageContent().contains(text)).findFirst().isPresent();
+	}
+
+	public boolean doesLineContain(String pageTextId, int lineNumber, String toSearch) {
+		return doesLineContain(findPageByTextIdentifier(pageTextId), lineNumber, toSearch);
+	}
 
 	public boolean doesLineContain(int pageNumber, int lineNumber, String toSearch) {
-		return getLine(pageNumber, lineNumber).contains(toSearch);
+		String line = getLine(pageNumber, lineNumber);
+		return line.contains(toSearch) || line.equals(toSearch);
+	}
+
+	public boolean doesLineEquals(String pageTextId, int lineNumber, String toSearch) {
+		return doesLineEquals(findPageByTextIdentifier(pageTextId), lineNumber, toSearch);
 	}
 
 	public boolean doesLineEquals(int pageNumber, int lineNumber, String toSearch) {
@@ -68,6 +84,15 @@ public class PdfFileContent
 	}
 
 	/**
+	 * @param pageTextId text that identifies a page
+	 * @param toSearch text to search for within the page
+	 * @return true if toSearch is found on page <pageNumber>
+	 */
+	public boolean doesPageContain(String pageTextId, String toSearch) {
+		return doesPageContain(findPageByTextIdentifier(pageTextId), toSearch);
+	}
+	
+	/**
 	 * @param pageNumber
 	 * @param toSearch
 	 * @return
@@ -78,6 +103,21 @@ public class PdfFileContent
 		int index = pageNumber - 1;
 		return pageContentList.get(index).getPageContentAsString().contains(toSearch);
 	}
+	
+	public boolean doesPageContainIgnoreWhiteSpace(String pageTextId, String toSearch) {
+		return doesPageContainIgnoreWhiteSpace(findPageByTextIdentifier(pageTextId), toSearch);
+	}
+	
+	public boolean doesPageContainIgnoreWhiteSpace(int pageNumber, String toSearch) 
+	{
+		if (pageNumber < 1 || pageNumber > getPageNumber() ) {
+			throw new IllegalArgumentException("Page number " + pageNumber + " out of range!");
+		}
+		
+		int index = pageNumber - 1;
+		String compressedPageContent = compress(pageContentList.get(index).getOriginalPageContent());
+		return compressedPageContent.contains( compress(toSearch) );
+	}		
 	
 	public boolean doesPageContain_IgnoreWhiteSpace(int pageNumber, String toSearch) 
 	{
@@ -99,6 +139,33 @@ public class PdfFileContent
 		int index = pageNumber - 1;
 		return pageContentList.get(index).getLines();
 	}
+	
+	public List<String> getLinesOfPage(String pageTextId) {
+		return getLinesOfPage(findPageByTextIdentifier(pageTextId));
+	}	
+	
+	/**
+	 * Searches for the frist page containing pageTextId and returns its number (starting with 1)
+	 * @param pageTextId
+	 * @return page number or -1 if pageTextId was not found
+	 */
+	public int findPageByTextIdentifier(String pageTextId)
+	{
+		if (isInteger(pageTextId)) {
+			return Integer.valueOf(pageTextId);
+		}
+		int toReturn = 0;
+
+		for (PdfPageContent pageContent: pageContentList) {
+			if (pageContent.getOriginalPageContent().contains(pageTextId)) {
+				return ++toReturn;
+			}
+			++toReturn;
+		}
+
+		return -1;
+	}
+
 
 	// #################################################################
 	//               P R I V A T E    M E T H O D S
@@ -151,4 +218,14 @@ public class PdfFileContent
 		return sb.toString();
 	}
 
+	private boolean isInteger(String s) {
+		char[] chars = s.trim().toCharArray();
+		for (Character c: chars) {
+			if (! Character.isDigit(c)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 }

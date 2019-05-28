@@ -14,7 +14,7 @@ public class PdfPageContent
 {
 	private int pageNo;
 	private String orignalPageContent;
-	private LinkedHashMap<Integer, String> lhMap = new LinkedHashMap<>();
+	private LinkedHashMap<Integer, String> lines = new LinkedHashMap<>();
 
 
 	public PdfPageContent(int aPageNo) {
@@ -34,7 +34,7 @@ public class PdfPageContent
 	
 	
 	public void addLine(int lineNo, String line) {
-		lhMap.put(Integer.valueOf(lineNo), line);
+		lines.put(Integer.valueOf(lineNo), line);
 	}
 
 	public void addLines(List<String> lines) 
@@ -63,18 +63,18 @@ public class PdfPageContent
 	public void apply(PdfCompareIgnoreConfig ignoreConfig) 
 	{
 		List<Integer> lineNumbersToIgnore = ignoreConfig.getLinesToIgnore(this);
-		lineNumbersToIgnore.forEach(lineNo -> lhMap.remove(lineNo));
+		lineNumbersToIgnore.forEach(lineNo -> lines.remove(lineNo));
 	}
 	
 	public List<String> getLines() 
 	{
-		final List<String> lines = new ArrayList<String>();
-		lines.addAll(lhMap.values());
-		return lines;
+		final List<String> toReturn = new ArrayList<String>();
+		toReturn.addAll(lines.values());
+		return toReturn;
 	}
 
 	public int getLineNumber(int index) {
-		return (int) lhMap.keySet().toArray()[index];
+		return (int) lines.keySet().toArray()[index];
 	}
 
 	// #################################################################
@@ -88,7 +88,7 @@ public class PdfPageContent
 		
 		for (String line : splitResult) {
 			lineNo++;
-			lhMap.put(Integer.valueOf(lineNo), line.trim());
+			lines.put(Integer.valueOf(lineNo), line.trim());
 		}
 	}
 	

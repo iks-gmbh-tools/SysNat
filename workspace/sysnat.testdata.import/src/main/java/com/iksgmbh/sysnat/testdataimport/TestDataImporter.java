@@ -22,9 +22,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
-import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
+import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+
 
 /**
  * Helper to load test data from dat-file or from Excel file.
@@ -33,7 +34,8 @@ import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
  */
 public class TestDataImporter 
 {
-	public static final String FACTORY_PACKAGE = "com.iksgmbh.helloworldspringboot.greeting.factory";
+	public static final String TESTDATA_LOCATION_SEPARATOR = "::";
+
 
 	protected static final char[] CHARS_TO_CUT_FROM_DATA_FILE_NAME = 
 		{'0','1','2','3','4','5','6','7','8','9','0','-','_', '.' };
@@ -42,7 +44,7 @@ public class TestDataImporter
 	String testdataId;
 	
 	/**
-	 * @param testdataId path to testdata dir 
+	 * @param aTestdataDir path to testdata dir
 	 *                   e.g. ../sysnat.natural.language.executable.examples/testdata/HelloWorldSpringBoot
 	 */
 	public TestDataImporter(final String aTestdataDir) {
@@ -53,7 +55,7 @@ public class TestDataImporter
 	 * Loads data from file(s). Data of each dataset found are
 	 * stored as key-value pairs of a Properties class instance.
 	 * 
-	 * @param testdataId either filename without extension
+	 * @param aTestdataId either filename without extension
 	 *                   or name of subdirectory
 	 * @return test data as a list of key-value pairs
 	 */
@@ -71,35 +73,70 @@ public class TestDataImporter
 
 	List<File> findFilesToLoad() 
 	{
-		final List<File> toReturn = FileFinder.searchFilesRecursively(new File(testdataDir), new FilenameFilter() 
+		File targetDir = new File(testdataDir);
+
+		if (! targetDir.exists()) {
+			throw new SysNatTestDataException("Das Testdatenverzeichnis '" + testdataDir + "' existiert nicht.");
+		}
+
+		final String filenameToSearch;
+		if (testdataId.contains( TESTDATA_LOCATION_SEPARATOR )) {
+			filenameToSearch = extractFilename(testdataId);
+		} else {
+			filenameToSearch = testdataId;
+		}
+
+		final List<File> toReturn = FileFinder.searchFilesRecursively(targetDir, new FilenameFilter()
 		{
 			@Override 
 			public boolean accept(File dir, String filename) 
 			{
-				if (! filename.endsWith(".dat") && ! filename.endsWith(".xlsx")) 
+				if (! filename.endsWith(".dat") && ! filename.endsWith(".xlsx") && ! filename.endsWith(".validation"))
 					return false;
-				
-				filename = SysNatStringUtil.cutExtension(filename);
-				filename = SysNatStringUtil.cutTrailingChars(filename, CHARS_TO_CUT_FROM_DATA_FILE_NAME);
-				
-				if (filename.equals(testdataId))
+
+				if (filename.equals(filenameToSearch))
 					return true;
-				
-				int pos = testdataId.indexOf('_');
+
+				filename = SysNatStringUtil.cutExtension(filename);
+
+				if ( ! filenameToSearch.contains("Testdaten") ) {
+					filename = SysNatStringUtil.cutTrailingChars(filename, CHARS_TO_CUT_FROM_DATA_FILE_NAME);
+				}
+
+				if (filename.equals(filenameToSearch))
+					return true;
+
+				int pos = filenameToSearch.indexOf('_');
+
+				if (pos > 0) {
+					String filenameCandidate = filenameToSearch.substring(0, pos);
+					return filenameCandidate.equals(filename);
+				}
+
+				pos = filenameToSearch.lastIndexOf('/');
 				if (pos == -1) 
 					return false;
 				
-				String filenameCandidate = testdataId.substring(0, pos);
-				
-				return filenameCandidate.equals(filename);
+				String filenameCandidate = filenameToSearch.substring(pos+1);
+				boolean ok = filenameCandidate.equals(filename);
+				if (ok) return filenameCandidate.equals(filename);
+
+				pos = filenameCandidate.lastIndexOf(".");
+				if (pos == -1) return false;
+				String filenameCandidateWithoutExtension = filenameCandidate.substring(0, pos);
+				return filenameCandidateWithoutExtension.equals(filename);
 			}
 		});
 		
 		if (toReturn.size() == 0) {
-			throw new SysNatTestDataException("Zu '" + testdataId + "' wurden in " + testdataDir + " keine Testdaten-Dateien gefunden.");
+			throw new SysNatTestDataException("Zu '" + filenameToSearch + "' wurden in " + testdataDir + " keine Testdaten-Dateien gefunden.");
 		}
 		
 		return toReturn;
+	}
+
+	private String extractFilename(String testdataId) {
+		return testdataId.split(TESTDATA_LOCATION_SEPARATOR)[0];
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -109,43 +146,73 @@ public class TestDataImporter
 		final Hashtable<String, Properties> dataSetsFromFile = loadDatasetsFromFile(file);
 		final List<String> datasetNames = new ArrayList(dataSetsFromFile.keySet());
 		//datasetNames.forEach(System.err::println);
-		
-		// Add only those datasets that match the testdataId read from the nlxx file!
-		datasetNames.stream().filter(name -> name.equals(testdataId) || name.startsWith(testdataId))
-		                     .forEach(name -> testdata.put(name, dataSetsFromFile.get(name)));
+
+
+		if (file.getName().endsWith(".dat")) {
+			// Add only those datasets that match the testdataId read from the nlxx file!
+			datasetNames.stream()
+					.filter(name -> name.equals(testdataId) || name.startsWith(testdataId) || testdataId.endsWith(name + ".dat"))
+					.forEach(name -> testdata.put(name, dataSetsFromFile.get(name)));
+		} else {
+			datasetNames.forEach(name -> testdata.put(name, dataSetsFromFile.get(name)));
+		}
 	}
 
 	private Hashtable<String, Properties> loadDatasetsFromFile(final File file) 
 	{
-		if (file.getName().endsWith(".dat")) 
-		{
-			final Hashtable<String, Properties> toReturn = new Hashtable<>();
-			final List<Properties> loadedDataSets = DatFileReader.doYourJob(file);
-			
-			if (loadedDataSets.size() == 1) {
-				String dataSetName = SysNatStringUtil.cutExtension(file.getName());
-				toReturn.put(dataSetName, loadedDataSets.get(0));
-			}
-			else
-			{				
-				int counter = 0;
-				for (Properties dataset : loadedDataSets) {
-					counter++;
-					String dataSetName = SysNatStringUtil.cutExtension(file.getName()) + "_" + counter;
-					toReturn.put(dataSetName, dataset);
-				}
-			}
-			
-			return toReturn;
+		if (file.getName().endsWith(".dat")) {
+			return loadFromDatFile(file);
 		}
-		
-		return loadDatasetsFromExcelFile(file);
-	}
-	
 
-	private Hashtable<String, Properties> loadDatasetsFromExcelFile(final File excelFile) 
+		if (file.getName().endsWith(".validation")) {
+			return loadFromValidationFile(file);
+		}
+
+		if (file.getName().endsWith(".xlsx")) {
+			return loadDatasetsFromExcelFile(file, testdataId);
+		}
+
+		throw new SysNatTestDataException("File type not supported for test data import: " + file.getName());
+	}
+
+	private Hashtable<String, Properties> loadFromValidationFile(File file)
 	{
-		return ExcelDataProvider.doYourJob(excelFile);
+		final Hashtable<String, Properties> toReturn = new Hashtable<>();
+		final Properties loadedDataSet = ValidationFileReader.doYourJob(file);
+		toReturn.put("ValidationData", loadedDataSet);
+		return toReturn;
+	}
+
+	private Hashtable<String, Properties> loadFromDatFile(File file)
+	{
+		final Hashtable<String, Properties> toReturn = new Hashtable<>();
+		final List<Properties> loadedDataSets = DatFileReader.doYourJob(file);
+
+		if (loadedDataSets.size() == 1) {
+			String dataSetName = SysNatStringUtil.cutExtension(file.getName());
+			toReturn.put(dataSetName, loadedDataSets.get(0));
+		}
+		else
+		{
+			int counter = 0;
+			for (Properties dataset : loadedDataSets) {
+				counter++;
+				String dataSetName = SysNatStringUtil.cutExtension(file.getName()) + "_" + counter;
+				toReturn.put(dataSetName, dataset);
+			}
+		}
+
+		return toReturn;
+	}
+
+	private Hashtable<String, Properties> loadDatasetsFromExcelFile(final File excelFile, String testdataId)
+	{
+		String testDataLocation = testdataId;
+		int pos = testdataId.indexOf(TESTDATA_LOCATION_SEPARATOR);
+		if (pos > -1) {
+			testDataLocation = testdataId.substring(pos + TESTDATA_LOCATION_SEPARATOR.length());
+		}
+		return ExcelDataProvider.doYourJob(new File(excelFile.getAbsolutePath()));
 	}
 
 	

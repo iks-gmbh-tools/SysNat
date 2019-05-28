@@ -21,7 +21,7 @@ import org.junit.Test;
 
 public class PdfFileContentClassLevelTest 
 {
-	private PdfFileContent cut = new PdfFileContent("../sysnat.common/src/test/resources/PdfAnalyserTest/Pdf0.pdf");
+	private PdfFileContent cut = new PdfFileContent("../sysnat.common/src/test/resources/PdfPageContentTestData/Pdf0.pdf");
 	
 	@Test
 	public void analysesPdfWithWhitespace() throws Exception 
@@ -56,4 +56,34 @@ public class PdfFileContentClassLevelTest
 		}
 	}
 
+    @Test
+    public void appliesAllAnalysisMethodOfCUT() throws Exception
+    {
+    	cut = new PdfFileContent("../sysnat.common/src/test/resources/PdfPageContentTestData/IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf");
+    	
+        assertEquals("Page Number", 8, cut.getPageNumber() );
+        assertEquals("Page Number", 8, cut.findPageByTextIdentifier("Fazit") );
+
+        assertFalse("Unexpected content.", cut.doesFileContain("Dieser Text darf nicht vorhanden sein.") );
+        assertTrue("Unexpected content", cut.doesFileContain("Softwarequalität") );
+
+
+        assertTrue("Unexpected Line", cut.doesLineEquals(1, 1, "Softwarequalität zum Anfassen: Gibt es so etwas?") );
+        assertTrue("Unexpected Line", cut.doesLineEquals("Was ist Softwarequalität?", 4, "Gibt es so etwas?") );
+
+        assertTrue("Unexpected Line", cut.doesLineContain(1, 2, "clean-coding-cosmos") );
+        assertTrue("Unexpected Line", cut.doesLineContain("Was ist Softwarequalität?", 2, "clean-coding-cosmos") );
+
+        assertFalse("Unexpected Page", cut.doesPageContain(2, "Abb. 4") );
+        assertTrue("Unexpected Page", cut.doesPageContain(2, "Abb. 3") );
+        assertTrue("Unexpected Page", cut.doesPageContain("Literatur & Links", "http://clean-coding-cosmos.de/der-entwicklerkosmos/softwarequalitaet-1") );
+        assertTrue("Unexpected Page", cut.doesPageContain("Literatur & Links", "http://clean-coding-cosmos.de/der-entwicklerkosmos/softwarequalitaet-4") );
+
+        assertTrue("Unexpected Page", cut.doesPageContainIgnoreWhiteSpace(3, "DasQualitätsmodell    in   Abbildung 3") );
+        assertTrue("Unexpected Page", cut.doesPageContainIgnoreWhiteSpace("Tabelle 1:", "DasQualitätsmodell    in   Abbildung 3") );
+
+        assertEquals("Line Number", 60, cut.getLinesOfPage("Abb. 4:").size() );
+        assertEquals("Line Number", 263, cut.getLinesOfPage(4).size() );
+    }
+	
 }

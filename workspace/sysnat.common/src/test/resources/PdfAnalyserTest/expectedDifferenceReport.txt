@@ -1,8 +1,0 @@
-Unterschiede zwischen
-../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_A.pdf (Seitenzahl: 4)
-und
-../sysnat.common/src/test/resources/PdfAnalyserTest/PDF_B.pdf (Seitenzahl: 4)
---------------------------------------------------------------------
-Seite 2, Zeile 2: [Two] # [2]
-Seite 2, Zeile 5: [Five] # [5]
-Seite 3, Zeile 3: [Green] # [Green and]

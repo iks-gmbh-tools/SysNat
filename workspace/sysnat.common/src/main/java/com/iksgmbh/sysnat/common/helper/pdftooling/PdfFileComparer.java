@@ -173,6 +173,10 @@ public class PdfFileComparer
 			                          final PdfCompareIgnoreConfig ignoreConfig) throws IOException 
 	{
 		final Map<Integer, List<String>> differences = getDifferences(anotherPdf, ignoreConfig); // new way
+		
+		if (differences == null) {
+			return getDifferenceReport(anotherPdf, null, null);
+		}
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final List<Integer> differingPages = new ArrayList(differences.keySet());
@@ -189,6 +193,9 @@ public class PdfFileComparer
 		final Map<Integer, List<String>> toReturn = new HashMap<>();
 		
 		List<Integer> differingPages = getDifferingPages(anotherPdf, ignoreConfig);
+		if (differingPages == null) {
+			return null;
+		}
 		
 		for (int i = 0; i < differingPages.size(); i++) 
 		{

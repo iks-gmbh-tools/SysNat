@@ -26,9 +26,8 @@ import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.StartParameter;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
-import com.iksgmbh.sysnat.language_templates.homepageiks.pageobject.ZeiterfassungPageObject;
 
 /**
  * Contains the basic language templates for IKS-Online tests.
@@ -41,13 +40,11 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 	private ExecutableExample executableExample;
 	@SuppressWarnings("unused")
 	private ExecutionRuntimeInfo executionInfo;
-	private ZeiterfassungPageObject zeitErfassungPageObject;
 	
 	public LanguageTemplatesHomePageIKSBasics(ExecutableExample aExecutableExample) 
 	{
 		this.executableExample = aExecutableExample;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();
-		this.zeitErfassungPageObject = new ZeiterfassungPageObject(aExecutableExample);
 	}
 
 	private String getPageName() 
@@ -73,7 +70,7 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 	//##########################################################################################
 	
 	@Override
-	public void doLogin(final HashMap<StartParameter,String> startParameter) {
+	public void doLogin(final HashMap<WebLoginParameter,String> startParameter) {
 		// no login/logout for IKS Homepage
 	}
 
@@ -140,25 +137,6 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 	public void clickMainMenuItem(String menuItemText) {
 		executableExample.clickLink(menuItemText);
 		executableExample.addReportMessage("Der Hauptmenüpunkt <b>" + menuItemText + "</b> wurde geklickt.");
-	}
-
-	@LanguageTemplate(value = "Klicke die Schaltfläche ^^.")
-	public void clickButton(String buttonName) 
-	{
-		boolean ok = true;
-		String pageName = getPageName();
-		
-		if ("Zeiterfassung".equals(pageName)) {
-			zeitErfassungPageObject.clickButton(buttonName);
-		} else {
-			ok = false;
-		}
-		
-		if (ok) {
-			executableExample.addReportMessage("Button <b>" + buttonName + "</b> wurde geklickt.");
-		} else {
-			executableExample.failWithMessage("Die aktuelle Datenmaske (siehe Screenshot) ist unbekannt.");
-		}
 	}
 
 	@LanguageTemplate(value = "Download PDF ^^ als <>.")

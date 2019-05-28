@@ -22,7 +22,14 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Data used to identify lines that have to be ignored for comparing. 
+ * Data used to identify lines that have to be ignored for comparing.
+ * The following means exist to identify date lines:
+ * 
+ * a) lines that contain a date value (either whole line is a date value or the line ends or starts with a date value)
+ * b) lines that contain at least one of the defined character sequences
+ * c) lines that start with at least one of the defined prefixes
+ * d) lines that match at least on of the defined regex expressions
+ * e) lines that match one of the defined line definition (pageno-lineno-combinations)
  */
 public class PdfCompareIgnoreConfig 
 {
@@ -64,7 +71,11 @@ public class PdfCompareIgnoreConfig
 	}
 
 	
-	// Builder Methods	
+	// public Methods
+	
+	public List<String> getRegexPatterns() {
+		return regexPatterns;
+	}
 	
 	public boolean checkForDateLines() {
 		return dateformats != null && ! dateformats.isEmpty();
@@ -241,15 +252,19 @@ public class PdfCompareIgnoreConfig
 	private String buildLineDefinitionIdentifier(int pageNo, int lineNo) {
 		return BUNDLE.getString("PAGE") + " " + pageNo + ", " + BUNDLE.getString("LINE") + " " + lineNo;
 	}
-
-	private boolean isDateLine(String lineWithoutSpace) 
-	{
-		return dateformats.stream()
-				          .filter(dateformat -> isDateLine(lineWithoutSpace, dateformat))
-				          .findFirst()
-				          .isPresent();
+	
+	private boolean isDateLine(String lineWithoutSpace) {
+		return isDate(lineWithoutSpace) || startsWithDate(lineWithoutSpace) || endsWithDate(lineWithoutSpace); 
 	}
 	
+
+	private boolean isDate(String s) 
+	{
+		return dateformats.stream()
+				          .filter(dateformat -> isDateLine(s, dateformat))
+				          .findFirst()
+				          .isPresent();
+	}	
 	
 	private boolean isDateLine(String lineWithoutSpace, DateFormat dateformat) 
 	{
@@ -261,5 +276,21 @@ public class PdfCompareIgnoreConfig
         }	
 	}
 
+	private boolean startsWithDate(String lineWithoutSpace) 
+	{
+		if (lineWithoutSpace.length() < 11)
+			return false;
+		
+		return isDate(lineWithoutSpace.substring(0,  10));
+	}
+	
+	private boolean endsWithDate(String lineWithoutSpace) 
+	{
+		int length = lineWithoutSpace.length();
+		if (length < 11)
+			return false;
+		
+		return isDate(lineWithoutSpace.substring(length-10));
+	}
 	
 }

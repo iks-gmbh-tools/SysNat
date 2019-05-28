@@ -40,7 +40,7 @@ import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
  * 
  * @author Reik Oberrath
  */
-public class TestCaseGeneration_ModuleLevelTest 
+public class TestcaseGeneration_ModuleLevelTest 
 {
 	private String testInputDir;
 

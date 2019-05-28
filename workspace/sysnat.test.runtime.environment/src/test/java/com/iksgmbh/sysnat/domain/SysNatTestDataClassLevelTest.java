@@ -63,21 +63,6 @@ public class SysNatTestDataClassLevelTest
 	}
 	
 	@Test
-	public void throwsExceptionForAmbiguousDataset() throws Exception 
-	{
-		try {
-			// act
-			cut.getValue("aFieldName");
-			fail("Expected exception not thrown!");
-		} catch (Exception e) {
-			// assert
-			assertEquals("Error Message", "Es gibt 3 Testdatensätze. "
-					     + "Von welchem wird der Wert für <b>aFieldName</b> benötigt?", 
-					     e.getMessage() );	
-		}
-	}
-	
-	@Test
 	public void returnsValueForFieldnameWithFullReference() throws Exception 
 	{
 		// act
@@ -94,7 +79,7 @@ public class SysNatTestDataClassLevelTest
 		cut.setMarker(cut.getDataSet("TestDataset_2"));
 		
 		// act
-		final String result = cut.findValueForValueReference(":firstKey");
+		final String result = cut.findValueForValueReference("::firstKey");
 		
 		// assert
 		assertEquals("value of field", "firstValue", result);
@@ -109,10 +94,10 @@ public class SysNatTestDataClassLevelTest
 		final SysNatDataset dataset = new SysNatDataset("TestDataset");
 		dataset.setProperty("firstKey", "firstValue");
 		dataset.setProperty("anotherKey", "anotherValue");
-		cut.addDataset(dataset.getName(), dataset );
+		cut.addDataset(dataset.getName(), dataset);
 		
 		// act
-		final String result = cut.findValueForValueReference(":firstKey");
+		final String result = cut.findValueForValueReference("::firstKey");
 		
 		// assert
 		assertEquals("value of field", "firstValue", result);

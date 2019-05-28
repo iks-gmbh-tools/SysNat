@@ -7,6 +7,7 @@ import org.junit.Before;
 import com.iksgmbh.sysnat.testcasejavatemplate.TestCaseTemplateParent;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
 import com.iksgmbh.sysnat.language_templates.homepageiks.LanguageTemplatesHomePageIKSBasics;
+import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesPDF;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesPrint;
 import java.io.File;
 
@@ -19,6 +20,7 @@ public class PruefeHauptmenuepunkte_1_Test extends TestCaseTemplateParent
 
 protected LanguageTemplatesCommon languageTemplatesCommon;
 protected LanguageTemplatesHomePageIKSBasics languageTemplatesHomePageIKSBasics;
+protected LanguageTemplatesPDF languageTemplatesPDF;
 protected LanguageTemplatesPrint languageTemplatesPrint;
 
 
@@ -28,6 +30,7 @@ public void setUp()
 super.setUp();
 languageTemplatesCommon = new LanguageTemplatesCommon(this);
 languageTemplatesHomePageIKSBasics = new LanguageTemplatesHomePageIKSBasics(this);
+languageTemplatesPDF = new LanguageTemplatesPDF(this);
 languageTemplatesPrint = new LanguageTemplatesPrint(this);
 }
 
@@ -39,6 +42,7 @@ if (languageTemplatesHomePageIKSBasics != null) languageTemplatesHomePageIKSBasi
 }
 languageTemplatesCommon = null;
 languageTemplatesHomePageIKSBasics = null;
+languageTemplatesPDF = null;
 languageTemplatesPrint = null;
 super.shutdown();
 }

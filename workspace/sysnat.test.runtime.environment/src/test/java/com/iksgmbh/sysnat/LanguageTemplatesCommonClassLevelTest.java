@@ -106,14 +106,14 @@ public class LanguageTemplatesCommonClassLevelTest
 		executableExample.executeTestCase();
 
 		// assert
-		System.out.println(executableExample.getReportMessages());
+		//System.err.println(executableExample.getReportMessages());
 		
-		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Start: <b>MainTestScript</b>"));
-		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Start: <b>SubTestScript</b>"));
-		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Subscript executed for aMenuName and aLink."));
-		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Ende: <b>SubTestScript</b>"));
-		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Mainscript executed."));
-		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Ende: <b>MainTestScript</b>"));
+		assertTrue("Expected report message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Start: <b>MainTestScript</b>"));
+		assertTrue("Expected report message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Start: <b>SubTestScript</b>"));
+		assertTrue("Expected report message not found.", doesMessagesContain(executableExample.getReportMessages(), "Subscript executed for aMenu and aLink."));
+		assertTrue("Expected report message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Ende: <b>SubTestScript</b>"));
+		assertTrue("Expected report message not found.", doesMessagesContain(executableExample.getReportMessages(), "Mainscript executed."));
+		assertTrue("Expected report message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Ende: <b>MainTestScript</b>"));
 	}
 
 	@Test
