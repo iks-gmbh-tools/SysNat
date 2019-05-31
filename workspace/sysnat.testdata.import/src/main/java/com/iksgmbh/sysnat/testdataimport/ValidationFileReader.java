@@ -15,13 +15,15 @@
  */
 package com.iksgmbh.sysnat.testdataimport;
 
-import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
-import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
-
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 /**
  * Reads a dat file and parses the content to list of properties.
@@ -30,26 +32,35 @@ import java.util.Properties;
  */
 public class ValidationFileReader
 {
-	private static final String PATTERN_SEARCH_WHOLE_DOCUMENT = "Das Dokument enthält den Text \"";
-	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE1 = "Das Dokument enthält auf der Seite mit dem Text \"";
-	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE2 = "Das Dokument enthält auf Seite ";
-	private static final String PATTERN_SEARCH_IN_LINE = " in Zeile ";
-	private static final String PATTERN_SEARCH_TEXT_IDENT = " den Text ";
+	static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/PDFContentValidation", Locale.getDefault());
+	static final ResourceBundle BUNDLE_EN = ResourceBundle.getBundle("bundles/PDFContentValidation", Locale.ENGLISH);
 
+	private static final String PATTERN_SEARCH_WHOLE_DOCUMENT = BUNDLE.getString("Pattern_FileContains") + " \"";
+	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE1 = BUNDLE.getString("Pattern_PageContains_Variant1") + " \"";
+	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE2 = BUNDLE.getString("Pattern_PageContains_Variant2") + " ";
+	private static final String PATTERN_SEARCH_IN_LINE = " " + BUNDLE.getString("Pattern_LineContains") + " ";
+	private static final String PATTERN_SEQUENCE = " " + BUNDLE.getString("Pattern_sequence") + " ";
+
+	private static final String PATTERN_SEARCH_WHOLE_DOCUMENT_EN = BUNDLE_EN.getString("Pattern_FileContains") + " \"";
+	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE1_EN = BUNDLE_EN.getString("Pattern_PageContains_Variant1") + " \"";
+	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE2_EN = BUNDLE_EN.getString("Pattern_PageContains_Variant2") + " ";
+	private static final String PATTERN_SEARCH_IN_LINE_EN = " " + BUNDLE_EN.getString("Pattern_LineContains") + " ";
+	private static final String PATTERN_SEQUENCE_EN = " " + BUNDLE_EN.getString("Pattern_sequence") + " ";
+	
 	private File inputFile;
 
 	ValidationFileReader(final File aDataFile) {
 		inputFile = aDataFile;
 	}
 	
-	public static Properties doYourJob(final File file)
+	public static LinkedHashMap<String, String> doYourJob(final File file)
 	{
 		return new ValidationFileReader(file).readData();
 	}
 
-	private Properties readData()
+	private LinkedHashMap<String, String> readData()
 	{
-		final Properties toReturn = new Properties();
+		final LinkedHashMap<String, String> toReturn = new LinkedHashMap<>();
 		final List<String> lines = extractDataLines(SysNatFileUtil.readTextFile(inputFile));
 
 		for (String line: lines) {
@@ -59,30 +70,41 @@ public class ValidationFileReader
 		return toReturn;
 	}
 
-	private void addToProperties(String line, Properties toReturn)
+	void addToProperties(String line, LinkedHashMap<String, String> toReturn)
 	{
-		List<String> lineValues = extractValues(line);
-		switch (lineValues.size())
+		try {
+			List<String> lineValues = extractValues(line);
+			switch (lineValues.size())
+			{
+				case 1: toReturn.put(lineValues.get(0), "");
+						break;
+				case 2: toReturn.put(lineValues.get(0), lineValues.get(1));
+						break;
+				case 3: toReturn.put(lineValues.get(0), lineValues.get(1) + "::" + lineValues.get(2));
+						break;
+			}
+		}
+		catch (Exception e) 
 		{
-			case 1: toReturn.put(lineValues.get(0), "");
-			        break;
-			case 2: toReturn.put(lineValues.get(0), lineValues.get(1));
-				    break;
-			case 3: toReturn.put(lineValues.get(0), lineValues.get(1) + "::" + lineValues.get(2));
-				    break;
+			//e.printStackTrace();
+			String errorMessage = BUNDLE.getString("InvalidValidationRuleMessage");
+			errorMessage = errorMessage.replace("XY", line);
+			throw new SysNatTestDataException(errorMessage);
 		}
 	}
 
 	private List<String> extractValues(String line)
 	{
 		final List<String> lineValues = new ArrayList<>();
-		String fullLine = line;
 		String textToSearchFor = null;
 
-
 		if (line.startsWith(PATTERN_SEARCH_WHOLE_DOCUMENT)) {
-			textToSearchFor = line.substring(PATTERN_SEARCH_WHOLE_DOCUMENT.length());
-			textToSearchFor = textToSearchFor.substring(0, textToSearchFor.length()-1);
+			textToSearchFor = getTextToSearchFor(line, PATTERN_SEARCH_WHOLE_DOCUMENT);
+			lineValues.add(textToSearchFor);
+			return lineValues;
+		}
+		if (line.startsWith(PATTERN_SEARCH_WHOLE_DOCUMENT_EN)) {
+			textToSearchFor = getTextToSearchFor(line, PATTERN_SEARCH_WHOLE_DOCUMENT_EN);
 			lineValues.add(textToSearchFor);
 			return lineValues;
 		}
@@ -100,8 +122,16 @@ public class ValidationFileReader
 			int pos = line.indexOf(' ');
 			pageToSearchIn = line.substring(0, pos);
 			line = line.substring(pos);
-		} else {
-			throw new SysNatTestDataException("Zeile nicht verständlich: '" + fullLine + "'.");
+		} else if (line.startsWith(PATTERN_SEARCH_IN_PAGE_VARIANTE1_EN)) {
+			line = line.substring(PATTERN_SEARCH_IN_PAGE_VARIANTE1_EN.length());
+			int pos = line.indexOf('"');
+			pageToSearchIn = line.substring(0, pos);
+			line = line.substring(pos);
+		} else if (line.startsWith(PATTERN_SEARCH_IN_PAGE_VARIANTE2_EN)) {
+			line = line.substring(PATTERN_SEARCH_IN_PAGE_VARIANTE2_EN.length());
+			int pos = line.indexOf(' ');
+			pageToSearchIn = line.substring(0, pos);
+			line = line.substring(pos);
 		}
 
 		if (line.startsWith(PATTERN_SEARCH_IN_LINE))
@@ -110,11 +140,28 @@ public class ValidationFileReader
 			int pos = line.indexOf(' ');
 			lineNo = line.substring(0, pos);
 			line = line.substring(pos);
+		} 
+		else if (line.startsWith(PATTERN_SEARCH_IN_LINE_EN)) 
+		{
+			line = line.substring(PATTERN_SEARCH_IN_LINE_EN.length());
+			int pos = line.indexOf(' ');
+			lineNo = line.substring(0, pos);
+			line = line.substring(pos);
 		}
 
-		if (line.contains(PATTERN_SEARCH_TEXT_IDENT)) {
-			textToSearchFor = line.substring(PATTERN_SEARCH_TEXT_IDENT.length());
-			textToSearchFor = textToSearchFor.substring(1, textToSearchFor .length()-1);
+		if (line.contains(PATTERN_SEQUENCE)) 
+		{
+			textToSearchFor = line.substring(PATTERN_SEQUENCE.length());
+			int pos1 = textToSearchFor.indexOf('"');
+			int pos2 = textToSearchFor.lastIndexOf('"');
+			textToSearchFor = textToSearchFor.substring(pos1+1, pos2);
+		} 
+		else if (line.contains(PATTERN_SEQUENCE_EN)) 
+		{
+			textToSearchFor = line.substring(PATTERN_SEQUENCE_EN.length());
+			int pos1 = textToSearchFor.indexOf('"');
+			int pos2 = textToSearchFor.lastIndexOf('"');
+			textToSearchFor = textToSearchFor.substring(pos1+1, pos2);
 		}
 
 
@@ -123,6 +170,14 @@ public class ValidationFileReader
 		if (lineNo != null) lineValues.add(lineNo.trim());
 
 		return lineValues;
+	}
+
+	private String getTextToSearchFor(final String line, 
+			                          final String pattern)
+	{
+		String textToSearchFor = line.substring(pattern.length());
+		int pos = textToSearchFor.indexOf('"');
+		return textToSearchFor.substring(0, pos);
 	}
 
 

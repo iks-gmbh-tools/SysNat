@@ -15,33 +15,34 @@
  */
 package com.iksgmbh.sysnat.language_templates.common;
 
-import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIER;
-
 import java.io.File;
 import java.util.List;
 
 import org.openqa.selenium.WebDriver;
 
 import com.iksgmbh.sysnat.ExecutableExample;
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.domain.FileList;
-import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
-import com.iksgmbh.sysnat.common.helper.pdftooling.PdfFileContent;
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 @LanguageTemplateContainer
-public class LanguageTemplatesPrint 
+public class LanguageTemplatesDownload 
 {
 	public static final String NO_PDF_MESSAGE = "Problem: Es wurde keine PDF-Datei erzeugt!";
 
 	private ExecutableExample executableExample;
 	
-	public LanguageTemplatesPrint(ExecutableExample aExecutableExample) {
+	public LanguageTemplatesDownload(ExecutableExample aExecutableExample) {
 		executableExample = aExecutableExample;
 	}
 	
+	// ###########################################################################
+	//            L a n g u a g e   T e m p l a t e   M e t h o d s
+	// ###########################################################################
+	
+	@LanguageTemplate("List of PDF files in Download directory ^^ is saved as <>.")
 	@LanguageTemplate("Die Liste der PDF-Dateien im Download-Verzeichnis ^^ als <> festgehalten.")
 	public FileList getCurrentPdfFileList(String fileListName) 
 	{
@@ -53,6 +54,7 @@ public class LanguageTemplatesPrint
    		return toReturn;
 	}
 
+	@LanguageTemplate("Is the current number of PDF file in the Download directory by ^^ larger than in ^^?")
 	@LanguageTemplate("Ist die aktuelle Zahl der PDF-Dateien im Download-Verzeichnis um ^^ höher als in der ^^?")
 	public void compareFileList(int number, FileList oldPdfFiles) 
 	{
@@ -63,37 +65,18 @@ public class LanguageTemplatesPrint
 		executableExample.answerQuestion(question, ok);
 	}
 
-	@LanguageTemplate("Die jüngste PDF-Datei im Download-Verzeichnis ^^ wird als <> festgehalten.")
-	public File storeLastPdfFile(String fileName) 
+	@LanguageTemplate("The downloaded PDF is saved as <>.")
+	@LanguageTemplate("Das heruntergeladene PDF wird als <> festgehalten.")
+	public File storeLastPdfFile() 
 	{
-		FileList currentFileList = SysNatFileUtil.findDownloadFiles("pdf");
-		long millisAtTestStart = ExecutionRuntimeInfo.getInstance().getStartPointOfTime().getTime();
-		File latestPdfFile = SysNatFileUtil.findLatest(currentFileList, millisAtTestStart);
+		File latestPdfFile = SysNatFileUtil.findRecentDownloadFile(2000);
 		if (latestPdfFile == null) {
-			return null;
+			throw new SysNatException("No PDF found that was recently downloaded.");
 		}
 		return latestPdfFile;
 	}
 	
-	@LanguageTemplate("Enthält das Dokument ^^ genau ^^ Seite(n)?")
-	public void doesDocumentWithNameContainExcactNumberOfPages(String documentName, int expectedPageNumber) 
-	{
-		File file = (File) executableExample.getTestObject(documentName);
-		if (file == null) {
-			throw new SysNatTestDataException("The document <b>" + documentName + "</b> is unknown and must be defined as return value before this instruction is called.");
-		}
-		doesDocumentContainExcactNumberOfPages(file, expectedPageNumber);
-	}
-	
-	@LanguageTemplate("Enthält das Dokument '' genau ^^ Seite(n)?")
-	public void doesDocumentContainExcactNumberOfPages(File document, int expectedPageNumber) 
-	{
-		final PdfFileContent pdfAnalyser = new PdfFileContent(document.getAbsolutePath());
-		final boolean ok = expectedPageNumber == pdfAnalyser.getPageNumber();
-		final String question = "Enhält das Dokument <b>" + document.getName() + "</b> genau <b>" + expectedPageNumber + "</b> Seite(n)" + QUESTION_IDENTIFIER;
-		executableExample.answerQuestion(question, ok);	
-	}
-
+	@LanguageTemplate("Close PDF window ^^.")
 	@LanguageTemplate("Schließe das PDF-Fenster ^^.")
 	public void closePDFWindow(String windowTitle)
 	{
@@ -111,6 +94,10 @@ public class LanguageTemplatesPrint
 		executableExample.sleep(1000); // give system time 
 	}
 
+	// ###########################################################################
+	//                    P r i v a t e   M e t h o d s
+	// ###########################################################################
+	
 	private boolean doesWindowWithTitleExists(String windowTitlePart) 
 	{
 		final List<String> result = executableExample.executeCommandAndListOutput("tasklist /v");

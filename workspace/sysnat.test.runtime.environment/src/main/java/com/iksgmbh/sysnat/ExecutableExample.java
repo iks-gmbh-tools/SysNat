@@ -740,6 +740,9 @@ abstract public class ExecutableExample
 	
 	public void answerQuestion(final String question, final boolean  ok)
 	{
+		if (question.contains("Home")) {
+			System.out.println();
+		}
 		if (ok) { 
 			addReportMessage(question + YES); 
 		} else {

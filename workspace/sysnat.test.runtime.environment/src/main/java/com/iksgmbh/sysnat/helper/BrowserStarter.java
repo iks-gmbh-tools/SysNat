@@ -18,10 +18,6 @@ package com.iksgmbh.sysnat.helper;
 import java.io.File;
 import java.net.MalformedURLException;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.common.helper.HtmlLauncher;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants;
-import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -32,7 +28,10 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class BrowserStarter 
 {
@@ -203,7 +202,7 @@ public class BrowserStarter
    
     private FirefoxBinary getFireFoxBinary(final String systemPropertyKey) 
     {
-      final File firefoxExe = new File( HtmlLauncher.getPathToFirefoxBinary(systemPropertyKey) + "\\firefox.exe");
+      final File firefoxExe = SysNatFileUtil.getFirefoxExecutable();
       if (! firefoxExe.exists()) {
          throw new RuntimeException("Firefox Executable not found: " + firefoxExe.getAbsolutePath());
       }
@@ -217,7 +216,7 @@ public class BrowserStarter
    
    private String getExecutable(final String executableType)
    {
-      String path = System.getProperty("path.to.webdrivers").replace("<root.path>", System.getProperty("root.path"));
+      String path = System.getProperty("path.to.webdrivers").replace(SysNatConstants.ROOT_PATH_PLACEHOLDER, System.getProperty("root.path"));
       String toReturn = path + "/" + System.getProperty( executableType );
       if ( ! new File(toReturn).exists() ) {
          throw new RuntimeException("Could not find: " + executableType);

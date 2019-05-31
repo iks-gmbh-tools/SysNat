@@ -114,7 +114,8 @@ public class LanguageTemplateCollector
 	/**
 	 * check for duplicates in the naturalLanguagePattern of the LanguageTemplates
 	 */
-	private void validate(HashMap<Filename, List<LanguageTemplatePattern>> toReturn) {
+	private void validate(HashMap<Filename, List<LanguageTemplatePattern>> toReturn) 
+	{
 		final List<LanguageTemplatePattern> naturalLanguagePatterns = new ArrayList<>();
 		Set<Filename> keySet = toReturn.keySet();
 		for (Filename key : keySet) {
@@ -126,7 +127,7 @@ public class LanguageTemplateCollector
 		}
 	}
 
-	private void removeFirstElementIfUniqueOrThrowException(List<LanguageTemplatePattern> naturalLanguagePatterns) 
+	private void removeFirstElementIfUniqueOrThrowException(final List<LanguageTemplatePattern> naturalLanguagePatterns) 
 	{
 		LanguageTemplatePattern firstElement = naturalLanguagePatterns.get(0);
 		naturalLanguagePatterns.remove(0);
@@ -134,7 +135,7 @@ public class LanguageTemplateCollector
 	}
 
 	private void compareNaturalLanguagePatterns(final LanguageTemplatePattern pattern1,
-			final LanguageTemplatePattern pattern2) 
+											    final LanguageTemplatePattern pattern2) 
 	{
 		if (pattern1.isIdentical(pattern2)) {
 			ExceptionHandlingUtil.throwClassifiedException(ErrorCode.LANGUAGE_TEMPLATE_PARSING__DUPLICATES,

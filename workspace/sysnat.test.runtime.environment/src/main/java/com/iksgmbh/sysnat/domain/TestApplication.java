@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.common.utils.ExceptionHandlingUtil;
 import com.iksgmbh.sysnat.common.utils.PropertiesUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 
@@ -31,16 +31,18 @@ public class TestApplication
 {
    private String name;
    private String targetEnvironmentAsString;
+   private String propertiesFileName;
    private boolean isWebApplication;
    private boolean withLogin;
    private Properties applicationProperties;
    private HashMap<SysNatConstants.WebLoginParameter,String> loginParameter = new HashMap<>();
 
    public TestApplication(final String anApplicationName,
-                          final String propertiesFileName,
+                          final String aPropertiesFileName,
                           final String atargetEnvironmentAsString)
    {
       this.name = anApplicationName;
+      this.propertiesFileName = aPropertiesFileName;
       this.targetEnvironmentAsString = atargetEnvironmentAsString;
 
       applicationProperties = PropertiesUtil.loadProperties(propertiesFileName);
@@ -93,8 +95,10 @@ public class TestApplication
 
       String propertyValue = applicationProperties.getProperty(propertyKey);
       if (propertyValue == null) {
-         //ExceptionHandlingUtil.throwException("Missing application property '" + propertyKey + "'.");
-         throw new SysNatException("Missing application property '" + propertyKey + "'.");
+         ExceptionHandlingUtil.throwException("The test application " + name + 
+        		               " is not configured for the current test run. "
+        		               + "Please defined property '" + propertyKey + "' in '" 
+        		               + propertiesFileName + "'.");
       }
       return propertyValue.trim();
    }

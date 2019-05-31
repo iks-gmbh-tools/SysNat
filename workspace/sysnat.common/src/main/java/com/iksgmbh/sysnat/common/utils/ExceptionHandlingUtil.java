@@ -22,7 +22,7 @@ import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 public class ExceptionHandlingUtil 
 {	
 	public static void throwException(final String errorMessage) {
-		System.err.println(errorMessage);
+		System.err.println("ERROR: " + errorMessage);
 		throw new SysNatException(errorMessage);
 	}
 	

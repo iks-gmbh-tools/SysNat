@@ -47,6 +47,7 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();
 	}
 
+	@SuppressWarnings("unused")
 	private String getPageName() 
 	{
 		int maxTries = 60;
@@ -107,6 +108,7 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 	//##########################################################################################
 
 	
+	@LanguageTemplate(value = "Is page ^^ displayed?")
 	@LanguageTemplate(value = "Wird die Seite ^^ angezeigt?")
 	public void isPageVisible(String expectedPage) 
 	{
@@ -129,30 +131,21 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 			executableExample.failWithMessage("Unbekannte Seite <b>" + expectedPage + "</b>.");
 		}
 		
-		String question = "Wurde die Seite <b>" + expectedPage + "</b> angezeigt" + QUESTION_IDENTIFIER;
+		String question = "Is page <b>" + expectedPage + "</b> displayed" + QUESTION_IDENTIFIER;
+		//String question = "Wurde die Seite <b>" + expectedPage + "</b> angezeigt" + QUESTION_IDENTIFIER;
 		executableExample.answerQuestion(question, ok);
 	}
 	
 	@LanguageTemplate(value = "Klicke Hauptmenüpunkt ^^.")
+	@LanguageTemplate(value = "Click main menu item ^^.")
 	public void clickMainMenuItem(String menuItemText) {
 		executableExample.clickLink(menuItemText);
-		executableExample.addReportMessage("Der Hauptmenüpunkt <b>" + menuItemText + "</b> wurde geklickt.");
+		//executableExample.addReportMessage("Der Hauptmenüpunkt <b>" + menuItemText + "</b> wurde geklickt.");
+		executableExample.addReportMessage("Main menu item <b>" + menuItemText + "</b> has been clicked.");
 	}
 
-	@LanguageTemplate(value = "Download PDF ^^ als <>.")
-	public File downloadPDF(String pdfFilename)
-	{
-		return null;
-	}
-
-	@LanguageTemplate(value = "Enthält '' auf Seite ^^ den Text ^^?")
-	public void checkPdfContent(final File pdfFile, 
-			                    final String pageNumber, 
-			                    final String expectedText)
-	{
-	    // to be implemented
-	}
 	
+	@LanguageTemplate("Click link ^^.")
 	@LanguageTemplate("Klicke Link ^^.")
 	public void clickLink(String linkText) 
 	{
@@ -161,10 +154,12 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 		} else {			
 			executableExample.clickLink(linkText);
 		}
-		executableExample.addReportMessage("Der Link <b>" + linkText + "</b> wurde geklickt.");
+		executableExample.addReportMessage("Link <b>" + linkText + "</b> has been clicked.");
+		//executableExample.addReportMessage("Der Link <b>" + linkText + "</b> wurde geklickt.");
 	}
 	
 	@LanguageTemplate("Das PDF wird als Dokument <> gespeichert.")
+	@LanguageTemplate("PDF <> saved.")
 	public File savePDF() 
 	{
 		List<File> findDownloadFiles1 = SysNatFileUtil.findDownloadFiles("PDF").getFiles();

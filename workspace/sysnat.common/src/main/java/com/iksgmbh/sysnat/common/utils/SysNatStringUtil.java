@@ -20,6 +20,7 @@ import static com.iksgmbh.sysnat.common.utils.SysNatConstants.NO_FILTER;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class SysNatStringUtil 
 {
@@ -301,6 +302,39 @@ public class SysNatStringUtil
 			return splitResult[0].replaceAll("\\.", "") + "." + splitResult[1];
 		}
 		return amountAsString.replace(",", "");
+	}
+
+	public static String listToString(Set<String> set, String separator)
+	{
+		List<String> list = new ArrayList<>();
+		list.addAll(set);
+		return listToString(list, separator);
 	}	
-	
+
+	public static String listToString(List<String> list, String separator)
+	{
+		final StringBuffer sb = new StringBuffer();
+		list.forEach(element -> sb.append(element).append(separator) );
+		String toReturn = sb.toString();
+		return toReturn.substring(0, toReturn.length() - separator.length());
+	}
+
+	public static List<String> toList(String listAsString, String separator)
+	{
+		List<String> toReturn = new ArrayList<>();
+		
+		while (listAsString.contains(separator))
+		{
+			int pos = listAsString.indexOf(separator);
+			String element = listAsString.substring(0, pos);
+			toReturn.add(element);
+			listAsString = listAsString.substring(pos + separator.length());
+		}
+		
+		toReturn.add(listAsString);
+		
+		return toReturn;
+	}	
+
+
 }

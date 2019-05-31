@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
@@ -193,7 +194,7 @@ public class PdfFileContent
 				pageContentList.add(new PdfPageContent(pageNo, pageContentAsString));
             }
         } catch (IOException e) {
-        	throw new RuntimeException(e);
+        	throw new SysNatException("Error parsing PDF <b>" + pdfFileName + "</b>.");
         }
     }
 	

@@ -18,6 +18,8 @@ package com.iksgmbh.sysnat.common.utils;
 public class SysNatConstants 
 {
 	public static final String SYS_NAT_VERSION = "0.2";
+	
+	public static final String ROOT_PATH_PLACEHOLDER = "<root.path>";
 
 	public enum TestPhase {PRECONDITION, ARRANGE, ACT, ASSERT, CLEANUP, 
 		                   GIVEN, WHEN, THEN, 

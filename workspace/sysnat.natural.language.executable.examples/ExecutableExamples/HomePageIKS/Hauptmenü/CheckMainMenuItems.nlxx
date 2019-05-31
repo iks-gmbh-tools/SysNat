@@ -1,0 +1,34 @@
+Behaviour: <Dateiname>
+
+Warum wird für Kontakt zusätzliche Zeilen generiert ???
+
+
+XXID: Dienstleistungen
+Filter: Smoketest
+Click main menu item "Dienstleistungen".
+Is page "Dienstleistungen" displayed?
+
+XXID: Unternehmen
+Filter: Smoketest
+Click main menu item "Unternehmen".
+Is page "Unternehmen" displayed?
+
+XXID: Downloads
+Filter: Smoketest
+Click main menu item "Downloads".
+Is page "Downloads" displayed?
+
+XXID: Karriere
+Filter: Smoketest
+Click main menu item "Karriere".
+Is page "Karriere" displayed?
+
+XXID: Kontakt
+Filter: Smoketest
+Click main menu item "Kontakt".
+Is page "Kontakt" displayed?
+
+Click main menu item "Home".
+Filter: Smoketest
+Click main menu item "Home".
+Is page "Home" displayed?

@@ -316,6 +316,10 @@ public class XXGroupBuilder
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void buildXXGroupForParameterizedXX(final Filename filename)
 	{
+		if (filename.value.contains("TestParameterBasedGreet")) {
+			System.out.println("");
+		}
+
 		final List<JavaCommand> commands = javaCommandCollectionTemp.get(filename);
 		final String testParameterValue = testParameter.get(filename);
 		final Hashtable<String, Properties> datasets;
@@ -342,10 +346,11 @@ public class XXGroupBuilder
 		
 		final List<String> dataSetNames = new ArrayList(datasets.keySet());
 		nameOfCurrentFile = filename.value;
-		dataSetNames.forEach(dataSetName -> buildTestCase(dataSetName, datasets.get(dataSetName), tableDataMode, commands)); 
+		dataSetNames.forEach(dataSetName -> buildTestCase(testParameterValue, dataSetName, datasets.get(dataSetName), tableDataMode, commands)); 
 	}
 	
-	private void buildTestCase(final String datasetName,
+	private void buildTestCase(final String testParameterValue, 
+			                   final String datasetName,
 			                   final Properties dataset, 
 			                   final boolean tableDataMode,                   
 			                   final List<JavaCommand> commands) 
@@ -359,7 +364,7 @@ public class XXGroupBuilder
 			if (javaCommand.value.contains( "startNewXX" )) {
 				xxid = extractXXID(javaCommand.value);
 				newCommands.add(new JavaCommand("languageTemplatesCommon.startNewXX(\"" + xxid + "_" + datasetId + "\");"));
-			} 
+			}
 			else if (javaCommand.value.contains(PARAMETER_IDENTIFIER_METHOD_CALL)) 
 			{
 				if (tableDataMode) {
@@ -370,7 +375,11 @@ public class XXGroupBuilder
 			} 
 			else 
 			{
-				newCommands.add(javaCommand);
+				if (javaCommand.value.contains(":") && ! testParameterValue.contains("|")) {
+					newCommands.add(new JavaCommand(javaCommand.value.replaceAll(testParameterValue + ":", datasetName + ":")));
+				} else {
+					newCommands.add(javaCommand);
+				}
 			}
 		}
 

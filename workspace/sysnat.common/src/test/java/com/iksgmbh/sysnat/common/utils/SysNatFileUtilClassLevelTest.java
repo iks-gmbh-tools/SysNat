@@ -21,16 +21,65 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
 import org.junit.Test;
 
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 
-public class SysNatFileUtilClassLevelTest {
+public class SysNatFileUtilClassLevelTest 
+{
 
+	@Test
+	public void findsRecentDocumentInDownloadDir() throws IOException 
+	{
+		// arrange
+		final File downloadDir = SysNatFileUtil.getDownloadDir();
+		final File downloadedFile = new File(downloadDir, "DownloadSimulation.pdf");
+		downloadedFile.delete();
+		assertFalse(downloadedFile.exists());
+		downloadedFile.createNewFile();
+
+		// act
+		File result = SysNatFileUtil.findRecentDownloadFile(100);
+
+		// assert
+		assertTrue(result.exists());
+
+		// cleanup
+		downloadedFile.delete();
+	}
+
+	@Test
+	public void throwsExceptionForNonRecentDocumentInDownloadDir() throws Exception 
+	{
+		// arrange
+		SysNatFileUtil.MAX_SECONDS_TO_WAIT_FOR_DOWNLOAD_TO_START = 1;
+		final File downloadDir = SysNatFileUtil.getDownloadDir();
+		final File downloadedFile = new File(downloadDir, "DownloadSimulation.pdf");
+		downloadedFile.delete();
+		assertFalse(downloadedFile.exists());
+		downloadedFile.createNewFile();
+		Thread.sleep(200);
+		
+		try {			
+			// act
+			SysNatFileUtil.findRecentDownloadFile(100);
+			fail("Expected exception not thrown!");
+		} catch (SysNatException e) {
+			// assert
+			assertEquals("Error message", "Problem: Download stopped to continue.", e.getMessage());
+		}
+		
+		// cleanup
+		downloadedFile.delete();
+	}
+
+	
 	@Test
 	public void copiesFolderWithAllSubfoldersAndFiles() 
 	{

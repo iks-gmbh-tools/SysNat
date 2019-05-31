@@ -249,7 +249,7 @@ public class SysNatTestData
       }
 
       if (size() == 0) {
-         throw new SysNatTestDataException("Es gibt " + size() + " Testdatensätze. Es passt keiner zu Datensatz-Reference <b>" + dataSetReference + "</b>.");
+         throw new SysNatTestDataException("Es sind keine Testdaten gesetzt.");
       }
 
       throw new SysNatTestDataException("Es gibt für <b>" + dataSetReference + "</b> <b>" + datasetMatches.size() + "</b> matchende Testdatensätze. Es passt keiner zu Datensatz-Reference <b>" + dataSetReference + "</b>.");

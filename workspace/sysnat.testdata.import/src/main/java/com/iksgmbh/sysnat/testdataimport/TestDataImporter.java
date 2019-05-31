@@ -19,8 +19,10 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
@@ -148,8 +150,9 @@ public class TestDataImporter
 		//datasetNames.forEach(System.err::println);
 
 
-		if (file.getName().endsWith(".dat")) {
-			// Add only those datasets that match the testdataId read from the nlxx file!
+		if (file.getName().endsWith(".dat") || file.getName().endsWith(".xlsx")) 
+		{
+			// Add only those datasets that match the testdataId
 			datasetNames.stream()
 					.filter(name -> name.equals(testdataId) || name.startsWith(testdataId) || testdataId.endsWith(name + ".dat"))
 					.forEach(name -> testdata.put(name, dataSetsFromFile.get(name)));
@@ -178,8 +181,15 @@ public class TestDataImporter
 	private Hashtable<String, Properties> loadFromValidationFile(File file)
 	{
 		final Hashtable<String, Properties> toReturn = new Hashtable<>();
-		final Properties loadedDataSet = ValidationFileReader.doYourJob(file);
+		final LinkedHashMap<String, String> keyValuePairs = ValidationFileReader.doYourJob(file);
+		final Set<String> keySet = keyValuePairs.keySet();
+		final String keyOrder = SysNatStringUtil.listToString(keySet, "|");
+		final Properties loadedDataSet = new Properties();
+
+		keySet.forEach(key -> loadedDataSet.setProperty(key, keyValuePairs.get(key)) );
+		loadedDataSet.setProperty("keyOrder", keyOrder);
 		toReturn.put("ValidationData", loadedDataSet);
+
 		return toReturn;
 	}
 
@@ -205,13 +215,7 @@ public class TestDataImporter
 		return toReturn;
 	}
 
-	private Hashtable<String, Properties> loadDatasetsFromExcelFile(final File excelFile, String testdataId)
-	{
-		String testDataLocation = testdataId;
-		int pos = testdataId.indexOf(TESTDATA_LOCATION_SEPARATOR);
-		if (pos > -1) {
-			testDataLocation = testdataId.substring(pos + TESTDATA_LOCATION_SEPARATOR.length());
-		}
+	private Hashtable<String, Properties> loadDatasetsFromExcelFile(final File excelFile, String testdataId) {
 		return ExcelDataProvider.doYourJob(new File(excelFile.getAbsolutePath()));
 	}
 

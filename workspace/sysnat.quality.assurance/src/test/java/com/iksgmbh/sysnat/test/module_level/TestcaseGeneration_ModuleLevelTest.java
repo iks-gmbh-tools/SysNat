@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
@@ -103,6 +104,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	}	 
 	
 	@Test
+	@Ignore // script file is currently not needed
 	public void createsScriptFileForHomePageIKS() throws Exception 
 	{
 		// arrange
@@ -120,7 +122,7 @@ public class TestcaseGeneration_ModuleLevelTest
 				return name.endsWith("Script.java");
 			}
 		});
-		assertEquals("Number of generated Java files representing a script", 1, result.size());
+		assertEquals("Number of generated Script Java files", 1, result.size());
 				
 		// check content of script file
 		String expectedFileContent = 

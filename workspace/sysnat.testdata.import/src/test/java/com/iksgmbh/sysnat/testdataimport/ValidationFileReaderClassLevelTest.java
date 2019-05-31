@@ -16,11 +16,15 @@
 package com.iksgmbh.sysnat.testdataimport;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.Properties;
+import java.util.LinkedHashMap;
+import java.util.Locale;
 
 import org.junit.Test;
+
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 
 public class ValidationFileReaderClassLevelTest
 {
@@ -31,16 +35,70 @@ public class ValidationFileReaderClassLevelTest
         File file = new File("../sysnat.testdata.import/src/test/resources/test.validation");
 
         // act
-        final Properties result = ValidationFileReader.doYourJob(file);
+        final LinkedHashMap<String, String> result = ValidationFileReader.doYourJob(file);
 
         // arrange
         assertEquals("Number of properties", 6, result.size());
-        assertEquals("Value", "", result.getProperty("Softwarequalität"));
-        assertEquals("Value", "8::2", result.getProperty("Die Akteure der Umsetzung"));
-        assertEquals("Value", "8", result.getProperty("Der Autor"));
-        assertEquals("Value", "", result.getProperty("Dr. <Autor>"));
-        assertEquals("Value", "Literatur & Links", result.getProperty("<CCC>"));
-        assertEquals("Value", "Literatur & Links::2", result.getProperty("<Titel>"));
+        assertEquals("Value", "", result.get("Softwarequalität"));
+        assertEquals("Value", "8::2", result.get("Die Akteure der Umsetzung"));
+        assertEquals("Value", "8", result.get("Der Autor"));
+        assertEquals("Value", "", result.get("Dr. <Autor>"));
+        assertEquals("Value", "Literatur & Links", result.get("<CCC>"));
+        assertEquals("Value", "Literatur & Links::2", result.get("<Titel>"));
 
     }
+ 
+    @Test
+    public void throwsErrorForMissingQuotationMark()
+    {
+    	// arrange
+    	String errorMessage = ValidationFileReader.BUNDLE.getString("InvalidValidationRuleMessage");
+    	ValidationFileReader validationFileReader = new ValidationFileReader(null);
+    	LinkedHashMap<String, String> keyValuePairs = new LinkedHashMap<>();
+	
+    	// check 1
+    	String validationRule = "The PDF contains on page with sequence Content\" the sequence \"Preface\".";
+    	if (Locale.getDefault().getLanguage().equals("de")) {
+    		validationRule = "Das PDF enthält auf der Seite mit dem Text Inhalt\" den Text \"Vorwort\".";
+    	}
+    	checkRule(errorMessage, validationFileReader, keyValuePairs, validationRule);
+		
+		
+    	// check 2
+    	validationRule = "The PDF contains on page with sequence \"Content the sequence \"Preface\".";
+    	if (Locale.getDefault().getLanguage().equals("de")) {
+    		validationRule = "Das PDF enthält auf der Seite mit dem Text \"Inhalt den Text \"Vorwort\".";
+    	}    	
+		checkRule(errorMessage, validationFileReader, keyValuePairs, validationRule);
+		
+    	// check 3
+    	validationRule = "The PDF contains on page with sequence \"Content\" the sequence Preface\".";
+    	if (Locale.getDefault().getLanguage().equals("de")) {
+    		validationRule = "Das PDF enthält auf der Seite mit dem Text \"Inhalt\" den Text Vorwort\".";
+    	}    	
+		checkRule(errorMessage, validationFileReader, keyValuePairs, validationRule);
+
+    	// check 4
+    	validationRule = "The PDF contains on page with sequence \"Content\" the sequence \"Preface.";
+    	if (Locale.getDefault().getLanguage().equals("de")) {
+    		validationRule = "Das PDF enthält auf der Seite mit dem Text \"Inhalt\" den Text \"Vorwort.";
+    	}    	
+		checkRule(errorMessage, validationFileReader, keyValuePairs, validationRule);
+		
+    }
+
+	private void checkRule(String errorMessage,
+	        ValidationFileReader validationFileReader,
+	        LinkedHashMap<String, String> keyValuePairs,
+	        String validationRule)
+	{
+		try {
+			// act
+			validationFileReader.addToProperties(validationRule, keyValuePairs);
+			fail("Expected exception not thrown!");
+		} catch (SysNatException e) {
+			// assert
+			assertEquals("Error message", errorMessage.replaceAll("XY", validationRule), e.getMessage());
+		}
+	}
 }

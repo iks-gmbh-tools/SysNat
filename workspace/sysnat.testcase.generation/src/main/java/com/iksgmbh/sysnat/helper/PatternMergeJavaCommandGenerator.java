@@ -240,7 +240,8 @@ public class PatternMergeJavaCommandGenerator
 		}	
 	}
 
-	private boolean isTableDataMode() {
+	private boolean isTableDataMode() 
+	{
 		return (instructionPatternToMatch.getPart(0).value.toString().equals(SysNatConstants.TEST_DATA + ":")
 				|| instructionPatternToMatch.getPart(0).value.toString().equals(SysNatConstants.TEST_PARAMETER + ":")
                 ) && instructionPatternToMatch.getPart(1).value.toString().equals("-");

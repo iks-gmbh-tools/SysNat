@@ -25,6 +25,36 @@ import org.junit.Test;
 public class SysNatStringUtilClassLevelTest 
 {
 	@Test
+	public void separatesStringIntoList() 
+	{
+		// act
+		List<String> result = SysNatStringUtil.toList("a||bb||ccc", "||");
+		
+		// assert
+		assertEquals("element number", 3, result.size());
+		assertEquals("element 1", "a", result.get(0));
+		assertEquals("element 2", "bb", result.get(1));
+		assertEquals("element 3", "ccc", result.get(2));
+	}
+
+	@Test
+	public void concatsListToString() 
+	{
+		// arrange
+		List<String> list = new ArrayList<>();
+		list.add("a");
+		list.add("bb");
+		list.add("ccc");
+
+		// act
+		String result = SysNatStringUtil.listToString(list, "##");
+		
+		// assert
+		assertEquals("result", "a##bb##ccc", result);
+	}
+	
+	
+	@Test
 	public void returnsLeadingWhiteSpace() {
 		assertEquals("White space", "     ", SysNatStringUtil.getLeadingWhiteSpace("     a"));
 	}
