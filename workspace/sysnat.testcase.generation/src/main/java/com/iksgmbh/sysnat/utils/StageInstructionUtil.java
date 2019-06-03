@@ -33,10 +33,6 @@ public class StageInstructionUtil
 			knownStageInstructions = loadKnownStageInstructions();
 		}
 		
-		if (naturalLanguageLine.startsWith("Szenario")) {
-			System.out.println("");
-		}
-		
 		for (String stageInstruction : knownStageInstructions) {
 			if (naturalLanguageLine.trim().startsWith(stageInstruction.trim())) {
 				return true;

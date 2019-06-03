@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
 import com.iksgmbh.sysnat.common.utils.ExceptionHandlingUtil;
@@ -154,10 +155,7 @@ public class PatternMergeJavaCommandGenerator
 		String filename = file.substring(pos);
 		String path = file.substring(0, pos); 
 		userErrorMessage = userErrorMessage.replace("x2", filename);
-		userErrorMessage = userErrorMessage.replace("x3", path)
-				            + System.getProperty("line.separator") + "<br>"
-				            + System.getProperty("line.separator") + "<br>"
-									            + System.getProperty("line.separator");
+		userErrorMessage = userErrorMessage.replace("x3", ExecutionRuntimeInfo.getInstance().getTestApplicationName());
 
 		String testApp = System.getProperty(SysNatLocaleConstants.TESTAPP_SETTING_KEY);
 		String libraryFilename = System.getProperty("sysnat.help.command.list.file")

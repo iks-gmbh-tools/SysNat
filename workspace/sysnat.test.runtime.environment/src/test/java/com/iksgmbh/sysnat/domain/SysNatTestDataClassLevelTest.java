@@ -65,7 +65,7 @@ public class SysNatTestDataClassLevelTest
 	public void returnsValueForFieldnameWithFullReference() throws Exception 
 	{
 		// act
-		final String result = cut.findValueForValueReference("TestDataset_2:firstKey");
+		final String result = cut.findValueForValueReference("TestDataset_2::firstKey");
 		
 		// assert
 		assertEquals("value of field", "firstValue", result);

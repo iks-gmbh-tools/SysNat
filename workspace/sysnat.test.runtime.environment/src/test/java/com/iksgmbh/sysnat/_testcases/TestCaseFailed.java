@@ -33,7 +33,7 @@ public class TestCaseFailed extends TestCaseTestImpl
 	public void executeTestCase() 
 	{
 		languageTemplatesCommon.startNewXX("Red Test");
-		languageTemplatesCommon.defineExecutionFilter(NO_FILTER);
+		languageTemplatesCommon.defineAndCheckExecutionFilter(NO_FILTER);
 		failWithMessage(ERROR_KEYWORD + ": Test-Error"); 
 	}
 }

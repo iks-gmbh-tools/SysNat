@@ -19,9 +19,11 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.ExceptionHandlingUtil;
 import com.iksgmbh.sysnat.common.utils.PropertiesUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
 
 /**
  * Holds attributes of the application under test.
@@ -45,32 +47,66 @@ public class TestApplication
       this.propertiesFileName = aPropertiesFileName;
       this.targetEnvironmentAsString = atargetEnvironmentAsString;
 
-      applicationProperties = PropertiesUtil.loadProperties(propertiesFileName);
-      String result = (String) applicationProperties.get("isWebApplication");
-      isWebApplication = "true".equalsIgnoreCase(result);
-      result = (String) applicationProperties.get("withLogin");
-      withLogin = "true".equalsIgnoreCase(result);
-
-      if (withLogin) {
-         addStartParameter(applicationProperties);
-      }
+      init();
    }
+
+   public TestApplication(final String anApplicationName)
+   {
+      this.name = anApplicationName;
+      this.propertiesFileName = getDefaultPropertiesFileName(anApplicationName);
+      this.targetEnvironmentAsString = getDefaultEnvironmentAsString(anApplicationName);
+
+      init();
+   }
+
+   
+   
+	private String getDefaultEnvironmentAsString(String anApplicationName)
+	{
+		TargetEnv targetEnv = ExecutionRuntimeInfo.getInstance().getTargetEnv();
+		
+		if (targetEnv == null) {
+			SysNatException exception = new SysNatException("No (valid) target environment defined in settings.config!");
+			exception.printStackTrace();
+			return "<Unknown target environment>";
+		}
+		
+		return targetEnv.name();
+	}
+
+	private String getDefaultPropertiesFileName(String anApplicationName)
+	{
+		String propertiesPath = ExecutionRuntimeInfo.getInstance().getPropertiesPath();
+		
+		if (propertiesPath == null) {
+			SysNatException exception = new SysNatException("No (valid) properties.execution file defined!");
+			exception.printStackTrace();
+		}
+
+		return propertiesPath + "/" + anApplicationName + ".properties";
+	}
+
+	private void init()
+	{
+		applicationProperties = PropertiesUtil.loadProperties(propertiesFileName);
+		String result = (String) applicationProperties.get("isWebApplication");
+		isWebApplication = "true".equalsIgnoreCase(result);
+		result = (String) applicationProperties.get("withLogin");
+		withLogin = "true".equalsIgnoreCase(result);
+
+		if (withLogin) {
+			addStartParameter(applicationProperties);
+		}
+	}
 
    public String getProperty(String key)
    {
       String propertyKey = ( name + "." +
-                           targetEnvironmentAsString + "." +
-                               key
+                             targetEnvironmentAsString + "." +
+                             key
                            ).toLowerCase();
 
       return applicationProperties.getProperty(propertyKey);
-   }
-
-   public TestApplication(final String aApplicationUnderTest)
-   {
-      this(aApplicationUnderTest,
-           ExecutionRuntimeInfo.getInstance().getPropertiesPath() + "/" + aApplicationUnderTest + ".properties",
-           ExecutionRuntimeInfo.getInstance().getTargetEnv().name());
    }
 
    private void addStartParameter(final Properties applicationProperties)

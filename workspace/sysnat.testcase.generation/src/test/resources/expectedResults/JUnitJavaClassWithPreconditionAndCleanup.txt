@@ -59,6 +59,7 @@ public class ExampleTest extends TestCaseTemplateParent
 			languageTemplatesCommon.prepare1();
 			languageTemplatesCommon.prepare2();
 			languageTemplatesCommon.startNewXX("XXId");
+			languageTemplatesCommon.defineAndCheckExecutionFilter("-");
 			templateContainer.doSomethingElse();
 			languageTemplatesCommon.cleanup1();
 			languageTemplatesCommon.cleanup2();

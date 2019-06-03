@@ -239,7 +239,9 @@ public class LanguageTemplatesCommon
 		executableExample.setBehaviorID(aBehaviourID);
 	}
 
+	@LanguageTemplate(value = "XX: ^^")
 	@LanguageTemplate(value = "XXID: ^^")
+	@LanguageTemplate(value = "XXId: ^^")
 	public void startNewXX(String xxid) 
 	{
 		xxid = xxid.trim();
@@ -271,7 +273,7 @@ public class LanguageTemplatesCommon
 	@LanguageTemplate(value = "Filter: ^^")
 	@LanguageTemplate(value = "Ausführungsfilter: ^^")
 	@LanguageTemplate(value = "Tags: ^^")
-	public void defineExecutionFilter(String executionFilterOfThisTestCase) 
+	public void defineAndCheckExecutionFilter(String executionFilterOfThisTestCase) 
 	{
 		boolean executeThisTest = true;
 		final List<String> execFilterOfExecutableExample = executableExample.buildExecutionFilterList(executionFilterOfThisTestCase);

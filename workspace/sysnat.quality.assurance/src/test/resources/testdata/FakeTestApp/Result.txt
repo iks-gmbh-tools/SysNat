@@ -41,6 +41,7 @@ public void executeTestCase()
 {
 try {
 fakeLanguageTemplatesContainer.startNewXX("test");
+languageTemplatesCommon.defineAndCheckExecutionFilter("-");
 
 closeCurrentTestCaseWithSuccess();
 } catch (Throwable e) {

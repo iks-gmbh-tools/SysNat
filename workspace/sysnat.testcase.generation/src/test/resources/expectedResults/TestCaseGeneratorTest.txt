@@ -42,6 +42,7 @@ public void executeTestCase()
 {
 try {
 complexInstructionTestApplication_LanguageTemplateContainer.startNewXX("SequenceTest");
+languageTemplatesCommon.defineAndCheckExecutionFilter("-");
 Order auftrag_1 = complexInstructionTestApplication_LanguageTemplateContainer.createOrder();
 storeTestObject("auftrag_1", auftrag_1);
 Order auftrag_2 = complexInstructionTestApplication_LanguageTemplateContainer.createOrder();

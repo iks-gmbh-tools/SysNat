@@ -17,7 +17,12 @@ package com.iksgmbh.sysnat.common.utils;
 
 public class SysNatConstants 
 {
-	public static final String SYS_NAT_VERSION = "0.2";
+	public static final String SYS_NAT_VERSION = "1.0.0";
+	
+	/**
+	 * The Double Colon is used to specify placeholders for test data values.
+	 */
+	public static final String DC = "::";
 	
 	public static final String ROOT_PATH_PLACEHOLDER = "<root.path>";
 
@@ -59,5 +64,13 @@ public class SysNatConstants
 	public static final String TEST_PARAMETER = "Test-Parameter";
 	public static final String TEST_DATA = "TestData";
 	public static final String LINE_SEPARATOR = "<Line Separator>";
+	
+
+	public static final String METHOD_CALL_IDENTIFIER_TEST_PARAMETER_DEFINITION = ".applyTestParameter(";
+	public static final String METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION = ".declareXXGroupForBehaviour(";
+	public static final String METHOD_CALL_IDENTIFIER_BDD_KEYWORD_USAGE = ".setBddKeyword(";
+	public static final String METHOD_CALL_IDENTIFIER_START_XX = ".startNewXX(";
+	public static final String METHOD_CALL_IDENTIFIER_FILTER_DEFINITION = ".defineAndCheckExecutionFilter(";
+
 	
 }

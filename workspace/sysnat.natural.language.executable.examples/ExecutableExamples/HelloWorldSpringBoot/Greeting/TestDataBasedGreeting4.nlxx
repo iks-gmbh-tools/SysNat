@@ -13,8 +13,8 @@ TestData:         MultipleGreetingData
 
 # arrange 1
 Test-Phase: Arrange    # setup all test requirements
-Select "MultipleGreetingData_1:Greeting" in selection field "Greeting".
-Enter "MultipleGreetingData_1:Name" in text field "Name".
+Select "MultipleGreetingData_1::Greeting" in selection field "Greeting".
+Enter "MultipleGreetingData_1::Name" in text field "Name".
 
 # act 1
 Test-Phase: Act  # Perform action under test
@@ -30,8 +30,8 @@ Is the displayed text "GreetingResult" equal to "Hi Tim!"?
 # arrange 2
 Test-Phase: Arrange    # setup all test requirements
 Click menu item "Form Page".
-Select "MultipleGreetingData_2:Greeting" in selection field "Greeting".
-Enter "MultipleGreetingData_2:Name" in text field "Name".
+Select "MultipleGreetingData_2::Greeting" in selection field "Greeting".
+Enter "MultipleGreetingData_2::Name" in text field "Name".
 
 # act 2
 Test-Phase: Act  # Perform action under test
@@ -48,8 +48,8 @@ Is the displayed text "GreetingResult" equal to "Hello Rose!"?
 # arrange 3
 Test-Phase: Arrange    # setup all test requirements
 Click menu item "Form Page".
-Select "MultipleGreetingData_3:Greeting" in selection field "Greeting".
-Enter "MultipleGreetingData_3:Name" in text field "Name".
+Select "MultipleGreetingData_3::Greeting" in selection field "Greeting".
+Enter "MultipleGreetingData_3::Name" in text field "Name".
 
 # act 3
 Test-Phase: Act  # Perform action under test

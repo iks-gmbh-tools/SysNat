@@ -15,6 +15,8 @@
  */
 package com.iksgmbh.sysnat.helper;
 
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.*;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.Filename;
@@ -445,7 +448,13 @@ public class JavaFileBuilder
 		} else {
 			toReturn = toReturn.substring(0, pos);			
 		}
-		return toReturn.replaceAll("/", ".");
+		toReturn = toReturn.replaceAll("/", ".");
+		
+		if (toReturn.endsWith(".")) {
+			toReturn = toReturn.substring(0, toReturn.length()-1);
+		}
+		
+		return toReturn;
 	}
 
 	private File buildTargetFilename(final Filename instructionFilename) 
@@ -462,10 +471,12 @@ public class JavaFileBuilder
 		boolean oneTimeCleanupsPresent = isOnetimeCleanupPresent(commands);
 
 		commands = extractTestExecutionCommands(commands);
+		commands = addFilterCommandIfNotPresent(commands);
 		JavaCommand declareBehaviorCommand = findDeclareBehaviorCommand(commands);
-		JavaCommand defineFeatureCommand = findDefineFetureCommand(commands);
+		JavaCommand defineFeatureCommand = findDefineFeatureCommand(commands);
 		
-		if (declareBehaviorCommand != null) {
+		if (declareBehaviorCommand != null) 
+		{
 			if (defineFeatureCommand != null) {
 				commands.remove(defineFeatureCommand);
 				addToJavaFile(defineFeatureCommand.value, toReturn);
@@ -487,7 +498,33 @@ public class JavaFileBuilder
 		return toReturn;
 	}
 
-	private JavaCommand findDefineFetureCommand(List<JavaCommand> commands) 
+	private List<JavaCommand> addFilterCommandIfNotPresent(List<JavaCommand> commands)
+	{
+		boolean isPresent = commands.stream()
+				                    .filter(command -> command.value.contains(METHOD_CALL_IDENTIFIER_FILTER_DEFINITION))
+				                    .findFirst()
+				                    .isPresent();
+		
+		if (isPresent) return commands;
+		
+		List<JavaCommand> toReturn = new ArrayList<>();
+		
+		for (JavaCommand javaCommand : commands) 
+		{
+			toReturn.add(javaCommand);
+			if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_START_XX)) 
+			{
+				String value = "languageTemplatesCommon.defineAndCheckExecutionFilter(\"" + SysNatConstants.NO_FILTER +  "\");";
+				JavaCommand newCommand = new JavaCommand(value, CommandType.Standard);
+				toReturn.add(newCommand);
+			}
+			
+		}
+		
+		return toReturn;
+	}
+
+	private JavaCommand findDefineFeatureCommand(List<JavaCommand> commands) 
 	{
 		return commands.stream()
 			       .filter(command -> command.value.contains("setBddKeyword(\"Feature\")"))

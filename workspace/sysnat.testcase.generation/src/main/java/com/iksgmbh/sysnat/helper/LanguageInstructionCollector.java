@@ -139,9 +139,8 @@ public class LanguageInstructionCollector
 
 			if (   line.startsWith("Scenario")
 				|| line.startsWith("Szenario")
+				|| line.startsWith("XX")
 				|| line.startsWith("XXID")
-				|| line.startsWith("XX-ID")
-				|| line.startsWith("XX-Id")
 				|| line.startsWith("XXId")) 
 			{
 				firstXXDetected = true;

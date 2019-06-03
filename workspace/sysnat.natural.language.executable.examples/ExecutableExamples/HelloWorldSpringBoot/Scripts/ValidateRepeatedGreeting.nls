@@ -17,4 +17,4 @@ Click button "Greet".
 
 # assert
 Test-Phase: Assert    # check expectations
-Is the displayed text "GreetingResult" equal to ":GreetingResult"?
+Is the displayed text "GreetingResult" equal to "::GreetingResult"?

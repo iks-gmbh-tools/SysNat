@@ -914,18 +914,18 @@ abstract public class ExecutableExample
 	
 	public String getTestDataValue(String valueCandidate) 
 	{
-		if ( ! valueCandidate.contains(":") ) {
+		if ( ! valueCandidate.contains(SysNatConstants.DC) ) {
 			// valueCandidate is a hard coded value no fieldname reference
 			return valueCandidate; 
 		}
 
 		String valueReference = valueCandidate;
-		if (valueReference.startsWith(":")) {
-			String fieldName = valueReference.substring(1);
+		if (valueReference.startsWith(SysNatConstants.DC)) {
+			String fieldName = valueReference.substring(2);
 			return testDataSets.findValueForValueReference(fieldName);
 		}
 		
-		String[] splitResult = valueReference.split(":");
+		String[] splitResult = valueReference.split(SysNatConstants.DC);
 		
 		if (splitResult.length != 2) {
 			throw new SysNatTestDataException("Cannot parse reference to value: " + valueReference);

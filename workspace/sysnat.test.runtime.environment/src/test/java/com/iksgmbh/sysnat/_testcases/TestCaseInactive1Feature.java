@@ -38,7 +38,7 @@ public class TestCaseInactive1Feature extends TestCaseTestImpl
 			languageTemplatesCommon.declareXXGroupForBehaviour("Inactive Feature");
 			languageTemplatesCommon.setBddKeyword("Scenario");
 			languageTemplatesCommon.startNewXX("Inactive Scenario 1");
-			languageTemplatesCommon.defineExecutionFilter(SysNatConstants.NO_FILTER);
+			languageTemplatesCommon.defineAndCheckExecutionFilter(SysNatConstants.NO_FILTER);
 			languageTemplatesCommon.setActiveState("nein");	
 		} catch (Exception e) {
 			// ignore

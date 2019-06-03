@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
+import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaCommand;
@@ -69,6 +70,9 @@ public class SysNatTestCaseGenerator
 		final HashMap<Filename, List<LanguageInstructionPattern>> languageInstructionCollection = 
 				LanguageInstructionCollector.doYourJob(testApplication.getName());
 		
+		boolean ok = areExecutableExamplesAvailable(languageInstructionCollection.size());
+		if (!ok) return;
+		
 		// step 4: find matches between language patterns and template patterns
 		//         and merge matches into java code
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw = 
@@ -93,5 +97,20 @@ public class SysNatTestCaseGenerator
 		System.out.println(SysNatConstants.SYS_OUT_SEPARATOR);
 		System.out.println("Done with generating JUnit test classes.");
 		System.out.println(SysNatConstants.SYS_OUT_SEPARATOR);
+	}
+
+	private boolean areExecutableExamplesAvailable(int size)
+	{
+		if (size == 0) 
+		{
+			String testApp = ExecutionRuntimeInfo.getInstance().getTestApplicationName();
+			ErrorPageLauncher.doYourJob("For test application <b>" + testApp 
+					                   + "</b> there are no Executable Examples available.", 
+					                   "Please, write nlxx files in folder "
+					                   + "<b>sysnat.natural.language.executable.examples/ExecutableExamples/" 
+					                   + testApp + "</b>.");
+			return false;
+		}
+		return true;
 	}
 }

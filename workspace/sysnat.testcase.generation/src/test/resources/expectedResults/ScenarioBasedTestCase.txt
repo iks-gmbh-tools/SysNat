@@ -44,6 +44,7 @@ complexInstructionTestApplication_LanguageTemplateContainer.setBddKeyword("Featu
 complexInstructionTestApplication_LanguageTemplateContainer.declareXXGroupForBehaviour("TestFeature");
 complexInstructionTestApplication_LanguageTemplateContainer.setBddKeyword("Scenario");
 complexInstructionTestApplication_LanguageTemplateContainer.startNewXX("TestScenario1");
+languageTemplatesCommon.defineAndCheckExecutionFilter("-");
 complexInstructionTestApplication_LanguageTemplateContainer.setBddKeyword("Given");
 complexInstructionTestApplication_LanguageTemplateContainer.doSomething();
 complexInstructionTestApplication_LanguageTemplateContainer.setBddKeyword("When");

@@ -35,7 +35,7 @@ public class TestCaseInactive extends TestCaseTestImpl
 	{
 		try {
 			languageTemplatesCommon.startNewXX("Inactive Test");
-			languageTemplatesCommon.defineExecutionFilter(SysNatConstants.NO_FILTER);
+			languageTemplatesCommon.defineAndCheckExecutionFilter(SysNatConstants.NO_FILTER);
 			languageTemplatesCommon.setActiveState("nein");	
 		} catch (Exception e) {
 			// ignore

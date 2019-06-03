@@ -42,6 +42,7 @@ public void executeTestCase()
 {
 try {
 languageTemplatesCommon.startNewXX("TestXXId_1");
+languageTemplatesCommon.defineAndCheckExecutionFilter("-");
 languageTemplatesCommon.setDatasetObject("ExcelDataFile_Dataset1");
 
 // arrange block

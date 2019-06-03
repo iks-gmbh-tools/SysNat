@@ -33,6 +33,7 @@ public class MethodAnnotationSuggestionBuilder
 		
 		return "@LanguageTemplate(value = \"" + annotationValueString + "\")" + System.getProperty("line.separator") +
 		       "public " + returnValueString + " replaceByAnExpressiveMethodName(" + paramsString + ")" + System.getProperty("line.separator") +
+		       "{" + System.getProperty("line.separator") +
 		       "    // Implement here code that corresponds to the Language Template's promise." + System.getProperty("line.separator") +
 		       "    // And don't forget to create a report message entry!" + System.getProperty("line.separator") +
 		       "}";

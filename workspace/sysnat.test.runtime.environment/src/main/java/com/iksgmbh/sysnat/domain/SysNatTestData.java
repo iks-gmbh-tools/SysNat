@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 
 /**
  * Store of datasets provided for use to the current executable example (XX).
@@ -293,12 +294,12 @@ public class SysNatTestData
       for (String datasetName : datasetMatches)
       {
          List<Object> fieldMatches = orderedDatasets.get(datasetName).keySet().stream()
-                                           .filter(field -> valueReference.contains(datasetName + ":" + field))
+                                           .filter(field -> valueReference.contains(datasetName + SysNatConstants.DC + field))
                                            .collect(Collectors.toList());
          String toReturn = valueReference;
          for (Object field : fieldMatches) {
             String fieldName = field.toString();
-            toReturn = toReturn.replace(datasetName + ":" + fieldName, getValue(datasetName, fieldName));
+            toReturn = toReturn.replace(datasetName + SysNatConstants.DC + fieldName, getValue(datasetName, fieldName));
          }
 
          return toReturn;

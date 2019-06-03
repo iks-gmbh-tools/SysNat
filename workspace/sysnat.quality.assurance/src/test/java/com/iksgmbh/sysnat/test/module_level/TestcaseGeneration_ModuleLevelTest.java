@@ -90,7 +90,7 @@ public class TestcaseGeneration_ModuleLevelTest
 				return name.endsWith(".java");
 			}
 		});
-		assertEquals("Number of generated Java files", 9, result.size());
+		assertEquals("Number of generated Java files", 8, result.size());
 		
 		// check content of test case file
 		String expectedFileContent = SysNatStringUtil.removeWhitespaceLinewise(

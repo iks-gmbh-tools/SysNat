@@ -15,6 +15,11 @@
  */
 package com.iksgmbh.sysnat.helper;
 
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.METHOD_CALL_IDENTIFIER_BDD_KEYWORD_USAGE;
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION;
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.METHOD_CALL_IDENTIFIER_START_XX;
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.METHOD_CALL_IDENTIFIER_TEST_PARAMETER_DEFINITION;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -24,6 +29,7 @@ import java.util.Properties;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
@@ -53,11 +59,6 @@ import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 public class XXGroupBuilder 
 {
 	public static final String BEHAVIOUR_CONSTANT_DECLARATION = "private static final String BEHAVIOUR_ID";
-
-	private static final String PARAMETER_IDENTIFIER_METHOD_CALL = ".applyTestParameter(";
-	private static final String BEHAVIOUR_IDENTIFIER_METHOD_CALL = ".declareXXGroupForBehaviour(";
-	private static final String BDD_KEYWORD_IDENTIFIER_METHOD_CALL = ".setBddKeyword(";
-	private static final String XXID_IDENTIFIER_METHOD_CALL = ".startNewXX(";
 
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw;
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionTemp = new HashMap<>();
@@ -134,12 +135,12 @@ public class XXGroupBuilder
 
 		for (JavaCommand javaCommand : commands) 
 		{
-			if (javaCommand.value.endsWith(BDD_KEYWORD_IDENTIFIER_METHOD_CALL + "\"Feature\");")) {
+			if (javaCommand.value.endsWith(METHOD_CALL_IDENTIFIER_BDD_KEYWORD_USAGE + "\"Feature\");")) {
 				groupInstructions.add(javaCommand);
 				continue;
 			}
 
-			if (javaCommand.value.contains(BEHAVIOUR_IDENTIFIER_METHOD_CALL)) 
+			if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION)) 
 			{
 				groupDeclarationCounter++;
 				if (groupDeclarationCounter > 1) {
@@ -219,7 +220,9 @@ public class XXGroupBuilder
 		int pos = filename.value.lastIndexOf('/');
 		if (pos == -1) pos = filename.value.length();
 		
-		return new Filename(filename.value.substring(0, pos) + "/" + xxGroup.toLowerCase() + "/" + xxid + "_Test.java");
+		String name = filename.value.substring(0, pos) + "/" + xxGroup.toLowerCase() + "/" + xxid + "_Test.java";
+		name = name.replaceAll("//", "/").replaceAll(" ", "_");
+		return new Filename(name);
 	}
 
 	private HashMap<String, List<JavaCommand>> cutXXGroupIntoSeparateXX(
@@ -235,12 +238,12 @@ public class XXGroupBuilder
 		
 		for (JavaCommand javaCommand : standardCommandsOfGroup) 
 		{
-			if (javaCommand.value.contains(BDD_KEYWORD_IDENTIFIER_METHOD_CALL)) {
+			if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_BDD_KEYWORD_USAGE)) {
 				standardCommandsOfseparatedXX.add(javaCommand);
 				continue;
 			}
 			
-			if (javaCommand.value.contains(XXID_IDENTIFIER_METHOD_CALL)) 
+			if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_START_XX)) 
 			{
 				if (xxid != null) 
 				{
@@ -361,11 +364,11 @@ public class XXGroupBuilder
 		
 		for (JavaCommand javaCommand : commands) 
 		{
-			if (javaCommand.value.contains( "startNewXX" )) {
+			if (javaCommand.value.contains( METHOD_CALL_IDENTIFIER_START_XX )) {
 				xxid = extractXXID(javaCommand.value);
 				newCommands.add(new JavaCommand("languageTemplatesCommon.startNewXX(\"" + xxid + "_" + datasetId + "\");"));
 			}
-			else if (javaCommand.value.contains(PARAMETER_IDENTIFIER_METHOD_CALL)) 
+			else if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_TEST_PARAMETER_DEFINITION)) 
 			{
 				if (tableDataMode) {
 					newCommands.add(new JavaCommand("languageTemplatesCommon.setDatasetObject(\"" + toTableData(dataset) + "\");"));
@@ -447,11 +450,11 @@ public class XXGroupBuilder
 		
 		for (JavaCommand javaCommand : commands) 
 		{
-			if (javaCommand.value.contains( XXID_IDENTIFIER_METHOD_CALL )) {
+			if (javaCommand.value.contains( METHOD_CALL_IDENTIFIER_START_XX )) {
 				counterXXId++;
 			}
 			
-			if (javaCommand.value.contains(BEHAVIOUR_IDENTIFIER_METHOD_CALL))
+			if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION))
 			{
 				xxGroupIdentifierPresent = true;
 				if (xxGroups.containsKey(filename)) {
@@ -468,6 +471,12 @@ public class XXGroupBuilder
 		}
 		
 		if (counterXXId > 1 && ! xxGroupIdentifierPresent) {
+			String link = "https://github.com/iks-github/SysNat/wiki/What-is-a-nlxx-file%3F";
+			ErrorPageLauncher.doYourJob("Without Behaviour declaration only one executable example "
+					                     + "is allowed in the same nlxx file.", 
+					                     "To have more than one, add line 'Behaviour: &lt;unique name of behaviour&gt;' "
+					                     + "at the top of the nlxx file. Read more about "
+					                     + " <a href=\"" + link + "\">behaviours</a>.");
 			throw new SysNatTestDataException("Missing Behaviour declaration in '" +
                     filename.value + "'.");
 		}
@@ -486,7 +495,7 @@ public class XXGroupBuilder
 		
 		for (JavaCommand javaCommand : commands) 
 		{
-			if (javaCommand.value.contains( PARAMETER_IDENTIFIER_METHOD_CALL )) 
+			if (javaCommand.value.contains( METHOD_CALL_IDENTIFIER_TEST_PARAMETER_DEFINITION )) 
 			{
 				testParameter.put(filename, extractTestParameter(javaCommand.value));
 				return true;
@@ -499,19 +508,19 @@ public class XXGroupBuilder
 	
 	private String extractTestParameter(String javaCommand) 
 	{
-		final int pos = javaCommand.indexOf(PARAMETER_IDENTIFIER_METHOD_CALL) + PARAMETER_IDENTIFIER_METHOD_CALL.length() + 1;
+		final int pos = javaCommand.indexOf(METHOD_CALL_IDENTIFIER_TEST_PARAMETER_DEFINITION) + METHOD_CALL_IDENTIFIER_TEST_PARAMETER_DEFINITION.length() + 1;
 		return javaCommand.substring(pos, javaCommand.length()-3).trim();
 	}
 
 	private String extractXXGroup(String javaCommand) 
 	{
-		final int pos = javaCommand.indexOf(BEHAVIOUR_IDENTIFIER_METHOD_CALL) + BEHAVIOUR_IDENTIFIER_METHOD_CALL.length() + 1;
+		final int pos = javaCommand.indexOf(METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION) + METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION.length() + 1;
 		return javaCommand.substring(pos, javaCommand.length()-3).trim();
 	}
 
 	private String extractXXID(String javaCommand) 
 	{
-		final int pos = javaCommand.indexOf(XXID_IDENTIFIER_METHOD_CALL) + XXID_IDENTIFIER_METHOD_CALL.length() + 1;
+		final int pos = javaCommand.indexOf(METHOD_CALL_IDENTIFIER_START_XX) + METHOD_CALL_IDENTIFIER_START_XX.length() + 1;
 		String toReturn = javaCommand.substring(pos, javaCommand.length()-3).trim();
 		if (toReturn.equals(SysNatLocaleConstants.FROM_FILENAME)) {
 			return extractXXIdFromFilename(nameOfCurrentFile);
