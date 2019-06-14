@@ -656,4 +656,8 @@ public class SysNatFileUtil
 
 		return firefoxExecutable;
 	}
+
+	public static boolean deleteFile(String filename) {
+		return new File(filename).delete();		
+	}
 }

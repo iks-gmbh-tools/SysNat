@@ -19,15 +19,15 @@ import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
- * This class is the parent of all script templates (.nls files). 
+ * This class is a wrapper for implementations of natural language scripts (.nls files). 
  * For technical reasons it is a subclass of TestCase,
  * although it is not executable on its own.
  */
-public abstract class ScriptTemplateParent extends ExecutableExample
+public abstract class SysNatScript extends ExecutableExample
 {
 	private String testCaseFileName;
 	
-	public ScriptTemplateParent(ExecutableExample callingTestCase) {
+	public SysNatScript(ExecutableExample callingTestCase) {
 		adoptContextDataFrom(callingTestCase);
 	}
 	

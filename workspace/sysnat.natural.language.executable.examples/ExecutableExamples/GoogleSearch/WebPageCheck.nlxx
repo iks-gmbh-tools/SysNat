@@ -1,0 +1,16 @@
+Behaviour: GoogleSearch
+
+XX: Search for SysNat with Google
+TestData: GoogleSearchSysNat
+
+Enter search text "::SearchText".
+Start search.
+Search results contain "::ExpectedSearchResultText1".
+Search results contain "::ExpectedSearchResultText2".
+
+XX: Search for BuBu with Google
+TestData: GoogleSearchBubu
+
+Enter search text "::SearchText".
+Start search.
+Search results contain "::ExpectedSearchResultText1".

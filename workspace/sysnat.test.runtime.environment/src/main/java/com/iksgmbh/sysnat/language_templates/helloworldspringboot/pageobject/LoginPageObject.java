@@ -29,25 +29,31 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
  * 
  * @author Reik Oberrath
  */
-public class ResultPageObject extends PageObject
+public class LoginPageObject extends PageObject
 {	
-	public ResultPageObject(LanguageTemplateBasics aLanguageTemplateBasics) 
+	public LoginPageObject(LanguageTemplateBasics aLanguageTemplateBasics) 
 	{
 		this.languageTemplateBasics = aLanguageTemplateBasics;
 		this.idMappingCollection = new HashMap<GuiType, HashMap<String, List<String>>>();
 		
 		HashMap<String, List<String>> idMappings = new HashMap<String, List<String>>();
-		idMappings.put("GreetingResult", createList("/html/body/p"));
-		idMappingCollection.put(GuiType.ElementToReadText, idMappings);	}
+		idMappings.put("Username", createList("username"));
+		idMappings.put("Password", createList("password"));
+		idMappingCollection.put(GuiType.TextField, idMappings);		
+
+		idMappings = new HashMap<String, List<String>>();
+		idMappings.put("Log in", createList("login_button"));
+		idMappingCollection.put(GuiType.Button, idMappings);		
+	}
 
 	@Override
 	public String getPageName() {
-		return getClass().getSimpleName().replaceAll("PageObject", "").replaceAll("HelloWorld", "");
+		return getClass().getSimpleName().replaceAll("Object", "");
 	}
-
 
 	@Override
 	public boolean isCurrentlyDisplayed() {
-		return languageTemplateBasics.getExecutableExample().isElementAvailable("/html/body/p");
+		return languageTemplateBasics.getExecutableExample().isElementAvailable("login_button");
 	}
+	
 }

@@ -17,12 +17,11 @@ package com.iksgmbh.sysnat._testhelper;
 
 import org.junit.Ignore;
 
-import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
-import com.iksgmbh.sysnat.testcasejavatemplate.TestCaseTemplateParent;
-
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
+import com.iksgmbh.sysnat.testcasejavatemplate.SysNatTestCase;
 
 @Ignore
-public class TestCaseTestImpl extends TestCaseTemplateParent 
+public class TestCaseTestImpl extends SysNatTestCase 
 {	
 	protected LanguageTemplatesCommonTestImpl languageTemplatesCommon;
 	protected boolean throwExceptionOnFailing = false;
@@ -37,8 +36,8 @@ public class TestCaseTestImpl extends TestCaseTemplateParent
 		return true;
 	}
 	
-	public LanguageTemplates getApplicationSpecificLanguageTemplates() {
-		return new LanguageTemplatesCommonTestImpl(this);
+	public LanguageTemplateBasics getApplicationSpecificLanguageTemplates() {
+		return null;
 	}
 
 	@Override

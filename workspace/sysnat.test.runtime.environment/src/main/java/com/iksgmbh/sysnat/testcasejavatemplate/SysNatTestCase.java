@@ -35,13 +35,12 @@ import com.iksgmbh.sysnat.helper.ReportCreator;
 import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
- * This class represents the parent class for all TestCaseTemplates.
- * Each TestApplication needs its own TestCaseTemplate derived by this parent class
- * which contains all code shared by all TestCaseTemplates.
+ * This class represents a wrapper class of a Executable Example
+ * which allows the example to execute in the SysNat test runtime.
  * 
  * @author Reik Oberrath
  */
-public abstract class TestCaseTemplateParent extends ExecutableExample
+public abstract class SysNatTestCase extends ExecutableExample
 {
 	public void setUp() 
 	{
@@ -93,7 +92,7 @@ public abstract class TestCaseTemplateParent extends ExecutableExample
 			e.printStackTrace();		
 			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
 			failWithMessage(ERROR_KEYWORD 
-					        + ": Folgendes grafisches Element ist nicht verfügbar:" 
+					        + ": Folgendes grafisches Element ist nicht verfügbar: " 
 		                    + extractSelectorValue(e.getMessage())); 
 		} catch (SysNatException e) {
 			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));

@@ -18,11 +18,11 @@ package com.iksgmbh.sysnat._testcases.testscripts;
 import org.junit.Ignore;
 
 import com.iksgmbh.sysnat.ExecutableExample;
-import com.iksgmbh.sysnat.testcasejavatemplate.ScriptTemplateParent;
+import com.iksgmbh.sysnat.testcasejavatemplate.SysNatScript;
 
 
 @Ignore
-public class SimpleTestScript extends ScriptTemplateParent 
+public class SimpleTestScript extends SysNatScript 
 {
 	public SimpleTestScript(ExecutableExample callingTestCase) {
 		super(callingTestCase);

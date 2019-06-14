@@ -38,7 +38,8 @@ public class SysNatConstants
 		                  TextField,   // single line input field
 		                  ComboBox,    // selectbox with dropdown
 		                  RadioButtonSelection,   
-		                  ElementToReadText};
+		                  ElementToReadText,
+		                  CheckBox};
 	
 	public enum TargetEnv { LOCAL,        // IDE of deceloper
 		                    DEVELOPMENT,  // Developer team environment used by CI

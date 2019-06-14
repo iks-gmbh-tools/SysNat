@@ -15,7 +15,6 @@
  */
 package com.iksgmbh.sysnat;
 
-import static com.iksgmbh.sysnat.helper.TestClassLevelTest.doesMessagesContain;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -178,4 +177,14 @@ public class LanguageTemplatesCommonClassLevelTest
 		assertTrue( result9 );
 	}
 	
+	private boolean doesMessagesContain(List<String> reportMessages, String toFind) 
+	{
+		for (String message : reportMessages) {
+			if (message.contains(toFind) || message.equals(toFind)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

@@ -27,7 +27,11 @@ public class TestCaseForTestPurpose extends ExecutableExample
 {
 	protected LanguageTemplatesCommon languageTemplatesCommon;
 	
-	public TestCaseForTestPurpose()  {
+	private String testDataIdentifier;
+	
+	public TestCaseForTestPurpose(String aTestdataIdentifier)  
+	{
+		this.testDataIdentifier = aTestdataIdentifier;
 		languageTemplatesCommon = new LanguageTemplatesCommon(this);
 		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
 		executionInfo.setApplicationStarted(true);
@@ -37,7 +41,7 @@ public class TestCaseForTestPurpose extends ExecutableExample
 	@Override
 	public void executeTestCase() {
 		languageTemplatesCommon.startNewXX("TestCaseForTestPurpose");
-		languageTemplatesCommon.loadTestData("ManyDatasets");
+		languageTemplatesCommon.loadTestData(testDataIdentifier);
 		addReportMessage(getTestData().size() + " datasets have been loaded.");
 		closeCurrentTestCaseWithSuccess();
 	}

@@ -20,9 +20,9 @@ import org.junit.Test;
 
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
 import com.iksgmbh.sysnat.test.language_container.CalculatorLanguageTemplatesContainer;
-import com.iksgmbh.sysnat.testcasejavatemplate.TestCaseTemplateParent;
+import com.iksgmbh.sysnat.testcasejavatemplate.SysNatTestCase;
 
-public class BehaviourLevelInstructionsTestCase1Test extends TestCaseTemplateParent
+public class BehaviourLevelInstructionsTestCase1Test extends SysNatTestCase
 {
 	private static final String BEHAVIOR_ID = "BehaviourId";
 

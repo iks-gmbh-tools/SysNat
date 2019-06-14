@@ -153,7 +153,6 @@ public class PatternMergeJavaCommandGenerator
 		String file = instructionPattern.getFileName();
 		int pos = file.lastIndexOf('\\') + 1;
 		String filename = file.substring(pos);
-		String path = file.substring(0, pos); 
 		userErrorMessage = userErrorMessage.replace("x2", filename);
 		userErrorMessage = userErrorMessage.replace("x3", ExecutionRuntimeInfo.getInstance().getTestApplicationName());
 

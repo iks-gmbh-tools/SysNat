@@ -20,19 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.InvalidArgumentException;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import com.iksgmbh.sysnat.common.exception.SysNatException;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.helper.BrowserStarter;
 
 public class SeleniumGuiController implements GuiControl 
@@ -42,24 +35,25 @@ public class SeleniumGuiController implements GuiControl
 	private WebDriver webDriver;
 	private ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
 
+	public String getCurrentURL() {
+		return webDriver.getCurrentUrl();
+	}
+
 	private enum TAGNAME { select, input };
 
-	public String getCurrentURL() {
-	   return webDriver.getCurrentUrl();
-	}
-	
 	@Override
 	public void loadPage(String url)
 	{
-	   try {
-	      webDriver.get(url);
-	   } catch (InvalidArgumentException e) {
-	      throw new SysNatException("Die URL <b>" + url + "</b> ist keine gültige Webadresse.");
-	   }
+		try {
+			if (url !=null) webDriver.get(url);
+		} catch (InvalidArgumentException e) {
+			throw new SysNatException("Die URL <b>" + url + "</b> ist keine gültige Webadresse.");
+		}
 	}
-	
+
 	@Override
-	public void reloadCurrentPage() {
+	public void reloadCurrentPage()
+	{
 		try {
 			webDriver.navigate().refresh();
 		} catch (Exception e) {
@@ -91,7 +85,9 @@ public class SeleniumGuiController implements GuiControl
 		if (ok) 
 		{
 			try {
-				webDriver.get(targetLoginUrl);				
+				webDriver.get(targetLoginUrl);
+			} catch (InvalidArgumentException e) {
+				throw new SysNatException("Die konfigurierte URL '" + targetLoginUrl + "' ist ungültig.");
 			} catch (Exception e) {
 				e.printStackTrace();
 				ok = false;
@@ -178,8 +174,8 @@ public class SeleniumGuiController implements GuiControl
 	@Override
     public String clickElement(final String elementAsString, int timeoutInSeconds)
     {
-        WebElement element = retrieveElement(elementAsString, timeoutInSeconds);
-        return clickElement(element, elementAsString);
+        WebElement element = retrieveElement(elementAsString, timeoutInSeconds*1000);
+		return clickElement(element, elementAsString);
     }
 
 	@Override
@@ -384,26 +380,39 @@ public class SeleniumGuiController implements GuiControl
 	}
 
 	@Override
-	public void waitToDisappear(String text, int maxSecondsToWait)
+	public boolean waitToDisappear(String text, int maxSecondsToWait)
 	{
-		boolean goOn = true;
-		int counterWaitState = 0;
-		int maxAttemptsToFindElement = maxSecondsToWait * 1000 / MILLIS_TO_WAIT_PER_TRY;
+		try {
+			int counterWaitState = 0;
+			int maxAttemptsToFindElement = maxSecondsToWait * 1000 / MILLIS_TO_WAIT_PER_TRY;
 
-		while (goOn)
-		{
-			sleep(MILLIS_TO_WAIT_PER_TRY);
+			while (true)
+			{
+				sleep(MILLIS_TO_WAIT_PER_TRY);
 
-			if ( ! isTextCurrentlyDisplayed(text) ) {
-				goOn = false;
-			}
-			counterWaitState++;
+				if ( ! isTextCurrentlyDisplayed(text) ) {
+					System.out.println("###########");
+					System.out.println("waitToDisappear cancelled by text not available - " + text);
+					System.out.println("###########");
+					return true;
+				}
 
-			if (counterWaitState > maxAttemptsToFindElement) {
-				goOn = false;
+				counterWaitState++;
+
+				if (counterWaitState > maxAttemptsToFindElement) {
+					System.out.println("###########");
+					System.out.println("waitToDisappear cancelled by Timeout - " + text);
+					System.out.println("###########");
+					return false;
+				}
 			}
 		}
-
+		catch (Exception e) {
+			System.out.println("###########");
+			System.out.println("waitToDisappear cancelled by Exception - " + text);
+			System.out.println("###########");
+			return true;
+		}
 	}
 
 
@@ -543,31 +552,47 @@ public class SeleniumGuiController implements GuiControl
 	public boolean isXPathAvailable(String xPath) {
 		final List<WebElement> elements = webDriver.findElements(By.xpath(xPath));
 		if (elements.size() == 0) return false;
-		return isElementReadyToUse(elements.get(0));
+		return elements.get(0).isDisplayed() && elements.get(0).isEnabled();
 	}
 
 	// ####################################################################################################
 	//                             P r i v a t e   M e t h o d s
 	// ####################################################################################################
 	
-	private WebElement retrieveElement(final String elementIdentifier)  
-	{
-		return retrieveElement(elementIdentifier, executionInfo.getDefaultGuiElementTimeout());
-	}	
+	private WebElement retrieveElement(final String elementIdentifier)  {
+		return retrieveElement(elementIdentifier, executionInfo.getMaxMilliesForWaitState());
+	}
 
-	private WebElement retrieveElement(final String elementIdentifier, int timeOutInSeconds)  
+	
+	/**
+	 * 
+	 * @param elementIdentifier
+	 * @param timeOutInMillis
+	 * @return
+	 */
+	private WebElement retrieveElement(final String elementIdentifier, int timeOutInMillis)
 	{
-        WebElement toReturn = null;
+		String toSearchFor = elementIdentifier;
+		String toSearchForExtension = "";
+
+		if (elementIdentifier.contains("::"))
+		{
+			String[] splitResult = elementIdentifier.split("::");
+			toSearchFor = splitResult[0];
+			toSearchForExtension = splitResult[1];
+		}
+
+		List<WebElement> matches = null;
 		boolean goOn = true;
 		int counterWaitState = 0;
-		int maxAttemptsToFindElement = executionInfo.getMaxMilliesForWaitState() / MILLIS_TO_WAIT_PER_TRY;
+		int maxAttemptsToFindElement = timeOutInMillis / MILLIS_TO_WAIT_PER_TRY;
 		
 		while (goOn)
 		{
 			sleep(MILLIS_TO_WAIT_PER_TRY);
 			
-			toReturn = findElement(elementIdentifier);
-			if (toReturn != null) {
+			matches = findMatchingElements(toSearchFor);
+			if (matches.size() > 0) {
 				goOn = false;
 			}
 			counterWaitState++;
@@ -577,66 +602,84 @@ public class SeleniumGuiController implements GuiControl
 			}
 		}
 
-		if (toReturn == null) {
-			throw new NoSuchElementException("Das Element mit der technischen Identifizierung " 
-		                                      + elementIdentifier + 
-		                                      " konnte auf der aktuellen Seite nicht gefunden werden.");
+		if (matches.size() == 0) {
+			throw new NoSuchElementException("Das Element mit der technischen Identifizierung "
+					+ elementIdentifier +
+					" konnte auf der aktuellen Seite nicht gefunden werden.");
 		}
 
-		return toReturn;
+
+		if (matches.size() == 1) {
+			return matches.get(0);
+		}
+
+		for (WebElement element : matches) {
+			if (element.getAttribute("id").equals(toSearchFor)
+				||
+				element.getAttribute("id").equals(toSearchForExtension))
+			{
+				return element;
+			}
+		}
+
+		throw new NoSuchElementException("Das Element mit der technischen Identifizierung "
+				+ elementIdentifier +
+				" ist nicht eindeutig identifizierbar.");
 	}
 	
 	
-	private WebElement findElement(final String elementIdentifier) 
+	private List<WebElement> findMatchingElements(final String elementIdentifier)
 	{
-        WebElement toReturn = null;
+        List<WebElement> toReturn = new ArrayList<>();
         
 		try {
-			toReturn = webDriver.findElement(By.id(elementIdentifier));
+			toReturn = webDriver.findElements(By.id(elementIdentifier));
         } catch (Exception e)  {
             // ignore
         }
 
-		if (toReturn == null) 
+		if (toReturn.size() == 0)
 		{
 			try {
-				toReturn = webDriver.findElement(By.name(elementIdentifier));
+				toReturn = webDriver.findElements(By.name(elementIdentifier));
 			} catch (Exception e) {
 				// ignore
 			}
 		}
-		
-		if (toReturn == null) 
+
+		if (toReturn.size() == 0)
 		{			
 			try {
-				toReturn = webDriver.findElement(By.xpath(elementIdentifier));
+				toReturn = webDriver.findElements(By.xpath(elementIdentifier));
 			} catch (Exception e)  {
 				// ignore
 			}			
 		}
-		
-		if (toReturn == null) {
+
+		if (toReturn.size() == 0) {
 			try {
-				toReturn = webDriver.findElement(By.tagName(elementIdentifier));
+				toReturn = webDriver.findElements(By.tagName(elementIdentifier));
 			} catch (Exception e)  {
 				// ignore
 			}
 		}
-		
-		if (toReturn == null) {
+
+		if (toReturn.size() == 0) {
 			try {
-				toReturn = webDriver.findElement(By.className(elementIdentifier));
+				toReturn = webDriver.findElements(By.className(elementIdentifier));
 			} catch (Exception e)  {
 				// ignore
 			}
 		}
-		
-		try {
-			toReturn = webDriver.findElement(By.linkText(elementIdentifier));
-        } catch (Exception e)  {
-            // ignore
-        }
-		
+
+		if (toReturn.size() == 0) {
+			try {
+				toReturn = webDriver.findElements(By.linkText(elementIdentifier));
+			} catch (Exception e)  {
+				// ignore
+			}
+		}
+
 		return toReturn;
 	}
 
@@ -649,8 +692,22 @@ public class SeleniumGuiController implements GuiControl
         }
     }
 
-	private boolean isElementReadyToUse(WebElement element) {
-		return element != null && element.isDisplayed() && element.isEnabled();
+	public boolean isElementReadyToUse(WebElement element)
+	{
+		return  element != null
+				&& element.isDisplayed()
+				&& element.isEnabled()
+				&& isClickable(element);
+	}
+
+	private boolean isClickable(WebElement element)
+	{
+		try {
+			element.click();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
     private void inputText(WebElement e, String value)

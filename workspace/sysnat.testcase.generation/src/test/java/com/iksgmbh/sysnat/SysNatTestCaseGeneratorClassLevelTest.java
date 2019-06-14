@@ -171,10 +171,10 @@ public class SysNatTestCaseGeneratorClassLevelTest
 
 		String actualFileContent = SysNatStringUtil.removeLicenceComment( SysNatFileUtil.readTextFileToString(result.get(0)) );
 		actualFileContent = SysNatStringUtil.removeWhitespaceLinewise(actualFileContent);
-		String expectedFileContent = SysNatFileUtil.readTextFileToString("../sysnat.testcase.generation/src/test/resources/expectedResults/ScenarioBasedTestCase.txt");
+		String expectedFileContent = SysNatFileUtil.readTextFileToString("../sysnat.testcase.generation/src/test/resources/expectedResults/"
+				                                                          + "ScenarioBasedTestCase.txt");
 		expectedFileContent = SysNatStringUtil.removeWhitespaceLinewise(expectedFileContent);
 		assertEquals("File Content", expectedFileContent, actualFileContent);
-
 	}
 
 }

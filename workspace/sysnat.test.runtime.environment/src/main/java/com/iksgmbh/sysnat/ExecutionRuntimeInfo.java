@@ -53,6 +53,8 @@ import com.iksgmbh.sysnat.helper.VirtualTestCase;
 public class ExecutionRuntimeInfo 
 {
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
+	private static final ResourceBundle BUNDLE_EN = ResourceBundle.getBundle("bundles/Constants", Locale.ENGLISH);
+
 	private static final Hashtable<String, String> sysNatProperties = new Hashtable<>();
 
 	public static final String UNNAMED_XX_GROUP = "UNNAMED_XX_GROUP";
@@ -133,10 +135,15 @@ public class ExecutionRuntimeInfo
 		try {
 			targetEnvironment = TargetEnv.valueOf(getSystemProperty(BUNDLE.getString("ENVIRONMENT_SETTING_KEY")).toUpperCase());
 		} catch (Exception e) {
-			System.err.println("Unknown Environment in config.settings: " + getSystemProperty("Environment"));
+			targetEnvironment = TargetEnv.valueOf(getSystemProperty(BUNDLE_EN.getString("ENVIRONMENT_SETTING_KEY")).toUpperCase());
 		}
 
-		executionFilters = getSystemProperty(BUNDLE.getString("EXECUTION_FILTER"));
+		try {
+			executionFilters = getSystemProperty(BUNDLE.getString("EXECUTION_FILTER"));
+		} catch (Exception e) {
+			executionFilters = getSystemProperty(BUNDLE_EN.getString("EXECUTION_FILTER"));
+		}
+		
 		executionFilterList = SysNatStringUtil.getExecutionFilterAsList(executionFilters, "");
 		assertPositiveFiltersInFrontOfNegativeOnes(executionFilterList);
 		if (executionFilters.length() == 0) {
@@ -173,7 +180,8 @@ public class ExecutionRuntimeInfo
 		}
 	}
 
-	private String getSystemProperty(String key) {
+	private String getSystemProperty(String key) 
+	{
 		String toReturn = System.getProperty(key);
 		if (toReturn == null) {
 			handleException("Unknown system property '" + key + "'!");
@@ -430,18 +438,27 @@ public class ExecutionRuntimeInfo
 		System.setProperty(BUNDLE.getString("TESTAPP_SETTING_KEY"), name);
 	}
 
-	public String getTestApplicationName() {
-		final String toReturn = System.getProperty(BUNDLE.getString("TESTAPP_SETTING_KEY"));
+	public String getTestApplicationName() 
+	{
+		String toReturn = System.getProperty(BUNDLE.getString("TESTAPP_SETTING_KEY"));
 
 		if (toReturn == null) {
-			throw new SysNatException("Appliacation under test not specified!");
+			toReturn = System.getProperty(BUNDLE_EN.getString("TESTAPP_SETTING_KEY"));
+		}
+
+		if (toReturn == null) {
+			throw new SysNatException("Application under test not specified!");
 		}
 
 		return toReturn;
 	}
 
 	public String getExecutionSpeed() {
-		return getSystemProperty(BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY"));
+		try {
+			return getSystemProperty(BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY"));
+		} catch (Exception e) {
+			return getSystemProperty(BUNDLE_EN.getString("EXECUTION_SPEED_SETTING_KEY"));
+		}
 	}
 
 	public int getMaxMilliesForWaitState() {
@@ -534,6 +551,10 @@ public class ExecutionRuntimeInfo
 		return System.getProperty("sysnat.properties.path", PROPERTIES_PATH);
 	}
 
+	public String getRootPath() {
+		return System.getProperty("root.path");
+	}
+
 	public void setApplicationStarted(boolean applicationStarted) {
 		this.applicationStarted = applicationStarted;
 	}
@@ -578,7 +599,13 @@ public class ExecutionRuntimeInfo
 	}
 
 	public String getReportName() {
-		String toReturn = System.getProperty(BUNDLE.getString("REPORT_NAME_SETTING_KEY")).trim();
+		String toReturn;
+		
+		try {
+			toReturn = System.getProperty(BUNDLE.getString("REPORT_NAME_SETTING_KEY")).trim();
+		} catch (Exception e) {
+			toReturn = System.getProperty(BUNDLE_EN.getString("REPORT_NAME_SETTING_KEY")).trim();
+		}		
 
 		if (toReturn == null || toReturn.trim().length() == 0) {
 			toReturn = buildDefaultReportName();
@@ -603,7 +630,11 @@ public class ExecutionRuntimeInfo
 	}
 
 	public String getArchiveDir() {
-		return getSystemProperty(BUNDLE.getString("ARCHIVE_DIR_SETTING_KEY"));
+		try {			
+			return getSystemProperty(BUNDLE.getString("ARCHIVE_DIR_SETTING_KEY"));
+		} catch (Exception e) {
+			return getSystemProperty(BUNDLE_EN.getString("ARCHIVE_DIR_SETTING_KEY"));
+		}
 	}
 
 	public void setReportName(String value) {
@@ -624,8 +655,8 @@ public class ExecutionRuntimeInfo
 	}
 
 	public boolean getUseSettingsDialog() {
-		return System.getProperty("SettingsConfigDialog").equalsIgnoreCase("on")
-				|| System.getProperty("SettingsConfigDialog").equalsIgnoreCase("an");
+		return System.getProperty("Start_With_SettingsConfigDialog").equalsIgnoreCase("on")
+				|| System.getProperty("Starte_Mit_SettingsConfigDialog").equalsIgnoreCase("an");
 	}
 
 

@@ -26,24 +26,55 @@ import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.testdataimport.ExcelTableReader.Cell;
 
+/**
+ * Builds datasets from a squared matrix read from an excel file (per default the first sheet of the file).
+
+ * The matrix is defined by its upper left cell (the "root cell") - per default the cell A1.
+ * All neighbouring non-emtpy cells to the right of the root cell belong to the "first row" of the matrix until the first emtpy cell is detected.  
+ * All neighbouring non-emtpy cells below the root cell belong to the "first column" of the matrix until the first emtpy cell is detected.
+ * The matrix is defined by the rectangle constructed by the first row and the first column.
+ * 
+ * Per default, datasets are organized in rows. That means, the dataset names are supposed to be represented by the first column.
+ * The content of the root cells allows to indicate the opposite, i. e. the matrix is rotated, datasets are organized in columns and the dataset names are read from the first row.
+ * To rotate the matrix, write 'rotate' or 'datasets in columns' into the root cell.
+ * 
+ * @author Reik Oberrath
+ */
 public class ExcelDataProvider
 {
-	// maybe used later on
-//	private static final String ROTATION_MODE_DATASET_NAMES_IN_FIRST_ROW = "Dataset Names In First Row";
-//	private static final String ROTATION_MODE_DATASET_NAMES_IN_FIRST_COLUMN = "Dataset Names In First Column";
-
+	private static final String ROTATION_MODE_DATASET_NAMES_IN_FIRST_ROW_1 = "Column is dataset";
+	private static final String ROTATION_MODE_DATASET_NAMES_IN_FIRST_ROW_2 = "Datasets in columns";
+	//private static final String ROTATION_MODE_DATASET_NAMES_IN_FIRST_COLUMN = "Row is Dataset";
+	
 	public static Hashtable<String, Properties> doYourJob(final File excelFile) 
+	{
+		return doYourJob(excelFile, 1, 1, 1);
+	}
+	
+	public static Hashtable<String, Properties> doYourJob(final File excelFile, 
+                                                          final int sheetNumber,
+			                                              final int columnOfRootCell, 
+			                                              final int rowOfRootCell) 
 	{
 		final ExcelTableReader excelTableReader;
 		try {
-			excelTableReader = new ExcelTableReader(excelFile);
+			excelTableReader = new ExcelTableReader(excelFile, sheetNumber);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new SysNatTestDataException("Fehler beim Lesen von " + excelFile.getAbsolutePath());
 		}
 		
-		final Cell firstCell = new Cell(1, 1);
-		final String[][] matrixData = excelTableReader.getMatrix(firstCell);
+		final Cell rootCell = new Cell(columnOfRootCell, rowOfRootCell);
+		final String rootCellContent = excelTableReader.getContent(rootCell);
+		final String[][] matrixData;
+
+		if (rootCellContent.equalsIgnoreCase(ROTATION_MODE_DATASET_NAMES_IN_FIRST_ROW_1) 
+			|| rootCellContent.equalsIgnoreCase(ROTATION_MODE_DATASET_NAMES_IN_FIRST_ROW_2)
+			|| rootCellContent.equalsIgnoreCase("rotate")) {
+			matrixData = rotate( excelTableReader.getMatrix(rootCell) );
+		} else {
+			matrixData = excelTableReader.getMatrix(rootCell);
+		}
 		
 		checkMatrixData(matrixData, excelFile.getAbsolutePath());
 		
@@ -77,19 +108,19 @@ public class ExcelDataProvider
 	}
 
 	// maybe used later on
-//	private static String[][] rotate(String[][] originalMatrixData)
-//	{
-//		final String[][] toReturn = new String[originalMatrixData[0].length][originalMatrixData.length];
-//		for (int origRow = 0; origRow < originalMatrixData.length; origRow++) 
-//		{
-//			for (int origCol = 0; origCol < originalMatrixData[0].length; origCol++) 
-//			{
-//				toReturn[origCol][origRow] = originalMatrixData[origRow][origCol];
-//			}
-//			
-//		}
-//		return toReturn;
-//	}
+	private static String[][] rotate(String[][] originalMatrixData)
+	{
+		final String[][] toReturn = new String[originalMatrixData[0].length][originalMatrixData.length];
+		for (int origRow = 0; origRow < originalMatrixData.length; origRow++) 
+		{
+			for (int origCol = 0; origCol < originalMatrixData[0].length; origCol++) 
+			{
+				toReturn[origCol][origRow] = originalMatrixData[origRow][origCol];
+			}
+			
+		}
+		return toReturn;
+	}
 
 
 

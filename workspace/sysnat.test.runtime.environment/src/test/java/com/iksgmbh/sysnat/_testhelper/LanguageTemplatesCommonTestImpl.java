@@ -15,19 +15,15 @@
  */
 package com.iksgmbh.sysnat._testhelper;
 
-import java.util.HashMap;
-
 import org.junit.Before;
 
 import com.iksgmbh.sysnat.ExecutableExample;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
-import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
 
-public class LanguageTemplatesCommonTestImpl extends LanguageTemplatesCommon implements LanguageTemplates
+public class LanguageTemplatesCommonTestImpl extends LanguageTemplatesCommon
 {
-	public LanguageTemplatesCommonTestImpl(ExecutableExample test) {
-		super(test);
+	public LanguageTemplatesCommonTestImpl(ExecutableExample anXX) {
+		super(anXX);
 	}
 
 	protected String getScriptDir() {
@@ -37,28 +33,5 @@ public class LanguageTemplatesCommonTestImpl extends LanguageTemplatesCommon imp
 	@Before
 	public boolean doesTestBelongToApplicationUnderTest() {
 		return true;
-	}
-
-	@Override
-	public void doLogout() {
-	}
-
-	@Override
-	public boolean isStartPageVisible() {
-		return false;
-	}
-
-	@Override
-	public boolean isLoginPageVisible() {
-		return false;
-	}
-
-	@Override
-	public void gotoStartPage() {
-	}
-
-	@Override
-	public void doLogin(HashMap<WebLoginParameter, String> startParameter) {
-	}
-	
+	}	
 }

@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.test.helper.TestCaseForTestPurpose;
 
 /**
@@ -33,28 +34,117 @@ import com.iksgmbh.sysnat.test.helper.TestCaseForTestPurpose;
  */
 public class TestDataImport_ModuleLevelTest 
 {
+	private static final String testFolder = "../sysnat.natural.language.executable.examples/testdata/HomePageIKS";
+	
 	@Before
 	public void setup() {
 		ExecutionRuntimeInfo.reset();
 	}
 	
 	@Test
-	public void loadsDataFromDatFiles() throws Exception
+	public void loadsMultipleDatasetsFromSingleDatFiles() throws Exception
 	{
 		// arrange
+		String testDataIdentifier = "ManyDatasets";
+		String dataFileName = testDataIdentifier + ".dat";
+		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName);
 		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "src/test/resources/testSettingConfigs/HomePageIKS.config");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("Environment", "LOCAL");
 		final ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
 		assertEquals("Number of report message", 0, executionInfo.getReportMessagesOK().size());
-		TestCaseForTestPurpose fakeTestCase = new TestCaseForTestPurpose();
+		TestCaseForTestPurpose fakeTestCase = new TestCaseForTestPurpose(testDataIdentifier);
+		SysNatFileUtil.copyTextFileToTargetDir("../sysnat.quality.assurance/src/test/resources/testdata/ImportTests", 
+				                               dataFileName, testFolder);
+		
 
 		// act
 		fakeTestCase.executeTestCase();
 
+		// cleanup
+		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName);
+		
 		// assert
 		final List<String> reportMessages = executionInfo.getReportMessagesOK().get("TestCaseForTestPurpose");
 		assertEquals("Number of report message", 1, reportMessages.size());
 		assertEquals("Report message", "3 datasets have been loaded.", reportMessages.get(0));
-		assertEquals("Value of field", "value22", fakeTestCase.getTestData().getValue("ManyDatasets_2", "fieldname22"));
+		assertEquals("Value of field", "value11", fakeTestCase.getTestData().getValue(testDataIdentifier + "_1", "fieldname11"));
+		assertEquals("Value of field", "value22", fakeTestCase.getTestData().getValue(testDataIdentifier + "_2", "fieldname22"));
+		assertEquals("Value of field", "value31", fakeTestCase.getTestData().getValue(testDataIdentifier + "_3", "fieldname31"));
 	}
+	
+	@Test
+	public void loadsMultipleDatasetsFromDatFileSeries() throws Exception
+	{
+		// arrange
+		String testDataIdentifier = "DistributedDatasetSeries";
+		String dataFileName1 = testDataIdentifier + "_1.dat";
+		String dataFileName2 = testDataIdentifier + "_2.dat";
+		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName1);
+		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName2);
+		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "src/test/resources/testSettingConfigs/HomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty("Environment", "LOCAL");
+		final ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		assertEquals("Number of report message", 0, executionInfo.getReportMessagesOK().size());
+		TestCaseForTestPurpose fakeTestCase = new TestCaseForTestPurpose(testDataIdentifier);
+		SysNatFileUtil.copyTextFileToTargetDir("../sysnat.quality.assurance/src/test/resources/testdata/ImportTests", 
+				                               dataFileName1, testFolder);
+		SysNatFileUtil.copyTextFileToTargetDir("../sysnat.quality.assurance/src/test/resources/testdata/ImportTests", 
+                                               dataFileName2, testFolder);
+		
+
+		// act
+		fakeTestCase.executeTestCase();
+
+		// cleanup
+		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName1);
+		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName2);
+		
+		// assert
+		final List<String> reportMessages = executionInfo.getReportMessagesOK().get("TestCaseForTestPurpose");
+		assertEquals("Number of report message", 1, reportMessages.size());
+		assertEquals("Report message", "3 datasets have been loaded.", reportMessages.get(0));
+		assertEquals("Value of field", "value11", fakeTestCase.getTestData().getValue(testDataIdentifier + "_1", "fieldname11"));
+		assertEquals("Value of field", "value22", fakeTestCase.getTestData().getValue(testDataIdentifier + "_2_1", "fieldname22"));
+		assertEquals("Value of field", "value31", fakeTestCase.getTestData().getValue(testDataIdentifier + "_2_2", "fieldname31"));
+	}
+
+	@Test
+	public void loadsMultipleDatasetsFromExcelFile() throws Exception {
+		testDataLoadingFromExcelFile("ExcelData");
+	}
+
+	@Test
+	public void loadsMultipleDatasetsFromRotatedExcelFile() throws Exception {
+		testDataLoadingFromExcelFile("RotatedExcelData");
+	}
+	
+	private void testDataLoadingFromExcelFile(String testDataIdentifier) throws Exception
+	{
+		// arrange
+		String dataFileName = testDataIdentifier + ".xlsx";
+		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName);
+		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "src/test/resources/testSettingConfigs/HomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty("Environment", "LOCAL");
+		final ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+		assertEquals("Number of report message", 0, executionInfo.getReportMessagesOK().size());
+		TestCaseForTestPurpose fakeTestCase = new TestCaseForTestPurpose(testDataIdentifier);
+		SysNatFileUtil.copyBinaryFile("../sysnat.quality.assurance/src/test/resources/testdata/ImportTests/" + dataFileName, 
+				                      testFolder + "/" + dataFileName);
+		
+
+		// act
+		fakeTestCase.executeTestCase();
+
+		// cleanup
+		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName);
+		
+		// assert
+		final List<String> reportMessages = executionInfo.getReportMessagesOK().get("TestCaseForTestPurpose");
+		assertEquals("Number of report message", 1, reportMessages.size());
+		assertEquals("Report message", "3 datasets have been loaded.", reportMessages.get(0));
+		assertEquals("Value of field", "value12", fakeTestCase.getTestData().getValue(testDataIdentifier + "_dataset1", "fieldname2"));
+		assertEquals("Value of field", "value23", fakeTestCase.getTestData().getValue(testDataIdentifier + "_dataset2", "fieldname3"));
+		assertEquals("Value of field", "value31", fakeTestCase.getTestData().getValue(testDataIdentifier + "_dataset3", "fieldname1"));
+	}
+	
 }

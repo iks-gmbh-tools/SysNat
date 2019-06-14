@@ -19,12 +19,12 @@ import org.junit.Ignore;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat._testhelper.LanguageTemplatesCommonTestImpl;
-import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
-import com.iksgmbh.sysnat.testcasejavatemplate.ScriptTemplateParent;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
+import com.iksgmbh.sysnat.testcasejavatemplate.SysNatScript;
 
 
 @Ignore
-public class MainTestScript extends ScriptTemplateParent 
+public class MainTestScript extends SysNatScript 
 {
 	private LanguageTemplatesCommonTestImpl languageTemplatesCommon;
 
@@ -39,7 +39,7 @@ public class MainTestScript extends ScriptTemplateParent
 		addReportMessage("Mainscript executed."); 
 	}
 	
-	public LanguageTemplates getApplicationSpecificLanguageTemplates() {
-		return new LanguageTemplatesCommonTestImpl(this);
+	public LanguageTemplateBasics getApplicationSpecificLanguageTemplates() {
+		return null;
 	}
 }

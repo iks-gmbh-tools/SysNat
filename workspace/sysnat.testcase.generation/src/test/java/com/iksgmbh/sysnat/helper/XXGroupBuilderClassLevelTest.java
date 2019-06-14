@@ -124,6 +124,7 @@ public class XXGroupBuilderClassLevelTest
 	public void throwsExceptionForTwoXXWithoutGroupDeclaration() 
 	{
 		// arrange
+		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.dummy.test.run", "true");
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw = new HashMap<>();
 		javaCommandCollectionRaw.put(new Filename("aFile"), createCommandListWithTwoXXWithoutGroup());
 		

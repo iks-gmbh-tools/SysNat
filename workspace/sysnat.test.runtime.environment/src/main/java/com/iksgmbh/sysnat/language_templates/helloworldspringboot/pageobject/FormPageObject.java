@@ -15,68 +15,55 @@
  */
 package com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject;
 
-import com.iksgmbh.sysnat.ExecutableExample;
+import java.util.HashMap;
+import java.util.List;
+
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
 /**
- * Maps names of GUI elements visible to the user to technical field IDs
- * and calls the gui controller to execute an action. 
+ * Implements actions that can be applied to this page.
+ * Some standard actions are available from the parent class.
+ * To use them, the idMappings must be defined.
  * 
  * @author Reik Oberrath
  */
-public class FormPageObject implements PageObject
+public class FormPageObject extends PageObject
 {	
-	private ExecutableExample executableExample;
+	public FormPageObject(LanguageTemplateBasics aLanguageTemplateBasics) 
+	{
+		this.languageTemplateBasics = aLanguageTemplateBasics;
+		this.idMappingCollection = new HashMap<GuiType, HashMap<String, List<String>>>();
+		
+		HashMap<String, List<String>> idMappings = new HashMap<String, List<String>>();
+		idMappings.put("Name", createList("name"));
+		idMappingCollection.put(GuiType.TextField, idMappings);		
 
-	public FormPageObject(ExecutableExample aTestCase) {
-		this.executableExample = aTestCase;
+		idMappings = new HashMap<String, List<String>>();
+		idMappings.put("Greet", createList("btnGreet"));
+		idMappingCollection.put(GuiType.Button, idMappings);		
+
+		idMappings = new HashMap<String, List<String>>();
+		idMappings.put("Greeting", createList("greetingSelect"));
+		idMappingCollection.put(GuiType.ComboBox, idMappings);		
 	}
 
 	@Override
 	public String getPageName() {
-		return getClass().getSimpleName().replaceAll("PageObject", "").replaceAll("HelloWorld", "");
-	}
-
-	@Override
-	public void enterTextInField(String fieldName, String value) 
-	{
-		if ("Name".equals(fieldName)) {
-			executableExample.inputText("name", value);
-		} else {			
-			throwUnsupportedGuiEventException(GuiType.TextField, fieldName);
-		}
-	}
-
-	@Override
-	public void clickButton(String buttonName) 
-	{
-		if ("Greet".equals(buttonName)) {
-			executableExample.clickButton("btnGreet");
-		} else {	
-			throwUnsupportedGuiEventException(GuiType.Button, buttonName);
-		}
-	}
-
-	@Override
-	public String getText(String identifierOfGuiElementToRead) {
-		throwUnsupportedGuiEventException(GuiType.ElementToReadText, identifierOfGuiElementToRead);
-		return null;
-	}
-
-	@Override
-	public void chooseForCombobox(String fieldName, String value) {
-		if ("Greeting".equals(fieldName)) {
-			executableExample.chooseFromComboBoxByValue("greetingSelect", value);
-		} else {	
-			throwUnsupportedGuiEventException(GuiType.ComboBox, fieldName);
-		}
+		return getClass().getSimpleName().replaceAll("Object", "");
 	}
 
 	@Override
 	public boolean isCurrentlyDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
+		return languageTemplateBasics.getExecutableExample().isElementAvailable("btnGreet");
 	}
+	
+	@Override
+    public void clickButton(String buttonName)
+    {
+        super.clickButton(buttonName);
+        languageTemplateBasics.resetCurrentPage();
+    }
 	
 }

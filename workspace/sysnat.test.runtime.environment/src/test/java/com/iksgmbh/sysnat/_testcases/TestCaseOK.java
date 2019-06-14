@@ -37,4 +37,8 @@ public class TestCaseOK extends TestCaseTestImpl
 		languageTemplatesCommon.defineAndCheckExecutionFilter(SysNatConstants.NO_FILTER);
 		closeCurrentTestCaseWithSuccess();
 	}
+	
+	public void setThrowExceptionOnFailing(boolean value) {
+		throwExceptionOnFailing = value;
+	}
 }

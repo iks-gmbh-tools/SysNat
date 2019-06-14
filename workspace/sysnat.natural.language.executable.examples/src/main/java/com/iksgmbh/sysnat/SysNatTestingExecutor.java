@@ -34,6 +34,7 @@ import com.iksgmbh.sysnat.testresult.archiving.SysNatTestResultArchiver;
 public class SysNatTestingExecutor 
 {
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
+	private static final ResourceBundle BUNDLE_EN = ResourceBundle.getBundle("bundles/Constants", Locale.ENGLISH);
 
 	public static final String MAVEN_OK = "OK";
 	public static final File JAVA_HOME = new File("../../java");
@@ -117,19 +118,39 @@ public class SysNatTestingExecutor
 		final Properties properties = new Properties();
 		
 		String propertyKey = BUNDLE.getString("TESTAPP_SETTING_KEY");
-		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		String property = System.getProperty(propertyKey);
+		if (property == null) property = System.getProperty(BUNDLE_EN.getString("TESTAPP_SETTING_KEY"));
+		properties.setProperty(propertyKey, property);
+
 		propertyKey = BUNDLE.getString("BROWSER_SETTING_KEY");
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		
+		
 		propertyKey = BUNDLE.getString("ENVIRONMENT_SETTING_KEY");
-		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		property = System.getProperty(propertyKey);
+		if (property == null) property = System.getProperty(BUNDLE_EN.getString("ENVIRONMENT_SETTING_KEY"));
+		properties.setProperty(propertyKey, property);
+		
 		propertyKey = BUNDLE.getString("EXECUTION_FILTER");
-		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		property = System.getProperty(propertyKey);
+		if (property == null) property = System.getProperty(BUNDLE_EN.getString("EXECUTION_FILTER"));
+		properties.setProperty(propertyKey, property);		
+		
 		propertyKey = BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY");
-		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		property = System.getProperty(propertyKey);
+		if (property == null) property = System.getProperty(BUNDLE_EN.getString("EXECUTION_SPEED_SETTING_KEY"));
+		properties.setProperty(propertyKey, property);		
+
 		propertyKey = BUNDLE.getString("REPORT_NAME_SETTING_KEY");
-		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		property = System.getProperty(propertyKey);
+		if (property == null) property = System.getProperty(BUNDLE_EN.getString("REPORT_NAME_SETTING_KEY"));
+		properties.setProperty(propertyKey, property);		
+		
 		propertyKey = BUNDLE.getString("ARCHIVE_DIR_SETTING_KEY");
-		properties.setProperty(propertyKey, System.getProperty(propertyKey));
+		property = System.getProperty(propertyKey);
+		if (property == null) property = System.getProperty(BUNDLE_EN.getString("ARCHIVE_DIR_SETTING_KEY"));
+		properties.setProperty(propertyKey, property);		
+		
 		propertyKey = "sysnat.dummy.test.run";
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
 		propertyKey = "sysnat.autolaunch.report";

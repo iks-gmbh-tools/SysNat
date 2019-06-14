@@ -82,10 +82,15 @@ public interface GuiControl
 	
 	// misc
 	int getNumberOfLinesInTextArea(String xpath);
-	void waitUntilElementIsAvailable(String elementIdentifier);
 	void clickLink(String elementIdentifier);
 	List<WebElement> getElements(String elementIdentifier);
 	String getTagName(String elementIdentifier);
+	boolean isTextCurrentlyDisplayed(String text);
+	void waitUntilElementIsAvailable(String elementIdentifier);
+	/**
+	 * @return true if text is not displayed or disappeared during maxSecondsToWait, false if not
+	 */
+	boolean waitToDisappear(String text, int maxSecondsToWait);
 	
 	// window stuff
 	String getCurrentlyActiveWindowTitle();  // for selenium this is the tab title not the frame title (which not exist) !
@@ -93,10 +98,6 @@ public interface GuiControl
 	void switchToLastWindow();
 	int getNumberOfOpenTabs();  // in all frames !
 	void switchToFirstWindow();
-
-	// misc
-	boolean isTextCurrentlyDisplayed(String text);
-	void waitToDisappear(String text, int maxSecondsToWait);
 
 	public default void performDoubleClickOnPosition(int x, int y) 
 	{

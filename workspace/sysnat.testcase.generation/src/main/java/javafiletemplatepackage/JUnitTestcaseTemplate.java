@@ -23,14 +23,15 @@ package javafiletemplatepackage;
 import org.junit.After;
 import org.junit.Before;
 
-import com.iksgmbh.sysnat.testcasejavatemplate.TestCaseTemplateParent;
+import com.iksgmbh.sysnat.testcasejavatemplate.SysNatTestCase;
 /* TO BE REPLACED: imports */
 
 /**
  * JUnitTestCaseTemplate for TestApplication 'XY'.
  * TO BE REPLACED: class java doc comment
  */
-public class JUnitTestcaseTemplate extends TestCaseTemplateParent
+@SuppressWarnings("unused")
+public class JUnitTestcaseTemplate extends SysNatTestCase
 {
 	/* TO BE REPLACED: constants */
 	

@@ -34,7 +34,9 @@ import com.iksgmbh.sysnat.common.helper.pdftooling.PdfFileContent;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 
 /**
- * Contains the implementation of the PDF content validation.
+ * Contains the implementation of language templates for the purpose of validating 
+ * the content of PDF files.
+ * If needed, they can be used in all test applications. 
  */
 @LanguageTemplateContainer
 public class LanguageTemplatesPDFValidation

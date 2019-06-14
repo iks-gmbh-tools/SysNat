@@ -19,38 +19,39 @@ import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIE
 
 import java.util.HashMap;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutableExample;
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
 import com.iksgmbh.sysnat.domain.TestApplication;
-import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.ErrorPageObject;
 import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.FormPageObject;
+import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.LoginPageObject;
 import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.ResultPageObject;
 
 /**
- * Contains the basic language templates for IKS-Online tests.
+ * Contains the basic language templates for the test application HelloWorldSpringBoot.
+ * 
+ * This class demonstrates the use of PageObjects and testing an application with login.
  * 
  * @author Reik Oberrath
  */
 @LanguageTemplateContainer
-public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemplates
+public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTemplateBasics
 {	
-	private ExecutableExample executableExample;
-	private ExecutionRuntimeInfo executionInfo;
+	private LoginPageObject loginPageObject;
 	private FormPageObject formPageObject;
-	private ResultPageObject resultPageObject;
-	private ErrorPageObject errorPageObject;
 	
-	public LanguageTemplatesHelloWorldSpringBootBasics(ExecutableExample aTestCase) 
+	public LanguageTemplatesBasics_HelloWorldSpringBoot(ExecutableExample anXX) 
 	{
-		this.executableExample = aTestCase;
-		this.executionInfo = ExecutionRuntimeInfo.getInstance();
-		this.formPageObject = new FormPageObject(aTestCase);
-		this.resultPageObject = new ResultPageObject(aTestCase);
-		this.errorPageObject = new ErrorPageObject(aTestCase);
+		this.executableExample = anXX;
+		this.executionInfo = ExecutionRuntimeInfo.getInstance();		
+		this.loginPageObject = createAndRegister(LoginPageObject.class, this);
+		this.formPageObject = createAndRegister(FormPageObject.class, this);
+		createAndRegister(ResultPageObject.class, this);
+		createAndRegister(ErrorPageObject.class, this);
 	}
 
 	private String getPageName() {
@@ -64,26 +65,26 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	@Override
 	public void doLogin(final HashMap<WebLoginParameter,String> startParameter) 
 	{
-		executableExample.inputText("username", startParameter.get(WebLoginParameter.LOGINID));
-		executableExample.inputText("password", startParameter.get(WebLoginParameter.PASSWORD));
-		executableExample.clickButton("login_button");			
+		loginPageObject.enterTextInField("Username", startParameter.get(WebLoginParameter.LOGINID));
+		loginPageObject.enterTextInField("Password", startParameter.get(WebLoginParameter.PASSWORD));
+		loginPageObject.clickButton("Log in");			
+        resetCurrentPage();
 	}
 
 	@Override
     public void doLogout() {
         executableExample.clickMenuHeader("Logout");
+        resetCurrentPage();
     }
     
 	@Override
 	public boolean isLoginPageVisible() {
-		return executableExample.isElementReadyToUse("username");
+		return loginPageObject.isCurrentlyDisplayed();
 	}
 
 	@Override
-	public boolean isStartPageVisible() 
-	{
-		return executableExample.isElementReadyToUse("greeting") 
-			&& executableExample.isElementReadyToUse("//*[@id='navbar-inner']");
+	public boolean isStartPageVisible() {
+		return formPageObject.isCurrentlyDisplayed();
 	}
 
 
@@ -130,20 +131,19 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 	}
 
 	@LanguageTemplate(value = "Click menu item ^^.")
-	public void clickMainMenuItem(final String valueCandidate) 
+	public void clickMainMenuItem(final String mainMenuItem) 
 	{
-		final String menuText = executableExample.getTestDataValue(valueCandidate);
-		
-		if (menuText.equals("Form Page"))  {
+		if (mainMenuItem.equals("Form Page"))  {
 			executableExample.clickMenuHeader("Form Page");
-		} else if (menuText.equals("Logout"))  {
+		} else if (mainMenuItem.equals("Logout"))  {
 			doLogout();
 			executionInfo.setAlreadyLoggedIn(false);
 		} else {
-			executableExample.failWithMessage("Unknown menu item <b>" + menuText + "</b>.");
+			executableExample.failWithMessage("Unknown menu item <b>" + mainMenuItem + "</b>.");
 		}
 		
-		executableExample.addReportMessage("Menu item <b>" + menuText + "</b> has been clicked.");
+		executableExample.addReportMessage("Menu item <b>" + mainMenuItem + "</b> has been clicked.");
+		resetCurrentPage();
 	}
 
 	@LanguageTemplate(value = "Relogin.")
@@ -152,96 +152,28 @@ public class LanguageTemplatesHelloWorldSpringBootBasics implements LanguageTemp
 		TestApplication testApp = executionInfo.getTestApplication();
 		doLogin(testApp.getLoginParameter());
 		executableExample.addReportMessage("Login has been perfomed with DefaultLoginData.");
+		resetCurrentPage();
 	}
 
 	@LanguageTemplate(value = "Enter ^^ in text field ^^.")
-	public void enterTextInField(String valueCandidate, String fieldName)
-	{
-		boolean ok = true;
-		String value = executableExample.getTestDataValue(valueCandidate);
-		String pageName = getPageName();
-		
-		if ("Form Page".equals(pageName)) {
-			formPageObject.enterTextInField(fieldName, value);
-		} else if ("Result Page".equals(pageName)) {
-			resultPageObject.enterTextInField(fieldName, value);
-		} else {
-			ok = false;
-		}
-		
-		if (ok) {
-			executableExample.addReportMessage("In field <b>" + fieldName + "</b> the value <b>" + value + "</b> has been entered.");
-		} else {
-			executableExample.failWithMessage("Entering a value into a field is not supported for page <b>"+ pageName + "</b>.");
-		}
+	public void enterTextInField(String valueCandidate, String fieldName) {
+		super.enterTextInField(valueCandidate, fieldName);
 	}
 
 	@LanguageTemplate(value = "Click button ^^.")
-	public void clickButton(String valueCandidate) 
-	{
-		final String buttonName = executableExample.getTestDataValue(valueCandidate);
-		boolean ok = true;
-		String pageName = getPageName();
-		
-		if ("Form Page".equals(pageName)) {
-			formPageObject.clickButton(buttonName);
-		} else if ("Result Page".equals(pageName)) {
-			resultPageObject.clickButton(buttonName);
-		} else if ("Error Page".equals(pageName)) {
-			executableExample.clickButton("btnBack");
-		} else {
-			ok = false;
-		}
-		
-		if (ok) {
-			executableExample.addReportMessage("Button <b>" + buttonName + "</b> has beed clicked.");
-		} else {
-			executableExample.failWithMessage("Clicking a button is not supported for page <b>"+ pageName + "</b>.");
-		}
+	public void clickButton(String buttonName) {
+		super.clickButton(buttonName);
 	}
 
 
 	@LanguageTemplate(value = "Select ^^ in selection field ^^.")
-	public void choose(String valueCandidate, String fieldName) 
-	{
-		final String value = executableExample.getTestDataValue(valueCandidate);
-		final String pageName = getPageName();
-		boolean ok = true;		
-		
-		if ("Form Page".equals(pageName)) {
-			formPageObject.chooseForCombobox(fieldName, value);
-		} else {
-			ok = false;
-		}
-		
-		if (ok) {
-			executableExample.addReportMessage("For field <b>" + fieldName + "</b> value <b>" + value + "</b> has been selected.");
-		} else {
-			executableExample.failWithMessage("Selecting a value is not supported for page <b>"+ pageName + "</b>.");
-		}		
+	public void choose(String valueCandidate, String fieldName) {
+		super.choose(valueCandidate, fieldName);
 	}
 
 	@LanguageTemplate(value = "Is the displayed text ^^ equal to ^^?")
-	public void isDislayedTextCorrect(final String guiElementToRead, final String valueCandidate) 
-	{
-		final String expectedText = executableExample.getTestDataValue(valueCandidate);
-		final String pageName = getPageName();
-		
-		String actualText = null;
-		
-		if ("Result Page".equals(pageName)) {
-			actualText = resultPageObject.getText(guiElementToRead);
-		} else if ("Error Page".equals(pageName)) {
-			actualText = errorPageObject.getText(guiElementToRead);
-		}
-		
-		if (actualText == null) {
-			executableExample.failWithMessage("Element <b>"+ guiElementToRead + "</b> is not supported to be read from page <b>" + pageName + "</b>.");
-		} else {
-			boolean ok = actualText.equals(expectedText);
-			String question = "Is the expected text (" + expectedText + ") equals to the actually displayed one (" + actualText + ")" + QUESTION_IDENTIFIER;
-			executableExample.answerQuestion(question, ok);	
-		}
+	public void isTextDislayed(final String guiElementToRead, final String valueCandidate) {
+		super.isTextDislayed(guiElementToRead, valueCandidate);
 	}
 	
 //  Needed?

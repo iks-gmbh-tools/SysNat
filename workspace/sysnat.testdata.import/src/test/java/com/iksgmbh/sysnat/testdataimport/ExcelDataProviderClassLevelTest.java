@@ -34,6 +34,24 @@ import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 public class ExcelDataProviderClassLevelTest {
 
 	@Test
+	public void readsRotatedDatasetsFromExcelFile() throws IOException 
+	{
+		// arrange
+		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/RotatedExcelTestData.xlsx");
+		
+		// act
+		final Hashtable<String, Properties> result = ExcelDataProvider.doYourJob(excelFile);
+		
+		// assert
+		assertEquals("Number of Datasets", 4, result.size());
+		final List<String> sortedListOfDatasetNames = getSortedKeys(result);
+		final String firstOrderedDatasetName = sortedListOfDatasetNames.get(0);
+		assertEquals("DatasetName", "RotatedExcelTestData_GreetingValidationData1", firstOrderedDatasetName);
+		assertEquals("DatasetName", "Stephen", result.get(firstOrderedDatasetName).getProperty("Name").toString());
+	}
+	
+	
+	@Test
 	public void readsDatasetsFromExcelFile() throws IOException 
 	{
 		// arrange

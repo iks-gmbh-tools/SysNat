@@ -29,12 +29,16 @@ public class ExcelTableReader
 	private File excelFile;
 	private XSSFWorkbook workbook;
 	private XSSFSheet currentSheet;
-	
+
 	public ExcelTableReader(final File excelFile) throws IOException {
+		this(excelFile, 1);
+	}
+
+	public ExcelTableReader(final File excelFile, int sheetNumber) throws IOException {
 		this.excelFile = excelFile;
 		FileInputStream fileInputStream = new FileInputStream(excelFile);
 		workbook = new XSSFWorkbook(fileInputStream);
-		setSheet(1);
+		setSheet(sheetNumber);
 	}
 
 	public File getExcelFile()
@@ -171,8 +175,8 @@ public class ExcelTableReader
 	 */
 	public static class Cell
 	{
-		public int rowNo;  // starts with 1
 		public int colNo;  // starts with 1
+		public int rowNo;  // starts with 1
 		
 		public Cell(final int colNo, final int rowNo) 
 		{

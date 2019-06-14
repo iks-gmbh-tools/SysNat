@@ -21,9 +21,9 @@ import org.junit.Test;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
 import com.iksgmbh.sysnat.test.language_container.CalculatorLanguageTemplatesContainer;
-import com.iksgmbh.sysnat.testcasejavatemplate.TestCaseTemplateParent;
+import com.iksgmbh.sysnat.testcasejavatemplate.SysNatTestCase;
 
-public class BDDKeywordTestCaseTest extends TestCaseTemplateParent
+public class BDDKeywordTestCaseTest extends SysNatTestCase
 {
 	private LanguageTemplatesCommon languageTemplatesCommon;
 	private CalculatorLanguageTemplatesContainer calculatorLanguageTemplatesContainer;

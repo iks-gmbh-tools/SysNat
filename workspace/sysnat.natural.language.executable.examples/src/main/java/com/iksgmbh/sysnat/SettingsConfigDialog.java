@@ -66,6 +66,7 @@ import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 public class SettingsConfigDialog extends JFrame 
 {
 	private static final ResourceBundle CONSTANTS_BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
+	private static final ResourceBundle CONSTANTS_BUNDLE_EN = ResourceBundle.getBundle("bundles/Constants", Locale.ENGLISH);
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/SettingsConfigDialog", Locale.getDefault());
 	private static final long serialVersionUID = 1L;
 	
@@ -406,7 +407,7 @@ public class SettingsConfigDialog extends JFrame
 		final JLabel lbl = new JLabel();
 		
 		if ( ! text.endsWith(":")) {
-			text = CONSTANTS_BUNDLE.getString(text).replaceAll("_", " ") + ":";
+			text = getBundleText(text) + ":";
 		}
 
 		lbl.setText(text);
@@ -418,6 +419,13 @@ public class SettingsConfigDialog extends JFrame
 		
 		parentPanel.add(lbl);
 		return lbl;
+	}
+
+	private String getBundleText(String key)
+	{
+		String toReturn = CONSTANTS_BUNDLE.getString(key);
+		if (toReturn == null) toReturn = CONSTANTS_BUNDLE_EN.getString(key);
+		return toReturn.replaceAll("_", " ");
 	}
 	
 	private void setSelectionToExecutionInfo() 

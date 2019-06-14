@@ -470,7 +470,8 @@ public class XXGroupBuilder
                     filename.value + "'.");
 		}
 		
-		if (counterXXId > 1 && ! xxGroupIdentifierPresent) {
+		if (counterXXId > 1 && ! xxGroupIdentifierPresent) 
+		{
 			String link = "https://github.com/iks-github/SysNat/wiki/What-is-a-nlxx-file%3F";
 			ErrorPageLauncher.doYourJob("Without Behaviour declaration only one executable example "
 					                     + "is allowed in the same nlxx file.", 

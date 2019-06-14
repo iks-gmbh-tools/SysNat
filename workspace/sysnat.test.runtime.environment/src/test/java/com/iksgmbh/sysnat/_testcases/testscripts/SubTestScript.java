@@ -20,11 +20,11 @@ import org.junit.Ignore;
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat._testhelper.LanguageTemplatesCommonTestImpl;
 import com.iksgmbh.sysnat.domain.SysNatTestData.SysNatDataset;
-import com.iksgmbh.sysnat.testcasejavatemplate.ScriptTemplateParent;
+import com.iksgmbh.sysnat.testcasejavatemplate.SysNatScript;
 
 
 @Ignore
-public class SubTestScript extends ScriptTemplateParent 
+public class SubTestScript extends SysNatScript 
 {
 	@SuppressWarnings("unused")
 	private LanguageTemplatesCommonTestImpl languageTemplatesCommon;

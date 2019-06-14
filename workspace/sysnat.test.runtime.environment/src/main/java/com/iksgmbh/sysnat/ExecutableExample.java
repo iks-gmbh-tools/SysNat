@@ -59,7 +59,7 @@ import com.iksgmbh.sysnat.guicontrol.SeleniumGuiController;
 import com.iksgmbh.sysnat.helper.PopupHandler;
 import com.iksgmbh.sysnat.helper.ReportCreator;
 import com.iksgmbh.sysnat.helper.WindowHelper;
-import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.testdataimport.TableDataParser;
 import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 import com.iksgmbh.sysnat.testresult.archiving.SysNatTestResultArchiver;
@@ -291,17 +291,17 @@ abstract public class ExecutableExample
 	}
 
 	
-	public LanguageTemplates getApplicationSpecificLanguageTemplates() 
+	public LanguageTemplateBasics getApplicationSpecificLanguageTemplates() 
     {
     	final String applicationUnderTest = executionInfo.getTestApplicationName();
     	final String testappl = applicationUnderTest.toLowerCase();
     	final String expectedClassName = "com.iksgmbh.sysnat.language_templates." + testappl + "."
-                                         + "LanguageTemplates" + applicationUnderTest + "Basics";
+                                         + "LanguageTemplatesBasics_" + applicationUnderTest;
     	try {
 			final Class<?> type =  Class.forName(expectedClassName);
 			final Constructor<?> constructor = type.getConstructor(ExecutableExample.class);
 			final Object toReturn = constructor.newInstance(this);
-			return (LanguageTemplates) toReturn;
+			return (LanguageTemplateBasics) toReturn;
 		} 
     	catch (ClassNotFoundException e) 
     	{

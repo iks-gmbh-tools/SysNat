@@ -228,7 +228,8 @@ public class JavaFileBuilderClassLevelTest
 		final File firstElement = result.keySet().iterator().next();
 		final String actualFileContent = result.get(firstElement);
 		final String expectedFileContent = SysNatFileUtil.readTextFileToString(
-				"../sysnat.testcase.generation/src/test/resources/expectedResults/JUnitJavaClassWithPreconditionAndCleanup.txt");
+				"../sysnat.testcase.generation/src/test/resources/expectedResults/"
+				+ "JUnitJavaClassWithPreconditionAndCleanup.txt");
         assertEquals("Expected report", expectedFileContent.trim(), actualFileContent.trim());
 	}
 	

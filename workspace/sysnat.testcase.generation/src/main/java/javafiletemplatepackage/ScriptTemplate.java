@@ -18,13 +18,14 @@ package javafiletemplatepackage;
 /* TO BE REPLACED: imports */
 
 import com.iksgmbh.sysnat.ExecutableExample;
-import com.iksgmbh.sysnat.testcasejavatemplate.ScriptTemplateParent;
+import com.iksgmbh.sysnat.testcasejavatemplate.SysNatScript;
 
 /**
  * Script for TestApplication 'XY'.
  * TO BE REPLACED: class java doc comment
 */
-public class ScriptTemplate extends ScriptTemplateParent
+@SuppressWarnings("unused")
+public class ScriptTemplate extends SysNatScript
 {
 	/* TO BE REPLACED: fields for language template containers */
 

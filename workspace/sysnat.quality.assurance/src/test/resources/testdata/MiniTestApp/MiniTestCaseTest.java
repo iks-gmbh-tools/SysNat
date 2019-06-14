@@ -8,9 +8,9 @@ import org.junit.Test;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
-import com.iksgmbh.sysnat.testcasejavatemplate.TestCaseTemplateParent;
+import com.iksgmbh.sysnat.testcasejavatemplate.SysNatTestCase;
 
-public class MiniTestCaseTest extends TestCaseTemplateParent
+public class MiniTestCaseTest extends SysNatTestCase
 {
 	private LanguageTemplatesCommon languageTemplatesCommon;
 	

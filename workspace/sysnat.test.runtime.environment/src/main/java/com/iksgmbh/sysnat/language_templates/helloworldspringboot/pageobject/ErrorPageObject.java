@@ -15,58 +15,55 @@
  */
 package com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject;
 
-import com.iksgmbh.sysnat.ExecutableExample;
+import java.util.HashMap;
+import java.util.List;
+
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
 /**
- * Maps names of GUI elements visible to the user to technical field IDs
- * and calls the gui controller to execute an action. 
+ * Implements actions that can be applied to this page.
+ * Some standard actions are available from the parent class.
+ * To use them, the idMappings must be defined.
  * 
  * @author Reik Oberrath
  */
-public class ErrorPageObject implements PageObject
+public class ErrorPageObject extends PageObject
 {	
-	private ExecutableExample executableExample;
+	public ErrorPageObject(LanguageTemplateBasics aLanguageTemplateBasics) 
+	{
+		this.languageTemplateBasics = aLanguageTemplateBasics;
+		this.idMappingCollection = new HashMap<GuiType, HashMap<String, List<String>>>();
+		
+		HashMap<String, List<String>> idMappings = new HashMap<String, List<String>>();
+		idMappings.put("ErrorMessage", createList("/html/body/form/table/tbody/tr/td[2]"));
+		idMappingCollection.put(GuiType.ElementToReadText, idMappings);
+		
+		idMappings = new HashMap<String, List<String>>();
+		idMappings.put("Back", createList("btnBack"));
+		idMappingCollection.put(GuiType.Button, idMappings);			
+	}	
 
-	public ErrorPageObject(ExecutableExample aTestCase) {
-		this.executableExample = aTestCase;
-	}
 
 	@Override
 	public String getPageName() {
-		return getClass().getSimpleName().replaceAll("PageObject", "").replaceAll("HelloWorld", "");
+		return getClass().getSimpleName().replaceAll("Object", "");
 	}
 
-	@Override
-	public void clickButton(String buttonName) {
-		throwUnsupportedGuiEventException(GuiType.Button, buttonName);
-	}
-
-	@Override
-	public void enterTextInField(String fieldName, String value) {
-		throwUnsupportedGuiEventException(GuiType.TextField, fieldName);
-	}
-
-	@Override
-	public String getText(String identifierOfGuiElementToRead) 
-	{
-		if ("ErrorMessage".equals(identifierOfGuiElementToRead)) {
-			return executableExample.getTextForElement("/html/body/form/table/tbody/tr/td[2]");
-		} else {	
-			throwUnsupportedGuiEventException(GuiType.ElementToReadText, identifierOfGuiElementToRead);
-			return null;
-		}
-	}
-
-	@Override
-	public void chooseForCombobox(String fieldName, String value) {
-		throwUnsupportedGuiEventException(GuiType.ComboBox, fieldName);
-	}
+//	@Override
+//	public String getText(String identifierOfGuiElementToRead) 
+//	{
+//		if ("ErrorMessage".equals(identifierOfGuiElementToRead)) {
+//			return executableExample.getTextForElement("/html/body/form/table/tbody/tr/td[2]");
+//		} else {	
+//			throwUnsupportedGuiEventException(GuiType.ElementToReadText, identifierOfGuiElementToRead);
+//			return null;
+//		}
+//	}
 
 	@Override
 	public boolean isCurrentlyDisplayed() {
-		// TODO Auto-generated method stub
-		return false;
+		return languageTemplateBasics.getExecutableExample().isElementAvailable("/html/body/form/table/tbody/tr/td[2]");
 	}
 }

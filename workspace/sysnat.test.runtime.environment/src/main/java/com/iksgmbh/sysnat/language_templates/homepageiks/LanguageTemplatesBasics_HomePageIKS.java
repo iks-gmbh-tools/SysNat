@@ -21,27 +21,33 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutableExample;
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
-import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
-import com.iksgmbh.sysnat.language_templates.LanguageTemplates;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 
 /**
- * Contains the basic language templates for IKS-Online tests.
+ * Contains the basic language templates for test application HomePageIKS.
+ * 
+ * It demonstrates both the implementation without PageObjects 
+ * and the testing of an application without login.
+ * 
+ * Not using Page Objects is a bad idea, because its consequences are if-chains 
+ * (see method isPageVisible).
  * 
  * @author Reik Oberrath
  */
 @LanguageTemplateContainer
-public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
+public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 {	
 	private ExecutableExample executableExample;
 	@SuppressWarnings("unused")
 	private ExecutionRuntimeInfo executionInfo;
 	
-	public LanguageTemplatesHomePageIKSBasics(ExecutableExample aExecutableExample) 
+	public LanguageTemplatesBasics_HomePageIKS(ExecutableExample aExecutableExample) 
 	{
 		this.executableExample = aExecutableExample;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();
@@ -72,17 +78,17 @@ public class LanguageTemplatesHomePageIKSBasics implements LanguageTemplates
 	
 	@Override
 	public void doLogin(final HashMap<WebLoginParameter,String> startParameter) {
-		// no login/logout for IKS Homepage
+		// no login/logout for this test application
 	}
 
 	@Override
     public void doLogout() {
-		// no login/logout for IKS Homepage
+		// no login/logout for this test application
     }
     
 	@Override
 	public boolean isLoginPageVisible() {
-		return false; // no login for IKS Homepage
+		return false; // no login for this test application
 	}
 
 	@Override

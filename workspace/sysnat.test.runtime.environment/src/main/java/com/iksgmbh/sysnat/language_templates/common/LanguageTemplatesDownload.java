@@ -27,6 +27,10 @@ import com.iksgmbh.sysnat.common.domain.FileList;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
+/**
+ * Contains the implementation of language templates for the purpose of handling file downloads.
+ * If needed, they can be used in all test applications. 
+ */
 @LanguageTemplateContainer
 public class LanguageTemplatesDownload 
 {

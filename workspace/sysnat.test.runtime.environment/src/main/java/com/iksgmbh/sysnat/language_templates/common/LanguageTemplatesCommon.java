@@ -46,7 +46,8 @@ import com.iksgmbh.sysnat.domain.SysNatTestData;
 import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
- * Contains the implementation of the most basic language templates available in the nlxx files.
+ * Contains the implementation of the most basic language templates available in the nlxx files
+ * and which are used in all test applications.
  * Note that the application specific LanguageTemplate-annotated method are contained
  * in language specific subclasses (see package com.iksgmbh.sysnat.language_templates.common).
  *
