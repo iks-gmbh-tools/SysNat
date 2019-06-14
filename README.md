@@ -8,13 +8,13 @@ Its main features are
 
 - It let you formulate instructions in natural language that operates your application under test and asserts the corresponding expectations.
 - It let you write natural language scripts designed for reuse in multiple test cases and for low level system descriptions 
-- It comes with full Selenium support for testing web applications
+- It comes with extensive Selenium support for testing web applications
 - It creates a test report with a test result overview as well as detailed information about any instruction, expectations and results - all presented in natural language.
 
-With these main features, SysNatTesting is perfectly suitable to support cross functional teams and collaboration between domain experts and developers. Applying SysNat leads towards a Domain Specific Language (DSL) in natural language.
+With these main features, *SysNat* is perfectly suitable to support cross functional teams and collaboration between domain experts and developers. Applying SysNat leads towards a Domain Specific Language (DSL) in natural language.
 Once established, this DSL enables domain experts to modify existing tests, to create new tests and to execute them without any support by developers because the natural language is intuitively understandable.
 
-Minor features of the SysNatTesting are:
+Minor features of the *SysNat* are:
 
 - Easy **test data import** (".dat" files for data structured as key-value pairs or Excel-data for data structured as tables)
 - **Test Parametrization** (write one test and execute it many times with different datasets)
