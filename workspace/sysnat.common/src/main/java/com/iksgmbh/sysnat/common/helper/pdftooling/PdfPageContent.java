@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import com.iksgmbh.sysnat.common.helper.pdftooling.PdfCompareIgnoreConfig.ApplyIgnoreLineDefinitionScope;
+
 /**
  * Stores each line of a single page with the original line numbers.
  * Gaps in line numbers may come into existence when {@link PdfPageContent.apply(PdfCompareIgnoreConfig)} has been called.
@@ -50,6 +52,10 @@ public class PdfPageContent
 		return pageNo;
 	}
 
+	public int getNumberOfLines() {
+		return lines.size();
+	}
+
 	public String getOriginalPageContent() {
 		return orignalPageContent;
 	}
@@ -60,9 +66,14 @@ public class PdfPageContent
 		return sb.toString().trim();
 	}
 	
-	public void apply(PdfCompareIgnoreConfig ignoreConfig) 
+	/**
+	 * @param ignoreConfig
+	 * @param scope provides information whether this PDFPageContent 
+	 *        is regarded as first or second in the comparison
+	 */
+	public void apply(PdfCompareIgnoreConfig ignoreConfig, ApplyIgnoreLineDefinitionScope scope) 
 	{
-		List<Integer> lineNumbersToIgnore = ignoreConfig.getLinesToIgnore(this);
+		List<Integer> lineNumbersToIgnore = ignoreConfig.getLinesToIgnore(this, scope);
 		lineNumbersToIgnore.forEach(lineNo -> lines.remove(lineNo));
 	}
 	
@@ -73,7 +84,7 @@ public class PdfPageContent
 		return toReturn;
 	}
 
-	public int getLineNumber(int index) {
+	public int getOriginalNumberOfLineInPage(int index) {
 		return (int) lines.keySet().toArray()[index];
 	}
 

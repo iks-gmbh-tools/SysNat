@@ -3,6 +3,12 @@ Unterschiede zwischen
 und
 ../sysnat.common/src/test/resources/PdfPageContentTestData/PDF_B.pdf (Seitenzahl: 4)
 --------------------------------------------------------------------
-Seite 2, Zeile 2: [Two] # [2]
-Seite 2, Zeile 5: [Five] # [5]
-Seite 3, Zeile 3: [Green] # [Green and]
+1. Difference:
+PDF1, Page 2(2), Line 2(2) : [Two]
+PDF2, Page 2(2), Line 2(2) : [2]
+2. Difference:
+PDF1, Page 2(2), Line 5(5) : [Five]
+PDF2, Page 2(2), Line 5(5) : [5]
+3. Difference:
+PDF1, Page 3(3), Line 3(3) : [Green]
+PDF2, Page 3(3), Line 3(3) : [Green and]

@@ -83,10 +83,12 @@ public class TestDataImporterClassLevelTest
 	public void throwsExceptionForMissingTestData() throws Exception 
 	{
 		try {
+			// act
 			cut.loadTestdata("unknown");
 			fail("Expected exception not thrown!");
 		} catch (SysNatTestDataException e) {
-			assertEquals("Error Message", "Zu 'unknown' wurden in ../sysnat.testdata.import/src/test/resources/testTestdata keine Testdaten-Dateien gefunden.", e.getMessage() );	
+			// assert
+			assertEquals("Error Message", "For 'unknown' there is no test data file found in ../sysnat.testdata.import/src/test/resources/testTestdata.", e.getMessage() );	
 		}
 	}
 

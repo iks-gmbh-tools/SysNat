@@ -13,7 +13,7 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
  * 
  * Adapt the value of the constants to your needs and execute this class as Java application.
  * 
- * ATTENSION: Already existing files will be overwritten !
+ * Note: Java and Properties files that exist will not be overwritten!
  * 
  * @author Reik Oberrath
  */
@@ -179,7 +179,12 @@ public class TestApplicationGenerator
 		File folder = new File(path);
 		folder.mkdir();
 		File javaFile = new File(folder, "LanguageTemplatesBasics_" + TestApplicationName + ".java");
-		SysNatFileUtil.writeFile(javaFile, newContent);
+		
+		if ( ! javaFile.exists()) {			
+			SysNatFileUtil.writeFile(javaFile, newContent);
+		} else {
+			System.out.println("Existing file " + javaFile.getName() + " was not overwritten");
+		}
 	}
 
 	private static void createLanguageTemplatesBasics_basedOn_HelloWordSpringBoot()
@@ -214,7 +219,12 @@ public class TestApplicationGenerator
 		File folder = new File(path);
 		folder.mkdir();
 		File javaFile = new File(folder, "LanguageTemplatesBasics_" + TestApplicationName);
-		SysNatFileUtil.writeFile(javaFile, newContent);
+		
+		if ( ! javaFile.exists()) {			
+			SysNatFileUtil.writeFile(javaFile, newContent);
+		} else {
+			System.out.println("Existing file " + javaFile.getName() + " was not overwritten");
+		}
 	}
 
 	private static void createPropertyFile()
@@ -238,6 +248,11 @@ public class TestApplicationGenerator
 			properties += TestApplicationName.toLowerCase() + "." + environment 
 		              + ".login." + WebLoginParameter.PASSWORD.name().toLowerCase() + "=" + Password + System.getProperty("line.separator");
 		}
-		SysNatFileUtil.writeFile(propertiesFile, properties);
+
+		if ( ! propertiesFile.exists()) {			
+			SysNatFileUtil.writeFile(propertiesFile, properties);
+		} else {
+			System.out.println("Existing file " + propertiesFile.getName() + " was not overwritten");
+		}
 	}
 }

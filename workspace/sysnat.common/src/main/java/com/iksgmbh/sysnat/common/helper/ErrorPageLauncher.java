@@ -17,6 +17,7 @@ package com.iksgmbh.sysnat.common.helper;
 
 import java.util.Locale;
 
+import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class ErrorPageLauncher 
@@ -34,10 +35,14 @@ public class ErrorPageLauncher
 					+ "/GenerationError.html";
 			
 			final String errorReport = templateText.replace("ERROR_MESSAGE_PLACEHOLDER", errorMessage);
-			SysNatFileUtil.writeFile(filename, errorReport.replace("HELP_MESSAGE_PLACEHOLDER", helpMessage));
 			
-			
-			HtmlLauncher.doYourJob(filename);
+			try {
+				SysNatFileUtil.writeFile(filename, errorReport.replace("HELP_MESSAGE_PLACEHOLDER", helpMessage));
+				HtmlLauncher.doYourJob(filename);
+			} catch (Exception e) {
+				System.err.println("Problem: Cannot start ErrorPageLauncher.");
+				throw new SysNatTestDataException(errorMessage);
+			}
 		}
 	}
 

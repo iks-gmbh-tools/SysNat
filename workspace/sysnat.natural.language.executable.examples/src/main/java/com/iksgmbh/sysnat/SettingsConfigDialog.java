@@ -137,8 +137,10 @@ public class SettingsConfigDialog extends JFrame
 		
 		final List<String> contentOfConfigSettingsFile = executionInfo.getContentOfConfigSettingsFile();		
 		final List<String> possibleValues = new ArrayList<>();
+		final List<String> possibleValues_en = new ArrayList<>();
 		StringBuffer tooltip = getNewTookTipStringBuffer();
 		boolean possibleValueLineDetected = false;
+		boolean possibleValueLineDetected_en = false;
 		
 		for (String line : contentOfConfigSettingsFile) 
 		{
@@ -151,6 +153,18 @@ public class SettingsConfigDialog extends JFrame
 				String valueLine = line.substring(1).trim();
 				possibleValues.addAll( Arrays.asList( valueLine.split(",") ) );
 				possibleValueLineDetected = false;
+				continue;
+			}
+			
+			if (line.startsWith("# " + CONSTANTS_BUNDLE_EN.getString("POSSIBLE_VALUE_IDENTIFIER"))) {
+				possibleValueLineDetected_en = true;
+				continue;
+			} 
+	
+			if (possibleValueLineDetected_en) {
+				String valueLine = line.substring(1).trim();
+				possibleValues_en.addAll( Arrays.asList( valueLine.split(",") ) );
+				possibleValueLineDetected_en = false;
 				continue;
 			}
 			
@@ -179,10 +193,16 @@ public class SettingsConfigDialog extends JFrame
 				possibleValues.clear();
 				tooltip = getNewTookTipStringBuffer();
 			}
-			else if (line.contains(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY))
+			else if (line.startsWith(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY))
 			{
 				knownExecSpeeds.addAll(trim(possibleValues));
 				possibleValues.clear();
+				tooltip = getNewTookTipStringBuffer();
+			}
+			else if (line.startsWith(CONSTANTS_BUNDLE_EN.getString("EXECUTION_SPEED_SETTING_KEY")))
+			{
+				knownExecSpeeds.addAll(trim(possibleValues_en));
+				possibleValues_en.clear();
 				tooltip = getNewTookTipStringBuffer();
 			}
 			else if (line.contains(SysNatLocaleConstants.EXECUTION_FILTER))
@@ -652,24 +672,46 @@ public class SettingsConfigDialog extends JFrame
          line = line.trim();
          if (line.startsWith(SysNatLocaleConstants.TESTAPP_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.TESTAPP_SETTING_KEY + " = " + cbxTestApplication.getSelectedItem().toString());
-         } else if (line.startsWith(SysNatLocaleConstants.ENVIRONMENT_SETTING_KEY)) {
+         } else if (line.startsWith(CONSTANTS_BUNDLE_EN.getString("TESTAPP_SETTING_KEY"))) {
+             newFileContent.append(CONSTANTS_BUNDLE_EN.getString("TESTAPP_SETTING_KEY") + " = " + cbxTestApplication.getSelectedItem().toString());
+         } 
+         else if (line.startsWith(SysNatLocaleConstants.ENVIRONMENT_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.ENVIRONMENT_SETTING_KEY + " = " + cbxEnvironments.getSelectedItem().toString());
-         } else if (line.startsWith(SysNatLocaleConstants.BROWSER_SETTING_KEY)) {
+         } else if (line.startsWith(CONSTANTS_BUNDLE_EN.getString("ENVIRONMENT_SETTING_KEY"))) {
+             newFileContent.append(CONSTANTS_BUNDLE_EN.getString("ENVIRONMENT_SETTING_KEY") + " = " + cbxEnvironments.getSelectedItem().toString());
+         } 
+         else if (line.startsWith(SysNatLocaleConstants.BROWSER_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.BROWSER_SETTING_KEY + " = " + cbxBrowsers.getSelectedItem().toString());
-         } else if (line.startsWith(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY)) {
+         } else if (line.startsWith(CONSTANTS_BUNDLE_EN.getString("BROWSER_SETTING_KEY"))) {
+             newFileContent.append(CONSTANTS_BUNDLE_EN.getString("BROWSER_SETTING_KEY") + " = " + cbxBrowsers.getSelectedItem().toString());             
+         } 
+         else if (line.startsWith(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.EXECUTION_SPEED_SETTING_KEY + " = " + cbxExecSpeeds.getSelectedItem().toString());
-         } else if (line.startsWith(SysNatLocaleConstants.EXECUTION_FILTER)) {
+         } else if (line.startsWith(CONSTANTS_BUNDLE_EN.getString("EXECUTION_SPEED_SETTING_KEY"))) {
+             newFileContent.append(CONSTANTS_BUNDLE_EN.getString("EXECUTION_SPEED_SETTING_KEY") + " = " + cbxExecSpeeds.getSelectedItem().toString());             
+         } 
+         else if (line.startsWith(SysNatLocaleConstants.EXECUTION_FILTER)) {
              newFileContent.append(SysNatLocaleConstants.EXECUTION_FILTER + " = " + cbxFilters.getSelectedItem().toString());
-         } else if (line.startsWith(SysNatLocaleConstants.REPORT_NAME_SETTING_KEY)) {
+         } else if (line.startsWith(CONSTANTS_BUNDLE_EN.getString("EXECUTION_FILTER"))) {
+             newFileContent.append(CONSTANTS_BUNDLE_EN.getString("EXECUTION_FILTER") + " = " + cbxFilters.getSelectedItem().toString());             
+         } 
+         else if (line.startsWith(SysNatLocaleConstants.REPORT_NAME_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.REPORT_NAME_SETTING_KEY + " = " + txtReportName.getText());
-         } else if (line.startsWith(SysNatLocaleConstants.ARCHIVE_DIR_SETTING_KEY)) {
+         } else if (line.startsWith(CONSTANTS_BUNDLE_EN.getString("REPORT_NAME_SETTING_KEY"))) {
+             newFileContent.append(CONSTANTS_BUNDLE_EN.getString("REPORT_NAME_SETTING_KEY") + " = " + txtReportName.getText());             
+         } 
+         else if (line.startsWith(SysNatLocaleConstants.ARCHIVE_DIR_SETTING_KEY)) {
              newFileContent.append(SysNatLocaleConstants.ARCHIVE_DIR_SETTING_KEY + " = " + txtArchiveDir.getText());
-         } else {
+         } else if (line.startsWith(CONSTANTS_BUNDLE_EN.getString("ARCHIVE_DIR_SETTING_KEY"))) {
+             newFileContent.append(CONSTANTS_BUNDLE_EN.getString("ARCHIVE_DIR_SETTING_KEY") + " = " + txtArchiveDir.getText());             
+         } 
+         else {
              newFileContent.append(line);
          }
          newFileContent.append(System.getProperty("line.separator"));
        }
 
+       //System.out.println(newFileContent.toString().trim());
        SysNatFileUtil.writeFile(ExecutionRuntimeInfo.CONFIG_FILE_NAME, newFileContent.toString().trim());
     }
     

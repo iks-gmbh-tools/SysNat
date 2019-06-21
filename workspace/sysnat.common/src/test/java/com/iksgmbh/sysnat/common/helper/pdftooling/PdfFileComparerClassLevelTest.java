@@ -87,7 +87,12 @@ public class PdfFileComparerClassLevelTest
 	{
 		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_A.pdf" );
 		String result = cut.getFirstDifference(TEST_DATA_DIR + "/PDF_B.pdf");
-		assertEquals("First difference between PDFs", "Seite 2, Zeile 2: [Two] # [2]", result);
+		assertEquals("First difference between PDFs", 
+				     "1. Difference:" 
+		             + System.getProperty("line.separator")  
+		             + "PDF1, Page 2(2), Line 2(2) : [Two]" 
+		             + System.getProperty("line.separator")
+				     + "PDF2, Page 2(2), Line 2(2) : [2]", result);
 	}
 
 	@Test
@@ -111,9 +116,13 @@ public class PdfFileComparerClassLevelTest
 				                                          2, new PdfCompareIgnoreConfig());
 		
 		// assert
-		assertEquals("Number of differing lines", 2, result.size()); 
-		assertEquals("Seite 2, Zeile 2: [Two] # [2]", result.get(0)); 
-		assertEquals("Seite 2, Zeile 5: [Five] # [5]", result.get(1));
+		assertEquals("Number of differing lines", 4, result.size()); 
+		assertEquals("1. Difference:", result.get(0)); 
+		assertEquals("PDF1, Page 2(2), Line 2(2) : [Two]" + System.getProperty("line.separator") +
+				     "PDF2, Page 2(2), Line 2(2) : [2]", result.get(1));
+		assertEquals("2. Difference:", result.get(2)); 
+		assertEquals("PDF1, Page 2(2), Line 5(5) : [Five]" + System.getProperty("line.separator") +
+			         "PDF2, Page 2(2), Line 5(5) : [5]", result.get(3));
 	}
 
 	@Test
@@ -136,9 +145,13 @@ public class PdfFileComparerClassLevelTest
 		pageContent2.addLines(linesB);
 		
 		final List<String> result = cut.getDifferenceList(pageContent1, pageContent2, pageNo);
-		assertEquals("Number of differing lines", 2, result.size());
-		assertEquals("First Difference", "Seite 1, Zeile 2: [Line2a] # [Line2b]", result.get(0)); 
-		assertEquals("Second Difference", "Seite 1, Zeile 4: [] # [Line4]", result.get(1)); 
+		assertEquals("Number of differing lines", 4, result.size());
+		assertEquals("First Difference", "PDF1, Page 1(1), Line 2(2) : [Line2a]" + 
+		                                 System.getProperty("line.separator") + 
+				                         "PDF2, Page 1(1), Line 2(2) : [Line2b]", result.get(1)); 
+		assertEquals("Second Difference", "PDF1, Page 1(1), Line none : -" +
+				                          System.getProperty("line.separator") +
+				                          "PDF2, Page 1(1), Line 4(4) : [Line4]", result.get(3)); 
 	}
 
 	@Test
@@ -152,11 +165,17 @@ public class PdfFileComparerClassLevelTest
 		pageContent1.addLines(linesA);
 
 		PdfPageContent pageContent2 = new PdfPageContent(pageNo);
-		
+
 		final List<String> result = cut.getDifferenceList(pageContent1, pageContent2, pageNo);
-		assertEquals("Number of differing lines", 2, result.size());
-		assertEquals("First Difference", "Seite 1, Zeile 1: [Line1] # []", result.get(0)); 
-		assertEquals("Second Difference", "Seite 1, Zeile 2: [Line2] # []", result.get(1)); 
+		assertEquals("Number of differing lines", 4, result.size());
+		assertEquals("First Difference Line", "1. Difference:", result.get(0)); 
+		assertEquals("Second Difference Line", 
+				     "PDF1, Page 1(1), Line 1(1) : [Line1]" + System.getProperty("line.separator") +
+				     "PDF2, Page 1(1), Line none : -", result.get(1)); 
+		assertEquals("First Difference Line", "2. Difference:", result.get(2)); 
+		assertEquals("Second Difference Line", 
+				     "PDF1, Page 1(1), Line 2(2) : [Line2]" + System.getProperty("line.separator") +
+				     "PDF2, Page 1(1), Line none : -", result.get(3)); 
 	}
 	
 	
@@ -219,13 +238,78 @@ public class PdfFileComparerClassLevelTest
 				                                ignoreConfig);
 		
 		// assert
-		String expected = "Seite 1, Zeile 6: [321] # [999]";
+		String expected = "PDF1, Page 1(1), Line 6(6) : [321]" + System.getProperty("line.separator") +
+		                  "PDF2, Page 1(1), Line 6(6) : [999]";
 		if (! result.endsWith(expected)) {
 			System.out.println(result);
 		}
 		assertTrue("Unexpected difference!", result.endsWith(expected));
+		
+		
 	}
+	
+	@Test
+	public void returnsDifferenceReport_AssymetricIgnoreWithLineDefinitions_onLineLevel() throws Exception
+	{
+		// arrange
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_Assymetric_Compare1.pdf" );
+		PdfFileComparer cut2 = new PdfFileComparer( TEST_DATA_DIR + "/PDF_Assymetric_Compare2.pdf" );
+		final List<String> lineDefinitionsToIgnore = new ArrayList<>();
+		lineDefinitionsToIgnore.add("PDF1, Seite 1, Zeile 1");
+		lineDefinitionsToIgnore.add("PDF2, Seite 2, Zeile 1");
+		PdfCompareIgnoreConfig ignoreConfig = new PdfCompareIgnoreConfig().withLineDefinitions(lineDefinitionsToIgnore);
 
+		// act
+		String result1 = cut.getDifferenceReport(TEST_DATA_DIR + "/PDF_Assymetric_Compare2.pdf",
+				                                ignoreConfig);
+		String result2 = cut2.getDifferenceReport(TEST_DATA_DIR + "/PDF_Assymetric_Compare1.pdf",
+                                                  ignoreConfig);
+		
+		// assert
+		assertTrue("Difference report is not empty!", result1.isEmpty());
+		assertFalse("Difference report is empty!", result2.isEmpty());
+	}	
+
+	@Test
+	public void returnsDifferenceReport_AssymetricIgnoreWithLineDefinitions_onPageLevel() throws Exception
+	{
+		// arrange
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_Assymetric_Compare3.pdf" );  // this is PDF1
+		PdfFileComparer cut2 = new PdfFileComparer( TEST_DATA_DIR + "/PDF_Assymetric_Compare4.pdf" );
+		final List<String> lineDefinitionsToIgnore = new ArrayList<>();
+		lineDefinitionsToIgnore.add("PDF1, Seite 3, Zeile *");
+		PdfCompareIgnoreConfig ignoreConfig = new PdfCompareIgnoreConfig().withLineDefinitions(lineDefinitionsToIgnore);
+
+		// act
+		String result1 = cut.getDifferenceReport(TEST_DATA_DIR + "/PDF_Assymetric_Compare4.pdf", // this is PDF2
+				                                ignoreConfig);
+		String result2 = cut2.getDifferenceReport(TEST_DATA_DIR + "/PDF_Assymetric_Compare3.pdf", // PDF order exchanged
+                                                  ignoreConfig);
+		
+		// assert
+		assertTrue("Difference report is not empty!", result1.isEmpty());
+		assertFalse("Difference report is empty!", result2.isEmpty());
+	}	
+
+	@Test
+	public void returnsDifferenceReport_AssymetricIgnoreWithLineDefinitions_onBothPageAndLineLevel() throws Exception
+	{
+		// arrange
+		cut = new PdfFileComparer( TEST_DATA_DIR + "/PDF_Assymetric_Compare1.pdf" );  // this is PDF1
+		final List<String> lineDefinitionsToIgnore = new ArrayList<>();
+		lineDefinitionsToIgnore.add("PDF1, Seite 1, Zeile 1");
+		lineDefinitionsToIgnore.add("PDF2, Seite 3, Zeile *");
+		PdfCompareIgnoreConfig ignoreConfig = new PdfCompareIgnoreConfig().withLineDefinitions(lineDefinitionsToIgnore);
+
+		// act
+		String result = cut.getDifferenceReport(TEST_DATA_DIR + "/PDF_Assymetric_Compare5.pdf", // this is PDF2
+				                                ignoreConfig);
+		
+		// assert
+		String expectedFileContent = SysNatFileUtil.readTextFileToString(
+				TEST_DATA_DIR + "/expectedAssymetricDifferenceReport.txt");
+		assertEquals("Difference report", expectedFileContent, result);
+	}
 	
 	@Test
 	public void returnsDifferenceReport_IgnoreWithPrefixesAndSubstrings() throws Exception

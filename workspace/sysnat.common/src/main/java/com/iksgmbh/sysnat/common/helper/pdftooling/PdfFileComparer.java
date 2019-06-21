@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+import com.iksgmbh.sysnat.common.helper.pdftooling.PdfCompareIgnoreConfig.ApplyIgnoreLineDefinitionScope;
 
 /**
  * Provides methods to find differences between two PDF files.
@@ -43,6 +44,7 @@ public class PdfFileComparer
 	private String otherPdfFileNameToCompare;
 	private PdfFileContent firstPdfFileContent;
 	private PdfFileContent otherPdfFileContent;
+	private int diffCounter;
 
 	public PdfFileComparer(String aPdfFileName) {
 		this.firestPdfFileName = aPdfFileName;
@@ -57,35 +59,55 @@ public class PdfFileComparer
 		return firstPdfFileContent.getPageNumber();
 	}
 
-	public List<Integer> getDifferingPages(String anotherPdf) throws IOException {
-		return getDifferingPages(anotherPdf, new PdfCompareIgnoreConfig());
+	public List<Integer> getDifferingPages(String anotherPdf) throws IOException 
+	{	
+		final PdfCompareIgnoreConfig ignoreConfig = new PdfCompareIgnoreConfig();
+		
+		final List<PdfPageContent> contentToComparePDF1 = createComparableContent(
+				firstPdfFileContent, ignoreConfig, ApplyIgnoreLineDefinitionScope.PDF1);
+		final List<PdfPageContent> contentToComparePDF2 = createComparableContent(
+				getOtherContentAnalyser(anotherPdf), ignoreConfig, ApplyIgnoreLineDefinitionScope.PDF2);
+
+		return getDifferingPages(contentToComparePDF1, contentToComparePDF2);
 	}
 	
-	public List<Integer> getDifferingPages(final String anotherPdf, 
-			                               final PdfCompareIgnoreConfig ignoreConfig) 
+	public List<Integer> getDifferingPages(final List<PdfPageContent> contentToComparePDF1, 
+			                               final List<PdfPageContent> contentToComparePDF2) 
 			                               throws IOException 
 	{
-		int pageCount = getPageNumber();
-		int otherPageCount = getOtherContentAnalyser(anotherPdf).getPageNumber();
-		if (pageCount != otherPageCount) {
+		if (contentToComparePDF1.size() != contentToComparePDF2.size()) {
 			return null;
 		}
-		
+
 		final List<Integer> differingPages = new ArrayList<>();
 		
-		for (int pageNo = 1; pageNo <= pageCount; pageNo++) 
+		for (int pageNo = 1; pageNo <= contentToComparePDF1.size(); pageNo++) 
 		{
-			PdfPageContent pageContent1 = firstPdfFileContent.getPageContent(pageNo);
-			pageContent1.apply(ignoreConfig);
-			PdfPageContent pageContent2 = getOtherContentAnalyser(anotherPdf).getPageContent(pageNo);
-			pageContent2.apply(ignoreConfig);
-			
-			if ( ! getDifferenceList(pageContent1, pageContent2, pageNo).isEmpty() ) {
+			if ( ! getDifferenceList(contentToComparePDF1.get(pageNo-1), 
+					                 contentToComparePDF2.get(pageNo-1),
+					                 pageNo).isEmpty() ) 
+			{
 				differingPages.add(pageNo);
-			}
+			}			
 		}
 		
 		return differingPages;
+	}
+
+	private List<PdfPageContent> createComparableContent(final PdfFileContent pdfFileContent, 
+			                                             final PdfCompareIgnoreConfig ignoreConfig,
+			                                             final ApplyIgnoreLineDefinitionScope scope)
+	{
+		final List<PdfPageContent> toReturn = new ArrayList<>();
+
+		for (int pageNo = 1; pageNo <= pdfFileContent.getPageNumber(); pageNo++) 
+		{
+			PdfPageContent pageContent = pdfFileContent.getPageContent(pageNo);
+			pageContent.apply(ignoreConfig, scope);
+			if (pageContent.getNumberOfLines() > 0) toReturn.add(pageContent);
+		}
+		
+		return toReturn;
 	}
 
 	public String getDifferingPagesAsString(String anotherPdf) throws IOException 
@@ -145,11 +167,12 @@ public class PdfFileComparer
                                                 final PdfCompareIgnoreConfig ignoreConfig) 
 	{
 		PdfPageContent pageContent1 = firstPdfFileContent.getPageContent(pageNo);
-		pageContent1.apply(ignoreConfig);
+		pageContent1.apply(ignoreConfig, ApplyIgnoreLineDefinitionScope.PDF1);
 		
 		PdfPageContent pageContent2 = getOtherContentAnalyser(anotherPdf).getPageContent(pageNo);
-		pageContent2.apply(ignoreConfig);
+		pageContent2.apply(ignoreConfig, ApplyIgnoreLineDefinitionScope.PDF2);
 		
+		diffCounter = 0;
 		return getDifferenceList(pageContent1, pageContent2, pageNo);
 	}
 
@@ -175,7 +198,7 @@ public class PdfFileComparer
 		final Map<Integer, List<String>> differences = getDifferences(anotherPdf, ignoreConfig); // new way
 		
 		if (differences == null) {
-			return getDifferenceReport(anotherPdf, null, null);
+			return getDifferenceReport(anotherPdf, null, null, null);
 		}
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -183,25 +206,32 @@ public class PdfFileComparer
 		final List<String> differingLines = new ArrayList<>();
 		
 		differences.forEach((pageNo,diffLines) -> differingLines.addAll(diffLines));
-		return getDifferenceReport(anotherPdf, differingPages , differingLines); 
+		return getDifferenceReport(anotherPdf, differingPages, differingLines, ignoreConfig); 
 	}
 
 	public Map<Integer, List<String>> getDifferences(String anotherPdf, 
 			                                         PdfCompareIgnoreConfig ignoreConfig) 
 			                                         throws IOException 
 	{
+		final List<PdfPageContent> contentToComparePDF1 = createComparableContent(
+				firstPdfFileContent, ignoreConfig, ApplyIgnoreLineDefinitionScope.PDF1);
+		final List<PdfPageContent> contentToComparePDF2 = createComparableContent(
+				getOtherContentAnalyser(anotherPdf), ignoreConfig, ApplyIgnoreLineDefinitionScope.PDF2);
+		
 		final Map<Integer, List<String>> toReturn = new HashMap<>();
 		
-		List<Integer> differingPages = getDifferingPages(anotherPdf, ignoreConfig);
+		List<Integer> differingPages = getDifferingPages(contentToComparePDF1, contentToComparePDF2);
 		if (differingPages == null) {
 			return null;
 		}
 		
+		diffCounter = 0;
+
 		for (int i = 0; i < differingPages.size(); i++) 
 		{
 			int pageNo = differingPages.get(i);
-			PdfPageContent pageContent1 = firstPdfFileContent.getPageContent(pageNo);
-			PdfPageContent pageContent2 = getOtherContentAnalyser(anotherPdf).getPageContent(pageNo);
+			PdfPageContent pageContent1 = contentToComparePDF1.get(pageNo-1);
+			PdfPageContent pageContent2 = contentToComparePDF2.get(pageNo-1);
 			List<String> differenceList = getDifferenceList(pageContent1, pageContent2, pageNo);
 			toReturn.put(new Integer(pageNo), differenceList);
 		}
@@ -289,32 +319,69 @@ public class PdfFileComparer
 			return NO_DIFFERENCE_FOUND;
 		}
 		
-		return differenceList.get(0);
+		StringBuffer sb = new StringBuffer();
+		String line = differenceList.get(0);
+		int lineCounter = 0;
+		while ( ! line.startsWith("2. ")) {
+			sb.append(line).append(System.getProperty("line.separator"));
+			lineCounter++;
+			line = differenceList.get(lineCounter);
+		}
+		
+		return sb.toString().trim();
 	}
 
 
-	List<String> getDifferenceList(PdfPageContent pageContent1, PdfPageContent pageContent2, int pageNo) 
+	List<String> getDifferenceList(final PdfPageContent pageContent1,
+			                       final PdfPageContent pageContent2, 
+			                       final int pageNo) 
 	{
 		List<String> toReturn = new ArrayList<>();
 		List<String> lines1 = pageContent1.getLines();
 		List<String> lines2 = pageContent2.getLines();
-		
+	
 		int numberOfLines = lines1.size(); 
 		if (lines2.size() > numberOfLines) {
 			numberOfLines = lines2.size(); 
 		}
 	
-		for (int i = 0; i < numberOfLines; i++) 
+		for (int i = 1; i <= numberOfLines; i++) 
 		{
-			if (i > lines1.size()-1) {
-				toReturn.add("Seite " + pageNo + ", Zeile " + pageContent2.getLineNumber(i) + ": [] # [" + lines2.get(i) + "]");
+			String pageNo1 = pageNo + "(" + pageContent1.getPageNumber() + ")";
+			String pageNo2 = pageNo + "(" + pageContent2.getPageNumber() + ")";
+			String lineNo1;
+			String lineNo2;
+			String line1;
+			String line2;
+			
+			if (i > lines1.size()) 
+			{
+				lineNo1 = "none";
+				line1 = "-";
+				lineNo2 = i + "(" + pageContent2.getOriginalNumberOfLineInPage(i-1) + ")";
+				line2 = "[" + lines2.get(i-1) + "]";
 			}
-			else if (i > lines2.size()-1) {
-				toReturn.add("Seite " + pageNo + ", Zeile " + pageContent1.getLineNumber(i) + ": [" + lines1.get(i) + "] # []");
+			else if (i > lines2.size()) {
+				lineNo1 = i + "(" + pageContent1.getOriginalNumberOfLineInPage(i-1) + ")";
+				line1 = "[" + lines1.get(i-1) + "]";
+				lineNo2 = "none";
+				line2 = "-";
 			}
-			else if ( ! lines1.get(i).equals(lines2.get(i)) ) {
-				toReturn.add("Seite " + pageNo + ", Zeile " + pageContent1.getLineNumber(i) + ": [" + lines1.get(i) + "] # [" + lines2.get(i) + "]");
+			else if ( ! lines1.get(i-1).equals(lines2.get(i-1)) ) {
+				lineNo1 = i + "(" + pageContent1.getOriginalNumberOfLineInPage(i-1) + ")";
+				line1 = "[" + lines1.get(i-1) + "]";
+				lineNo2 = i + "(" + pageContent2.getOriginalNumberOfLineInPage(i-1) + ")";
+				line2 = "[" + lines2.get(i-1) + "]";
+			} else {
+				continue;
 			}
+			
+			diffCounter++;
+			toReturn.add(diffCounter + ". Difference:");
+			toReturn.add("PDF1, Page " + pageNo1 + ", Line " + lineNo1 + " : " + line1
+					   + System.getProperty("line.separator")
+					   + "PDF2, Page " + pageNo2 + ", Line " + lineNo2 + " : " + line2);
+
 		}
 		
 		return toReturn;
@@ -322,19 +389,12 @@ public class PdfFileComparer
 
 
 	private String getDifferenceReport(final String anotherPdf,
-			                          final List<Integer> diffPages,
-			                          final List<String> differingLines) throws IOException 
+			                           final List<Integer> diffPages,
+			                           final List<String> differingLines, 
+			                           final PdfCompareIgnoreConfig ignoreConfig) 
+			                           throws IOException 
 	{
-		StringBuffer report = new StringBuffer("Unterschiede zwischen");
-		report.append(System.getProperty("line.separator"));
-		report.append(firestPdfFileName).append(" (Seitenzahl: " + getPageNumber() + ")");
-		report.append(System.getProperty("line.separator"));
-		report.append("und");
-		report.append(System.getProperty("line.separator"));
-		report.append(anotherPdf).append(" (Seitenzahl: " + getOtherContentAnalyser(anotherPdf).getPageNumber() + ")");
-		report.append(System.getProperty("line.separator"));
-		report.append("--------------------------------------------------------------------");
-		
+		StringBuffer report = getReportHeader(anotherPdf, ignoreConfig);
 		
 		if (diffPages == null) {
 			report.append(System.getProperty("line.separator"));
@@ -358,6 +418,36 @@ public class PdfFileComparer
 		}
 		
 		return report.toString().trim(); 
+	}
+
+	private StringBuffer getReportHeader(final String anotherPdf, final PdfCompareIgnoreConfig ignoreConfig)
+	{
+		StringBuffer report = new StringBuffer("Unterschiede zwischen");
+		report.append(System.getProperty("line.separator"));
+		report.append(firestPdfFileName).append(" (Seitenzahl: " + getPageNumber() + ")");
+		report.append(System.getProperty("line.separator"));
+		report.append("und");
+		report.append(System.getProperty("line.separator"));
+		report.append(anotherPdf).append(" (Seitenzahl: " + getOtherContentAnalyser(anotherPdf).getPageNumber() + ")");
+		report.append(System.getProperty("line.separator"));
+		report.append("--------------------------------------------------------------------");
+		
+		addIgnoreInfoIfNeeded(ignoreConfig, report);
+		
+		return report;
+	}
+
+	private void addIgnoreInfoIfNeeded(final PdfCompareIgnoreConfig ignoreConfig, StringBuffer report)
+	{
+		if (ignoreConfig != null)
+		{
+			String ignoreInfo = ignoreConfig.toString();
+			if ( ! ignoreInfo.isEmpty() ) {
+				report.append(System.getProperty("line.separator"));
+				report.append(ignoreInfo);
+				report.append("--------------------------------------------------------------------");
+			}
+		}
 	}
 	
 	Integer getPageNumberFromLine(String line) 

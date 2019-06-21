@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
@@ -131,7 +132,9 @@ public class TestDataImporter
 		});
 		
 		if (toReturn.size() == 0) {
-			throw new SysNatTestDataException("Zu '" + filenameToSearch + "' wurden in " + testdataDir + " keine Testdaten-Dateien gefunden.");
+			String errorMessage = "For '" + filenameToSearch + "' there is no test data file found in " + testdataDir + ".";
+			String helpMessage = "Create test data file or remove its reference.";
+			ErrorPageLauncher.doYourJob(errorMessage, helpMessage );
 		}
 		
 		return toReturn;

@@ -1,0 +1,17 @@
+Unterschiede zwischen
+../sysnat.common/src/test/resources/PdfPageContentTestData/PDF_Assymetric_Compare1.pdf (Seitenzahl: 3)
+und
+../sysnat.common/src/test/resources/PdfPageContentTestData/PDF_Assymetric_Compare5.pdf (Seitenzahl: 4)
+--------------------------------------------------------------------
+There are following configurations defined to ignore:
+2 line definition(s) (from these 1 causes a whole page to be ignored)
+--------------------------------------------------------------------
+1. Difference:
+PDF1, Page 1(1), Line 1(2) : [Page1 Line 1]
+PDF2, Page 1(1), Line 1(1) : [Page1 Line 1 diff]
+2. Difference:
+PDF1, Page 3(3), Line 2(2) : []
+PDF2, Page 3(4), Line 2(2) : [Page3 Line 2]
+3. Difference:
+PDF1, Page 3(3), Line none : -
+PDF2, Page 3(4), Line 4(4) : []
