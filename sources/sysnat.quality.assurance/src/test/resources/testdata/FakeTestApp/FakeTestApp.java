@@ -1,0 +1,1 @@
+This is just a fake JUnit template.

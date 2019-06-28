@@ -1,0 +1,18 @@
+XXID:  <filename>   # This Executable Example will be named as its file
+
+Test-Phase: Arrange    
+
+Click main menu item "Downloads".
+Click link "Alle Fachartikel zeigen". 
+
+Test-Phase: Act
+
+Click link "IKS Software zum Anfassen Gibt es so etwas".
+The downloaded PDF is saved as <Fachartikel Software zum Anfassen>.  # Here a Dynamic Test Object (DTO) is created.
+Close PDF window "IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf".
+
+Test-Phase: Assert
+
+Does PDF 'Fachartikel Software zum Anfassen' consists of "8" page(s)?  # Here is the DTO used
+Does PDF 'Fachartikel Software zum Anfassen' match the validation rules in "SoftwareZumAnfassenContentDescription.validation"?
+Does PDF 'Fachartikel Software zum Anfassen' contain "Abb. 3:"?

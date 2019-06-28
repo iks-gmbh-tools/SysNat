@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <artifactId>sysnat.test.runtime.environment</artifactId>
+  <name>SNT Test Runtime Environment Module</name>
+  <description>Implementation of the test runtime. JUnit test classes located in the gen directory are executed..</description>
+  
+  <parent>
+     <groupId>com.iksgmbh.snt</groupId>
+     <artifactId>sysnat.parent</artifactId>
+     <version>0.0.1-SNAPSHOT</version>
+     <relativePath>../sysnat.parent/pom.xml</relativePath>
+  </parent>  
+  
+  
+  <dependencies>
+  
+   	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.testdata.import</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+
+   	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.testresult.archiving</artifactId>
+  	  <version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+
+	<dependency>
+	    <groupId>net.java.dev.jna</groupId>
+	    <artifactId>jna</artifactId>
+	    <version>4.1.0</version>
+	</dependency>
+
+	 <dependency>
+	    <groupId>org.seleniumhq.selenium</groupId>
+	    <artifactId>selenium-java</artifactId>
+	    <version>3.13.0</version>
+	</dependency> 	
+   
+  </dependencies>  
+ 
+</project>

@@ -1,0 +1,17 @@
+XX:     <filename>
+Filter: <path>, Smoketest
+
+# arrange
+Test-Phase: Arrange    
+Is page "Form Page" visible?
+Click menu item "Logout".
+Is page "Login Page" visible?
+
+# act 
+Test-Phase: Act  # Perform action under test
+Relogin.
+
+# assert
+Test-Phase: Assert    # check expectations
+Is page "Form Page" visible?
+

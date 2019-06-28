@@ -1,0 +1,74 @@
+Instructions read from LanguageTemplatesCommon
+-------------------------------------------------------
+.
+Active: ^^
+Aktiv: ^^
+Ausführungsfilter: ^^
+Beep ^^ times.
+Behaviour: ^^
+Comment: ^^
+Das heutige Datum wird als <> festgehalten.
+Date of today is stored as <>.
+Ein Screenshot wird als ^^ gespeichert.
+Ein Screenshot wird gespeichert, falls der Testfall als pictureProof kategorisiert wurde.
+Es existieren ^^.
+Execute script ^^ with
+Execute script ^^ with input data
+Execute script ^^ with input data ^^.
+Execute script ^^.
+Execute with
+Execute with ^^
+Execute with all ^^
+Filter: ^^
+Führe das Skript ^^ aus mit
+Führe das Skript ^^ aus mit den Eingabedaten
+Führe das Skript ^^ aus.
+Führe das Skript ^^ mit den Eingabedaten ^^ aus.
+Führe mit
+Führe mit ^^
+Führe mit allen ^^
+Kommentar: ^^
+Piepse ^^ mal.
+Save screenshot now as ^^.
+Save screenshot now if test case is categorized as mitBildnachweis.
+Set BDD-Keyword ^^.
+Tags: ^^
+Test-Parameter: ^^
+Test-Phase: ^^
+TestData: ^^
+Testdaten: ^^
+There are ^^.
+Verhalten: ^^
+Wait ^^ second(s).
+Warte ^^ Sekunde(n).
+XXID: ^^
+^^ mit
+^^ mit den Eingabedaten
+^^ mit den Eingabedaten ^^.
+^^ with 
+^^ with input data
+^^ with input data ^^.
+^^.
+^^=^^
+das Skript ^^ aus.
+the script ^^.
+
+Instructions read from LanguageTemplatesHelloWorldSpringBootBasics
+-------------------------------------------------------
+Click button ^^.
+Click menu item ^^.
+Enter ^^ in text field ^^.
+Is page ^^ visible?
+Is the displayed text ^^ equal to ^^?
+Login with ^^, ^^.
+Relogin.
+Select ^^ in selection field ^^.
+
+Instructions read from LanguageTemplatesPrint
+-------------------------------------------------------
+Die Liste der PDF-Dateien im Download-Verzeichnis ^^ als <> festgehalten.
+Die jüngste PDF-Datei im Download-Verzeichnis ^^ wird als <> festgehalten.
+Enthält das Dokument '' genau ^^ Seite(n)?
+Enthält das Dokument ^^ genau ^^ Seite(n)?
+Ist die aktuelle Zahl der PDF-Dateien im Download-Verzeichnis um ^^ höher als in der ^^?
+Schließe das PDF-Fenster ^^.

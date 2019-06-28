@@ -1,0 +1,15 @@
+XX:     <filename>
+Filter: <path>
+Test-Parameter: HelloWorldTestData
+
+# arrange
+Test-Phase: Arrange    # setup all test requirements
+"EnterGreetingData".
+
+# act 
+Test-Phase: Act  # Perform action under test
+Click button "Greet".
+
+# assert
+Test-Phase: Assert    # check expectations
+Is the displayed text "GreetingResult" equal to "HelloWorldTestData::GreetingResult"?

@@ -1,0 +1,5 @@
+com\iksgmbh\sysnat\common\utils\SysNatFileUtilClassLevelTest.class
+com\iksgmbh\sysnat\common\helper\TextInFileReplacerClassLevelTest.class
+com\iksgmbh\sysnat\common\helper\pdftooling\PdfFileContentClassLevelTest.class
+com\iksgmbh\sysnat\common\utils\SysNatStringUtilClassLevelTest.class
+com\iksgmbh\sysnat\common\helper\pdftooling\PdfFileComparerClassLevelTest.class

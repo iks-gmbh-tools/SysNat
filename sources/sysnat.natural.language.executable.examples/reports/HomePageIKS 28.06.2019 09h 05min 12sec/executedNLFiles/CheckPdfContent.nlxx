@@ -1,0 +1,22 @@
+XXID:  <filename>
+Filter: Bubu
+
+######  Arrange #######
+Test-Phase: Arrange    
+
+Click main menu item "Downloads".
+Click link "Alle Fachartikel zeigen". 
+
+######  Act #######
+Test-Phase: Act  # Perform action under test
+
+Click link "IKS Software zum Anfassen Gibt es so etwas".
+The downloaded PDF is saved as <Fachartikel Software zum Anfassen>.
+Close PDF window "IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf".
+
+######  Assert #######
+Test-Phase: Assert    # check expectations
+
+Does PDF 'Fachartikel Software zum Anfassen' consists of "8" page(s)?
+Does PDF 'Fachartikel Software zum Anfassen' match the validation rules in "SoftwareZumAnfassenContentDescription.validation"?
+Does PDF 'Fachartikel Software zum Anfassen' contain "Abb. 3:"?

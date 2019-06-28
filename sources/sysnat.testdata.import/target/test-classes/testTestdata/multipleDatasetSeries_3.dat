@@ -1,0 +1,12 @@
+# some datasets in file 3 of a series of files
+
+field1=100
+field2=200
+-
+field1=1000
+field2=2000
+-
+field1=10000
+field2=20000
+
+

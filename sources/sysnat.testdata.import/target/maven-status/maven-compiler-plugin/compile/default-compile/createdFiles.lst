@@ -1,0 +1,9 @@
+com\iksgmbh\sysnat\testdataimport\ExcelTableReader$AttributeSubset.class
+com\iksgmbh\sysnat\testdataimport\TestDataImporter.class
+com\iksgmbh\sysnat\testdataimport\ValidationFileReader.class
+com\iksgmbh\sysnat\testdataimport\ExcelTableReader.class
+com\iksgmbh\sysnat\testdataimport\TableDataParser.class
+com\iksgmbh\sysnat\testdataimport\ExcelTableReader$Cell.class
+com\iksgmbh\sysnat\testdataimport\ExcelDataProvider.class
+com\iksgmbh\sysnat\testdataimport\DatFileReader.class
+com\iksgmbh\sysnat\testdataimport\TestDataImporter$1.class

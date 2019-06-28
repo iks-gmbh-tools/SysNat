@@ -1,0 +1,6 @@
+com\iksgmbh\sysnat\testdataimport\TestDataImporterClassLevelTest.class
+com\iksgmbh\sysnat\testdataimport\ExcelDataProviderClassLevelTest.class
+com\iksgmbh\sysnat\testdataimport\DatFileReaderClassLevelTest.class
+com\iksgmbh\sysnat\testdataimport\ExcelTableReaderClassLevelTest.class
+com\iksgmbh\sysnat\testdataimport\ValidationFileReaderClassLevelTest.class
+com\iksgmbh\sysnat\testdataimport\TableDataParserClassLevelTest.class

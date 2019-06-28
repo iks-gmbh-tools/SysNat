@@ -1,0 +1,5 @@
+# This file will be ignored for test execution
+
+XX: InactiveTestExample
+Filter: Smoketest
+Active:	 no

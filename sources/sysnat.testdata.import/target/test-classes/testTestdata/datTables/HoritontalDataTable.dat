@@ -1,0 +1,10 @@
+Datasets in rows
+
+# First column values are supposed to be fieldnames!
+# Leading and trailing spaces in cells are ignored!
+
+|Name|Age|Size|
+|Dean| 8 |120|
+|Lisa| 7 |130|
+|Susy| 9 |110|
+|Tom|8|90|
