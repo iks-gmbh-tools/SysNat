@@ -1,8 +1,0 @@
-package com.iksgmbh.sysnat;
-
-public class MavenCaller 
-{
-	public static void compileJUnitTestCode() {
-		
-	}
-}

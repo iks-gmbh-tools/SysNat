@@ -1,16 +1,24 @@
-If you plan to use SysNat with IntelliJ, put a Idea IntelliJ Community version into this directory.
-Use SysNatIntelliJ.bat to start IntelliJ with the SysNat workspace.
-SysNatIntelliJ.bat expects to find the idea.exe with the relative path "./SysNat/IntelliJ/idea.exe".
+If you plan to use SysNat with IntelliJ, put a IntelliJ Community Edition into this directory. Use SysNatIntelliJ.bat from the SysNat root directory to start Eclipse with the IntelliJ project. The bat file expects to find the idea.exe with the relative path "./SysNat/Eclipse/eclipse.exe". The SysNat directory in IntelliJ directory contains the metadata for the SysNat IntelliJ project. Many useful settings are predefined in this metadata such as the Java and Maven version to be used as well as file associations, encoding type and launch configurations.
 
-To make SysNat running correctly follow the following steps:
- 
-1. Having started IntelliJ the first time, create a new project by importing "./SysNat/workspace/sysnat.parent/pom.xml".
+Having started SysNat IntelliJ the first time, assure the following settings:
 
-2. In the setting menu configure the Maven installation in "./SysNat/Maven" to be used and the file "./SysNat/Maven/config/settings.xml" as user settings.
+1a) In the Settings the Maven installation is set to "../maven" and that in the Maven user settings the Global Settings are set to '..\maven\conf\settings.xml' (let the default value for 'User settings' unchanged). Make sure that Local Repository is '../../maven/localRepository' (This value is read from the settings.xml). 
+1b) If you wish to use a specific artefact repository (such as an Artifactory or Nexus installation) you have to define this in the file '..\maven\conf\settings.xml'.
 
-3. Call Maven Clean and install on the sys.parent project and make sure that all projects are build correctly and all class level tests are green.
+2. The workspace encoding is set to "UTF-8". 3. 
 
-4. Run module level tests with JUnit test "./SysNat/workspace/sysnat.quality.assurance/src/test/java/com/iksgmbh/sysnat/test/ModuleLevelTestExecutor.java" and make sure all tests are green.
+3. All seven maven project in "./SysNat/workspace" are available. 
 
-5. Run system level tests with "./SysNat/workspace/sysnat.quality.assurance/src/test/java/com/iksgmbh/sysnat/test/SystemLevelTestExecutor.java" and make sure all tests are green.
+4. A Maven-Clean-Install-All-skipTest launch configuration is availble and its execution is successful.
+
+5. A Run-All-ClassLevelTests launch configuration is available and its execution results in 100% success.
+
+6. A Run-All-ModuleLevelTests launch configuration is available and its execution results in 100% success
+
+7. A Run-All-SystemLevelTests launch configuration is available and its execution results in 100% success.
+
+8. Two external tool launch configurations are available, one to delete all existing reports from the standard report directory and one to delete all PDFs from the Download directory.
+
+
+
 

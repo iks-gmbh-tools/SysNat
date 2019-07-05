@@ -1,5 +1,0 @@
-# Note: the following simple reference to test data
-#       works only if there is only dataset available!
-
-Select "::Greeting" in selection field "Greeting".
-Enter "::Name" in text field "Name".

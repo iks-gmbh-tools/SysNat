@@ -1,9 +1,0 @@
-package com.iksgmbh.sysnat;
-
-public class SysNatTesting 
-{
-	public static void main(String[] args) 
-	{
-		SysNatTestCaseGenerator.do
-	}
-}

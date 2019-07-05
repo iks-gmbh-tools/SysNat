@@ -1,7 +1,0 @@
-eclipse.m2.defaultPomEditorPage=true
-eclipse.m2.defaultRuntime=sntMaven
-eclipse.m2.runtimes=sntMaven
-eclipse.m2.runtimesNodes/sntMaven/location=../maven
-eclipse.m2.runtimesNodes/sntMaven/type=EXTERNAL
-eclipse.m2.userSettingsFile=C\:\\dev\\SysNatTesting\\maven\\conf\\settings.xml
-eclipse.preferences.version=1
