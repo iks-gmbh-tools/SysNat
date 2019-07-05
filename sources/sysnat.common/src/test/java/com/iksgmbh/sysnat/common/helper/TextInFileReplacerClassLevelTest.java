@@ -46,7 +46,7 @@ public class TextInFileReplacerClassLevelTest
 		// arrange
 		final String toSearch = "aNonExistingText";
 		final String replacement = "aReplacement";
-		final String targetDir = "../sysnat.common/src/test/resources/searchReplaceFiles";
+		final String targetDir = SysNatFileUtil.findAbsoluteFilePath("../sysnat.common/src/test/resources/searchReplaceFiles");
 
 		// act
 		String result = TextInFileReplacer.doYourJob(targetDir, toSearch, replacement);
@@ -62,7 +62,7 @@ public class TextInFileReplacerClassLevelTest
 		// arrange
 		final String toSearch = "directory/subdirectory";
 		final String replacement = "folder/subfolder/subsubfolder";
-		final String targetDir = "../sysnat.common/src/test/resources/searchReplaceFiles";
+		final String targetDir = SysNatFileUtil.findAbsoluteFilePath("../sysnat.common/src/test/resources/searchReplaceFiles");
 		assureSearchStringIsContainedInTargetFiles(targetDir, toSearch, replacement);
 
 		// act

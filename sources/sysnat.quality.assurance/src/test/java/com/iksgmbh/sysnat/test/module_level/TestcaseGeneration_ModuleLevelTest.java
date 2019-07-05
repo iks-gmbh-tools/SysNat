@@ -55,7 +55,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	public void createsJavaFilesForHelloWorldSpringBoot() throws Exception 
 	{
 		// arrange
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "src/test/resources/testSettingConfigs/HelloWorldSpringBoot_All.config");
+		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HelloWorldSpringBoot_All.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("Environment", "LOCAL");
 		GenerationRuntimeInfo.getInstance();
 		
@@ -64,6 +64,7 @@ public class TestcaseGeneration_ModuleLevelTest
 
 		// assert
 		String filePath = (String)System.getProperty("sysnat.generation.target.dir");
+		filePath = SysNatFileUtil.findAbsoluteFilePath(filePath);
 		List<File> result = FileFinder.searchFilesRecursively(new File(filePath), new FilenameFilter() {
 			@Override public boolean accept(File dir, String name) {
 				return name.endsWith(".java");
@@ -77,7 +78,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	{
 		// arrange
 		GenerationRuntimeInfo.reset();
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "src/test/resources/testSettingConfigs/HomePageIKS.config");
+		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("Environment", "PRODUCTION");
 		GenerationRuntimeInfo.getInstance();
 		
@@ -86,6 +87,7 @@ public class TestcaseGeneration_ModuleLevelTest
 
 		// assert
 		String filePath = (String)System.getProperty("sysnat.generation.target.dir");
+		filePath = SysNatFileUtil.findAbsoluteFilePath(filePath);
 		List<File> result = FileFinder.searchFilesRecursively(new File(filePath), new FilenameFilter() {
 			@Override public boolean accept(File dir, String name) {
 				return name.endsWith(".java");
@@ -96,7 +98,7 @@ public class TestcaseGeneration_ModuleLevelTest
 		// check content of test case file
 		String expectedFileContent = SysNatStringUtil.removeWhitespaceLinewise(
 				SysNatFileUtil.readTextFileToString(
-						"src/test/resources/HomePageIKS_ExpectedTestCaseContent.txt"));
+						"../sysnat.quality.assurance/src/test/resources/HomePageIKS_ExpectedTestCaseContent.txt"));
 		String actualFileContent = SysNatStringUtil.removeWhitespaceLinewise(
 				SysNatFileUtil.readTextFileToString( result.get(2) ) );
 		assertEquals("Generated Java File Content", 
@@ -109,7 +111,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	public void createsScriptFileForHomePageIKS() throws Exception 
 	{
 		// arrange
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "src/test/resources/testSettingConfigs/HomePageIKS.config");
+		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("Environment", "PRODUCTION");
 		GenerationRuntimeInfo.getInstance();
 		
@@ -196,13 +198,15 @@ public class TestcaseGeneration_ModuleLevelTest
 	public void createsJavaFilesForParameterizedTest() throws Exception 
 	{
 		// arrange
-		setTestProperties("ParameterizedTestApp", "src/test/java/com/iksgmbh/sysnat/test/helper");
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/src/test/java/com/iksgmbh/sysnat/test/helper");
+		setTestProperties("ParameterizedTestApp", path);
 		
 		// act
 		SysNatTestCaseGenerator.doYourJob();
 
 		// assert
 		String filePath = (String)System.getProperty("sysnat.generation.target.dir");
+		filePath = SysNatFileUtil.findAbsoluteFilePath(filePath);
 		List<File> result = FileFinder.searchFilesRecursively(new File(filePath), new FilenameFilter() {
 			@Override public boolean accept(File dir, String name) {
 				return name.endsWith(".java");
@@ -223,13 +227,16 @@ public class TestcaseGeneration_ModuleLevelTest
 	private void setTestProperties(final String appName, 
 			                       final String languageTemplateContainerSourceDir) 
 	{
-		testInputDir = "src/test/resources/testdata/" + appName; 
+		testInputDir = "../sysnat.quality.assurance/src/test/resources/testdata/" + appName;
+		testInputDir = SysNatFileUtil.findAbsoluteFilePath(testInputDir);
 		GenerationRuntimeInfo.reset();
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.executable.examples.source.dir", testInputDir);
 		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", testInputDir + "/settings.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.properties.path", testInputDir);
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.generation.target.dir", "target/" + appName);
 		GenerationRuntimeInfo.setSysNatSystemProperty("execution.properties", testInputDir + "/execution.properties");
+		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.help.command.list.file", "../sysnat.natural.language.executable.examples/help/ExistingNLInstructions_<testapp>.html");
+
 		
 		if (languageTemplateContainerSourceDir == null) {
 			GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.languageTemplateContainer.source.dir", testInputDir);
@@ -241,8 +248,9 @@ public class TestcaseGeneration_ModuleLevelTest
 	
 	private void prepareFakeTestApp() 
 	{
-		setTestProperties("FakeTestApp", "./src/test/java/com/iksgmbh/sysnat/test/helper");
-		final File resultDir = new File("target/faketestapp");
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/src/test/java/com/iksgmbh/sysnat/test/helper");
+		setTestProperties("FakeTestApp", path);
+		File resultDir = new File(SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/target/faketestapp"));
 		SysNatFileUtil.deleteFolder(resultDir);
 		assertFalse(resultDir.exists());
 		

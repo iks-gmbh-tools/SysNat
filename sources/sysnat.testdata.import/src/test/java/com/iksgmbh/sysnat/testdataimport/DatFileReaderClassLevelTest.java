@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Test;
 
 public class DatFileReaderClassLevelTest 
@@ -30,8 +31,9 @@ public class DatFileReaderClassLevelTest
 	public void loadSingleDatasetFromSingleDatFiles() 
 	{
 		// arrange
-		final File datFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/"
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/"
 				+ "singleDataset.dat");
+		final File datFile = new File(path);
 		
 		// act
 		final List<Properties> testdata = DatFileReader.doYourJob(datFile);
@@ -46,8 +48,10 @@ public class DatFileReaderClassLevelTest
 	public void loadMultipleDatasetsFromSingleDatFile() 
 	{
 		// arrange
-		final File datFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/"
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/"
 				+ "threeDatasets.dat");
+
+		final File datFile = new File(path);
 		
 		// act
 		final List<Properties> testdata = DatFileReader.doYourJob(datFile);
@@ -63,8 +67,9 @@ public class DatFileReaderClassLevelTest
 	public void ignoresEmptyDatasetsInDatFiles() throws Exception 
 	{
 		// arrange
-		final File datFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/"
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/"
 				+ "manyEmptyDatasets.dat");
+		final File datFile = new File(path);
 		
 		// act
 		final List<Properties> testdata = DatFileReader.doYourJob(datFile);

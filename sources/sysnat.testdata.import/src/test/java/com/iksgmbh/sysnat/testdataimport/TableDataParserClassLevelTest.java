@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
@@ -39,8 +40,9 @@ public class TableDataParserClassLevelTest
 	public void throwsExceptionForUnkownTableFormat() 
 	{
 		// arrange
-		final File datTableFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/"
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/"
 				+ "UnknownFormatDataTable.dat");
+		final File datTableFile = new File(path);
 		
 		try {
 			// act
@@ -57,8 +59,9 @@ public class TableDataParserClassLevelTest
 	public void throwsExceptionForIncompleteDataTable() 
 	{
 		// arrange
-		final File datTableFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/"
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/"
 				+ "IncompleteDataTable.dat");
+		final File datTableFile = new File(path);
 		
 		try {
 			// act
@@ -75,8 +78,9 @@ public class TableDataParserClassLevelTest
 	public void throwsExceptionForMissingCellSeparator() 
 	{
 		// arrange
-		final File datTableFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/"
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/"
 				+ "MissingCellSeparatorDataTable.dat");
+		final File datTableFile = new File(path);
 		
 		try {
 			// act
@@ -94,7 +98,8 @@ public class TableDataParserClassLevelTest
 	public void loadDatasetFromVerticalDatTable() 
 	{
 		// arrange
-		final File datTableFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/VerticalDataTable.dat");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/VerticalDataTable.dat");
+		final File datTableFile = new File(path);
 		
 		// act
 		final List<Properties> testdata = DatFileReader.doYourJob(datTableFile);
@@ -108,7 +113,8 @@ public class TableDataParserClassLevelTest
 	public void loadDatasetFromHorizontalDatTable() 
 	{
 		// arrange
-		final File datTableFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/HoritontalDataTable.dat");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/datTables/HoritontalDataTable.dat");
+		final File datTableFile = new File(path);
 		
 		// act
 		final List<Properties> testdata = DatFileReader.doYourJob(datTableFile);

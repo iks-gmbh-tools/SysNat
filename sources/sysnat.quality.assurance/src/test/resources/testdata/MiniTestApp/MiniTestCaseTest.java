@@ -36,7 +36,7 @@ public class MiniTestCaseTest extends SysNatTestCase
 		languageTemplatesCommon.startNewXX(testCaseName);
 		addReportMessage("Start executing " + testCaseName + "...");
 		languageTemplatesCommon.executeScript("MiniTestScript");
-		addCommentToReport("Name of PictureProof would be: " +
+		addCommentToReport("PictureProof: " +
 				executionInfo.getReportFolder() + "/" + getPictureProofName());
 		addReportMessage("Done executing " + testCaseName + "!");
 		

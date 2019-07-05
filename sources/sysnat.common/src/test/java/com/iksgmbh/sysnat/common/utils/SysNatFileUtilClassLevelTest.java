@@ -84,8 +84,10 @@ public class SysNatFileUtilClassLevelTest
 	public void copiesFolderWithAllSubfoldersAndFiles() 
 	{
 		// arrange
-		final File sourceDir = new File("../sysnat.common/src/test/resources/testTestResult");
-		final File targetDir = new File("../sysnat.common/target");
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.common/src/test/resources/testTestResult");
+		final File sourceDir = new File(path);
+		path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.common/target");
+		final File targetDir = new File(path);
 		final File expectedTargetDir = new File(targetDir, "testTestResult");
 		SysNatFileUtil.deleteFolder(expectedTargetDir);
 		assertFalse(expectedTargetDir.exists());
@@ -104,7 +106,8 @@ public class SysNatFileUtilClassLevelTest
 	public void loadsPropertyFile() 
 	{
 		// arrange
-		final File propertiesFile = new File("../sysnat.common/src/test/resources/test.properties");
+		final String pathAndFileName = SysNatFileUtil.findAbsoluteFilePath("../sysnat.common/src/test/resources/test.properties");
+		final File propertiesFile = new File(pathAndFileName);
 		final Properties properties = new Properties();
 		
 		// act
@@ -119,7 +122,8 @@ public class SysNatFileUtilClassLevelTest
 	public void throwsExceptionForUnreadablePropertyLine() 
 	{
 		// arrange
-		final File propertiesFile = new File("../sysnat.common/src/test/resources/test.err.properties");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.common/src/test/resources/test.err.properties");
+		final File propertiesFile = new File(path);
 		final Properties properties = new Properties();
 		
 		try {			

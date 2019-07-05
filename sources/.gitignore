@@ -1,0 +1,9 @@
+.classpath
+.project
+.settings/
+target
+reports
+screenshots
+/sysnat.test.execution/src/test/gen/**
+/*.bat
+/*.iml

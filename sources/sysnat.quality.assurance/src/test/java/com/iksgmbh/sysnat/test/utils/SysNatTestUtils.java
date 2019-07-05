@@ -95,10 +95,11 @@ public class SysNatTestUtils
 
 	public static void assertReportFolderNotExistsBeginningWith(final String reportNamePrefix) 
 	{
-		List<File> filelist = Arrays.asList( new File( System.getProperty("sysnat.report.dir") ).listFiles() );
+		String path = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.report.dir"));
+		List<File> filelist = Arrays.asList( new File( path ).listFiles() );
 		filelist = filelist.stream().filter(f->f.getName().startsWith(reportNamePrefix) && f.isDirectory()).collect(Collectors.toList());
 		filelist.forEach(f -> SysNatFileUtil.deleteFolder(f));
-		Optional<File> oldReportFolder = Arrays.asList( new File( System.getProperty("sysnat.report.dir") ).listFiles() ).stream().filter(f->f.getName().startsWith("MiniTestCaseTestReport") && f.isDirectory()).findFirst();
+		Optional<File> oldReportFolder = Arrays.asList( new File( path ).listFiles() ).stream().filter(f->f.getName().startsWith("MiniTestCaseTestReport") && f.isDirectory()).findFirst();
 		assertFalse("A old report folder still exists!", oldReportFolder.isPresent());
 	}
 

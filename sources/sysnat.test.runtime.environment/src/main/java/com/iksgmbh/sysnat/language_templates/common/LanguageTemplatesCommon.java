@@ -160,7 +160,8 @@ public class LanguageTemplatesCommon
 	{
 		if (nlsProperties == null) {
 			nlsProperties = new Properties();
-			final String propertyFileName = System.getProperty("sysnat.nls.lookup.file");
+			String propertyFileName = System.getProperty("sysnat.nls.lookup.file");
+			propertyFileName = SysNatFileUtil.findAbsoluteFilePath(propertyFileName);
 			SysNatFileUtil.loadPropertyFile(new File(propertyFileName), nlsProperties);
 		}
 		return nlsProperties;
@@ -364,7 +365,7 @@ public class LanguageTemplatesCommon
 	 * Makes a single data set available.
 	 * If not yet done, it is initialized now.
 	 * Test data is read from the TestData directory
-	 * @param objectName
+	 * @param dataReference
 	 * @return
 	 */
 	@LanguageTemplate(value = "There are ^^.") 

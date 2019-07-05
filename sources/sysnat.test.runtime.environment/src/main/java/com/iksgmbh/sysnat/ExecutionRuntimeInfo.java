@@ -30,7 +30,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
-import jdk.nashorn.internal.objects.NativeJava;
 import org.joda.time.DateTime;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
@@ -536,21 +535,39 @@ public class ExecutionRuntimeInfo
 
 	private String getSettingsConfigAsString()
 	{
-		String defaultValue = SysNatFileUtil.findAbsoluteFilePath(CONFIG_FILE_NAME);
-		String value = System.getProperty("settings.config", defaultValue);
-		System.out.println("settings.config used: " + value);
-		return value;
+		String toReturn = System.getProperty("settings.config");
+		if (toReturn == null) {
+			String defaultValue = SysNatFileUtil.findAbsoluteFilePath(CONFIG_FILE_NAME);
+			System.setProperty("settings.config", defaultValue);
+			toReturn = defaultValue;
+		}
+
+		if ( ! SysNatFileUtil.isAbsolutePath(toReturn) ) {
+			toReturn = SysNatFileUtil.findAbsoluteFilePath(toReturn);
+			System.setProperty("settings.config", toReturn);
+		}
+		System.out.println("settings.config used: " + toReturn);
+		return toReturn;
 	}
 
 	private String getExecutionPropertiesAsString() {
-		String toReturn = System.getProperty("execution.properties", getPropertiesPath() + "/" + PROPERTIES_FILENAME);
-		return SysNatFileUtil.findAbsoluteFilePath(toReturn);
+		return System.getProperty("execution.properties", getPropertiesPath() + "/" + PROPERTIES_FILENAME);
 	}
 
 	public String getPropertiesPath()
 	{
-		String defaultValue = SysNatFileUtil.findAbsoluteFilePath(PROPERTIES_PATH);
-		return System.getProperty("sysnat.properties.path", defaultValue);
+		String toReturn = System.getProperty("sysnat.properties.path");
+		if (toReturn == null) {
+			String defaultValue = SysNatFileUtil.findAbsoluteFilePath(PROPERTIES_PATH);
+			System.setProperty("sysnat.properties.path", defaultValue);
+			toReturn = defaultValue;
+		}
+		if ( ! SysNatFileUtil.isAbsolutePath(toReturn) ) {
+			toReturn = SysNatFileUtil.findAbsoluteFilePath(toReturn);
+			System.setProperty("sysnat.properties.path", toReturn);
+		}
+
+		return toReturn;
 	}
 
 	public String getRootPath() {

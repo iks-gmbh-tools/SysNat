@@ -48,7 +48,7 @@ public class TestDataImport_ModuleLevelTest
 		String testDataIdentifier = "ManyDatasets";
 		String dataFileName = testDataIdentifier + ".dat";
 		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName);
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "src/test/resources/testSettingConfigs/HomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("Environment", "LOCAL");
 		final ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
 		assertEquals("Number of report message", 0, executionInfo.getReportMessagesOK().size());
@@ -79,13 +79,16 @@ public class TestDataImport_ModuleLevelTest
 		String testDataIdentifier = "DistributedDatasetSeries";
 		String dataFileName1 = testDataIdentifier + "_1.dat";
 		String dataFileName2 = testDataIdentifier + "_2.dat";
-		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName1);
-		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName2);
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "src/test/resources/testSettingConfigs/HomePageIKS.config");
+		SysNatFileUtil.deleteFile(SysNatFileUtil.findAbsoluteFilePath(testFolder + "/" + dataFileName1));
+		SysNatFileUtil.deleteFile(SysNatFileUtil.findAbsoluteFilePath(testFolder + "/" + dataFileName2));
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", path);
 		ExecutionRuntimeInfo.setSysNatSystemProperty("Environment", "LOCAL");
 		final ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
 		assertEquals("Number of report message", 0, executionInfo.getReportMessagesOK().size());
 		TestCaseForTestPurpose fakeTestCase = new TestCaseForTestPurpose(testDataIdentifier);
+
+
 		SysNatFileUtil.copyTextFileToTargetDir("../sysnat.quality.assurance/src/test/resources/testdata/ImportTests", 
 				                               dataFileName1, testFolder);
 		SysNatFileUtil.copyTextFileToTargetDir("../sysnat.quality.assurance/src/test/resources/testdata/ImportTests", 
@@ -123,7 +126,7 @@ public class TestDataImport_ModuleLevelTest
 		// arrange
 		String dataFileName = testDataIdentifier + ".xlsx";
 		SysNatFileUtil.deleteFile(testFolder + "/" + dataFileName);
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "src/test/resources/testSettingConfigs/HomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("Environment", "LOCAL");
 		final ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
 		assertEquals("Number of report message", 0, executionInfo.getReportMessagesOK().size());

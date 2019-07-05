@@ -40,7 +40,7 @@ public class PdfFileDeleter extends FileDeleter
 		//toDelete.addAll( findFiles(folder, null, null, ".zip", partOfFileName) );
 
 		if (toDelete.isEmpty()) {
-			System.out.println("Es wurden keine Vertrag-PDF-Dateien in " + folder.getCanonicalPath() + " gefunden." );
+			System.out.println("Es wurden keine PDF-Dateien in " + folder.getCanonicalPath() + " gefunden." );
 		} else {			
 			for (File pdfFile : toDelete) {
 				pdfFile.delete();

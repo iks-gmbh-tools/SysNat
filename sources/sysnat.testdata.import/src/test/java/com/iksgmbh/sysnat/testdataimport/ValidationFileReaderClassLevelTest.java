@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
@@ -32,7 +33,8 @@ public class ValidationFileReaderClassLevelTest
     public void loadsValidationData()
     {
         // arrange
-        File file = new File("../sysnat.testdata.import/src/test/resources/test.validation");
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/test.validation");
+        File file = new File(path);
 
         // act
         final LinkedHashMap<String, String> result = ValidationFileReader.doYourJob(file);

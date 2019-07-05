@@ -52,7 +52,8 @@ public class CalculatorApp_ModuleLevelTest
 		System.setProperty("sysnat.dummy.test.run", "true");
 		System.setProperty("sysnat.autolaunch.report", "false");
 
-		Arrays.asList( new File( "./target" ).listFiles() ).stream()
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/target");
+		Arrays.asList( new File( path ).listFiles() ).stream()
 		      .filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory())
 		      .forEach(SysNatFileUtil::deleteFolder);
 
@@ -77,18 +78,19 @@ public class CalculatorApp_ModuleLevelTest
 	public void compilesAndExecutesXX_with_BDDKeyword() throws Exception
 	{
 		// arrange
-		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName, 
-				"BDDKeywordTestCaseTest.java", 
-                EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/calculatortestapp");
-		
+		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName,
+				                               "BDDKeywordTestCaseTest.java",
+				                               EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/calculatortestapp");
+
 		GenerationRuntimeInfo.getInstance();
-		
+
 		// act
 		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();
 
 		// assert
 		assertEquals("Maven result", SysNatTestingExecutor.MAVEN_OK, result);
-		File reportFolder = Arrays.asList( new File( "./target" ).listFiles() ).stream().filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory()).findFirst().get();
+		String targetDir = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/target");
+		File reportFolder = Arrays.asList( new File( targetDir ).listFiles() ).stream().filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory()).findFirst().get();
 		final File fullReportFile = new File(reportFolder, ReportCreator.FULL_REPORT_RESULT_FILENAME);
 		SysNatTestUtils.assertFileExists( fullReportFile );
 		final String report = SysNatFileUtil.readTextFileToString(fullReportFile); 
@@ -104,13 +106,14 @@ public class CalculatorApp_ModuleLevelTest
 	public void compilesAndExecutesXX_withBehaviourLevelInstructions_andCreatesTestReport() throws Exception
 	{
 		// arrange
-		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName, 
-				"BehaviourLevelInstructionsTestCase1Test.java", 
-                EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/calculatortestapp");
-		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName, 
-				"BehaviourLevelInstructionsTestCase2Test.java", 
-                EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/calculatortestapp");
-		
+		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName,
+				                  "BehaviourLevelInstructionsTestCase1Test.java",
+				                       EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/calculatortestapp");
+
+		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName,
+								  "BehaviourLevelInstructionsTestCase2Test.java",
+				                       EXECUTION_TEST_DIR + "com/iksgmbh/sysnat/test/calculatortestapp");
+
 		GenerationRuntimeInfo.getInstance();
 		
 		// act
@@ -118,11 +121,12 @@ public class CalculatorApp_ModuleLevelTest
 
 		// assert
 		assertEquals("Maven result", SysNatTestingExecutor.MAVEN_OK, result);
-		File reportFolder = Arrays.asList( new File( "./target" ).listFiles() ).stream().filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory()).findFirst().get();
+		String targetDir = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/target");
+		File reportFolder = Arrays.asList( new File( targetDir ).listFiles() ).stream().filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory()).findFirst().get();
 		final File fullReportFile = new File(reportFolder, ReportCreator.FULL_REPORT_RESULT_FILENAME);
 		SysNatTestUtils.assertFileExists( fullReportFile );
 		final String report = SysNatFileUtil.readTextFileToString(fullReportFile); 
-		System.out.println(report);
+		//System.out.println(report);
 
 		SysNatTestUtils.assertReportContains(report, "1. Behaviour: BehaviourId");
 		SysNatTestUtils.assertReportContains(report, "This is a OneTimePrecondition instruction.");

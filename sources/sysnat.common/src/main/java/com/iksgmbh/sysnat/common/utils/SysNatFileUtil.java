@@ -63,18 +63,21 @@ public class SysNatFileUtil
 	private static File downloadDir = null;
 	private static File firefoxExecutable;
 
-	public static void copyTextFileToTargetDir(final String sourceDir,
-	                                           final String sourceFilename,
-	                                           final String targetDir)
+	public static void copyTextFileToTargetDir(String sourceDir,
+	                                           String sourceFilename,
+	                                           String targetDir)
 	{
-		final String content = SysNatFileUtil.readTextFileToString(sourceDir + "/" + sourceFilename);
+		sourceDir = SysNatFileUtil.findAbsoluteFilePath(sourceDir);
+		targetDir = SysNatFileUtil.findAbsoluteFilePath(targetDir);
+		String content = SysNatFileUtil.readTextFileToString(sourceDir + "/" + sourceFilename);
 		SysNatFileUtil.writeFile(new File(targetDir, sourceFilename), content);
 	}
 
-	public static void writeFile(final String fileName, 
-			                     final String fileContent)
+	public static void writeFile(String fileName,
+			                     String fileContent)
 	{
 		try {
+			fileName = findAbsoluteFilePath(fileName);
 			writeFile(new FileOutputStream(fileName), fileContent, fileName);
 		} catch (Exception e) {
 			String message = "Could not write file " + new File(fileName).getAbsolutePath();
@@ -182,7 +185,7 @@ public class SysNatFileUtil
 
 	/**
 	 * Finds most recent download file not older than <timespanOfZhePastInMillisToConsider> milliseconds.
-	 * @param timespan to consider into the past since method call
+	 * @param timespanOfThePastInMillisToConsider to consider into the past since method call
 	 * @return file found - otherwise an exception is thrown
 	 */
 	public static File findRecentDownloadFile(final long timespanOfThePastInMillisToConsider)
@@ -343,7 +346,7 @@ public class SysNatFileUtil
 	public static List<String> readTextFile(String pathAndfilename)
 	{
 		if (!new File(pathAndfilename).exists()) {
-			throw new SysNatException("Cannot read non existing file '" + pathAndfilename + "'.");
+			throw new SysNatException("Cannot read non-existing file '" + pathAndfilename + "'.");
 		}
 
 		final List<String> fileContent = new ArrayList<String>();
@@ -412,8 +415,11 @@ public class SysNatFileUtil
 		return readTextFile(file.getAbsolutePath());
 	}
 
-	public static String readTextFileToString(final String pathAndFilename)
+	public static String readTextFileToString(String pathAndFilename)
 	{
+		if ( ! isAbsolutePath(pathAndFilename)) {
+			pathAndFilename = findAbsoluteFilePath(pathAndFilename);
+		}
 		return readTextFileToString(new File(pathAndFilename));
 	}
 
@@ -442,6 +448,7 @@ public class SysNatFileUtil
 	 */
 	public static boolean deleteFolder(String dir)
 	{
+		dir = SysNatFileUtil.findAbsoluteFilePath(dir);
 		return deleteFolder(new File(dir));
 	}
 
@@ -512,10 +519,13 @@ public class SysNatFileUtil
 		copyBinaryFile(sourceFile, targetFile);
 	}
 
-	public static void copyBinaryFile(final String fromFileName, final String toFileName)
+	public static void copyBinaryFile(String fromFileName, String toFileName)
 	{
-		final File fromFile = new File(fromFileName);
-		final File toFile = new File(toFileName);
+		fromFileName = SysNatFileUtil.findAbsoluteFilePath(fromFileName);
+		toFileName = SysNatFileUtil.findAbsoluteFilePath(toFileName);
+
+		File fromFile = new File(fromFileName);
+		File toFile = new File(toFileName);
 		copyBinaryFile(fromFile, toFile);
 	}
 
@@ -525,9 +535,10 @@ public class SysNatFileUtil
 		copyBinaryFile(fromFile, toFile);
 	}
 
-	public static void copyBinaryFile(final String fromFileName, final File toFile)
+	public static void copyBinaryFile(String fromFileName, File toFile)
 	{
-		final File fromFile = new File(fromFileName);
+		fromFileName = SysNatFileUtil.findAbsoluteFilePath(fromFileName);
+		File fromFile = new File(fromFileName);
 		copyBinaryFile(fromFile, toFile);
 	}
 
@@ -657,7 +668,11 @@ public class SysNatFileUtil
 	}
 
 	public static boolean deleteFile(String filename) {
-		return new File(filename).delete();		
+		return deleteFile(new File(filename));		
+	}
+
+	public static boolean deleteFile(File file) {
+		return file.delete();		
 	}
 
 	public static String getRootDir() {
@@ -666,16 +681,47 @@ public class SysNatFileUtil
 
 	public static String findAbsoluteFilePath(String relativeFilepath)
 	{
-		String toReturn = relativeFilepath;
-		if (toReturn.startsWith("..")) {
-			toReturn = "sources" + toReturn.substring(2);
+		if (isAbsolutePath(relativeFilepath)) {
+			return relativeFilepath;
+		}
+		
+		File file = new File(relativeFilepath); 
+		if (file.exists()) {
+			return file.getAbsolutePath();
+		}
+		
+		if (relativeFilepath.startsWith("sources")) 
+		{
+			int pos = relativeFilepath.indexOf("/");
+			String filepath = ".." + relativeFilepath.substring(pos, relativeFilepath.length());
+
+			file = new File(filepath);
+			if (file.exists()) {
+				return file.getAbsolutePath();
+			}		
 		}
 
-		String rootPath = getRootDir();
-		if ( rootPath.endsWith("SysNat\\IntelliJ\\_SysNat")) {
-			toReturn = rootPath + "\\..\\..\\" + toReturn;
+		String toReturn = getRootDir();
+		if ( toReturn.endsWith("SysNat\\IntelliJ\\_SysNat")) {
+			if (relativeFilepath.startsWith("..")) {
+				relativeFilepath = "sources" + relativeFilepath.substring(2);
+			}
+			toReturn = toReturn + "\\..\\..\\" + relativeFilepath;
+		} else {
+			toReturn = toReturn + "\\" + relativeFilepath;
 		}
 
 		return toReturn;
 	}
+
+	public static boolean isAbsolutePath(String path)
+	{
+		if (path.startsWith("..")) return false;
+		if (path.startsWith("sources")) return false;
+		if (path.startsWith("/")) return false;
+		if (path.startsWith("\\")) return false;
+		return true;
+	}
+
+
 }

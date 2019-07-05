@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
@@ -36,7 +37,7 @@ public class PdfFileContent
     private List<PdfPageContent> pageContentList;
 
 	public PdfFileContent(String aPdfFileName) {
-		this.pdfFileName = aPdfFileName;
+		this.pdfFileName = SysNatFileUtil.findAbsoluteFilePath(aPdfFileName);
 		this.init();
 	}
 

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -93,7 +94,8 @@ public class LanguageInstructionCollectorClassLevelTest
 		final List<String> knownScripts = new ArrayList<>();
 		knownScripts.add("Create an order.nls");
 		GenerationRuntimeInfo.getInstance().setListOfKnownScriptNames(knownScripts);
-		final File inputFile = new File("../sysnat.testcase.generation/src/test/resources/simpleScriptCall.nlxx");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testcase.generation/src/test/resources/simpleScriptCall.nlxx");
+		final File inputFile = new File(path);
 
 		// act
 		List<String> result = new LanguageInstructionCollector("aTestApplication").getInstructionLines(inputFile);

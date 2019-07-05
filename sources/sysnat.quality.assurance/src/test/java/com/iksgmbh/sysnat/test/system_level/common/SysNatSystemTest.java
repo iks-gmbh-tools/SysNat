@@ -28,7 +28,7 @@ public class SysNatSystemTest
 {
 	protected File reportDir;
 	protected String settingsConfigToUseInSystemTest = null;
-	protected File executionDir = new File("../sysnat.test.execution/src/test");
+	protected File executionDir = createFile("../sysnat.test.execution/src/test");
 
 	protected static void sleep(int millis) 
 	{
@@ -50,7 +50,7 @@ public class SysNatSystemTest
 		
 		ExecutionRuntimeInfo.getInstance();
 		GenerationRuntimeInfo.getInstance();
-		reportDir = new File(System.getProperty("sysnat.report.dir"));
+		reportDir = createFile(System.getProperty("sysnat.report.dir"));
 		SysNatFileUtil.deleteFolder(reportDir);
 		reportDir.mkdir();
 		SysNatFileUtil.deleteFolder(executionDir);
@@ -76,5 +76,8 @@ public class SysNatSystemTest
 		return "background:" + color + "'>" + expectedNumberSuccessfullyExecutedTests+ "</span";
 	}
 
-
+	protected static File createFile(String path) {
+		path = SysNatFileUtil.findAbsoluteFilePath(path);
+		return new File(path);
+	}
 }

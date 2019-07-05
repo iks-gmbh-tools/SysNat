@@ -83,6 +83,7 @@ public class PdfStructureAnalyser
 
 	public PdfDocumentStructure analyze(String fileAsString)
     {
+    	fileAsString = SysNatFileUtil.findAbsoluteFilePath(fileAsString);
 		int pos = fileAsString.lastIndexOf('/');
     	PdfDocumentStructure toReturn = new PdfDocumentStructure(fileAsString.substring(pos+1));
     	

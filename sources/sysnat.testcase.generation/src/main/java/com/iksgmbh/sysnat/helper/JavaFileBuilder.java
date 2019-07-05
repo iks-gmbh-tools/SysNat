@@ -462,7 +462,8 @@ public class JavaFileBuilder
 
 	private File buildTargetFilename(final Filename instructionFilename) 
 	{
-		final String targetDir = System.getProperty("sysnat.generation.target.dir");
+		String targetDir = System.getProperty("sysnat.generation.target.dir");
+		targetDir = SysNatFileUtil.findAbsoluteFilePath(targetDir);
 		return new File (targetDir,  instructionFilename.value);
 	}
 

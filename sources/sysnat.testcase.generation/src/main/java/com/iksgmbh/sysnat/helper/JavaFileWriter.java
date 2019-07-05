@@ -30,7 +30,8 @@ public class JavaFileWriter
 {
 	public static void writeToTargetDir(final HashMap<File, String> testCodeToExecute) 
 	{
-		final String targetDir = System.getProperty("sysnat.generation.target.dir");
+		String targetDir = System.getProperty("sysnat.generation.target.dir");
+		targetDir = SysNatFileUtil.findAbsoluteFilePath(targetDir);
 		File dir = new File(targetDir);
 		SysNatFileUtil.deleteFolder(dir);  
 		testCodeToExecute.forEach((file, content) -> SysNatFileUtil.writeFile(file, content));

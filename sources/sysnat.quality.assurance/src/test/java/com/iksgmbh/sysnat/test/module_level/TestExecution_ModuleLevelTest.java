@@ -113,7 +113,8 @@ public class TestExecution_ModuleLevelTest
 		assertEquals("Result file content.", "This result file is created by 'MiniTestScript'.", 
 				                             SysNatFileUtil.readTextFileToString(resultFile));
 
-		File reportFolder = Arrays.asList( new File( System.getProperty("sysnat.report.dir") ).listFiles() ).stream().filter(f->f.getName().startsWith("MiniTestCaseTestReport") && f.isDirectory()).findFirst().get();
+		String path = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.report.dir"));
+		File reportFolder = Arrays.asList( new File( path ).listFiles() ).stream().filter(f->f.getName().startsWith("MiniTestCaseTestReport") && f.isDirectory()).findFirst().get();
 		SysNatTestUtils.assertFileExists(reportFolder);
 		SysNatTestUtils.assertFileExists( new File(reportFolder, ReportCreator.FULL_REPORT_RESULT_FILENAME) );
 		SysNatTestUtils.assertFileExists( new File(reportFolder, ReportCreator.SHORT_REPORT_RESULT_FILENAME) );
@@ -122,7 +123,7 @@ public class TestExecution_ModuleLevelTest
 		final String report = SysNatFileUtil.readTextFileToString(detailReportFile); 
 		String expectedText = "Script MiniTestScript has been executed!";
 		SysNatTestUtils.assertReportContains(report, expectedText);
-		expectedText = "Name of PictureProof would be: ..\\sysnat.quality.assurance\\target\\reportFolder/MiniTestCaseBILDNACHWEIS1";
+		expectedText = "PictureProof: C:\\dev\\SysNat\\sources\\sysnat.test.execution\\..\\sysnat.quality.assurance\\target\\reportFolder/MiniTestCaseBILDNACHWEIS1";
 		expectedText = expectedText.replace("reportFolder", reportFolder.getName());
 		SysNatTestUtils.assertReportContains(report, expectedText);
 	}	
@@ -133,8 +134,9 @@ public class TestExecution_ModuleLevelTest
 	
 	private File makeSureThatExpectedClassFileDoesNotExist(String testCaseName) 
 	{
-		final String path = "../sysnat.test.execution/target/test-classes/com/iksgmbh/sysnat/test/integration/testcase/";
-		final File expectedClassFile = new File(path + testCaseName + ".class");
+		String path = "../sysnat.test.execution/target/test-classes/com/iksgmbh/sysnat/test/integration/testcase";
+		path = SysNatFileUtil.findAbsoluteFilePath(path);
+		final File expectedClassFile = new File(path, testCaseName + ".class");
 		expectedClassFile.delete();
 		assertFalse(expectedClassFile.exists());
 		return expectedClassFile;
@@ -142,8 +144,9 @@ public class TestExecution_ModuleLevelTest
 
 	private File makeSureThatResultFileDoesNotExist(String filename) 
 	{
-		final File resultFile = new File("target/" + filename);
-		resultFile.delete();
+		String path = "../sysnat.quality.assurance/target/" + filename;
+		File resultFile = new File(SysNatFileUtil.findAbsoluteFilePath(path));
+		SysNatFileUtil.deleteFile(resultFile);
 		assertFalse(resultFile.exists());
 		return resultFile;
 	}
@@ -154,8 +157,11 @@ public class TestExecution_ModuleLevelTest
 	{
 		for (String filename : fileList) 
 		{
-			final String sourcePathAndFilename = TESTDATA_DIR + testdataSubFolder + "/" + filename;
-			final File targetFile = new File(EXECUTION_DIR + packagePath + filename);
+			final String sourcePathAndFilename = SysNatFileUtil.findAbsoluteFilePath(
+					TESTDATA_DIR + testdataSubFolder + "/" + filename);
+			String path = EXECUTION_DIR + packagePath + filename;
+			path = SysNatFileUtil.findAbsoluteFilePath(path);
+			final File targetFile = new File(path);
 			targetFile.getParentFile().mkdirs();
 			SysNatFileUtil.copyBinaryFile( sourcePathAndFilename, targetFile);
 		}

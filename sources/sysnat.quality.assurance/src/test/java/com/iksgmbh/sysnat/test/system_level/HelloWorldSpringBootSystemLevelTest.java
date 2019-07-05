@@ -76,7 +76,8 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 	{
 		try {
 			String toReturn = null;
-			final Process process = Runtime.getRuntime().exec("cmd /C cd HelloWorldSpringBoot && startHelloWorldSpringBoot.bat");
+			final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/HelloWorldSpringBoot");
+			final Process process = Runtime.getRuntime().exec("cmd /C cd " + path + " && startHelloWorldSpringBoot.bat");
 			final InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
 			final BufferedReader reader = new BufferedReader(inputStreamReader);
 			String line = null;

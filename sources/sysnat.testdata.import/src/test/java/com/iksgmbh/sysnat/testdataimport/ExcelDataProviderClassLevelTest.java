@@ -27,6 +27,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
@@ -37,7 +38,8 @@ public class ExcelDataProviderClassLevelTest {
 	public void readsRotatedDatasetsFromExcelFile() throws IOException 
 	{
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/RotatedExcelTestData.xlsx");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/excel/RotatedExcelTestData.xlsx");
+		final File excelFile = new File(path);
 		
 		// act
 		final Hashtable<String, Properties> result = ExcelDataProvider.doYourJob(excelFile);
@@ -55,7 +57,8 @@ public class ExcelDataProviderClassLevelTest {
 	public void readsDatasetsFromExcelFile() throws IOException 
 	{
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/ExcelTestData.xlsx");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/excel/ExcelTestData.xlsx");
+		final File excelFile = new File(path);
 		
 		// act
 		final Hashtable<String, Properties> result = ExcelDataProvider.doYourJob(excelFile);
@@ -71,7 +74,8 @@ public class ExcelDataProviderClassLevelTest {
 	public void throwsErrorForEmptyMatrix() throws Exception 
 	{		
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/EmptyDataFile.xlsx");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/excel/EmptyDataFile.xlsx");
+		final File excelFile = new File(path);
 		
 		try {
 			// act
@@ -87,7 +91,8 @@ public class ExcelDataProviderClassLevelTest {
 	public void throwsErrorForMissingDatasets() throws Exception 
 	{		
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/MissingDatasets.xlsx");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/excel/MissingDatasets.xlsx");
+		final File excelFile = new File(path);
 		
 		try {
 			// act
@@ -103,7 +108,8 @@ public class ExcelDataProviderClassLevelTest {
 	public void throwsErrorForMissingFields() throws Exception 
 	{		
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/MissingFields.xlsx");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/excel/MissingFields.xlsx");
+		final File excelFile = new File(path);
 		
 		try {
 			// act

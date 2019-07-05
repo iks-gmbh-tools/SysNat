@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
 import org.apache.maven.shared.invoker.InvocationRequest;
@@ -69,7 +70,8 @@ public class SysNatTestingExecutor
 	public static String startMavenCleanCompileTest(Properties jvmSystemProperties)
 	{
 		final InvocationRequest request = new DefaultInvocationRequest();
-		request.setPomFile(new File("../sysnat.test.execution/pom.xml"));
+		final String pomFile = SysNatFileUtil.findAbsoluteFilePath("../sysnat.test.execution/pom.xml");
+		request.setPomFile(new File(pomFile));
 		request.setProperties(jvmSystemProperties);
 		request.setJavaHome(JAVA_HOME);
 		request.setMavenOpts("-Dfile.encoding=UTF-8");

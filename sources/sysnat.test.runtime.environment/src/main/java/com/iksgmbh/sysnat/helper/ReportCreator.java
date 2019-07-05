@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 public class ReportCreator 
@@ -156,7 +157,8 @@ public class ReportCreator
 
 	private String createFullOverview() 
 	{
-		String overviewReport = readReportTemplate(OVERVIEW_TEMPLATE);
+		String path = SysNatFileUtil.findAbsoluteFilePath(OVERVIEW_TEMPLATE);
+		String overviewReport = readReportTemplate(path);
 		overviewReport = createOverview(overviewReport);
 		overviewReport = overviewReport.replace("PLACEHOLDER_DETAILS", buildDetailPart());
 		return overviewReport;
@@ -164,15 +166,16 @@ public class ReportCreator
 
 	private String createShortOverview() 
 	{
-		String overviewReport = readReportTemplate(OVERVIEW_TEMPLATE);
-		overviewReport = createOverview(overviewReport);
+		String path = SysNatFileUtil.findAbsoluteFilePath(OVERVIEW_TEMPLATE);
+		String overviewReport = readReportTemplate(path);		overviewReport = createOverview(overviewReport);
 		overviewReport = overviewReport.replace("PLACEHOLDER_DETAILS", BUNDLE.getString("seeDetails"));
 		return overviewReport;
 	}
 
 	private String createDetailReport(final ExecutableExample executableExample) 
 	{
-		String report = readReportTemplate(DETAIL_TEMPLATE);
+		String path = SysNatFileUtil.findAbsoluteFilePath(DETAIL_TEMPLATE);
+		String report = readReportTemplate(path);
 		String xxid = executableExample.getXXID();
 		String color = GREEN_HTML_COLOR;
 		if (executionInfo.getReportMessagesFAILED().containsKey(xxid)) {

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.ExecutableExample;
@@ -61,7 +62,9 @@ public class LanguageTemplatesPdfClassLevelTest
     public void validatesPdfContent()
     {
         // arrange
-        File testPdf = new File("../sysnat.test.runtime.environment/src/test/resources/validation/IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf");
+        String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.test.runtime.environment/src/test/resources/validation/IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf");
+        File testPdf = new File(path);
+
         String validationFileName = "test.validation";
         executableExample.storeTestObject("CCC", "Clean Coding Cosmos");
         executableExample.storeTestObject("Titel", "Literatur & Links");

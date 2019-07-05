@@ -1,0 +1,1 @@
+This empty common folder must exist for test purpose!

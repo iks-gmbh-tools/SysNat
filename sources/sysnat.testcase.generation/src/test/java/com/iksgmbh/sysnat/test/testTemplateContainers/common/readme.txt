@@ -1,0 +1,1 @@
+This empty common directory is necessary!

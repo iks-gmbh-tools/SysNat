@@ -48,7 +48,8 @@ public class SysNatTestCaseGeneratorClassLevelTest
 	public void deletesTargetDirBeforeWritingNewFiles() throws IOException
 	{
 		// arrange
-		final File targetDir = new File(System.getProperty("sysnat.generation.target.dir"));
+		final String path = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.generation.target.dir"));
+		final File targetDir = new File(path);
 		targetDir.mkdir();
 		final File dummyFile = new File(targetDir, "Dummy.java");
 		dummyFile.createNewFile();
@@ -102,7 +103,8 @@ public class SysNatTestCaseGeneratorClassLevelTest
 	public void createsCommandLibrary() throws IOException
 	{
 		// arrange
-		final File targetDir = new File(System.getProperty("sysnat.generation.target.dir"));
+		final String path = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.generation.target.dir"));
+		final File targetDir = new File(path);
 		targetDir.mkdir();
 		final File dummyFile = new File(targetDir, "Dummy.java");
 		dummyFile.createNewFile();
@@ -121,7 +123,8 @@ public class SysNatTestCaseGeneratorClassLevelTest
 	public void createsTwoJUnitTestClassesFromNLXXfileForBehaviourWithTwoXXs() throws IOException
 	{
 		// arrange
-		final File targetDir = new File(System.getProperty("sysnat.generation.target.dir"));
+		String path = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.generation.target.dir"));
+		File targetDir = new File(path);
 		SysNatFileUtil.deleteFolder(targetDir);
 		assertFalse(targetDir.exists());
 		
@@ -158,7 +161,8 @@ public class SysNatTestCaseGeneratorClassLevelTest
 
 
 		// arrange
-		final File targetDir = new File(System.getProperty("sysnat.generation.target.dir"));
+		final String path = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.generation.target.dir"));
+		final File targetDir = new File(path);
 		SysNatFileUtil.deleteFolder(targetDir);
 		assertFalse(targetDir.exists());
 

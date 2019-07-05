@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.testdataimport.ExcelTableReader.Cell;
@@ -30,7 +31,8 @@ public class ExcelTableReaderClassLevelTest {
 	public void readsMatrixFromExcelFile() throws IOException 
 	{
 		// arrange
-		final File excelFile = new File("../sysnat.testdata.import/src/test/resources/testTestdata/excel/ExcelTestData.xlsx");
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/excel/ExcelTestData.xlsx");
+		final File excelFile = new File(path);
 		final Cell firstCell = new Cell(1, 1);
 		
 		// act
