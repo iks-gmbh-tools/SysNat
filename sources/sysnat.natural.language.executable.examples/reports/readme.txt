@@ -1,0 +1,1 @@
+For automatically cleaning the report folder and using the IntelliJ scope "SysNat View" this reports folder must not be empty!

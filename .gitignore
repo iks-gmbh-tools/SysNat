@@ -3,7 +3,6 @@
 .project
 .settings/
 target
-reports
 sources/sysnat.test.execution/src/test/gen/**
 
 webdriver/MozillaFirefox45.9
