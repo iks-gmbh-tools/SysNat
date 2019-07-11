@@ -1,3 +1,10 @@
+*.iml
+.classpath
+.project
+.settings/
+target
+reports
+sources/sysnat.test.execution/src/test/gen/**
 
 webdriver/MozillaFirefox45.9
 webdriver/MozillaFirefox54
