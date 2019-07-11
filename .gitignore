@@ -4,6 +4,7 @@
 .settings/
 target
 sources/sysnat.test.execution/src/test/gen/**
+sources/sysnat.natural.language.executable.examples/reports/**
 
 webdriver/MozillaFirefox45.9
 webdriver/MozillaFirefox54
