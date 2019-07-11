@@ -1,6 +1,0 @@
-FailedXX1 # aFailedFeature (2/4)
-WrongXX1 # aWrongBehaviour (1/2)
-OkXX1 # OkXX10 # OkXX7
-<br>
-OkXX8 # OkXX9 # aOkGroup (2/2)
-<br>
