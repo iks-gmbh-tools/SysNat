@@ -6,16 +6,16 @@
         <Replace name="" />
     </FindHistory>
     <History nbMaxFile="10" inSubMenu="no" customLength="-1">
-        <File filename="C:\dev\SysNat\Notepad++\App\Notepad++\langs.xml" />
-        <File filename="C:\dev\SysNat\Notepad++\App\Notepad++\userDefineLang.xml" />
         <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\Hauptmen&#x00FC;\InactiveExampleTest.nlxx" />
         <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\Hauptmen&#x00FC;\CheckMainMenuItems.nlxx" />
         <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\PdfContent\CheckPdfContent.nlxx" />
         <File filename="C:\Users\rob\Desktop\ResultDetails" />
-        <File filename="C:\dev\SysNat\Notepad++\StartSysNatTesting.bat" />
         <File filename="C:\dev\SysNat\SysNatNotepad++.bat" />
         <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HelloWorldSpringBoot\Greeting\SimpleGreeting.nlxx" />
         <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HelloWorldSpringBoot\Greeting\GreetingWithTableTestData.nlxx" />
+        <File filename="C:\dev\SysNat\Notepad++\StartSysNatTesting.bat" />
+        <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles\deleteAllPdfFilesInDownloadDir.bat" />
+        <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles\clearReportDir.bat" />
     </History>
     <GUIConfigs>
         <GUIConfig name="ToolBar" visible="yes">standard</GUIConfig>
