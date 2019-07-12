@@ -123,7 +123,9 @@ public class TestExecution_ModuleLevelTest
 		final String report = SysNatFileUtil.readTextFileToString(detailReportFile); 
 		String expectedText = "Script MiniTestScript has been executed!";
 		SysNatTestUtils.assertReportContains(report, expectedText);
-		expectedText = "PictureProof: C:\\dev\\SysNat\\sources\\sysnat.test.execution\\..\\sysnat.quality.assurance\\target\\reportFolder/MiniTestCaseBILDNACHWEIS1";
+		expectedText = "PictureProof:";
+		SysNatTestUtils.assertReportContains(report, expectedText);
+		expectedText = "\\sources\\sysnat.test.execution\\..\\sysnat.quality.assurance\\target\\reportFolder/MiniTestCaseBILDNACHWEIS1";
 		expectedText = expectedText.replace("reportFolder", reportFolder.getName());
 		SysNatTestUtils.assertReportContains(report, expectedText);
 	}	

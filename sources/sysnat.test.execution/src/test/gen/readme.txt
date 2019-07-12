@@ -1,1 +1,0 @@
-In this directory will SysNat write the generated JUnit java files.
