@@ -3,6 +3,9 @@
 .project
 .settings/
 target
+
+//sources/sysnat.test.execution/src/test/gen/**
+sources/sysnat.test.execution/src/main/
 sources/sysnat.natural.language.executable.examples/reports/**
 
 webdriver/MozillaFirefox45.9
