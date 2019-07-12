@@ -28,8 +28,12 @@ Minor features of the *SysNat* are:
 
 Technical Requirements:
 
-- Java 8
-- JUnit 4
+- Java 8 #
+- Eclipse or IntelliJ #
+- Junit 4
+- Selenium 
+
+# These two requirements are not part of this repository and must be provided by you.
 
 
 * * *

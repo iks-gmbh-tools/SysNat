@@ -24,18 +24,20 @@ Preparation:
 7. Assure the following settings and configurations:
 - In the Settings menu, the Maven home directory is set to "../../maven", User Settings File is to '../../maven/conf/settings.xml' and the Local Repository is "./SysNat/maven/localRepository" (This value is read from the settings.xml)
 - a Maven-Clean-Install-All-skipTest launch configuration 
-- a Run-All-ClassLevelTests launch configuration 
-- a Run-All-ModuleLevelTests launch configuration 
-- a Run-All-SystemLevelTests launch configuration 
+- a Run-All-ClassLevelTests launch configuration (ClassLevelTestExecutor)
+- a Run-All-ModuleLevelTests launch configuration (ModuleLevelTestExecutor)
+- a Run-All-SystemLevelTests launch configuration (SystemLevelTestExecutor)
 - a launch configuration to clean the report directory from existing reports (red icon in the tool bar)
 - a launch configuration to clean the download directory from existing PDF files (orange icon in the tool bar)
 - a "SysNat User View" scope exists in the Project View that only lists ExecutableExample, reports, help, testdata and settings.config (this view is supposed to be used by a SysNat domain user without technical skills).
 
-
 8. Call the following launch configurations in the following order:
 - Maven-Clean-Install-All-skipTest
-- Execute ClassLevelTests 
-- Execute SystemLevelTests 
+- ClassLevelTestExecutor 
+- ModuleLevelTestExecutor
+- SystemLevelTestExecutor 
 There must be not a single failing test! In case there is one, restart it.
 
 9. One of the options in the project view is **SysNat User View". It is defined as a scope for non-developers who use the SysNat workbench. Activate this option if you plan to provide IntelliJ to your collegues who use SysNat from their business point of view without technical skills and experience as developers.
+
+10. You may delete within the SysNat root directory all folders and files not needed for your context (e.g. folder documentation and Eclipse and the files .gitignore or SysNat_Eclipse.bat).
