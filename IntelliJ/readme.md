@@ -1,37 +1,41 @@
-Setting up IntelliJ Eclipse
-===========================
+Setting up SysNat IntelliJ
+==========================
 
 Preconditions:
 - a Java SDK 8 is available
-- a IntelliJ installation is available (current community edition is fine)
+- a IntelliJ installation is available (a recent community edition is fine)
 
 Preparation:
 
 0. The SysNat repository from GitHub has been cloned or downloaded on your local system.
+
 1. Put the Java SDK into the subfolder "./SysNat/java" (expected path to java.exe is "./SysNat/java/bin/java.exe")
+
 2. Put the Intellij installation into the directory of this readme file (expected path to idea.exe is "./SysNat/Intellij/idea.exe"). 
-3. Extract the **IdeaSysNatConfig.zip** file to use the predefined *SysNat* workbench. It contains metadata for the SysNat IntelliJ project. Many useful settings are predefined in this metadata such as Java and Maven settings as well as file associations, launch configurations and a customized tool bar which has been optimized for the use of non-technical users.
-5. Start Eclipse by using the batch file **SysNatEclipse.bat** from the SysNat root directory. 
-6. Assure the following settings:
-- In the settings the Maven installation is set to "../maven" and that in the Maven user settings the Global Settings are set to '..\maven\conf\settings.xml' (let the default value for 'User settings' unchanged). Make sure that Local Repository is '../maven/localRepository' (This value is read from the settings.xml). 
-If you wish to use a specific artefact repository (such as an Artifactory or Nexus installation) you have to define a corresponding mirror section in the file '..\maven\conf\settings.xml'. If the relative paths defined do not work replace those by absolute values valued on your local system.
 
-- The collection of launch configuration contains 
--- a Maven-Clean-Install-All-skipTest launch configuration 
--- a Run-All-ClassLevelTests launch configuration 
--- a Run-All-ModuleLevelTests launch configuration 
--- a Run-All-SystemLevelTests launch configuration 
+3. Extract the **IdeaSysNatConfig.zip** file to use the predefined *SysNat* workbench. It contains metadata for the SysNat IntelliJ project. Many useful settings are predefined in this metadata such as Java and Maven settings as well as file associations, launch configurations, a customized tool bar and a "SysNat User View" which has been optimized for the use of non-technical users.
 
-- The collection of external tool launch configuration contains 
--- a launch configuration to clean the report directory from existing reports
--- a launch configuration to clean the download directory from existing PDF files
+4. If you cannot access the public maven repository or if you wish to use a special repository such as Nexus or Artefactory, then add a corresponding mirror section in to "./SysNat/maven/conf/settings.xml".
 
-7. Import the file "./SysNat/sources/sysnat.parent/pom.xml" as maven project. This will import all nine SysNat modules.
+5. Start IntelliJ by using the batch file **SysNatIntelliJ.bat** from the SysNat root directory. 
+
+6. Open menu "Module-New-Model from Existing Sources..." (not "Project from Existing Sources..."!!!) and import the file "./SysNat/sources/sysnat.parent/pom.xml" as maven project. Take care to perform the import with the option "Import Maven projects automatically". This will import all nine SysNat modules.
+
+7. Assure the following settings and configurations:
+- In the Settings menu, the Maven home directory is set to "../../maven", User Settings File is to '../../maven/conf/settings.xml' and the Local Repository is "./SysNat/maven/localRepository" (This value is read from the settings.xml)
+- a Maven-Clean-Install-All-skipTest launch configuration 
+- a Run-All-ClassLevelTests launch configuration 
+- a Run-All-ModuleLevelTests launch configuration 
+- a Run-All-SystemLevelTests launch configuration 
+- a launch configuration to clean the report directory from existing reports (red icon in the tool bar)
+- a launch configuration to clean the download directory from existing PDF files (orange icon in the tool bar)
+- a "SysNat User View" scope exists in the Project View that only lists ExecutableExample, reports, help, testdata and settings.config (this view is supposed to be used by a SysNat domain user without technical skills).
+
 
 8. Call the following launch configurations in the following order:
 - Maven-Clean-Install-All-skipTest
-- Run-All-ClassLevelTests 
-- Run-All-ModuleLevelTests 
-- Run-All-SystemLevelTests 
+- Execute ClassLevelTests 
+- Execute SystemLevelTests 
+There must be not a single failing test! In case there is one, restart it.
 
-There must be no failing test!
+9. One of the options in the project view is **SysNat User View". It is defined as a scope for non-developers who use the SysNat workbench. Activate this option if you plan to provide IntelliJ to your collegues who use SysNat from their business point of view without technical skills and experience as developers.
