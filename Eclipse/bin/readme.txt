@@ -1,0 +1,2 @@
+The whole zoo of folders and files in the SysNat root dir are supposed to represent a portable SysNat workbench.
+To make that work many paths are relative and the location of eclipse must be in this directory so that maven is found both from the Eclipse IDE when building the modules but also from SysNat when started as Java application.

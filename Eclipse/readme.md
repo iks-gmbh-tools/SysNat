@@ -11,12 +11,17 @@ Preparation:
 
 1. Put the Java SDK into the subfolder "./SysNat/java" (expected path to java.exe is "./SysNat/java/bin/java.exe")
 
-2. Put the Eclipse installation into the directory of this readme file (expected path to eclipse.exe is "./SysNat/Eclipse/eclipse.exe"). 
+2. Put the Eclipse installation into the v4.12.0 subdirectory (expected path of the start batch script to find the eclipse.exe is "./SysNat/Eclipse/v4.12.0/eclipse.exe"). 
 
-3. Adapt eclipse.ini to find Java by adding the following lines (before the vmargs setting !!!)
+3. Adapt eclipse.ini so that Eclipse will find Java by a relative path. This is best done by adding the following vm setting after the openFile and before the vmargs setting:
 
+        ...
+        openFile
+        --launcher.appendVmargs
         -vm
-        ../java/bin/javaw.exe
+        ..\..\java\bin\javaw.exe
+        -vmargs
+        ...
                               
 4. Extract the **EclipseSysNatConfig.zip** file to use the predefined *SysNat* workbench. It contains metadata for the SysNat Eclipse workspace. Many useful settings are predefined in this metadata such as Java and Maven settings as well as file associations, launch configurations and a customized tool bar which has been optimized for the use of non-technical users.
 

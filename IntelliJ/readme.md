@@ -15,11 +15,11 @@ Preparation:
 
 3. Extract the **IdeaSysNatConfig.zip** file to use the predefined *SysNat* workbench. It contains metadata for the SysNat IntelliJ project. Many useful settings are predefined in this metadata such as Java and Maven settings as well as file associations, launch configurations, a customized tool bar and a "SysNat User View" which has been optimized for the use of non-technical users.
 
-4. If you cannot access the public maven repository or if you wish to use a special repository such as Nexus or Artefactory, then add a corresponding mirror section in to "./SysNat/maven/conf/settings.xml".
+4. If you want to access a special repository such as Nexus or Artefactory (instead of using public repositories for fetching third party libraries), then add a corresponding mirror section in file "./SysNat/maven/conf/settings.xml". 
 
-5. Start IntelliJ by using the batch file **SysNatIntelliJ.bat** from the SysNat root directory. 
+5. Start IntelliJ by using the batch file **SysNatIntelliJ.bat** from the SysNat root directory. Open menu "File - Project Structure - SDKs" and make sure, that the "./SysNat/java" is used.  
 
-6. Open menu "Module-New-Model from Existing Sources..." (not "Project from Existing Sources..."!!!) and import the file "./SysNat/sources/sysnat.parent/pom.xml" as maven project. Take care to perform the import with the option "Import Maven projects automatically". This will import all nine SysNat modules.
+6. Open menu "Module - New - Model from Existing Sources..." (not "Project from Existing Sources..." and also avoid open "File - Open"!!!) and import the nine SysNat modules each by selecting the corresponding pom.xml. Take care to perform the import with the option "Import Maven projects automatically". Note that Intellij apperently does not allow to import a parent pom with all submodules. This is only possible with "Project from Existing Sources..." or "File - Open", however this would delete some valuable project settings. Therefore please follow given recommendation. This must be done only once initially.
 
 7. Assure the following settings and configurations:
 - In the Settings menu, the Maven home directory is set to "../../maven", User Settings File is to '../../maven/conf/settings.xml' and the Local Repository is "./SysNat/maven/localRepository" (This value is read from the settings.xml)
