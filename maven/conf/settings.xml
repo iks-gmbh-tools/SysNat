@@ -50,7 +50,7 @@ under the License.
 		  <!--
 <localRepository>C:\dev\SysNatTesting2\maven\localRepository</localRepository>
     -->
- <localRepository>../maven/localRepository</localRepository>
+ <localRepository>../../maven/localRepository</localRepository>
 
     
   <!-- interactiveMode
