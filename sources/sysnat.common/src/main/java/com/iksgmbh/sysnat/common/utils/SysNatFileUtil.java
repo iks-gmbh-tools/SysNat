@@ -675,8 +675,15 @@ public class SysNatFileUtil
 		return file.delete();		
 	}
 
-	public static String getRootDir() {
-		return new File("").getAbsolutePath();
+	public static String getRootDir()
+	{
+		String toReturn = new File("").getAbsolutePath();
+		if (toReturn.endsWith("sources"))
+		{
+			int pos = toReturn.lastIndexOf("sources");
+			toReturn = toReturn.substring(0, pos-1);
+		}
+		return toReturn;
 	}
 
 	public static String findAbsoluteFilePath(String relativeFilepath)
@@ -702,7 +709,7 @@ public class SysNatFileUtil
 		}
 
 		String toReturn = getRootDir();
-		if ( toReturn.endsWith("SysNat\\IntelliJ\\_SysNat")) {
+		if ( toReturn.endsWith("IntelliJ\\_SysNat")) {
 			if (relativeFilepath.startsWith("..")) {
 				relativeFilepath = "sources" + relativeFilepath.substring(2);
 			}

@@ -33,7 +33,9 @@ Technical Requirements:
 - Junit 4
 - Selenium 
 
-\* These two requirements are not part of this repository and must be provided by you.
+\* These two requirements are not part of this repository and must be provided by you. 
+
+_SysNat_ is optimized for the use under *Windows*. There is no known reason why _SysNat_ should not work under other operation systems but it is currently not yet tested.
 
 
 * * *

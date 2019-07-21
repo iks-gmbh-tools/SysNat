@@ -1,2 +1,2 @@
-cd Eclipse
-start eclipse.exe -data ..\Eclipse\_SysNat
+cd Eclipse/bin
+start eclipse.exe -data ..\_SysNat
