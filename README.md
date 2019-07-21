@@ -1,6 +1,6 @@
 # SysNat
 
-SysNat is a tool to manage the quality of software systems in natural language. It is designed to support ATDD, BDD and DDD as well as to combine the effects of theses three approaches to software development.
+*SysNat* is a tool to manage the quality of software systems in natural language. It is designed to support ATDD, BDD and DDD as well as to combine the effects of theses three approaches to software development.
 
 * * *
 
@@ -11,7 +11,7 @@ Its main features are
 - It comes with extensive Selenium support for testing web applications
 - It creates a test report with a test result overview as well as detailed information about any instruction, expectations and results - all presented in natural language.
 
-With these main features, *SysNat* is perfectly suitable to support cross functional teams and collaboration between domain experts and developers. Applying SysNat leads towards a Domain Specific Language (DSL) in natural language.
+With these main features, *SysNat* is perfectly suitable to support cross functional teams and collaboration between domain experts and developers. Applying *SysNat* leads towards a Domain Specific Language (DSL) in natural language.
 Once established, this DSL enables domain experts to modify existing tests, to create new tests and to execute them without any support by developers because the natural language is intuitively understandable.
 
 Minor features of the *SysNat* are:
@@ -28,12 +28,12 @@ Minor features of the *SysNat* are:
 
 Technical Requirements:
 
-- Java 8 #
-- Eclipse or IntelliJ #
+- Java 8 \*
+- Eclipse or IntelliJ \*
 - Junit 4
 - Selenium 
 
-# These two requirements are not part of this repository and must be provided by you.
+\* These two requirements are not part of this repository and must be provided by you.
 
 
 * * *
