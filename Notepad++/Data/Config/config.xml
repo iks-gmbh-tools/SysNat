@@ -6,16 +6,16 @@
         <Replace name="" />
     </FindHistory>
     <History nbMaxFile="10" inSubMenu="no" customLength="-1">
-        <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\Hauptmen&#x00FC;\InactiveExampleTest.nlxx" />
-        <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\Hauptmen&#x00FC;\CheckMainMenuItems.nlxx" />
-        <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\PdfContent\CheckPdfContent.nlxx" />
+        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\Hauptmen&#x00FC;\CheckMainMenuItems.nlxx" />
+        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\PdfContent\CheckPdfContent.nlxx" />
         <File filename="C:\Users\rob\Desktop\ResultDetails" />
-        <File filename="C:\dev\SysNat\SysNatNotepad++.bat" />
-        <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HelloWorldSpringBoot\Greeting\SimpleGreeting.nlxx" />
-        <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HelloWorldSpringBoot\Greeting\GreetingWithTableTestData.nlxx" />
-        <File filename="C:\dev\SysNat\Notepad++\StartSysNatTesting.bat" />
-        <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles\deleteAllPdfFilesInDownloadDir.bat" />
-        <File filename="C:\dev\SysNat\sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles\clearReportDir.bat" />
+        <File filename="C:\SysNat\SysNatNotepad++.bat" />
+        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HelloWorldSpringBoot\Greeting\SimpleGreeting.nlxx" />
+        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HelloWorldSpringBoot\Greeting\GreetingWithTableTestData.nlxx" />
+        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles\deleteAllPdfFilesInDownloadDir.bat" />
+        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles\clearReportDir.bat" />
+        <File filename="C:\Bubu3\SysNat_Notepad++.bat" />
+        <File filename="C:\Bubu3\Notepad++\StartSysNatTesting.bat" />
     </History>
     <GUIConfigs>
         <GUIConfig name="ToolBar" visible="yes">standard</GUIConfig>
@@ -25,7 +25,7 @@
         <GUIConfig name="UserDefineDlg" position="undocked">hide</GUIConfig>
         <GUIConfig name="TabSetting" replaceBySpace="no" size="4" />
         <GUIConfig name="AppPosition" x="0" y="0" width="1100" height="700" isMaximized="yes" />
-        <GUIConfig name="noUpdate" intervalDays="15" nextUpdateDate="20190713">no</GUIConfig>
+        <GUIConfig name="noUpdate" intervalDays="15" nextUpdateDate="20190805">no</GUIConfig>
         <GUIConfig name="Auto-detection">yes</GUIConfig>
         <GUIConfig name="CheckHistoryFiles">no</GUIConfig>
         <GUIConfig name="TrayIcon">no</GUIConfig>
@@ -50,7 +50,7 @@
         <GUIConfig name="ScintillaGlobalSettings" enableMultiSelection="no" />
         <GUIConfig name="openSaveDir" value="0" defaultDirPath="" />
         <GUIConfig name="titleBar" short="no" />
-        <GUIConfig name="stylerTheme" path="C:\dev\SysNat\Notepad++\App\Notepad++\stylers.xml" />
+        <GUIConfig name="stylerTheme" path="C:\Bubu3\Notepad++\App\Notepad++\stylers.xml" />
         <GUIConfig name="wordCharList" useDefault="yes" charsAdded="" />
         <GUIConfig name="delimiterSelection" leftmostDelimiter="40" rightmostDelimiter="41" delimiterSelectionOnEntireDocument="no" />
         <GUIConfig name="multiInst" setting="0" />

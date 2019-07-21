@@ -7,9 +7,9 @@
         </Macro>
     </Macros>
     <UserDefinedCommands>
-        <Command name="Run SysNatTesting" Ctrl="yes" Alt="yes" Shift="no" Key="88">cmd /c &quot;cd /d &quot;&quot;C:\dev\SysNat\Notepad++&quot;&quot; &amp;&amp; &quot;&quot;StartSysNatTesting.bat&quot;&quot;&quot;</Command>
         <Command name="Delete test reports" Ctrl="no" Alt="no" Shift="no" Key="0">cmd /c &quot;cd /d &quot;&quot;../../../sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles&quot;&quot; &amp;&amp; &quot;&quot;clearReportDir.bat&quot;&quot;&quot;</Command>
         <Command name="Delete PDF files in Download directory" Ctrl="no" Alt="no" Shift="no" Key="0">cmd /c &quot;cd /d &quot;&quot;../../../sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles&quot;&quot; &amp;&amp; &quot;&quot;deleteAllPdfFilesInDownloadDir.bat&quot;&quot;&quot;</Command>
+        <Command name="Run SysNatTesting" Ctrl="no" Alt="yes" Shift="yes" Key="88">cmd /c &quot;cd /d &quot;&quot;../..&quot;&quot; &amp;&amp; &quot;&quot;StartSysNatTesting.bat&quot;&quot;&quot;</Command>
     </UserDefinedCommands>
     <PluginCommands />
     <ScintillaKeys />
