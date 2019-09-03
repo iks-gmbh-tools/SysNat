@@ -267,9 +267,10 @@ public class LanguageTemplatesCommon
 			executableExample.terminateTestCase(message);
 		}
 
-		executableExample.setXXID( xxid.trim() );
-		System.out.println((executionInfo.getTotalNumberOfTestCases() + 1) + ". XXId: " + xxid);
-		executionInfo.countTestCase(executableExample.getBehaviorID());
+		executableExample.setXXID( xxid );
+		System.out.println((executionInfo.getTotalNumberOfXXs() + 1) + ". XXId: " + xxid);
+		executionInfo.countAsExecuted(xxid, executableExample.getBehaviorID());
+		executionInfo.countExistingXX();
 		
 		if ( ! executionInfo.isApplicationStarted() ) {
 			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
@@ -294,9 +295,8 @@ public class LanguageTemplatesCommon
 			executionInfo.addFilterToCollection(filter);
 		}	
 		
-		if (executeThisTest) {
-			executionInfo.countExcecutedTestCase(); 
-		} else {
+		if (! executeThisTest) {
+			executionInfo.uncountAsExecuted(executableExample.getXXID().trim()); 
 			throw new SkipTestCaseException(SkipReason.EXECUTION_FILTER);
 		}
 	}
@@ -308,8 +308,8 @@ public class LanguageTemplatesCommon
 		if (value.trim().equalsIgnoreCase("nein") 
 			|| value.trim().equalsIgnoreCase("no"))  
 		{
-			executionInfo.uncountAsExecutedTestCases();  // undo previously added 
-			executionInfo.addInactiveTestCase( executableExample.getXXID(), executableExample.getBehaviorID() );
+			executionInfo.uncountAsExecuted(executableExample.getXXID());  // undo previously added 
+			executionInfo.addInactiveXX( executableExample.getXXID(), executableExample.getBehaviorID() );
 			throw new SkipTestCaseException(SkipReason.ACTIVATION_STATE);
 		}
 	}

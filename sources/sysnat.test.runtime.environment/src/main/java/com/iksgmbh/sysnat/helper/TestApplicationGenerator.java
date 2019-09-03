@@ -34,6 +34,9 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
  */
 public class TestApplicationGenerator
 {
+	private static final String SOURCE_DIR = "sources";
+	
+	// Test Application context data 
 	private static final String TestApplicationName = "GoogleSearch"; 
 	private static final boolean isWebApplication = true; 
 	private static final boolean withLogin = false;   // true is not yet tested!
@@ -64,14 +67,27 @@ public class TestApplicationGenerator
 		System.out.println("Adapting settings.config...");
 		adaptSettingsConfig();
 		
+		System.out.println("Creating folder for nlxx files...");
+		createExecutableExampleFolder();
+		
 		System.out.println("");
 		System.out.println("Done with generation.");
+	}
+
+	private static void createExecutableExampleFolder()
+	{
+		String path = System.getProperty("sysnat.executable.examples.source.dir");
+		File folder = new File(path, TestApplicationName);
+		boolean ok = folder.mkdir();
+		if (! ok) {
+			System.err.println("Could not create: " + folder.getAbsolutePath());
+		}
 	}
 
 	private static void adaptSettingsConfig()
 	{
 		String path = ExecutionRuntimeInfo.getInstance().getRootPath()
-		        + "/sources/sysnat.natural.language.executable.examples";
+		        + "/" + SOURCE_DIR + "/sysnat.natural.language.executable.examples";
 		File settingsFile = new File(path, "settings.config");
 		List<String> content = SysNatFileUtil.readTextFile(settingsFile);
 		
@@ -142,7 +158,7 @@ public class TestApplicationGenerator
 	private static void createLanguageTemplatesBasics_basedOn_HomepageIKS()
 	{
 		String path = ExecutionRuntimeInfo.getInstance().getRootPath()
-		        + "/workspace/sysnat.test.runtime.environment/src/main/java/com/iksgmbh/sysnat/language_templates/homepageiks/";
+		        + "/sources/sysnat.test.runtime.environment/src/main/java/com/iksgmbh/sysnat/language_templates/homepageiks/";
 		List<String> content = SysNatFileUtil
 		        .readTextFile(new File(path, "LanguageTemplatesBasics_HomePageIKS.java"));
 
@@ -189,7 +205,7 @@ public class TestApplicationGenerator
 				                        "false;   // TODO");
 		
 		path = ExecutionRuntimeInfo.getInstance().getRootPath()
-		        + "/workspace/sysnat.test.runtime.environment/src/main/java/com/iksgmbh/sysnat/language_templates/"
+				+ "/" + SOURCE_DIR + "/sysnat.test.runtime.environment/src/main/java/com/iksgmbh/sysnat/language_templates/"
 		        + TestApplicationName.toLowerCase();
 		File folder = new File(path);
 		folder.mkdir();
@@ -205,7 +221,7 @@ public class TestApplicationGenerator
 	private static void createLanguageTemplatesBasics_basedOn_HelloWordSpringBoot()
 	{
 		String path = ExecutionRuntimeInfo.getInstance().getRootPath()
-				      + "/workspace/sysnat.test.runtime.environment/src/main/java/com/iksgmbh/sysnat/language_templates/helloworldspringboot/";
+				+ "/" + SOURCE_DIR + "/sysnat.test.runtime.environment/src/main/java/com/iksgmbh/sysnat/language_templates/helloworldspringboot/";
 		List<String> content = SysNatFileUtil.readTextFile(new File(path, "LanguageTemplatesBasics_HelloWorldSpringBoot.java"));
 		
 		StringBuffer sb = new StringBuffer();
@@ -229,7 +245,7 @@ public class TestApplicationGenerator
 		newContent = newContent.replace("\"Log in\"", "\"" + NameOfLoginButton + "\"");
 		
 		path = ExecutionRuntimeInfo.getInstance().getRootPath()
-			   + "/workspace/sysnat.test.runtime.environment/src/main/java/com/iksgmbh/sysnat/language_templates/"
+				+ "/" + SOURCE_DIR + "/sysnat.test.runtime.environment/src/main/java/com/iksgmbh/sysnat/language_templates/"
 			   + TestApplicationName.toLowerCase();
 		File folder = new File(path);
 		folder.mkdir();

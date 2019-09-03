@@ -23,7 +23,7 @@ Preparation:
 
 6. Assure that in the _Settings_ menu, the *Maven home directory* is set to "./SysNat/maven".  The *Local Repository* should be "./SysNat/maven/localRepository" (This value is read from the settings.xml). If the later is not the case, set *User settings file* to './SysNat/maven/conf/settings.xml'. 
 
-7. Import all nine modules separately using the menu "Module - New - Model from Existing Sources...". Take care to perform the import with the option "Import Maven projects automatically". Unfortunately, IntelliJ does not allow to import a parent module with all submodules. However, the necessary nine imports must be done only once.
+7. Import all nine modules separately using the menu "Module - New - Model from Existing Sources...". Take care to perform the import with the option "Import Maven projects automatically". Unfortunately, IntelliJ does not allow to import a parent module with all submodules. However, the necessary nine imports must be done only once. After the imports make sure that no module is ignored in the Maven view. In that case do a right click on those modules and choose from the pull down menu the option "unignore".
 
 *Attention:* Do neither use menu "File - Project from Existing Sources..." nor menu "File - Open". Both would create a totally new project and all predefined project settings would be lost. 
 

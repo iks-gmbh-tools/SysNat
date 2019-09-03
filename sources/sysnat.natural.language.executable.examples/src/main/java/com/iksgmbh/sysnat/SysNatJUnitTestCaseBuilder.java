@@ -24,7 +24,7 @@ public class SysNatJUnitTestCaseBuilder
 {
 	public static void main(String[] args) {
 		SettingsConfigDialog.doYourJob();
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitClassFileGenerator.doYourJob();
 	}
 
 }

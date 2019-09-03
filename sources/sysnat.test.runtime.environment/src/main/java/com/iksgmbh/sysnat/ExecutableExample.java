@@ -105,7 +105,7 @@ abstract public class ExecutableExample
     
 	public void setUp() 
 	{
-		if ( ! executionInfo.isTestEnvironmentInitialized() ) {
+		if ( executionInfo.isApplicationStartable() && ! executionInfo.isTestEnvironmentInitialized()) {
 			initTestEnvironment();
 		} else {
 			reinitTestEnvironment();
@@ -129,7 +129,12 @@ abstract public class ExecutableExample
 		{
 			setGuiController(new SeleniumGuiController());
 			executionInfo.setGuiController( getGuiController() );
-			boolean applicationStarted = login();
+			boolean applicationStarted = false;
+			try {
+				applicationStarted = login();
+			} catch (Exception e) {
+				executionInfo.setApplicationNotStartable();
+			}
     		executionInfo.setApplicationStarted(applicationStarted);
 			PopupHandler.setTestCase(this);
 		} else {
@@ -648,7 +653,7 @@ abstract public class ExecutableExample
 				
 				createReportHtml();
 				
-				if (executionInfo.getNumberOfAllExecutedTestCases() == 0) {
+				if (executionInfo.getNumberOfAllExecutedXXs() == 0) {
 					System.out.println("No test executed. Check execution filter and executable examples.");
 				} else {
 					System.out.println("Done with executing " + executionInfo.getReportName() + ".");
@@ -718,7 +723,7 @@ abstract public class ExecutableExample
 	
 	private File findExecutedNLFile(final String filename) 
 	{
-		String testCaseDir = executionInfo.getTestCaseDir() + "/" + executionInfo.getTestApplicationName();
+		String testCaseDir = executionInfo.getExecutableExampleDir() + "/" + executionInfo.getTestApplicationName();
 		
 		FilenameFilter scriptFileFilter = new FilenameFilter() {
 			

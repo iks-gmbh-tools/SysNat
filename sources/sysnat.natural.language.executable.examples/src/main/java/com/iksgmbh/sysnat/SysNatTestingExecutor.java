@@ -47,13 +47,17 @@ public class SysNatTestingExecutor
 		SettingsConfigDialog.doYourJob();
 		
 		// mandatory Phase A: translate natural language into JUnit test code
-		SysNatTestCaseGenerator.doYourJob();
+		boolean generationSuccessful = SysNatJUnitClassFileGenerator.doYourJob();
 		
-		// mandatory Phase B: compile and start tests 
-		startMavenCleanCompileTest();
+		if (generationSuccessful) 
+		{
+			// mandatory Phase B: compile and start tests 
+			startMavenCleanCompileTest();
 
-		// optional POST-Phase: archive test results
-		archiveIfNeccessary();
+			// optional POST-Phase: archive test results
+			archiveIfNeccessary();
+		}
+		
 	}
 
 	private static void archiveIfNeccessary() 

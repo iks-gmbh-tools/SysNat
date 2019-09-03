@@ -69,7 +69,7 @@ public abstract class SysNatTestCase extends ExecutableExample
 		} 
 		else 
 		{
-			System.out.println(ExecutionRuntimeInfo.getInstance().getTotalNumberOfTestCases() + " test cases executed so far.");
+			System.out.println(ExecutionRuntimeInfo.getInstance().getTotalNumberOfXXs() + " test cases executed so far.");
 		}
 		
 		setXXID(null);
@@ -128,7 +128,7 @@ public abstract class SysNatTestCase extends ExecutableExample
 
 	protected void setXXIdForInactiveTests(String xxid) {
 		setXXID("InactiveTestExample");
-		executionInfo.countTestCase(getBehaviorID());
-		executionInfo.countExcecutedTestCase();
+		executionInfo.countAsExecuted(xxid, getBehaviorID());
+		executionInfo.countAsExecuted(xxid);
 	}
 }

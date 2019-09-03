@@ -738,14 +738,14 @@ public class ReportCreator
 
 			if (reportMessagesWRONG.size() + reportMessagesFAILED.size() == 0) 
 			{
-				if (executionInfo.getNumberOfAllExecutedTestCases() == 0) {
+				if (executionInfo.getNumberOfAllExecutedXXs() == 0) {
 					report = report.replace("PLACEHOLDER_RESULT", "-");
 				} else {
 					report = report.replace("PLACEHOLDER_RESULT", "OK");
 				}
 				if (executionInfo.getNumberOfInactiveTests() > 0) {
 					report = report.replace("PLACEHOLDER_BACKGROUND_COLOR_OVERALL_RESULT", YELLOW_HTML_COLOR);
-				} else if (executionInfo.getNumberOfAllExecutedTestCases() > 0) {
+				} else if (executionInfo.getNumberOfAllExecutedXXs() > 0) {
 					report = report.replace("PLACEHOLDER_BACKGROUND_COLOR_OVERALL_RESULT", GREEN_HTML_COLOR);
 				} else {
 					report = report.replace("PLACEHOLDER_BACKGROUND_COLOR_OVERALL_RESULT", WHITE_HTML_COLOR);
@@ -765,8 +765,8 @@ public class ReportCreator
 
 	private String replaceTestStatiticsPlaceholder(String report) 
 	{
-		report = report.replace("PLACEHOLDER_N1", "" + executionInfo.getTotalNumberOfTestCases());
-		report = report.replace("PLACEHOLDER_N2", "" + executionInfo.getNumberOfAllExecutedTestCases());
+		report = report.replace("PLACEHOLDER_N1", "" + executionInfo.getTotalNumberOfXXs());
+		report = report.replace("PLACEHOLDER_N2", "" + executionInfo.getNumberOfAllExecutedXXs());
 		
 		report = report.replace("PLACEHOLDER_N3", "" + executionInfo.getNumberOfInactiveTests());
 		if (executionInfo.getNumberOfInactiveTests() == 0)  {

@@ -90,8 +90,8 @@ public class ExecutionRuntimeInfo
 	private List<String> executionFilterList;
 	private List<String> inactiveXXIDs = new ArrayList<>();
 	private File reportFolder;
-	private int totalNumberOfTestCases = 0; // known for the given application/product under test
-	private int numberOfAllExecutedTestCases = 0;
+	private List<String> orderedListOfAllExecutedXXs = new ArrayList<>();	
+	private int totalNumberOfXX = 0; // known for the given application/product under test
 	private boolean alreadyLoggedIn = false;
 	private DateTime startPointOfTime = new DateTime();
 	private BrowserType browserTypeToUse;
@@ -103,6 +103,7 @@ public class ExecutionRuntimeInfo
 	private boolean settingsOk;
 	private boolean testEnvironmentInitialized = false;
 	private boolean shutDownHookAdded;
+	private boolean applicationStartable = true;
 	private HashMap<String, Integer> numberOfExistingXXPerGroupMap = new HashMap<>();
 	private HashMap<String, Integer> numberOfExecutedXXPerGroupMap = new HashMap<>();
 
@@ -216,11 +217,11 @@ public class ExecutionRuntimeInfo
 		return startPointOfTime.toDate();
 	}
 
-	public void countExcecutedTestCase() {
-		numberOfAllExecutedTestCases++;
+	public void countAsExecuted(String xxid) {
+		orderedListOfAllExecutedXXs.add(xxid);
 	}
-
-	public void countTestCase(String behaviourId) 
+	
+	public void countAsExecuted(String xxid, String behaviourId) 
 	{
 		if (behaviourId != null) {
 			Integer oldFrequence = numberOfExecutedXXPerGroupMap.get(behaviourId);
@@ -229,10 +230,26 @@ public class ExecutionRuntimeInfo
 				numberOfExecutedXXPerGroupMap.put(behaviourId, Integer.valueOf(newFrequence));
 			}
 		}
-		totalNumberOfTestCases++;
+		countAsExecuted(xxid);
 	}
 
-	public void addInactiveTestCase(String inactiveXXId, String behaviourID) {
+	public void countExistingXX() {
+		totalNumberOfXX++;
+	}
+	
+	public int getNumberOfAllExecutedXXs() {
+		return orderedListOfAllExecutedXXs.size();
+	}
+
+	public void uncountAsExecuted(String xxid) {
+		orderedListOfAllExecutedXXs.remove(xxid);
+	}
+
+	public int getTotalNumberOfXXs() {
+		return totalNumberOfXX;
+	}
+
+	public void addInactiveXX(String inactiveXXId, String behaviourID) {
 		inactiveXXIDs.add(inactiveXXId);
 		addToBehaviourXXMapping(inactiveXXId, behaviourID);
 	}
@@ -283,18 +300,6 @@ public class ExecutionRuntimeInfo
 
 	public void setAlreadyLoggedIn(boolean alreadyLoggedIn) {
 		this.alreadyLoggedIn = alreadyLoggedIn;
-	}
-
-	public int getTotalNumberOfTestCases() {
-		return totalNumberOfTestCases;
-	}
-
-	public int getNumberOfAllExecutedTestCases() {
-		return numberOfAllExecutedTestCases;
-	}
-
-	public void uncountAsExecutedTestCases() {
-		numberOfAllExecutedTestCases--;
 	}
 
 	private void addToSystemProperties(final String propertiesFilename)  
@@ -515,7 +520,8 @@ public class ExecutionRuntimeInfo
 		return locale;
 	}
 
-	public boolean addToResultAsSeparateTestCase(VirtualTestCase virtualExecutableExample) {
+	public boolean addToResultAsSeparateXX(VirtualTestCase virtualExecutableExample) 
+	{
 		List<String> reportMessages = virtualExecutableExample.getReportMessages();
 		for (String message : reportMessages) {
 			if (message.contains(SysNatLocaleConstants.ERROR_KEYWORD)) {
@@ -722,7 +728,7 @@ public class ExecutionRuntimeInfo
 	}
 
 	public String getIntermediateResultLogText() {
-		int numTotal = getNumberOfAllExecutedTestCases();
+		int numTotal = getNumberOfAllExecutedXXs();
 		int numSuccess = getReportMessagesOK().size();
 
 		if (numTotal == 0) {
@@ -805,8 +811,16 @@ public class ExecutionRuntimeInfo
 		return executedNLFiles;
 	}
 
-	public String getTestCaseDir() {
+	public String getExecutableExampleDir() {
 		return System.getProperty("sysnat.executable.examples.source.dir");
 	}
 
+	public void setApplicationNotStartable() {
+		applicationStartable = false;
+	}
+
+	public boolean isApplicationStartable() {
+		return applicationStartable;
+	}
+	
 }
