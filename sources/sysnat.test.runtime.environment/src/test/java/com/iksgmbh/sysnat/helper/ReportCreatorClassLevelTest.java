@@ -42,6 +42,7 @@ import com.iksgmbh.sysnat._testcases.TestCaseInactive2Feature;
 import com.iksgmbh.sysnat._testcases.TestCaseOK;
 import com.iksgmbh.sysnat._testcases.TestCaseWrong;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 
 public class ReportCreatorClassLevelTest 
 {
@@ -136,9 +137,9 @@ public class ReportCreatorClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.getInstance();
-		executableExamples.add(new TestCaseFailed());
-		executableExamples.add(new TestCaseOK());
 		executableExamples.add(new TestCaseWrong());
+		executableExamples.add(new TestCaseOK());
+		executableExamples.add(new TestCaseFailed());
 
 		// act
 		executeAllExamples();
@@ -147,6 +148,39 @@ public class ReportCreatorClassLevelTest
 
 		// assert
 		assertReportOverview(3, 3, 0, 1, 1, 1);
+		assertOrderOfTestsInDetails();
+	}
+
+	/**
+	 * The execution order must reflect the order in details section of the overview report.
+	 */
+	private void assertOrderOfTestsInDetails()
+	{
+		List<String> lines = SysNatStringUtil.toListOfLines(result);
+		boolean detailSectionReached = false;
+		int lineNoTestCaseWrong = -1;
+		int lineNoTestCaseOk = -1;
+		int lineNoTestCaseFailed = -1;
+		int lineCounter = 0;
+		
+		for (String line : lines) 
+		{
+			lineCounter++;
+			if (line.contains("Detail")) {
+				detailSectionReached = true;
+			}
+			
+			if (detailSectionReached) 
+			{
+				if (line.contains("1. Orange Test:")) lineNoTestCaseWrong=lineCounter;
+				if (line.contains("2. Green Test:")) lineNoTestCaseOk=lineCounter;
+				if (line.contains("3. Red Test:")) lineNoTestCaseFailed=lineCounter;
+			}
+			
+		}
+		
+		assertTrue(lineNoTestCaseWrong < lineNoTestCaseOk);
+		assertTrue(lineNoTestCaseOk < lineNoTestCaseFailed);
 	}
 
 	@Test
@@ -220,15 +254,18 @@ public class ReportCreatorClassLevelTest
 	public void buildsDetailsHtmlSection_WithOnetimeInstructions() 
 	{
 		// arrange
-		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
 		List<String> messages1 = new ArrayList<>();
 		messages1.add("This is a OneTimePrecondition instruction.");
 		messages1.add("This is another OneTimePrecondition instruction.");
 		messages1.add(ReportCreator.END_OF_ONETIME_PRECONDTIONS_COMMENT);
 		messages1.add("Something has been done.");
+		createDataForExecutedXX("XX1", messages1);
+		
 		List<String> messages2 = new ArrayList<>();
 		messages2.add("Something has been done.");
 		messages2.add("Something else has been done.");
+		createDataForExecutedXX("XX2", messages2);
+
 		List<String> messages3 = new ArrayList<>();
 		messages3.add("Something has been done.");
 		messages3.add("Something else has been done.");
@@ -236,12 +273,10 @@ public class ReportCreatorClassLevelTest
 		messages3.add(ReportCreator.START_OF_ONETIME_CLEANUPS_COMMENT);
 		messages3.add("This is a OneTimeCleanup instruction.");
 		messages3.add("This is another OneTimeCleanup instruction.");
-		executionInfo.addTestMessagesOK("XX1", messages1, "aBehaviour");
-		executionInfo.addTestMessagesOK("XX2", messages2, "aBehaviour");
-		executionInfo.addTestMessagesOK("XX3", messages3, "aBehaviour");
+		createDataForExecutedXX("XX3", messages3);
 
 		// act
-		result = new ReportCreator().buildDetailPart();
+		result = new ReportCreator().buildDetailSection();
 
 		// assert
 		result = result.replaceAll("&nbsp;", "").replaceAll("#", " # ").trim();
@@ -251,6 +286,12 @@ public class ReportCreatorClassLevelTest
 	}
 	
 	
+	private void createDataForExecutedXX(String xxid, List<String> messages)
+	{
+		ExecutionRuntimeInfo.getInstance().addTestMessagesOK(xxid, messages, "aBehaviour");
+		ExecutionRuntimeInfo.getInstance().countAsExecuted(xxid);
+	}
+
 	@Test
 	public void buildsExcecutedHtmlSection_standard() 
 	{
@@ -301,7 +342,7 @@ public class ReportCreatorClassLevelTest
 		executionInfo.addTestMessagesOK("XX_B", messages, "OkGroup2");
 		
 		// act
-		result = new ReportCreator().buildDetailPart();
+		result = new ReportCreator().buildDetailSection();
 
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
@@ -324,7 +365,7 @@ public class ReportCreatorClassLevelTest
 		executionInfo.addTestMessagesWRONG("XX_A3", messages, "FailedGroup1");
 		
 		// act
-		result = new ReportCreator().buildDetailPart();
+		result = new ReportCreator().buildDetailSection();
 
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
@@ -348,7 +389,7 @@ public class ReportCreatorClassLevelTest
 		executionInfo.addTestMessagesOK("XX_A3", messages, feature);
 		
 		// act
-		result = new ReportCreator().buildDetailPart();
+		result = new ReportCreator().buildDetailSection();
 
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
@@ -373,7 +414,7 @@ public class ReportCreatorClassLevelTest
 		executionInfo.addTestMessagesFAILED("XX_A6", messages, null);
 		
 		// act
-		result = new ReportCreator().buildDetailPart();
+		result = new ReportCreator().buildDetailSection();
 
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
@@ -386,20 +427,20 @@ public class ReportCreatorClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
-		executionInfo.addToKnownFeatures("Feature");
+		executionInfo.addToKnownFeatures("myFeature");
 		List<String> messages = new ArrayList<>();
 		messages.add("First action.");
 		messages.add("Second action.");
 		messages.add("Third action.");
-		executionInfo.addTestMessagesOK("XX_A1", messages, "Feature");
-		executionInfo.addTestMessagesOK("XX_A2", messages, "Feature");
-		executionInfo.addTestMessagesOK("XX_A3", messages, "Behaviour");
-		executionInfo.addTestMessagesOK("XX_A4", messages, "Behaviour");
+		executionInfo.addTestMessagesOK("XX_A1", messages, "myFeature");
+		executionInfo.addTestMessagesOK("XX_A2", messages, "myFeature");
+		executionInfo.addTestMessagesOK("XX_A3", messages, "myBehaviour");
+		executionInfo.addTestMessagesOK("XX_A4", messages, "myBehaviour");
 		executionInfo.addTestMessagesOK("XX_A5", messages, null);
 		executionInfo.addTestMessagesOK("XX_A6", messages, null);
 		
 		// act
-		result = new ReportCreator().buildDetailPart();
+		result = new ReportCreator().buildDetailSection();
 
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(

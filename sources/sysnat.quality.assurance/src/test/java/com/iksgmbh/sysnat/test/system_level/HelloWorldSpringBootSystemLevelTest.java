@@ -26,7 +26,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.iksgmbh.sysnat.SysNatTestCaseGenerator;
+import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
 import com.iksgmbh.sysnat.SysNatTestingExecutor;
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
@@ -160,7 +160,7 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 	{
 		// act
 		super.setup();
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();
 
 		// assert

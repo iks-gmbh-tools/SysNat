@@ -1,7 +1,7 @@
 <br>
-<b><span style='font-size:16.0pt;color:#00B050'>1. Behaviour: Behaviour</span></b><br>
+<b><span style='font-size:16.0pt;color:#00B050'>1. Feature: myFeature</span></b><br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b><span style='font-size:14.0pt;color:#00B050'>1.1 XXID: XX_A3:</span></b>
+&nbsp;&nbsp;&nbsp;&nbsp;<b><span style='font-size:14.0pt;color:#00B050'>1.1 Scenario: XX_A1:</span></b>
 <br>
 <span style='font-size:12.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;1.1.1 First action.</span>
 <br>
@@ -12,7 +12,7 @@
 <br>
 <hr style="border-style: dashed">
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b><span style='font-size:14.0pt;color:#00B050'>1.2 XXID: XX_A4:</span></b>
+&nbsp;&nbsp;&nbsp;&nbsp;<b><span style='font-size:14.0pt;color:#00B050'>1.2 Scenario: XX_A2:</span></b>
 <br>
 <span style='font-size:12.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;1.2.1 First action.</span>
 <br>
@@ -23,9 +23,9 @@
 <br>
 <hr/>
 <br>
-<b><span style='font-size:16.0pt;color:#00B050'>2. Feature: Feature</span></b><br>
+<b><span style='font-size:16.0pt;color:#00B050'>2. Behaviour: myBehaviour</span></b><br>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b><span style='font-size:14.0pt;color:#00B050'>2.1 Scenario: XX_A1:</span></b>
+&nbsp;&nbsp;&nbsp;&nbsp;<b><span style='font-size:14.0pt;color:#00B050'>2.1 XXID: XX_A3:</span></b>
 <br>
 <span style='font-size:12.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;2.1.1 First action.</span>
 <br>
@@ -36,7 +36,7 @@
 <br>
 <hr style="border-style: dashed">
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;<b><span style='font-size:14.0pt;color:#00B050'>2.2 Scenario: XX_A2:</span></b>
+&nbsp;&nbsp;&nbsp;&nbsp;<b><span style='font-size:14.0pt;color:#00B050'>2.2 XXID: XX_A4:</span></b>
 <br>
 <span style='font-size:12.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;2.2.1 First action.</span>
 <br>
@@ -51,20 +51,20 @@
 <br><br>
 <b><span style='font-size:14.0pt;color:#00B050'>1. XX_A5:</span></b>
 <br>
-<span style='font-size:12.0pt'>2.1.1 First action.</span>
+<span style='font-size:12.0pt'>1.1 First action.</span>
 <br>
-<span style='font-size:12.0pt'>2.1.2 Second action.</span>
+<span style='font-size:12.0pt'>1.2 Second action.</span>
 <br>
-<span style='font-size:12.0pt'>2.1.3 Third action.</span>
+<span style='font-size:12.0pt'>1.3 Third action.</span>
 <br>
 <br>
 <hr/>
 <br>
 <b><span style='font-size:14.0pt;color:#00B050'>2. XX_A6:</span></b>
 <br>
-<span style='font-size:12.0pt'>2.2.1 First action.</span>
+<span style='font-size:12.0pt'>2.1 First action.</span>
 <br>
-<span style='font-size:12.0pt'>2.2.2 Second action.</span>
+<span style='font-size:12.0pt'>2.2 Second action.</span>
 <br>
-<span style='font-size:12.0pt'>2.2.3 Third action.</span>
+<span style='font-size:12.0pt'>2.3 Third action.</span>
 <br>

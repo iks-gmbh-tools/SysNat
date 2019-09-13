@@ -41,18 +41,18 @@ import com.iksgmbh.sysnat.helper.XXGroupBuilder;
  * 
  * @author Reik Oberrath
  */
-public class SysNatTestCaseGenerator 
+public class SysNatJUnitTestClassGenerator 
 {
 	/**
-	 * Reads natural language instruction files and
-	 * transforms the instructions given in a domain language
+	 * Reads natural language instruction files and transforms the instructions given in a domain language
 	 * into java commands of JUnit java files.
+	 * @return true if JUnit test classes has been generated
 	 */
-	public static void doYourJob() {
-		new SysNatTestCaseGenerator().generateJUnitTestCaseFiles();
+	public static boolean doYourJob() {
+		return new SysNatJUnitTestClassGenerator().generateJUnitTestCaseFiles();
 	}
 
-	protected void generateJUnitTestCaseFiles() 
+	protected boolean generateJUnitTestCaseFiles() 
 	{
 		// step 0: init
 		final TestApplication testApplication = GenerationRuntimeInfo.getInstance().getTestApplication();
@@ -71,7 +71,7 @@ public class SysNatTestCaseGenerator
 				LanguageInstructionCollector.doYourJob(testApplication.getName());
 		
 		boolean ok = areExecutableExamplesAvailable(languageInstructionCollection.size());
-		if (!ok) return;
+		if (!ok) return false;
 		
 		// step 4: find matches between language patterns and template patterns
 		//         and merge matches into java code
@@ -97,6 +97,7 @@ public class SysNatTestCaseGenerator
 		System.out.println(SysNatConstants.SYS_OUT_SEPARATOR);
 		System.out.println("Done with generating JUnit test classes.");
 		System.out.println(SysNatConstants.SYS_OUT_SEPARATOR);
+		return true;
 	}
 
 	private boolean areExecutableExamplesAvailable(int size)

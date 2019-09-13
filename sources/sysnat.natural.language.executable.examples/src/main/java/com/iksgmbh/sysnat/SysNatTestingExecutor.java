@@ -47,7 +47,7 @@ public class SysNatTestingExecutor
 		SettingsConfigDialog.doYourJob();
 		
 		// mandatory Phase A: translate natural language into JUnit test code
-		boolean generationSuccessful = SysNatJUnitClassFileGenerator.doYourJob();
+		boolean generationSuccessful = SysNatJUnitTestClassGenerator.doYourJob();
 		
 		if (generationSuccessful) 
 		{

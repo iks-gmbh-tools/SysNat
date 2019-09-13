@@ -30,7 +30,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
-import com.iksgmbh.sysnat.SysNatTestCaseGenerator;
+import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
@@ -60,7 +60,7 @@ public class TestcaseGeneration_ModuleLevelTest
 		GenerationRuntimeInfo.getInstance();
 		
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 
 		// assert
 		String filePath = (String)System.getProperty("sysnat.generation.target.dir");
@@ -83,7 +83,7 @@ public class TestcaseGeneration_ModuleLevelTest
 		GenerationRuntimeInfo.getInstance();
 		
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 
 		// assert
 		String filePath = (String)System.getProperty("sysnat.generation.target.dir");
@@ -116,7 +116,7 @@ public class TestcaseGeneration_ModuleLevelTest
 		GenerationRuntimeInfo.getInstance();
 		
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 
 		// assert
 		String filePath = (String)System.getProperty("sysnat.generation.target.dir");
@@ -146,7 +146,7 @@ public class TestcaseGeneration_ModuleLevelTest
 		prepareFakeTestApp();
 
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 		
 		// assert
 		List<File> result = findGeneratedJavaFiles();
@@ -167,7 +167,7 @@ public class TestcaseGeneration_ModuleLevelTest
 		prepareFakeTestApp();
 
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 
 		// assert
 		List<File> result = findGeneratedJavaFiles();
@@ -202,7 +202,7 @@ public class TestcaseGeneration_ModuleLevelTest
 		setTestProperties("ParameterizedTestApp", path);
 		
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 
 		// assert
 		String filePath = (String)System.getProperty("sysnat.generation.target.dir");

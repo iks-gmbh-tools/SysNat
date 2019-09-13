@@ -118,8 +118,8 @@ public class LanguageTemplatesPDFValidation
 	 * @param document as a String id
 	 * @param expectedPageNumber
 	 */
-	@LanguageTemplate("Enthält das Dokument ^^ genau ^^ Seite(n)?")
-	@LanguageTemplate("Does PDF ^^ contain ^^ page(s)?")
+	@LanguageTemplate("Besteht das Dokument mit dem Namen ^^ aus ^^ Seite(n)?")
+	@LanguageTemplate("Does PDF with name ^^ consists of ^^ page(s)?")
 	public void doesDocumentWithNameContainExcactNumberOfPages(String documentName, int expectedPageNumber) 
 	{
 		File file = (File) executableExample.getTestObject(documentName);
@@ -141,7 +141,7 @@ public class LanguageTemplatesPDFValidation
 		final PdfFileContent pdfAnalyser = new PdfFileContent(pdfFile.getAbsolutePath());
 		final boolean ok = expectedPageNumber == pdfAnalyser.getPageNumber();
 		final String question = "Does PDF <b>" + pdfFile.getName() 
-		                        + "</b> contain <b>" + expectedPageNumber + "</b>" 
+		                        + "</b> consist of <b>" + expectedPageNumber + "</b> page(s)" 
 				                + QUESTION_IDENTIFIER;
 
 		executableExample.answerQuestion(question, ok);	

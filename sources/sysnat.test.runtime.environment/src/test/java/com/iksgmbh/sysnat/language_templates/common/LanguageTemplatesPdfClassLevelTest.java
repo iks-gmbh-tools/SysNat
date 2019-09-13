@@ -75,30 +75,34 @@ public class LanguageTemplatesPdfClassLevelTest
         cut.assertPDFContentMatchesValidation(testPdf, validationFileName);
 
         // assert
-        assertEquals("Number of report messages", 6, executableExample.getReportMessages().size());
+        assertEquals("Number of report messages", 7, executableExample.getReportMessages().size());
 
+        
+        assertEquals("Report messages", 
+  		             "The data file <b>test.validation</b> has been imported with <b>1</b> datasets.",
+                     executableExample.getReportMessages().get(0));
         assertEquals("Report messages", 
         		      "Does PDF <b>IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf</b> "
         		      + "contain <b>Softwarequalität</b>? - Ja. &#x1F60A;",
-                      executableExample.getReportMessages().get(0));
+                      executableExample.getReportMessages().get(1));
         assertEquals("Report messages", 
         		     "Does PDF <b>IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf</b> on page <b>8</b> "
         		     + "contain <b>Der Autor</b>? - Ja. &#x1F60A;",
-                      executableExample.getReportMessages().get(1));
+                      executableExample.getReportMessages().get(2));
         assertEquals("Report messages", 
         		     "Does PDF <b>IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf</b> on page <b>8</b> in line <b>2</b> "
         		     + "contain <b>Die Akteure der Umsetzung</b>? - Ja. &#x1F60A;",
-                      executableExample.getReportMessages().get(2));
+                      executableExample.getReportMessages().get(3));
         assertEquals("Does PDF <b>IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf</b> "
         		     + "contain <b>Dr. Reik Oberrath</b>? - Ja. &#x1F60A;", 
-        		     executableExample.getReportMessages().get(3));
+        		     executableExample.getReportMessages().get(4));
         assertEquals("Does PDF <b>IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf</b> on page <b>Literatur & Links</b> "
         			 + "contain <b>Clean Coding Cosmos</b>? - Ja. &#x1F60A;",
-                      executableExample.getReportMessages().get(4));
+                      executableExample.getReportMessages().get(5));
         assertEquals("Report messages", 
         		     "Does PDF <b>IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf</b> on page <b>Literatur & Links</b> "
         		     + "in line <b>2</b> "
         		     + "contain <b>Literatur & Links</b>? - Ja. &#x1F60A;",
-                      executableExample.getReportMessages().get(5));
+                      executableExample.getReportMessages().get(6));
     }
 }

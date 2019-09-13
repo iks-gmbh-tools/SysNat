@@ -17,7 +17,7 @@ package com.iksgmbh.sysnat.common.utils;
 
 public class SysNatConstants 
 {
-	public static final String SYS_NAT_VERSION = "1.0.0";
+	public static final String SYS_NAT_VERSION = "1.1.0";
 	
 	/**
 	 * The Double Colon is used to specify placeholders for test data values.

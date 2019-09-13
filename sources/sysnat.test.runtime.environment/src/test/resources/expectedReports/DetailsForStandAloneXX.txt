@@ -1,5 +1,8 @@
+<hr/>
 <br>
-<b><span style='font-size:14.0pt;color:#FF0000'>1. XX_A3:</span></b>
+<b><span style='font-size:16.0pt;color:#000000'>Standalone Executable Examples</span></b>
+<br><br>
+<b><span style='font-size:14.0pt;color:#00B050'>1. XX_A1:</span></b>
 <br>
 <span style='font-size:12.0pt'>1.1 First action.</span>
 <br>
@@ -10,7 +13,7 @@
 <br>
 <hr/>
 <br>
-<b><span style='font-size:14.0pt;color:#FF0000'>2. XX_A6:</span></b>
+<b><span style='font-size:14.0pt;color:#FF6E00'>2. XX_A2:</span></b>
 <br>
 <span style='font-size:12.0pt'>2.1 First action.</span>
 <br>
@@ -21,7 +24,7 @@
 <br>
 <hr/>
 <br>
-<b><span style='font-size:14.0pt;color:#FF6E00'>3. XX_A2:</span></b>
+<b><span style='font-size:14.0pt;color:#FF0000'>3. XX_A3:</span></b>
 <br>
 <span style='font-size:12.0pt'>3.1 First action.</span>
 <br>
@@ -32,7 +35,7 @@
 <br>
 <hr/>
 <br>
-<b><span style='font-size:14.0pt;color:#FF6E00'>4. XX_A5:</span></b>
+<b><span style='font-size:14.0pt;color:#00B050'>4. XX_A4:</span></b>
 <br>
 <span style='font-size:12.0pt'>4.1 First action.</span>
 <br>
@@ -43,7 +46,7 @@
 <br>
 <hr/>
 <br>
-<b><span style='font-size:14.0pt;color:#00B050'>5. XX_A1:</span></b>
+<b><span style='font-size:14.0pt;color:#FF6E00'>5. XX_A5:</span></b>
 <br>
 <span style='font-size:12.0pt'>5.1 First action.</span>
 <br>
@@ -54,7 +57,7 @@
 <br>
 <hr/>
 <br>
-<b><span style='font-size:14.0pt;color:#00B050'>6. XX_A4:</span></b>
+<b><span style='font-size:14.0pt;color:#FF0000'>6. XX_A6:</span></b>
 <br>
 <span style='font-size:12.0pt'>6.1 First action.</span>
 <br>

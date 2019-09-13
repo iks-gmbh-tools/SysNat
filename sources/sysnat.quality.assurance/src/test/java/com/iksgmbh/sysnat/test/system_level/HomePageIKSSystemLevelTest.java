@@ -22,7 +22,7 @@ import java.io.File;
 
 import org.junit.Test;
 
-import com.iksgmbh.sysnat.SysNatTestCaseGenerator;
+import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
 import com.iksgmbh.sysnat.SysNatTestingExecutor;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
@@ -40,7 +40,7 @@ public class HomePageIKSSystemLevelTest extends SysNatSystemTest
 		super.setup();
 
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();
 		Thread.sleep(2000); // give maven time to execute tests
 		

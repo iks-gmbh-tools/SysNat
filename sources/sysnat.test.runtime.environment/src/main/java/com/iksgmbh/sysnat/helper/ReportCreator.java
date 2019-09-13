@@ -15,13 +15,13 @@
  */
 package com.iksgmbh.sysnat.helper;
 
-import static com.iksgmbh.sysnat.common.utils.SysNatConstants.BLACK_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.BLUE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.GREEN_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.ORANGE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.RED_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.WHITE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.YELLOW_HTML_COLOR;
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.BLACK_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ASSERT_ERROR_TEXT;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.NO_KEYWORD;
@@ -36,8 +36,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,23 +63,21 @@ public class ReportCreator
 	public static final String START_OF_ONETIME_CLEANUPS_COMMENT = "-Onetime-Cleanup-Marker-Comment-For-Report-Builder-";
 	
 	private static final String HTML_TEMPLATE_DIR = "../sysnat.test.runtime.environment/src/main/resources/htmlTemplates"; 
-
-			
 	private static final String OVERVIEW_TEMPLATE = HTML_TEMPLATE_DIR + "/OverviewReport.htm.Template." + Locale.getDefault().getLanguage() + ".txt";
 	private static final String DETAIL_TEMPLATE = HTML_TEMPLATE_DIR + "/SingleReport.htm.Template." + Locale.getDefault().getLanguage() + ".txt";
+	private static final String GROUP_COUNTER = "<GroupCounter>";
 	
 	private enum ReportStatus { OK, FAILED, WRONG };
 	
+	private LinkedHashMap<String, String> sortedXXidGroupMap;  
+	private LinkedHashMap<String, List<String>> executedXXGroups;  // contains list of XX for each group (both feature and behaviour)
 	private HashMap<String, List<String>> reportMessagesOK;
 	private HashMap<String, List<String>> reportMessagesWRONG;
 	private HashMap<String, List<String>> reportMessagesFAILED;
-	private HashMap<String, String> xxidGroupMap;  
-	private HashMap<String, List<String>> executedXXGroups;  // contains list of XX for each group (both feature and behaviour)
 	private HashMap<String, String> groupReportStatus;  // contains for each group the overall status (e.g. failed if at least one XX of the group failed)
 	private List<String> knownFeatures;  // contains XXGroup-IDs that are defined as Features
 
 	private int xxCounter = 0;
-	private int xxGroupCounter = 0;
 	private int messageCounter = 0;
 	private ExecutionRuntimeInfo executionInfo;
 
@@ -97,14 +97,14 @@ public class ReportCreator
 	ReportCreator() 
 	{
 		executionInfo = ExecutionRuntimeInfo.getInstance();
-		xxidGroupMap = executionInfo.getXXidBehaviourMap();
+		sortedXXidGroupMap = executionInfo.getSortedXXidBehaviourMap();
 		knownFeatures = executionInfo.getKnownFeatures();
 		
 		reportMessagesOK = executionInfo.getReportMessagesOK();
 		reportMessagesWRONG = executionInfo.getReportMessagesWRONG();
 		reportMessagesFAILED = executionInfo.getReportMessagesFAILED();
 
-		executedXXGroups = collectXXGroups();
+		executedXXGroups = collectXXGroupsInExecutionOrder();
 		groupReportStatus = collectGroupReportStatus();
 	}
 
@@ -133,19 +133,39 @@ public class ReportCreator
 		return ReportStatus.OK.name() + "(" + okNumber + "/" + executedXXGroups.get(groupID).size() + ")";
 	}
 
-	private HashMap<String, List<String>> collectXXGroups() 
+	private LinkedHashMap<String, List<String>> collectXXGroupsInExecutionOrder() 
 	{
-		final HashMap<String, List<String>> toReturn = new HashMap<>();
-		xxidGroupMap.keySet().forEach(xxid -> collectXXID(toReturn, xxid));
+		final LinkedHashMap<String, List<String>> toReturn = new LinkedHashMap<>();
+		sortedXXidGroupMap.keySet().forEach(xxid -> collectGroupedXXIDs(toReturn, xxid));
+		sortedXXidGroupMap.keySet().forEach(xxid -> collectStandAloneXXIDs(toReturn, xxid));
 		return toReturn;
 	}
 
-	private void collectXXID(HashMap<String, List<String>> toReturn, String xxid) 
+	private void collectStandAloneXXIDs(HashMap<String, List<String>> toReturn, String xxid) 
 	{
-		 String behaviourId = xxidGroupMap.get(xxid);
-		
+		String behaviourId = sortedXXidGroupMap.get(xxid);
+
 		if (behaviourId == null) {
 			behaviourId = ExecutionRuntimeInfo.UNNAMED_XX_GROUP;
+		}
+
+		if (behaviourId != ExecutionRuntimeInfo.UNNAMED_XX_GROUP) {
+			return;
+		}
+		
+		if (! toReturn.containsKey(behaviourId)) {
+			toReturn.put(behaviourId, new ArrayList<>());
+		}
+		
+		toReturn.get(behaviourId).add(xxid);
+	}
+	
+	private void collectGroupedXXIDs(HashMap<String, List<String>> toReturn, String xxid) 
+	{
+		String behaviourId = sortedXXidGroupMap.get(xxid);
+		
+		if (behaviourId == null || behaviourId == ExecutionRuntimeInfo.UNNAMED_XX_GROUP) {
+			return;
 		}
 		
 		if (! toReturn.containsKey(behaviourId)) {
@@ -160,7 +180,7 @@ public class ReportCreator
 		String path = SysNatFileUtil.findAbsoluteFilePath(OVERVIEW_TEMPLATE);
 		String overviewReport = readReportTemplate(path);
 		overviewReport = createOverview(overviewReport);
-		overviewReport = overviewReport.replace("PLACEHOLDER_DETAILS", buildDetailPart());
+		overviewReport = overviewReport.replace("PLACEHOLDER_DETAILS", buildDetailSection());
 		return overviewReport;
 	}
 
@@ -183,7 +203,7 @@ public class ReportCreator
 		} else if (executionInfo.getReportMessagesWRONG().containsKey(xxid)) {
 			color = RED_HTML_COLOR;
 		}
-		return report.replace("PLACEHOLDER_DETAILS", getReportDetailsForXX(xxid, null, executableExample.getReportMessages(), color, false));
+		return report.replace("PLACEHOLDER_DETAILS", getReportDetailsForXX(xxid, true, executableExample.getReportMessages(), color, false));
 	}
 
 
@@ -238,15 +258,15 @@ public class ReportCreator
 	private List<String> createInactiveList(List<String> inactiveXXIDs) 
 	{
 		List<String> inactiveXXGroups = inactiveXXIDs.stream()
-				                                     .map(xxid -> xxidGroupMap.get(xxid))
+				                                     .map(xxid -> sortedXXidGroupMap.get(xxid))
 				                                     .filter(behaviour -> behaviour != null)
 				                                     .filter(behaviour -> ! ExecutionRuntimeInfo.UNNAMED_XX_GROUP.equals(behaviour))
 				                                     .distinct()
                                                      .collect(Collectors.toList());
 		
 		List<String> standaloneXX = inactiveXXIDs.stream()
-                                                 .filter(xxid -> xxidGroupMap.get(xxid) == null 
-                                                                 || ExecutionRuntimeInfo.UNNAMED_XX_GROUP.equals( xxidGroupMap.get(xxid) ))
+                                                 .filter(xxid -> sortedXXidGroupMap.get(xxid) == null 
+                                                                 || ExecutionRuntimeInfo.UNNAMED_XX_GROUP.equals( sortedXXidGroupMap.get(xxid) ))
                                                  .collect(Collectors.toList());
 	
 
@@ -337,57 +357,93 @@ public class ReportCreator
 		return groupID + " " + status.substring(pos);
 	}
 
-	String buildDetailPart() 
+	String buildDetailSection() 
+	{
+		final Map<String, String> reportDetails = new HashMap<String, String>();
+
+		buildReportDetailsForXXGroups(reportDetails);
+		buildReportDetailsForStandAloneXX(reportDetails);
+		
+		return buildOrderedReportDetailSection(reportDetails);
+	}
+	
+	private void buildReportDetailsForStandAloneXX(Map<String, String> reportDetails)
 	{
 		final StringBuffer sb = new StringBuffer();
+		addHtmlHorizontalLine(sb);
+		sb.append("<br>").append(System.getProperty("line.separator"));
 
-		sb.append(buildReportDetailsForXXGroups());
+		List<String> standaloneXXs = executedXXGroups.get(ExecutionRuntimeInfo.UNNAMED_XX_GROUP);
 		
-		if (executedXXGroups.containsKey(ExecutionRuntimeInfo.UNNAMED_XX_GROUP)
-			&& executedXXGroups.size() > 1) 
-		{
-			addHtmlXXGroupSeparationLine(sb);
-			sb.append("<b><span style='font-size:16.0pt;color:" 
-			           + BLACK_HTML_COLOR + "'>" 
-					   + "Standalone Executable Examples</span></b>");
-			sb.append(System.getProperty("line.separator"));
-			sb.append("<br>");
+		if (standaloneXXs == null || standaloneXXs.isEmpty()) {
+			return;
 		}
-		  
+		
+		
+		sb.append("<b><span style='font-size:16.0pt;color:" 
+		           + BLACK_HTML_COLOR + "'>" 
+				   + "Standalone Executable Examples</span></b>");
+		sb.append(System.getProperty("line.separator"));
+		sb.append("<br><br>").append(System.getProperty("line.separator"));
+		
+		
 		xxCounter = 0;
 		
-		sb.append("<br>")
-		  .append(System.getProperty("line.separator"))
-		  .append(buildReportDetailsForStandAloneXX(reportMessagesFAILED, RED_HTML_COLOR))
-		  .append(buildReportDetailsForStandAloneXX(reportMessagesWRONG, ORANGE_HTML_COLOR))
-		  .append(buildReportDetailsForStandAloneXX(reportMessagesOK, GREEN_HTML_COLOR));
+		for (String xxid : standaloneXXs) 
+		{
+			if (executionInfo.getInactiveXXIDs().contains(xxid)) {
+				continue;
+			} else if (reportMessagesFAILED.containsKey(xxid)) {
+				buildReportDetailsForStandAloneXX(xxid, reportMessagesFAILED.get(xxid), RED_HTML_COLOR, sb);
+			} else if (reportMessagesWRONG.containsKey(xxid)) {
+				buildReportDetailsForStandAloneXX(xxid, reportMessagesWRONG.get(xxid), ORANGE_HTML_COLOR, sb);
+			} else {
+				buildReportDetailsForStandAloneXX(xxid, reportMessagesOK.get(xxid), GREEN_HTML_COLOR, sb);
+			}
+		}
+		
+		reportDetails.put(ExecutionRuntimeInfo.UNNAMED_XX_GROUP, sb.toString());		
+	}
+	
+	private String buildOrderedReportDetailSection(Map<String, String> reportDetails) 
+	{
+		final StringBuffer sb = new StringBuffer();
+		Set<String> keySet = executedXXGroups.keySet();
+		int testCaseCounter = 0;
+		
+		for (String groupId : keySet) 
+		{
+			testCaseCounter++;
+			String detailReport = reportDetails.get(groupId).replaceAll(GROUP_COUNTER, "" + testCaseCounter);
+			sb.append(detailReport);
+		}
 		
 		return sb.toString();
 	}
+	
 
-	private StringBuffer buildReportDetailsForXXGroups() 
+	private void buildReportDetailsForXXGroups(Map<String, String> reportDetails) 
 	{
-		final StringBuffer sb = new StringBuffer();
 		final List<String> groupsIds = executedXXGroups.keySet().stream()
                                                        .filter(groupID -> ! groupID.equals(ExecutionRuntimeInfo.UNNAMED_XX_GROUP))
-				                                       .sorted()
 				                                       .collect(Collectors.toList());
-		xxGroupCounter = 0;
 		
+		boolean standalone = false;
+		boolean firstGroup = true;
 		for (String groupID : groupsIds) 
 		{
-			xxGroupCounter++;
+			final StringBuffer sb = new StringBuffer();
 			
-			if (xxGroupCounter > 1) {
-				addHtmlXXGroupSeparationLine(sb);
+			if (firstGroup) {
+				firstGroup = false;
 			} else {
-				sb.append("<br>")
-				  .append(System.getProperty("line.separator"));
+				addHtmlHorizontalLine(sb);
 			}
+			sb.append("<br>").append(System.getProperty("line.separator"));
 			
 			sb.append("<b><span style='font-size:16.0pt;color:" 
 			           + getGroupStatusColor(groupID) + "'>" 
-					   + xxGroupCounter + ". " + getGroupType(groupID) 
+					   + GROUP_COUNTER + ". " + getGroupType(groupID) 
 					   + ": " + groupID + "</span></b>");
 
 			sb.append("<br>")
@@ -415,32 +471,35 @@ public class ReportCreator
 				}
 				
 				if (reportMessagesOK.containsKey(xxid)) {
-					sb.append( getReportDetailsForXX(xxid, xxGroupCounter,
-							                        reportMessagesOK.get(xxid), 
-							                        GREEN_HTML_COLOR, 
-							                        true));
+					sb.append( getReportDetailsForXX(xxid,
+							                         standalone,
+							                         reportMessagesOK.get(xxid), 
+							                         GREEN_HTML_COLOR, 
+							                         true));
 				} else if (reportMessagesWRONG.containsKey(xxid)) {
-					sb.append( getReportDetailsForXX(xxid, xxGroupCounter, 
-							                        reportMessagesWRONG.get(xxid), 
-							                        ORANGE_HTML_COLOR, 
-							                        true));					
+					sb.append( getReportDetailsForXX(xxid,  
+							                         standalone,
+							                         reportMessagesWRONG.get(xxid), 
+							                         ORANGE_HTML_COLOR, 
+							                         true));					
 				} else if (reportMessagesFAILED.containsKey(xxid)) {
-					sb.append( getReportDetailsForXX(xxid, xxGroupCounter, 
+					sb.append( getReportDetailsForXX(xxid,
+							                         standalone,
 							                         reportMessagesFAILED.get(xxid), 
 							                         RED_HTML_COLOR, 
 							                         true));					
 				}
-				
 			}
 
 			if (onetimePreconditionInstructions.size() > 0) {
 				addHtmlXXGroupSeparationLine(sb);
 				addOnetimeBehaviourLevelInstructions(sb, onetimeCleanupInstructions);
 			}
+			
+			sb.append("<br>")
+			  .append(System.getProperty("line.separator"));
+			reportDetails.put(groupID, sb.toString());
 		}
-
-
-		return sb;
 	}
 
 	private void addOnetimeBehaviourLevelInstructions(StringBuffer sb, List<String> onetimeCleanupInstructions) 
@@ -529,38 +588,24 @@ public class ReportCreator
 		return color;
 	}
 
-	private StringBuffer buildReportDetailsForStandAloneXX(
-			final HashMap<String, List<String>> reportMessages, 
-			final String color) 
+	private void buildReportDetailsForStandAloneXX(final String xxid,
+			                                       final List<String> reportMessages, 
+			                                       final String color,
+			                                       final StringBuffer sb) 
 	{
-		final StringBuffer sb = new StringBuffer();
+		xxCounter++;
 		
-		final ArrayList<String> keys = new ArrayList<>(reportMessages.keySet());
-		Collections.sort(keys);
-		
-		for (String xxid : keys) 
-		{
-			if (xxidGroupMap.get(xxid).equals(ExecutionRuntimeInfo.UNNAMED_XX_GROUP)) 
-			{
-				xxCounter++;
-				if (xxCounter > 1) {
-					addHtmlXXGroupSeparationLine(sb);
-				}
-				
-				if (xxidGroupMap.get(xxid).equals(ExecutionRuntimeInfo.UNNAMED_XX_GROUP)) 
-				{				
-					sb.append( getReportDetailsForXX(xxid, null,
-							reportMessages.get(xxid), 
-							color, true) );
-				}
-			}
+		if (xxCounter > 1) {
+			addHtmlXXGroupSeparationLine(sb);
 		}
 		
-		return sb;
+		if (sortedXXidGroupMap.get(xxid).equals(ExecutionRuntimeInfo.UNNAMED_XX_GROUP)) {				
+			sb.append( getReportDetailsForXX(xxid, true, reportMessages, color, true) );
+		}
 	}
 
 	private String getReportDetailsForXX(final String xxid,
-			                             final Integer groupCounter,
+			                             final boolean standalone,
 			                             final List<String> messages, 
 			                             final String color,
 			                             final boolean withTestCounter) 
@@ -571,15 +616,15 @@ public class ReportCreator
 		
 		String counterText = "";
 		if (withTestCounter) {
-			if (groupCounter == null) {
+			if (standalone) {
 				counterText = xxCounter + ". ";
 			} else {
 				htmlTab = "&nbsp;&nbsp;&nbsp;&nbsp;";
 				
-				if ( knownFeatures.contains( xxidGroupMap.get(xxid) ) ) {
-					counterText = groupCounter + "." + xxCounter + " Scenario: ";
+				if ( knownFeatures.contains( sortedXXidGroupMap.get(xxid) ) ) {
+					counterText = GROUP_COUNTER + "." + xxCounter + " Scenario: ";
 				} else {					
-					counterText = groupCounter + "." + xxCounter + " XXID: ";
+					counterText = GROUP_COUNTER + "." + xxCounter + " XXID: ";
 				}
 			}
 		}
@@ -590,14 +635,14 @@ public class ReportCreator
 		  .append(System.getProperty("line.separator"));
 
 		for (String message : messages) {
-			appendDetailMessageLine(sb, message, htmlTab);
+			appendDetailMessageLine(sb, message, htmlTab, standalone);
 		}
 		
 		return sb.toString();
 	}
 	
 	private void addHtmlHorizontalLine(final StringBuffer sb) {
-		sb.append("<hr/>");
+		sb.append("<hr/>").append(System.getProperty("line.separator"));
 	}
 	
 	private void addHtmlDashedHorizontalLine(final StringBuffer sb) {
@@ -623,12 +668,11 @@ public class ReportCreator
 		  
 		addHtmlHorizontalLine(sb);  
 		  
-		sb.append(System.getProperty("line.separator"))
-		  .append("<br>")
+		sb.append("<br>")
 		  .append(System.getProperty("line.separator"));
 	}
 
-	private void appendDetailMessageLine(StringBuffer sb, String message, String htmlTab) 
+	private void appendDetailMessageLine(StringBuffer sb, String message, String htmlTab, boolean standalone) 
 	{
 		if (message.startsWith("//")) {
 			appendCommentLine(sb, message);
@@ -637,10 +681,10 @@ public class ReportCreator
 		
 		messageCounter++;
 		
-		if (xxGroupCounter == 0) {
+		if (standalone) {
 			message = xxCounter + "." + messageCounter + " " + message;
 		} else {
-			message = xxGroupCounter + "." + xxCounter + "." + messageCounter + " " + message;
+			message = GROUP_COUNTER + "." + xxCounter + "." + messageCounter + " " + message;
 		}
 		
 		if (message.contains(YES_KEYWORD)) {

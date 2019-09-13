@@ -961,6 +961,8 @@ abstract public class ExecutableExample
 		} 
 		else {
 			loadedDatasets = getTestDataImporter().loadTestdata(testdata);
+			reportMessages.add("The data file <b>" + testdata + "</b> has been imported "
+					           + "with <b>" + loadedDatasets.size() + "</b> datasets.");
 		}
 		loadedDatasets.forEach( (datasetName, dataset) -> testDataSets.addDataset(datasetName, dataset));	
 		

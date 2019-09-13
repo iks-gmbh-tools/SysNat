@@ -161,8 +161,9 @@ public class TestLanguageTemplatesContainer
 		}
 
 		executableExample.setXXID( xxid.trim() );
-		System.out.println((executionInfo.getTotalNumberOfTestCases() + 1) + ". XXID: " + xxid);
-		executionInfo.countTestCase(executableExample.getBehaviorID());
+		System.out.println((executionInfo.getTotalNumberOfXXs() + 1) + ". XXID: " + xxid);
+		executionInfo.countAsExecuted(xxid, executableExample.getBehaviorID());
+		executionInfo.countExistingXX();
 		
 		if ( ! executionInfo.isApplicationStarted() ) {
 			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
@@ -332,7 +333,7 @@ public class TestLanguageTemplatesContainer
 			} catch (Exception e) {
 				virtualTestCase.addReportMessage(ERROR_KEYWORD + ": " + e. getMessage());
 			}
-			executionInfo.addToResultAsSeparateTestCase(virtualTestCase);
+			executionInfo.addToResultAsSeparateXX(virtualTestCase);
 		}
 		
 		executableExample.addReportMessage("A total of " + objectDataSets.size()	+ " datasets has been executed as separate test cases.");

@@ -56,7 +56,7 @@ public class SysNatTestCaseGeneratorClassLevelTest
 		assertTrue(dummyFile.exists());
 		
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 		
 		// arrange
 		assertTrue("Missing target directory " + targetDir.getAbsolutePath(), targetDir.exists());
@@ -74,7 +74,7 @@ public class SysNatTestCaseGeneratorClassLevelTest
 		assertFalse(targetDir.exists());
 		
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 		
 		// assert
 		assertTrue("Missing target directory " + targetDir.getAbsolutePath(), targetDir.exists());
@@ -111,7 +111,7 @@ public class SysNatTestCaseGeneratorClassLevelTest
 		assertTrue(dummyFile.exists());
 		
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 		
 		// assert
 		String content = SysNatFileUtil.readTextFileToString("../sysnat.testcase.generation/target/CommandTestLibrary.html");
@@ -129,7 +129,7 @@ public class SysNatTestCaseGeneratorClassLevelTest
 		assertFalse(targetDir.exists());
 		
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 		
 		// assert
 		assertTrue("Missing target directory " + targetDir.getAbsolutePath(), targetDir.exists());
@@ -167,7 +167,7 @@ public class SysNatTestCaseGeneratorClassLevelTest
 		assertFalse(targetDir.exists());
 
 		// act
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 
 		// assert
 		assertTrue("Missing target directory " + targetDir.getAbsolutePath(), targetDir.exists());

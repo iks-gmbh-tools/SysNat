@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -79,11 +80,11 @@ public class ExecutionRuntimeInfo
 
 	private HashMap<String, List<String>> reportMessagesOK = new HashMap<>();
 	private HashMap<String, List<String>> reportMessagesWRONG = new HashMap<>(); // assertion failed (fachliches Problem)
-	private HashMap<String, List<String>> reportMessagesFAILED = new HashMap<>(); // excecption thrown (technisches Problem)
+	private HashMap<String, List<String>> reportMessagesFAILED = new HashMap<>(); // exception thrown (technisches Problem)
 	private HashMap<String, Integer> executionFilterMap = new HashMap<>(); // execution filter defined in the nlxx files
 	private HashMap<String, TestStatistics> testStatistics = new HashMap<>();
-	private HashMap<String, String> xxidBehaviourMap = new HashMap<>();   // stores for each XXID the named Behaviour if defined
-	private List<String> knownFeatures = new ArrayList<>();   // stores behaviour with Feature-Keyword
+	private LinkedHashMap<String, String> sortedXXidBehaviourMap = new LinkedHashMap<>();   // stores for each XXID its Behaviour/group in the executed order
+	private List<String> knownFeatures = new ArrayList<>();   // stores Behaviour with Feature-Keyword
 	private List<String> executedNLFiles = new ArrayList<>();   // list of executed natural language files
 	
 	private String executionFilters;
@@ -216,6 +217,10 @@ public class ExecutionRuntimeInfo
 	public Date getStartPointOfTime() {
 		return startPointOfTime.toDate();
 	}
+	
+	public List<String> getOrderedListOfAllExecutedTestCases() {
+		return orderedListOfAllExecutedXXs;
+	}
 
 	public void countAsExecuted(String xxid) {
 		orderedListOfAllExecutedXXs.add(xxid);
@@ -277,7 +282,7 @@ public class ExecutionRuntimeInfo
 		if (behaviourID == null || behaviourID.isEmpty()) {
 			behaviourID = UNNAMED_XX_GROUP;
 		}
-		xxidBehaviourMap.put(xxid, behaviourID);
+		sortedXXidBehaviourMap.put(xxid, behaviourID);
 	}
 
 	public List<String> getExecutionFilterList() {
@@ -343,8 +348,8 @@ public class ExecutionRuntimeInfo
 	}
 
 	
-	public HashMap<String, String> getXXidBehaviourMap() {
-		return xxidBehaviourMap;
+	public LinkedHashMap<String, String> getSortedXXidBehaviourMap() {
+		return sortedXXidBehaviourMap;
 	}
 
 	public HashMap<String, List<String>> getReportMessagesOK() {
