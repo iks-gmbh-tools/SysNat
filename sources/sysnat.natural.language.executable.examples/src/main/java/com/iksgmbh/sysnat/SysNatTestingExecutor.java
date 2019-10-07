@@ -44,7 +44,7 @@ public class SysNatTestingExecutor
 	public static void main(String[] args) 
 	{
 		// optional PRE-Phase: read settings from dialog
-		SettingsConfigDialog.doYourJob();
+		SysNatStartDialog.doYourJob();
 		
 		// mandatory Phase A: translate natural language into JUnit test code
 		boolean generationSuccessful = SysNatJUnitTestClassGenerator.doYourJob();

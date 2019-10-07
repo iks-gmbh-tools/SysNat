@@ -23,7 +23,7 @@ package com.iksgmbh.sysnat;
 public class SysNatJUnitTestCaseBuilder 
 {
 	public static void main(String[] args) {
-		SettingsConfigDialog.doYourJob();
+		SysNatStartDialog.doYourJob();
 		SysNatJUnitTestClassGenerator.doYourJob();
 	}
 

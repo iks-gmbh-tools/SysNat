@@ -687,8 +687,8 @@ public class ExecutionRuntimeInfo
 	}
 
 	public boolean getUseSettingsDialog() {
-		return System.getProperty("Start_With_SettingsConfigDialog").equalsIgnoreCase("on")
-				|| System.getProperty("Starte_Mit_SettingsConfigDialog").equalsIgnoreCase("an");
+		return System.getProperty("Start_With_SysNatStartDialog").equalsIgnoreCase("on")
+				|| System.getProperty("Starte_Mit_SysNatStartDialog").equalsIgnoreCase("an");
 	}
 
 
