@@ -648,20 +648,25 @@ public class SysNatFileUtil
 	public static File getFirefoxExecutable()
 	{
 		if (firefoxExecutable == null) {
-			String firefoxDir = System.getProperty("absolute.path.to.firefox.root.dir");
-			if (firefoxDir == null) {
-				if (System.getProperty("relative.path.to.firefox.root.dir") == null) {
-					throw new RuntimeException("No path to Firefox Executable defined!");
+			String pathToFirefoxExecutable = System.getProperty("absolute.path.to.browser.executable");
+			if (pathToFirefoxExecutable != null) 
+			{
+				firefoxExecutable = new File(pathToFirefoxExecutable);
+			} 
+			else 
+			{
+				String firefoxExecutableName = System.getProperty("absolute.path.to.browser.executable");
+				if (firefoxExecutableName == null) {
+					throw new SysNatException("No Firefox Executable defined!");
 				}
-				firefoxDir = System.getProperty("relative.path.to.firefox.root.dir");
+				String firefoxDir = System.getProperty("relative.path.to.webdrivers");
 				if (firefoxDir.contains(SysNatConstants.ROOT_PATH_PLACEHOLDER)) {
-					firefoxDir = firefoxDir.replace(SysNatConstants.ROOT_PATH_PLACEHOLDER,
-					        System.getProperty("root.path"));
+					firefoxDir = firefoxDir.replace(SysNatConstants.ROOT_PATH_PLACEHOLDER, System.getProperty("root.path"));
 				} else {
 					firefoxDir = System.getProperty("user.dir") + '/' + firefoxDir;
 				}
+				firefoxExecutable = new File(firefoxDir, "firefox.exe");
 			}
-			firefoxExecutable = new File(firefoxDir, "firefox.exe");
 		}
 
 		return firefoxExecutable;

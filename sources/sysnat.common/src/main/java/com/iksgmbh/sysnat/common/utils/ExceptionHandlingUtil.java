@@ -15,12 +15,17 @@
  */
 package com.iksgmbh.sysnat.common.utils;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
 import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 
 public class ExceptionHandlingUtil 
 {	
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
+
 	public static void throwException(final String errorMessage) {
 		System.err.println("ERROR: " + errorMessage);
 		throw new SysNatException(errorMessage);
@@ -101,7 +106,7 @@ public class ExceptionHandlingUtil
                         .append(errorData[2]);
 			System.err.println(errorMessage.toString());			
 			
-			ErrorPageLauncher.doYourJob(errorData[3], errorData[4]);
+			ErrorPageLauncher.doYourJob(errorData[3], errorData[4], getErrorPageTitle());
 
 			
 			throw new SysNatException(errorCode);
@@ -123,6 +128,10 @@ public class ExceptionHandlingUtil
 			throwException("Unknown errorCode " + errorCode);
 			break;
 		} 
+	}
+
+	private static String getErrorPageTitle() {
+		return "SysNat " + BUNDLE.getString("GenerationError");
 	}
 
 }

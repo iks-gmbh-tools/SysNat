@@ -20,6 +20,7 @@ import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWOR
 import java.io.File;
 
 import org.joda.time.DateTime;
+import org.openqa.selenium.NoSuchElementException;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
@@ -97,6 +98,11 @@ public abstract class SysNatTestCase extends ExecutableExample
 		} catch (SysNatException e) {
 			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
 			failWithMessage(e.getMessage());
+		} catch (NoSuchElementException e) {
+			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
+			String message = e.getMessage();
+			int pos = message.indexOf("For documentation on this error, please visit: http://seleniumhq.org");
+			failWithMessage(message.substring(0, pos));
 		} catch (Throwable e) {
 			e.printStackTrace();
 			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));

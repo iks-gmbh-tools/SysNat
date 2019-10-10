@@ -104,7 +104,6 @@ public class ExecutionRuntimeInfo
 	private boolean settingsOk;
 	private boolean testEnvironmentInitialized = false;
 	private boolean shutDownHookAdded;
-	private boolean applicationStartable = true;
 	private HashMap<String, Integer> numberOfExistingXXPerGroupMap = new HashMap<>();
 	private HashMap<String, Integer> numberOfExecutedXXPerGroupMap = new HashMap<>();
 
@@ -820,12 +819,4 @@ public class ExecutionRuntimeInfo
 		return System.getProperty("sysnat.executable.examples.source.dir");
 	}
 
-	public void setApplicationNotStartable() {
-		applicationStartable = false;
-	}
-
-	public boolean isApplicationStartable() {
-		return applicationStartable;
-	}
-	
 }

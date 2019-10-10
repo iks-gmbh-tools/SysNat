@@ -25,7 +25,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
@@ -59,6 +61,8 @@ import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 public class XXGroupBuilder 
 {
 	public static final String BEHAVIOUR_CONSTANT_DECLARATION = "private static final String BEHAVIOUR_ID";
+
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
 
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw;
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionTemp = new HashMap<>();
@@ -488,7 +492,8 @@ public class XXGroupBuilder
 					                     + "is allowed in the same nlxx file.", 
 					                     "To have more than one, add line 'Behaviour: &lt;unique name of behaviour&gt;' "
 					                     + "at the top of the nlxx file. Read more about "
-					                     + " <a href=\"" + link + "\">behaviours</a>.");
+					                     + " <a href=\"" + link + "\">behaviours</a>.",
+					                     getErrorPageTitle());
 			throw new SysNatTestDataException("Missing Behaviour declaration in '" +
                     filename.value + "'.");
 		}
@@ -499,6 +504,11 @@ public class XXGroupBuilder
 		
 		return false;
 	}
+	
+	private String getErrorPageTitle() {
+		return "SysNat " + BUNDLE.getString("GenerationError");
+	}
+	
 
 	private boolean isTestCaseParameterized(final Filename filename)
 	{

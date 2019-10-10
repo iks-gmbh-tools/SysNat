@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
@@ -39,7 +41,8 @@ import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 public class TestDataImporter 
 {
 	public static final String TESTDATA_LOCATION_SEPARATOR = "::";
-
+	
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
 
 	protected static final char[] CHARS_TO_CUT_FROM_DATA_FILE_NAME = 
 		{'0','1','2','3','4','5','6','7','8','9','0','-','_', '.' };
@@ -136,10 +139,14 @@ public class TestDataImporter
 		if (toReturn.size() == 0) {
 			String errorMessage = "For '" + filenameToSearch + "' there is no test data file found in " + testdataDir + ".";
 			String helpMessage = "Create test data file or remove its reference.";
-			ErrorPageLauncher.doYourJob(errorMessage, helpMessage );
+			ErrorPageLauncher.doYourJob(errorMessage, helpMessage,  getErrorPageTitle());
 		}
 		
 		return toReturn;
+	}
+	
+	private String getErrorPageTitle() {
+		return "SysNat " + BUNDLE.getString("GenerationError");
 	}
 
 	private String extractFilename(String testdataId) {

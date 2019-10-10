@@ -603,9 +603,9 @@ public class SeleniumGuiController implements GuiControl
 		}
 
 		if (matches.size() == 0) {
-			throw new NoSuchElementException("Das Element mit der technischen Identifizierung "
+			throw new NoSuchElementException("Das Element mit der technischen Identifizierung <b>"
 					+ elementIdentifier +
-					" konnte auf der aktuellen Seite nicht gefunden werden.");
+					"</b> konnte auf der aktuellen Seite nicht gefunden werden.");
 		}
 
 

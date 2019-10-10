@@ -16,11 +16,13 @@
 package com.iksgmbh.sysnat.domain;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
-import com.iksgmbh.sysnat.common.utils.ExceptionHandlingUtil;
+import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.utils.PropertiesUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
@@ -31,6 +33,8 @@ import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
  */
 public class TestApplication 
 {
+   private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
+
    private String name;
    private String targetEnvironmentAsString;
    private String propertiesFileName;
@@ -130,14 +134,24 @@ public class TestApplication
                            ).toLowerCase();
 
       String propertyValue = applicationProperties.getProperty(propertyKey);
-      if (propertyValue == null) {
-         ExceptionHandlingUtil.throwException("The test application " + name + 
-        		               " is not configured for the current test run. "
-        		               + "Please defined property '" + propertyKey + "' in '" 
-        		               + propertiesFileName + "'.");
+      if (propertyValue == null) 
+      {
+    	 String errorMessage = BUNDLE.getString("TestApplicationEnvironmentMismatch_Error"); 
+    	 errorMessage = errorMessage.replace("XXX", propertyKey)
+    	                            .replace("YYY", propertiesFileName)
+    	                            .replace("ZZZ", targetEnvironmentAsString);
+    	 String helpMessage = BUNDLE.getString("TestApplicationEnvironmentMismatch_Help"); 
+    	 helpMessage = helpMessage.replace("XXX", propertyKey)
+                                  .replace("YYY", name);
+
+    	 ErrorPageLauncher.doYourJob(errorMessage, helpMessage, getErrorPageTitle());
       }
       return propertyValue.trim();
    }
+   
+	private String getErrorPageTitle() {
+		return "SysNat " + BUNDLE.getString("InitialisationError");
+	}
 
    public boolean isWebApplication() {
       return isWebApplication;

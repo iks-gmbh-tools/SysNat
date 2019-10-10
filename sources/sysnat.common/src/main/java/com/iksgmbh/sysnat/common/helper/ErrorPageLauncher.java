@@ -15,18 +15,15 @@
  */
 package com.iksgmbh.sysnat.common.helper;
 
-import java.util.Locale;
-
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class ErrorPageLauncher 
 {
 	private static final String ERROR_PAGE_TEMPLATE = 
-			"sources/sysnat.testcase.generation/src/main/resources/htmlTemplates/GenerationErrorPage.htm.Template."
-            + Locale.getDefault().getLanguage() + ".txt";
-
-	public static void doYourJob(String errorMessage, String helpMessage) 
+			"sources/sysnat.common/src/main/resources/ErrorPage.html.Template.txt";
+	
+	public static void doYourJob(String errorMessage, String helpMessage, String title) 
 	{
 		if (! "true".equalsIgnoreCase(System.getProperty("sysnat.dummy.test.run"))) 
 		{
@@ -34,8 +31,8 @@ public class ErrorPageLauncher
 			String filename = System.getProperty("sysnat.report.dir") + "/GenerationError.html";
 			filename = SysNatFileUtil.findAbsoluteFilePath(filename);
 			
-			final String errorReport = templateText.replace("ERROR_MESSAGE_PLACEHOLDER", errorMessage);
-			
+			final String errorReport = templateText.replace("TITLE_PLACEHOLDER", title)
+			                                       .replace("ERROR_MESSAGE_PLACEHOLDER", errorMessage);
 			try {
 				SysNatFileUtil.writeFile(filename, errorReport.replace("HELP_MESSAGE_PLACEHOLDER", helpMessage));
 				HtmlLauncher.doYourJob(filename);

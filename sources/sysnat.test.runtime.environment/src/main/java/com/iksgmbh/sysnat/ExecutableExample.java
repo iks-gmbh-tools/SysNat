@@ -105,8 +105,12 @@ abstract public class ExecutableExample
     
 	public void setUp() 
 	{
-		if ( executionInfo.isApplicationStartable() && ! executionInfo.isTestEnvironmentInitialized()) {
-			initTestEnvironment();
+		if ( ! executionInfo.isTestEnvironmentInitialized()) 
+		{
+			boolean ok = initTestEnvironment();
+			if ( ! ok ) {
+				System.exit(1);
+			}
 		} else {
 			reinitTestEnvironment();
 		}
@@ -120,7 +124,8 @@ abstract public class ExecutableExample
 	        getGuiController().reloadCurrentPage();  // prepare gui for next test
 		}
 	}
-	private void initTestEnvironment() 
+	
+	private boolean initTestEnvironment() 
 	{
 		testDataImporter = new TestDataImporter(executionInfo.getTestdataDir());
 		initShutDownHook();
@@ -133,7 +138,7 @@ abstract public class ExecutableExample
 			try {
 				applicationStarted = login();
 			} catch (Exception e) {
-				executionInfo.setApplicationNotStartable();
+				return false;
 			}
     		executionInfo.setApplicationStarted(applicationStarted);
 			PopupHandler.setTestCase(this);
@@ -142,6 +147,7 @@ abstract public class ExecutableExample
 		}
 		
 		executionInfo.setTestEnvironmentInitialized();
+		return true;
 	}
 
 	protected boolean isSkipped() {
@@ -651,7 +657,9 @@ abstract public class ExecutableExample
 			{
 				System.out.println(SysNatConstants.SYS_OUT_SEPARATOR);
 				
-				createReportHtml();
+				if (executionInfo.isTestEnvironmentInitialized()) {
+					createReportHtml();
+				}
 				
 				if (executionInfo.getNumberOfAllExecutedXXs() == 0) {
 					System.out.println("No test executed. Check execution filter and executable examples.");

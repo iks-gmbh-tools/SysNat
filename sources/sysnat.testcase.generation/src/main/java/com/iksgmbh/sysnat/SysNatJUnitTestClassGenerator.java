@@ -18,6 +18,8 @@ package com.iksgmbh.sysnat;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
@@ -43,6 +45,8 @@ import com.iksgmbh.sysnat.helper.XXGroupBuilder;
  */
 public class SysNatJUnitTestClassGenerator 
 {
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
+
 	/**
 	 * Reads natural language instruction files and transforms the instructions given in a domain language
 	 * into java commands of JUnit java files.
@@ -109,9 +113,14 @@ public class SysNatJUnitTestClassGenerator
 					                   + "</b> there are no Executable Examples available.", 
 					                   "Please, write nlxx files in folder "
 					                   + "<b>sysnat.natural.language.executable.examples/ExecutableExamples/" 
-					                   + testApp + "</b>.");
+					                   + testApp + "</b>.", getErrorPageTitle());
 			return false;
 		}
 		return true;
 	}
+	
+	private String getErrorPageTitle() {
+		return "SysNat " + BUNDLE.getString("InitialisationError");
+	}
+
 }
