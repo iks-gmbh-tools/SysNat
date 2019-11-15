@@ -1,6 +1,12 @@
 # SysNat
 
-*SysNat* is a tool to manage the quality of software systems in natural language. It is designed to support ATDD, BDD and DDD as well as to combine the effects of theses three approaches to software development.
+is tool to manage the progress in software quality. This is achieved by
+
+1. writing requirements as Executable Examples, 
+2. executing them as automated tests 
+3. by generating current documentation about your software system. 
+
+All this is done in natural language and can thus be used by business experts, requirement engineers, developers, testers as well as operators. That is why *SysNat* supports ATDD, BDD, DDD, DevOps and cross functional teams. 
 
 * * *
 
