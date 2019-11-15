@@ -16,7 +16,9 @@
 *Applying consequently *SysNat* is supposed to have the following effects in the long run:*
 
 a) Exectuable Examples become the Single Point of Truth (no or no unknown deviation between application and its description).
+
 b) There is always a current system documentation (it can be generated within seconds).
+
 c) Non-technical team members are able to modify existing Executable Examples, to create new ones and to execute them on their own without technical support (because the natural language used is intuitively understandable).
 
 [Have a closer look...](https://github.com/iks-github/SysNatTesting/wiki)
