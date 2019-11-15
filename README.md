@@ -15,7 +15,7 @@
 
 ***Applying consequently *SysNat* is supposed to have the following effects in the long run:***
 
-a) Exectuable Examples become the Single Point of Truth (no or no unknown deviation between application and its description).
+a) Exectuable Examples become the Single Point of Truth (no or no unknown deviation between the application itself, its programm code and its description).
 
 b) There is always a current system documentation (it can be generated within seconds).
 
