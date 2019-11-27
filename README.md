@@ -13,7 +13,7 @@
 - generating requirement documentations about the current state of your software system
 - generating system description documenation
 
-***Applying consequently *SysNat* is supposed to have the following effects in the long run:***
+***Applying *SysNat* consequently is supposed to have the following effects in the long run:***
 
 a) Exectuable Examples become the Single Point of Truth (no or no unknown deviation between the application itself, its programm code and its description).
 
