@@ -1,6 +1,6 @@
 # SysNat
 
-***is tool to manage the progress in software quality. This is achieved by***
+***is a tool to manage the progress in software quality. This is achieved by***
 1. writing and managing requirements as Executable Examples, 
 3. enabling developers in various ways to translate natural language instructions in programm code
 3. executing the requirements as automated tests 
