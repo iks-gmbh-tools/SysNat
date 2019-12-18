@@ -1,0 +1,10 @@
+# Similar to ExpectedEBookStructure.txt bit with a structure definition
+# that contains a part not defined in the part definitions
+
+ExcelFile=EBookStructureInfo.xlsx
+
+PartsExcelSheet=MissingPartData
+PartsRootCell=C4
+
+StructuresExcelSheet=MissingPartData
+StructuresRootCell=C10

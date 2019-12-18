@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.List;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
@@ -65,7 +66,7 @@ public class TestApplicationGenerator
 		createLanguageTemplatesBasicsJavaFile();
 		
 		System.out.println("Adapting settings.config...");
-		adaptSettingsConfig();
+		adaptTestingConfig();
 		
 		System.out.println("Creating folder for nlxx files...");
 		createExecutableExampleFolder();
@@ -84,54 +85,29 @@ public class TestApplicationGenerator
 		}
 	}
 
-	private static void adaptSettingsConfig()
+	private static void adaptTestingConfig()
 	{
 		String path = ExecutionRuntimeInfo.getInstance().getRootPath()
 		        + "/" + SOURCE_DIR + "/sysnat.natural.language.executable.examples";
-		File settingsFile = new File(path, "settings.config");
+		File settingsFile = new File(path, SysNatConstants.TESTING_CONFIG_PROPERTY);
 		List<String> content = SysNatFileUtil.readTextFile(settingsFile);
 		
 		StringBuffer newContent = new StringBuffer();
-		boolean addTestApp = false;
-		boolean firstAllowedValues = true;
 		
 		for (String line : content)
 		{
-			if (addTestApp) 
-			{
-				if ( ! line.contains(TestApplicationName)) {					
-					line += ", " + TestApplicationName;
-				}
-				addTestApp = false;
-			}
-			
-			if (firstAllowedValues && line.trim().startsWith("# Values allowed")) {
-				addTestApp = true;
-				firstAllowedValues = false;
-			}
-			
-			if (line.trim().startsWith("Application_Under_Test")) {
-				line = "Application_Under_Test = " + TestApplicationName;
-			}
-			
-			if (line.trim().startsWith("Zu_testende_Anwendung")) {
-				line = "Zu_testende_Anwendung = " + TestApplicationName;
+			if (line.trim().startsWith(SysNatConstants.TEST_APPLICATION_SETTING_KEY)) {
+				line = SysNatConstants.TEST_APPLICATION_SETTING_KEY + " = " + TestApplicationName;
 			}
 
-			if (line.trim().startsWith("Zielumgebung")) {
-				line = "Zielumgebung = " + environment.toUpperCase();
+			if (line.trim().startsWith(SysNatConstants.TEST_ENVIRONMENT_SETTING_KEY)) {
+				line = SysNatConstants.TEST_ENVIRONMENT_SETTING_KEY + " = " + environment.toUpperCase();
 			}
 			
-			if (line.trim().startsWith("Environment")) {
-				line = "Environment = " + environment.toUpperCase();
-			}
-			
-			if (line.trim().startsWith("Ausführungsfilter")) {
-				line = "Ausführungsfilter = -";
-			}
-			
-			if (line.trim().startsWith("ExecutionFilter")) {
-				line = "ExecutionFilter = -";
+			if (line.trim().startsWith(SysNatConstants.TEST_EXECUTION_FILTER_SETTING_KEY)) {
+				String newCommentLine = "# " + TestApplicationName + ": -";
+				newContent.append(newCommentLine).append(System.getProperty("line.separator"));
+				line = SysNatConstants.TEST_EXECUTION_FILTER_SETTING_KEY + " = -";
 			}
 
 			newContent.append(line).append(System.getProperty("line.separator"));

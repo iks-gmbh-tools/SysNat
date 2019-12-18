@@ -15,13 +15,15 @@
  */
 package com.iksgmbh.sysnat.testdataimport;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.testdataimport.ExcelTableReader.Cell;
@@ -44,17 +46,106 @@ public class ExcelDataProvider
 {
 	private static final String ROTATION_MODE_DATASET_NAMES_IN_FIRST_ROW_1 = "Column is dataset";
 	private static final String ROTATION_MODE_DATASET_NAMES_IN_FIRST_ROW_2 = "Datasets in columns";
+	private static final char ASCII_VALUE_Z = 91;
+	private static final char ASCII_VALUE_A = 65;
 	//private static final String ROTATION_MODE_DATASET_NAMES_IN_FIRST_COLUMN = "Row is Dataset";
 	
-	public static Hashtable<String, Properties> doYourJob(final File excelFile) 
+	public static LinkedHashMap<String, Properties> doYourJob(final File excelFile) 
 	{
 		return doYourJob(excelFile, 1, 1, 1);
 	}
+
+	public static LinkedHashMap<String, Properties> doYourJob(final File excelFile, 
+											                  final String sheetName,
+											                  final String rootCell)
+	{
+		final ExcelTableReader excelTableReader;
+		try {
+			excelTableReader = new ExcelTableReader(excelFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new SysNatTestDataException("Error reading " + excelFile.getAbsolutePath());
+		}
+		
+		int sheetNumber = excelTableReader.getSheetNumberFor(sheetName);
+		if (sheetNumber == 0) {
+			throw new SysNatTestDataException("Error switching to sheet " + sheetName + ": " + excelFile.getAbsolutePath());
+		}
+		try {
+			sheetNumber = excelTableReader.getSheetNumberFor(sheetName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SysNatTestDataException("Error switching to sheet " + sheetName + ": " + excelFile.getAbsolutePath());
+		}
+		
+		Point cellCoordinates = toCoordinates(rootCell);
+		
+		return doYourJob(excelFile, 
+				         sheetNumber, 
+				         cellCoordinates.x, 
+				         cellCoordinates.y);
+	}
 	
-	public static Hashtable<String, Properties> doYourJob(final File excelFile, 
-                                                          final int sheetNumber,
-			                                              final int columnOfRootCell, 
-			                                              final int rowOfRootCell) 
+	static Point toCoordinates(String excelCellName)
+	{
+		String columnOfRootCell = "";
+		String rowOfRootCell = ""; 
+		
+		char[] charArray = excelCellName.toCharArray();
+		for (int i = 0; i < charArray.length; i++) 
+		{
+			if (Character.isDigit(charArray[i])) {
+				rowOfRootCell += charArray[i];
+			} else {
+				if (charArray[i] >= ASCII_VALUE_A && charArray[i] <= ASCII_VALUE_Z) {
+					columnOfRootCell += charArray[i];
+				}
+			}
+		}
+		
+		if (columnOfRootCell.isEmpty() && rowOfRootCell.isEmpty()) {
+			throw new SysNatException("The Excel cell definition " + excelCellName + " is invalid.");			
+		}
+		
+		int column = toColumnNumber(columnOfRootCell, excelCellName);
+		int row = toRowNumber(rowOfRootCell, excelCellName);
+		
+		return new Point(column, row);
+	}
+
+	private static int toColumnNumber(String columnOfRootCell, String rootCell)
+	{
+		if (columnOfRootCell.isEmpty()) {
+			throw new SysNatException("The Excel cell definition " + rootCell + " contains no valid column identifier.");
+		}
+		char[] charArray = columnOfRootCell.toCharArray();
+		int column = 0;
+		for (int i = 0; i < charArray.length; i++) {
+			column += charArray[i] - ASCII_VALUE_A + 1;
+		}
+		
+		if (column == 0) {
+			throw new SysNatException("The Excel cell definition " + rootCell + " contains no valid column identifier.");
+		}
+		return column;
+	}
+
+	private static int toRowNumber(String rowOfRootCell, String rootCell)
+	{
+		if (rowOfRootCell.isEmpty()) {
+			throw new SysNatException("The Excel cell definition " + rootCell + " contains no valid row number.");
+		}
+		try {
+			return Integer.valueOf(rowOfRootCell);
+		} catch (Exception e) {
+			throw new SysNatException("The Excel cell definition " + rootCell + " contains no valid row number.");
+		}
+	}
+
+	public static LinkedHashMap<String, Properties> doYourJob(final File excelFile, 
+                                                              final int sheetNumber,
+			                                                  final int columnOfRootCell, 
+			                                                  final int rowOfRootCell) 
 	{
 		final ExcelTableReader excelTableReader;
 		try {
@@ -76,11 +167,11 @@ public class ExcelDataProvider
 			matrixData = excelTableReader.getMatrix(rootCell);
 		}
 		
-		checkMatrixData(matrixData, excelFile.getAbsolutePath());
+		checkMatrixData(matrixData, excelFile.getAbsolutePath(), rootCell);
 		
 		final List<String> fieldNames = getFirstRowData(matrixData);
 		final List<String> datasetNames = getFirstColumnData(matrixData);
-		final Hashtable<String, Properties> testData = new Hashtable<>();
+		final LinkedHashMap<String, Properties> testData = new LinkedHashMap<>();
 		final String excelFileName = SysNatStringUtil.cutExtension(excelFile.getName());
 		
 		for (int row = 1; row < matrixData.length; row++) 
@@ -89,6 +180,7 @@ public class ExcelDataProvider
 			for (int column = 1; column < matrixData[row].length; column++) {
 				fieldValuePairs.setProperty(fieldNames.get(column-1), matrixData[row][column]);
 			}
+			fieldValuePairs.setProperty(TestDataImporter.DATA_SET_EXCEL_ID, matrixData[row][0]);
 			testData.put(excelFileName + "_" + datasetNames.get(row-1), fieldValuePairs);
 		}
 		
@@ -96,13 +188,14 @@ public class ExcelDataProvider
 	}
 
 	private static void checkMatrixData(final String[][] matrixData, 
-			                            final String excelFileName) 
+			                            final String excelFileName, 
+			                            final Cell rootCell) 
 	{
 		if (matrixData.length == 1) {
-			throw new SysNatTestDataException("No test data found in " + excelFileName);
+			throw new SysNatTestDataException("No test data found in <b>" + excelFileName + "</b> at root cell <b>" + rootCell.toString() + "</b>.");
 		}
 		if (matrixData[0].length == 1) {
-			throw new SysNatTestDataException("No test data found in " + excelFileName);
+			throw new SysNatTestDataException("No test data found in <b>" + excelFileName + "</b> at root cell <b>" + rootCell.toString() + "</b>.");
 		}
 		
 	}

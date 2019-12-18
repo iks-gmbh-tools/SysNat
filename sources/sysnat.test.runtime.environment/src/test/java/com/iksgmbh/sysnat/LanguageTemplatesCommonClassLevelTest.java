@@ -31,6 +31,7 @@ import com.iksgmbh.sysnat._testcases.TestCaseCallingSimpleScript;
 import com.iksgmbh.sysnat._testcases.TestCaseCallingUnknownScript;
 import com.iksgmbh.sysnat._testcases.TestCaseUsingMissingObjectData;
 import com.iksgmbh.sysnat._testhelper.LanguageTemplatesCommonTestImpl;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
 
 public class LanguageTemplatesCommonClassLevelTest 
@@ -39,7 +40,7 @@ public class LanguageTemplatesCommonClassLevelTest
 	public void setup() {
 		ExecutionRuntimeInfo.reset();
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.runtime.environment/src/test/resources/AvailableNaturalLanguageScripts.properties");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		ExecutionRuntimeInfo.getInstance();
 	}
 
@@ -108,7 +109,7 @@ public class LanguageTemplatesCommonClassLevelTest
 		// arrange
 		ExecutionRuntimeInfo.reset();
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.runtime.environment/src/test/resources/AvailableNaturalLanguageScripts.properties");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.runtime.environment/src/test/resources/AvailableNaturalLanguageScripts.properties");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.testdata.import.directory", "../sysnat.test.runtime.environment/src/test/resources/testData");
 		ExecutionRuntimeInfo.getInstance().setTestApplicationName("HomePageIKS");
@@ -133,7 +134,7 @@ public class LanguageTemplatesCommonClassLevelTest
 	public void returnsTestsToExecute() 
 	{
 		// arrange
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		ExecutableExample executableExample =  new TestCaseCallingMainScriptCallingSubscript();
 		LanguageTemplatesCommon cut = new LanguageTemplatesCommonTestImpl(executableExample);
 		List<String> execFilterOfExecutableExample =  new ArrayList<>();

@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -73,12 +74,13 @@ public class SysNatFileUtil
 		SysNatFileUtil.writeFile(new File(targetDir, sourceFilename), content);
 	}
 
-	public static void writeFile(String fileName,
+	public static File writeFile(String fileName,
 			                     String fileContent)
 	{
 		try {
 			fileName = findAbsoluteFilePath(fileName);
 			writeFile(new FileOutputStream(fileName), fileContent, fileName);
+			return new File(fileName);
 		} catch (Exception e) {
 			String message = "Could not write file " + new File(fileName).getAbsolutePath();
 			System.err.println(message);
@@ -137,12 +139,20 @@ public class SysNatFileUtil
 
 	}
   
-	public static FileList findFilesIn(String fileExtension, 
+	/**
+	 * Searches for files of a certain extension in a given directory (not recursively!).
+	 * 
+	 * @param aFileExtension
+	 * @param directory
+	 * @return list of matching files
+	 */
+	public static FileList findFilesIn(final String aFileExtension, 
 			                           final File directory)
 	{
-		fileExtension = fileExtension.toLowerCase();
+		final String fileExtension = aFileExtension.toLowerCase();
 		final FileList toReturn = new FileList();
 		final File[] listFiles = directory.listFiles();
+		
 		for (File file : listFiles) {
 			if (file.getAbsolutePath().toLowerCase().endsWith(fileExtension) && file.isFile()) {
 				toReturn.add(file);
@@ -151,6 +161,28 @@ public class SysNatFileUtil
 
 		return toReturn;
 	}
+	
+	public static File findFileRecursively(final String aFileName, final File directory)
+	{
+		List<File> result = FileFinder.findFiles(directory, null, null, null, null, aFileName);
+		
+		if (result.size() == 0) {
+			throw new SysNatTestDataException("No file <b>" + aFileName + "</b> found in <b>" 
+		                                       + directory.getAbsolutePath() + "</b>!");
+		}
+		
+		if (result.size() > 1) 
+		{
+			Optional<File> exactMatch = result.stream().filter(file -> file.getName().equals(aFileName)).findFirst();
+			if (exactMatch.isPresent()) {
+				return exactMatch.get();
+			}
+			
+			throw new SysNatTestDataException("Ambiguous data file <b>" + aFileName + "</b>!");
+		}
+		
+		return result.get(0);
+	}	
 
 	public static FileList findDownloadFiles(String... fileExtensions)
 	{
@@ -529,10 +561,11 @@ public class SysNatFileUtil
 		copyBinaryFile(fromFile, toFile);
 	}
 
-	public static void copyBinaryFile(final File fromFile, final String toFileName)
+	public static File copyBinaryFile(final File fromFile, final String toFileName)
 	{
 		final File toFile = new File(toFileName);
 		copyBinaryFile(fromFile, toFile);
+		return toFile;
 	}
 
 	public static void copyBinaryFile(String fromFileName, File toFile)

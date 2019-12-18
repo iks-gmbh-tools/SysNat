@@ -1,0 +1,28 @@
+############################################
+EXPECTED STRUCTURE:
+---------------------
+Document Structure for document 'EBook':
+Page 1-3: Part1 (Intro)
+Page 4: Part2
+Page 5-6: Part3 (Preface)
+Page 7-9: Part4 (1. How to define the term 'definition'?)
+Page 10: Part5
+Page 11: Part6
+Page 12: Part7
+Page 13: Part8
+Page 14: Part9
+Page 15-17: Part10 (7. How to detect life?)
+Page 18-19: Part11 (Postface)
+Summary: 11 parts with a total of 19 pages.
+############################################
+ACTUAL STRUCTURE:
+---------------------
+Document Structure for document 'EBook':
+Page 1-3: Part1 (Intro)
+Page 4: Part2
+Page 5-6: Part3 (Preface)
+Page 7-9: Part4 (1. How to define the term 'definition'?)
+Page 10-12: Part10 (7. How to detect life?)
+Page 13-14: Part11 (Postface)
+Summary: 6 parts with a total of 14 pages.
+############################################

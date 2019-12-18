@@ -15,23 +15,34 @@
  */
 package com.iksgmbh.sysnat.guicontrol;
 
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.common.exception.SysNatException;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.InvalidArgumentException;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.helper.BrowserStarter;
 
 public class SeleniumGuiController implements GuiControl 
 {
-	private static final int MILLIS_TO_WAIT_PER_TRY = 10;
-
+	private Robot robot;
 	private WebDriver webDriver;
 	private ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
 
@@ -86,16 +97,25 @@ public class SeleniumGuiController implements GuiControl
 		{
 			try {
 				webDriver.get(targetLoginUrl);
-			} catch (InvalidArgumentException e) {
-				throw new SysNatException("Die konfigurierte URL '" + targetLoginUrl + "' ist ungültig.");
 			} catch (Exception e) {
-				e.printStackTrace();
+				ok = false;
+			}
+		}
+		
+		if (ok) 
+		{
+			try {
+				webDriver.findElement(By.tagName("body"));
+			} 
+			catch (Exception e) 
+			{
 				ok = false;
 			}
 		}
 		
 		return ok;
 	}
+
 
 	@Override
 	public void closeGUI()
@@ -136,10 +156,28 @@ public class SeleniumGuiController implements GuiControl
 	}
 	
 	@Override
-    public void clickLink(String id) {
-    	retrieveElement(id).sendKeys(Keys.RETURN);
-    }
+    public void clickLink(String id) 
+	{
+    	WebElement element = retrieveElement(id);
+    	element.sendKeys(Keys.RETURN);
+    	
+    	if (webDriver instanceof InternetExplorerDriver) {
+    		getRobot().keyPress(KeyEvent.VK_ENTER);
+	    }
+	}
 	
+	private Robot getRobot() 
+	{
+		if (robot == null) 
+		{
+			try {
+				robot = new Robot();
+			} catch (AWTException e) {
+				e.printStackTrace();
+			}
+		}
+		return robot;
+	}
 
 	@Override
 	public boolean isSelected(String elementIndentifier) {
@@ -147,6 +185,27 @@ public class SeleniumGuiController implements GuiControl
 		String checked = checkbox.getAttribute("checked");
 		return checked != null && checked.equalsIgnoreCase("true");
 	}
+	
+	@Override
+	public boolean isCheckBoxTicked(String chbId) {
+	   WebElement element = retrieveElement(chbId);
+	   return element.isSelected();
+	}
+
+	@Override
+	public void assureTickInCheckBox(String chbId) {
+	   if ( ! isCheckBoxTicked(chbId) ) {
+	      retrieveElement(chbId).click();
+	   }
+	}
+
+	@Override
+	public void assureNoTickInCheckBox(String chbId) {
+	   if ( isCheckBoxTicked(chbId) ) {
+	      retrieveElement(chbId).click();
+	   }
+	}
+
 
 	@Override
 	public void selectRow(String elementIndentifier, int rowNo) {
@@ -172,9 +231,9 @@ public class SeleniumGuiController implements GuiControl
 	
 
 	@Override
-    public String clickElement(final String elementAsString, int timeoutInSeconds)
+    public String clickElement(final String elementAsString, int timeoutInMillis)
     {
-        WebElement element = retrieveElement(elementAsString, timeoutInSeconds*1000);
+        WebElement element = retrieveElement(elementAsString, timeoutInMillis);
 		return clickElement(element, elementAsString);
     }
 
@@ -198,23 +257,46 @@ public class SeleniumGuiController implements GuiControl
     }
     
     
+	/**
+	 * Checks whether element is present in any state with any attribute.
+	 */
 	@Override
     public boolean isElementAvailable(String elementId) 
 	{
 		try {			
-	        WebElement element = retrieveElement(elementId, 1);
+	        WebElement element = retrieveElement(elementId, 1000);
 			return element != null;
 		} catch (NoSuchElementException e) {
 			return false;
 		}
     }
     
+	/**
+	 * Checks availability by clicking the element.
+	 * @param element
+	 * @return
+	 */
 	@Override
 	public boolean isElementReadyToUse(String elementIndentifier) 
 	{
 		try {			
 	        WebElement element = retrieveElement( elementIndentifier );
 			return isElementReadyToUse(element);
+		} catch (NoSuchElementException e) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Checks availability by asserting that it is displayed and enabled.
+	 * @param elementIndentifier
+	 * @return
+	 */
+	public boolean isElementReady(String elementIndentifier)
+	{
+		try {			
+	        WebElement element = retrieveElement( elementIndentifier );
+			return isElementReady(element);
 		} catch (NoSuchElementException e) {
 			return false;
 		}
@@ -335,7 +417,12 @@ public class SeleniumGuiController implements GuiControl
 	
 	@Override
 	public void waitUntilElementIsAvailable(String elementIdentifier) {
-		retrieveElement(elementIdentifier, 60);
+		retrieveElement(elementIdentifier, 15000);
+	}
+
+	@Override
+	public void waitUntilElementIsAvailable(String elementIdentifier, int timeoutInSeconds) {
+		retrieveElement(elementIdentifier, timeoutInSeconds * 1000);
 	}
 
 
@@ -345,10 +432,15 @@ public class SeleniumGuiController implements GuiControl
 	}
 
 	@Override
+	public void maximizeWindow() {
+		webDriver.manage().window().maximize();
+	}
+
+	@Override
 	public void switchToLastWindow() {
 		switchToWindow(getLastWindowHandle());
 	}
-	
+
 	@Override
 	public List<WebElement> getElements(final String elementIdentifier) {
 		return retrieveElement("body").findElements(By.xpath(elementIdentifier));
@@ -383,12 +475,11 @@ public class SeleniumGuiController implements GuiControl
 	public boolean waitToDisappear(String text, int maxSecondsToWait)
 	{
 		try {
-			int counterWaitState = 0;
-			int maxAttemptsToFindElement = maxSecondsToWait * 1000 / MILLIS_TO_WAIT_PER_TRY;
+			long startTimeInMillis = new Date().getTime();
 
 			while (true)
 			{
-				sleep(MILLIS_TO_WAIT_PER_TRY);
+				sleep(executionInfo.getMillisToWaitForAvailabilityCheck());
 
 				if ( ! isTextCurrentlyDisplayed(text) ) {
 					System.out.println("###########");
@@ -397,9 +488,8 @@ public class SeleniumGuiController implements GuiControl
 					return true;
 				}
 
-				counterWaitState++;
-
-				if (counterWaitState > maxAttemptsToFindElement) {
+				long nowInMillis = new Date().getTime();
+				if (nowInMillis - startTimeInMillis > executionInfo.getDefaultGuiElementTimeout()) {
 					System.out.println("###########");
 					System.out.println("waitToDisappear cancelled by Timeout - " + text);
 					System.out.println("###########");
@@ -432,6 +522,10 @@ public class SeleniumGuiController implements GuiControl
 	//                        (Selenium specific accesses to GUI)
 	// ####################################################################################################
 
+	public void switchToHomeFrame() {
+		webDriver.switchTo().defaultContent();
+	}
+	
 	public String getXPathForElementWithGuiText(String textPart1, String textPart2, String avoidText)
 	{
 		List<WebElement> matches1 = webDriver.findElements(By.xpath("//*[contains(text(),'" + textPart1 + "')]"));
@@ -531,17 +625,24 @@ public class SeleniumGuiController implements GuiControl
 		webDriver.switchTo().window(firstWindowHandle);
 	}
 	
+	@Override
 	public void switchToWindow(String windowID) {
 		webDriver.switchTo().window(windowID);
 	}
 	
 	public int getNumberOfOpenTabs() {
+		// TODO does this work with selenium 3.8
+		return webDriver.getWindowHandles().size();
+	}
+	
+	@Override
+	public int getNumberOfOpenApplicationWindows() {
 		return webDriver.getWindowHandles().size();
 	}
 
 	public void clickTableCellLink(String xPathToCell) 
 	{
-		WebElement retrieveElement = retrieveElement(xPathToCell, 0);
+		WebElement retrieveElement = retrieveElement(xPathToCell);
 		String attribute = retrieveElement.getAttribute("href");
 		if (attribute == null) {
 			throw new RuntimeException("Cell contains no clickable link.");
@@ -560,7 +661,7 @@ public class SeleniumGuiController implements GuiControl
 	// ####################################################################################################
 	
 	private WebElement retrieveElement(final String elementIdentifier)  {
-		return retrieveElement(elementIdentifier, executionInfo.getMaxMilliesForWaitState());
+		return retrieveElement(elementIdentifier, executionInfo.getDefaultGuiElementTimeout() * 1000);
 	}
 
 	
@@ -584,20 +685,19 @@ public class SeleniumGuiController implements GuiControl
 
 		List<WebElement> matches = null;
 		boolean goOn = true;
-		int counterWaitState = 0;
-		int maxAttemptsToFindElement = timeOutInMillis / MILLIS_TO_WAIT_PER_TRY;
+		long startTimeInMillis = new Date().getTime();
 		
 		while (goOn)
 		{
-			sleep(MILLIS_TO_WAIT_PER_TRY);
+			sleep(executionInfo.getMillisToWaitForAvailabilityCheck());
 			
 			matches = findMatchingElements(toSearchFor);
 			if (matches.size() > 0) {
 				goOn = false;
 			}
-			counterWaitState++;
-			
-			if (counterWaitState > maxAttemptsToFindElement) {
+
+			long nowInMillis = new Date().getTime();
+			if (nowInMillis - startTimeInMillis > timeOutInMillis) {
 				goOn = false;
 			}
 		}
@@ -692,6 +792,18 @@ public class SeleniumGuiController implements GuiControl
         }
     }
 
+	/**
+	 * Checks availability by asserting that it is displayed and enabled.
+	 * @param element
+	 * @return
+	 */
+	public boolean isElementReady(WebElement element)
+	{
+		return  element != null
+				&& element.isDisplayed()
+				&& element.isEnabled();
+	}
+
 	public boolean isElementReadyToUse(WebElement element)
 	{
 		return  element != null
@@ -725,12 +837,11 @@ public class SeleniumGuiController implements GuiControl
     private String clickElement(final WebElement element, String elementAsString)
     {
     	boolean goOn = true;
-		int counterWaitState = 0;
-		int maxAttemptsToFindElement = executionInfo.getMaxMilliesForWaitState() / MILLIS_TO_WAIT_PER_TRY;
+		long startTimeInMillis = new Date().getTime();
 		
 		while (goOn)
 		{
-			sleep(MILLIS_TO_WAIT_PER_TRY);
+			sleep(executionInfo.getMillisToWaitForAvailabilityCheck());
 		
 			try {
 				element.click();
@@ -743,9 +854,8 @@ public class SeleniumGuiController implements GuiControl
 				}
 			}
 			
-			counterWaitState ++;
-			
-			if (counterWaitState > maxAttemptsToFindElement) {
+			long nowInMillis = new Date().getTime();
+			if (nowInMillis - startTimeInMillis > executionInfo.getDefaultGuiElementTimeout()) {
 				goOn = false;
 			}
 		}

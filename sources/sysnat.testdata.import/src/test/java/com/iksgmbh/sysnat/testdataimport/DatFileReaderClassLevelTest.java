@@ -16,16 +16,62 @@
 package com.iksgmbh.sysnat.testdataimport;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+
 import org.junit.Test;
 
 public class DatFileReaderClassLevelTest 
 {
+	@Test
+	public void throwsErrorForProperiesWithMultipleEqualSymbols() 
+	{
+		// arrange
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/"
+				+ "multipleEuqalSymbolsInPropertyValuesNOK.dat");
+		final File datFile = new File(path);
+		
+		try {
+			// act
+			DatFileReader.doYourJob(datFile);
+			fail("Expected exception not thrown!");
+		} catch (SysNatException e) {
+			// assert
+			assertTrue("unexpected error message", e.getMessage().contains("Error reading property"));
+			assertTrue("unexpected error message", e.getMessage().contains("resources\\testTestdata\\multipleEuqalSymbolsInPropertyValuesNOK.dat"));
+			assertTrue("unexpected error message", e.getMessage().contains("line 1 \"<b>property=valueWith=MustBeSurroundedByHyphen"));
+		}	
+	}
+
+	@Test
+	public void loadProperiesWithMultipleEqualSymbols() 
+	{
+		// arrange
+		final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/testTestdata/"
+				+ "multipleEuqalSymbolsInPropertyValuesOK.dat");
+		final File datFile = new File(path);
+		
+		// act
+		final List<Properties> testdata = DatFileReader.doYourJob(datFile);
+		
+		// arrange
+		assertEquals("Number of datasets", 1, testdata.size());
+		assertEquals("Number of datafields in dataset", 2, testdata.get(0).keySet().size());
+		
+		List<String> keys = new ArrayList<>();
+		testdata.get(0).keySet().forEach(key -> keys.add((String) key));
+		assertEquals("Property Value", "valueWith=MustBeSurroundedByHyphen", testdata.get(0).get(keys.get(0)));
+		assertEquals("Property Value", "valueWith=MustBeSurroundedByHyphen", testdata.get(0).get(keys.get(1)));
+	}
+	
 	
 	@Test
 	public void loadSingleDatasetFromSingleDatFiles() 

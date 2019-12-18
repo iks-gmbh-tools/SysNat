@@ -23,23 +23,24 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 
 public class SysNatTestCaseGeneratorClassLevelTest 
 {
 	@Before
 	public void setup() {
 		GenerationRuntimeInfo.reset();
+		GenerationRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.testcase.generation/src/test/resources/testSettingConfigs/TestCaseGeneratorTestApplication.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.properties.path", "../sysnat.testcase.generation/src/test/resources/execution_properties");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.executable.examples.source.dir", "../sysnat.testcase.generation/src/test/resources/testTestCases");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.generation.target.dir", "../sysnat.testcase.generation/target/SysNatTestCaseGeneratorTest");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.languageTemplateContainer.source.dir", "../sysnat.testcase.generation/src/test/java/com/iksgmbh/sysnat/test/testTemplateContainers");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.execution/AvailableNaturalLanguageScripts.properties");
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.testcase.generation/src/test/resources/testSettingConfigs/TestCaseGeneratorTestApplication.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.help.command.list.file", "../sysnat.testcase.generation/target/CommandTestLibrary.html");
 		GenerationRuntimeInfo.getInstance();
 	}
@@ -150,15 +151,14 @@ public class SysNatTestCaseGeneratorClassLevelTest
 	public void generatesTestCaseFilesWithBddKeywords()
 	{
 		GenerationRuntimeInfo.reset();
+		GenerationRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.testcase.generation/src/test/resources/testSettingConfigs/ScenarioBasedApplication.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.properties.path", "../sysnat.testcase.generation/src/test/resources/execution_properties");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.executable.examples.source.dir", "../sysnat.testcase.generation/src/test/resources/testTestCases");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.generation.target.dir", "../sysnat.testcase.generation/target/ScenarioBasedApplicationTest");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.languageTemplateContainer.source.dir", "../sysnat.testcase.generation/src/test/java/com/iksgmbh/sysnat/test/testTemplateContainers");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.execution/AvailableNaturalLanguageScripts.properties");
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.testcase.generation/src/test/resources/testSettingConfigs/ScenarioBasedApplication.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.help.command.list.file", "../sysnat.testcase.generation/target/CommandTestLibrary.txt");
 		GenerationRuntimeInfo.getInstance();
-
 
 		// arrange
 		final String path = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.generation.target.dir"));

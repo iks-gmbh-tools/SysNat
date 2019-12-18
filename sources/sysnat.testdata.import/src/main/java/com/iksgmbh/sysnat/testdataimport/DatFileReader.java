@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 
 /**
  * Reads a dat file and parses the content to list of properties.
@@ -52,7 +53,9 @@ public class DatFileReader
 		return readAsSingleProperties(lines);
 	}
 
-	private boolean isDataInTableFormat(final List<String> lines) {
+	private boolean isDataInTableFormat(final List<String> lines) 
+	{
+		if (lines.size() == 0) return false;
 		return lines.get(0).startsWith(TableDataParser.TABLE_DATA_IDENTIFIER);
 	}
 
@@ -92,13 +95,27 @@ public class DatFileReader
 			{
 				if (line.endsWith("=")) {
 					properties.put(line.subSequence(0, line.length()-1), "");
-				} else {
+				} 
+				else 
+				{
 					String[] splitResult = line.split("=");
-					if (splitResult.length != 2) {
-						throw new SysNatTestDataException("Error reading property in <b>" 
-					          + inputFile.getAbsolutePath()
-	                          + "</b>, line " + lineCounter + " \"<b>" + line + "\"<b>.");
-					} else {
+					
+					if (splitResult.length != 2) 
+					{
+						if (line.endsWith("'") && SysNatStringUtil.countNumberOfOccurrences(line, "'") > 1) {
+							int pos = line.indexOf("'");
+							properties.put(line.substring(0, pos-2).trim(), line.substring(pos+1, line.length()-1));
+						} else if (line.endsWith("\"") && SysNatStringUtil.countNumberOfOccurrences(line, "\"") > 1) {
+							int pos = line.indexOf("\"");
+							properties.put(line.substring(0, pos-2).trim(), line.substring(pos+1, line.length()-1).trim());
+						} else {
+							throw new SysNatTestDataException("Error reading property in <b>" 
+									+ inputFile.getAbsolutePath()
+									+ "</b>, line " + lineCounter + " \"<b>" + line + "\"<b>.");
+						}
+					} 
+					else 
+					{
 						properties.put(splitResult[0], splitResult[1]);
 					}
 				}

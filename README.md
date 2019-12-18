@@ -1,26 +1,27 @@
 # SysNat
 
-*SysNat* is a tool to manage the quality of software systems in natural language. It is designed to support ATDD, BDD and DDD as well as to combine the effects of theses three approaches to software development.
+is tool to manage the progress in software quality. This is achieved by
+1. writing and managing requirements as Executable Examples, 
+3. enabling developers in various ways to translate natural language instructions in programm code
+3. executing the requirements as automated tests 
+4. generating current documentation about your software system. 
+
+All this is done in natural language and can thus be used by business experts, requirement engineers, developers, testers as well as operators. That is why *SysNat* supports ATDD, BDD, DDD, DevOps and cross functional teams. 
+
 
 * * *
 
-Its main features are
+*SysNat* is made for
+- driving requirements through a life cycle that you (or rather your team) define
+- translating natural language in programm code (with a minimum of developer effort)
+- executing the system requirements as automated tests (by any team member also in a purely non-technical role)
+- generating requirement documentations about the current state of your software system
+- generating system description documenation
 
-- It let you formulate instructions in natural language that operates your application under test and asserts the corresponding expectations.
-- It let you write natural language scripts designed for reuse in multiple test cases and for low level system descriptions 
-- It comes with extensive Selenium support for testing web applications
-- It creates a test report with a test result overview as well as detailed information about any instruction, expectations and results - all presented in natural language.
-
-With these main features, *SysNat* is perfectly suitable to support cross functional teams and collaboration between domain experts and developers. Applying *SysNat* leads towards a Domain Specific Language (DSL) in natural language.
-Once established, this DSL enables domain experts to modify existing tests, to create new tests and to execute them without any support by developers because the natural language is intuitively understandable.
-
-Minor features of the *SysNat* are:
-
-- Easy **test data import** (".dat" files for data structured as key-value pairs or Excel-data for data structured as tables)
-- **Test Parametrization** (write one test and execute it many times with different datasets)
-- Support of both **declarative style** (using BDD Keywords as with e.g. Gherkin) and **imperative style**
-- Means to archive / backup test results
-- Allows to create screenshots triggered by a natural language instruction
+Applying consequently *SysNat* is supposed to have the following effects in the long run:
+- Exectuable Examples become the Single Point of Truth (no or no unknown deviation between application and its description).
+- There is always a current system documentation (it can be generated within seconds).
+- Non-technical team members are able to modify existing Executable Examples, to create new ones and to execute them on their own without technical support (because the natural language used is intuitively understandable).
 
 [Have a closer look...](https://github.com/iks-github/SysNatTesting/wiki)
 

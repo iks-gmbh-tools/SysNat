@@ -1,0 +1,4 @@
+ExcelFile=PdfStructureInfo.xlsx
+
+PartsExcelSheet=Parts
+PartsRootCell=A1

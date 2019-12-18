@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.domain.TestApplication;
 
 public class GenerationRuntimeInfoClassLevelTest 
@@ -33,7 +34,7 @@ public class GenerationRuntimeInfoClassLevelTest
 	public void loadsApplicationProperties() 
 	{
 		// arrange
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.testcase.generation/src/test/resources/testSettingConfigs/HelloWorldSpringBoot.config");
+		GenerationRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.testcase.generation/src/test/resources/testSettingConfigs/HelloWorldSpringBoot.config");
     	
 		// act
 		TestApplication result = GenerationRuntimeInfo.getInstance().getTestApplication();

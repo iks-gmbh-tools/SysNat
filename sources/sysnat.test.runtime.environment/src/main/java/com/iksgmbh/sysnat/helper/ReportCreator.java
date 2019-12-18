@@ -210,10 +210,10 @@ public class ReportCreator
 	private String createOverview(String report) 
 	{
 		report = report.replace("PLACEHOLDER_PRODUCT", executionInfo.getTestApplicationName());
-		report = report.replace("PLACEHOLDER_TARGET_ENV", executionInfo.getTargetEnv().name());
+		report = report.replace("PLACEHOLDER_TARGET_ENV", executionInfo.getTestEnvironmentName());
 		report = report.replace("PLACEHOLDER_TIME", executionInfo.getStartPointOfTimeAsString());
 		report = report.replace("PLACEHOLDER_DURATION", executionInfo.getExecutionDurationAsString());
-		report = report.replace("PLACEHOLDER_EXECUTION_FILTER", executionInfo.getFiltersToExecute());
+		report = report.replace("PLACEHOLDER_EXECUTION_FILTER", executionInfo.getTestExecutionFilter());
 		
 		report = replacePlaceholdersOverallResult(report);
 		report = replaceTestStatiticsPlaceholder(report);

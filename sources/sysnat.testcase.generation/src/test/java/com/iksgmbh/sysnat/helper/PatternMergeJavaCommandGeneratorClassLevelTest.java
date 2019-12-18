@@ -31,6 +31,7 @@ import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaCommand;
 import com.iksgmbh.sysnat.domain.JavaFieldData;
@@ -47,7 +48,7 @@ public class PatternMergeJavaCommandGeneratorClassLevelTest
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.executable.examples.source.dir", "../sysnat.testcase.generation/src/test/resources/testTestCases");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.languageTemplateContainer.source.dir", 
 		                                              "../sysnat.testcase.generation/src/test/java/com/iksgmbh/sysnat/test/testTemplateContainers");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		GenerationRuntimeInfo.getInstance();
 	}
 	
@@ -58,7 +59,7 @@ public class PatternMergeJavaCommandGeneratorClassLevelTest
 		String result = cut.buildJavaFileName(new Filename("./src/test/resources/testTestCases/SubFolderTestApplication/Login/Test1.nlxx")).value;
 		
 		// assert
-		assertEquals("Name of java file", "subfoldertestapplication/login/Test1Test.java", result);
+		assertEquals("Name of java file", "SubFolderTestApplication/Login/Test1Test.java", result);
 	}
 	
 	@Test
@@ -227,7 +228,7 @@ public class PatternMergeJavaCommandGeneratorClassLevelTest
 		assertEquals("Instruction file number", 1, result.size());
 		
 		final Filename key = result.keySet().iterator().next();
-		assertEquals("Filename", "complexinstructiontestapplication//ComplexInstructionSequenzTest.java", key.value);
+		assertEquals("Filename", "ComplexInstructionTestApplication//ComplexInstructionSequenzTest.java", key.value);
 		
 		final List<JavaCommand> javaCommands = result.get(key);
 		assertEquals("number of commands", 5, javaCommands.size());

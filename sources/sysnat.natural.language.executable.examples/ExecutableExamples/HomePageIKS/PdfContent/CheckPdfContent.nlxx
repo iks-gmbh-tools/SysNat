@@ -1,4 +1,5 @@
 XXID:  <filename>   # This Executable Example will be named as its file
+Autor = Reik Oberrath
 
 Test-Phase: Arrange    
 
@@ -8,11 +9,22 @@ Click link "Alle Fachartikel zeigen".
 Test-Phase: Act
 
 Click link "IKS Software zum Anfassen Gibt es so etwas".
-The downloaded PDF is saved as <Fachartikel Software zum Anfassen>.  # Here a Dynamic Test Object (DTO) is created.
+The downloaded PDF is saved as <Fachartikel Software zum Anfassen.pdf>.  # Here a Dynamic Test Object (DTO) is created.
 Close PDF window "IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf".
 
 Test-Phase: Assert
 
-Does PDF 'Fachartikel Software zum Anfassen' consists of "8" page(s)?  # Here is the DTO used
-Does PDF 'Fachartikel Software zum Anfassen' match the validation rules in "SoftwareZumAnfassenContentDescription.validation"?
-Does PDF 'Fachartikel Software zum Anfassen' contain "Abb. 3:"?
+Does document 'Fachartikel Software zum Anfassen.pdf' consists of "8" page(s)?  # Here is the DTO used
+
+# DocVal Text Search Examples
+Does document 'Fachartikel Software zum Anfassen.pdf' contain the sequence "Literatur & Links"?
+Does document 'Fachartikel Software zum Anfassen.pdf' match the validation rules in "SoftwareZumAnfassenContentDescription.nldocval"?
+
+# DocVal Structure Comparison Examples
+Does structure of document 'Fachartikel Software zum Anfassen.pdf' in assumption of structure information from "PdfStructureFullInfo.dat" match structure "Structure1"?
+Does structure of document 'Fachartikel Software zum Anfassen.pdf' in assumption of structure information from "PdfStructurePartsOnly.dat" match content of text file "ExpectedPdfStructure.txt"?
+
+# DocVal Whole Content Comparison Examples
+Does content of document 'Fachartikel Software zum Anfassen.pdf' match the content-comparison rules in "PDFCompare.nldocval"?
+Does content of document 'Fachartikel Software zum Anfassen.pdf' and the one of document "ExpectedDownload.pdf" match exactly?
+

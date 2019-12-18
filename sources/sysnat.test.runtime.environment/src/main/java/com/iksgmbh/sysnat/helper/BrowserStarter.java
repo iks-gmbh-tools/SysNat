@@ -70,25 +70,25 @@ public class BrowserStarter
     {
       closeCurrentUI();
       
-      if (SysNatConstants.BrowserType.FIREFOX.equals(executionInfo.getBrowserTypeToUse()))
+      if (SysNatConstants.BrowserType.FIREFOX.equals(executionInfo.getTestBrowserType()))
       {
-         initFireFoxWebDriver();
+         initFirefoxWebDriver();
       }
-      else if (SysNatConstants.BrowserType.CHROME == executionInfo.getBrowserTypeToUse())
+      else if (SysNatConstants.BrowserType.CHROME == executionInfo.getTestBrowserType())
       {
          initChromeWebDriver();
       } 
-      else if (SysNatConstants.BrowserType.IE == executionInfo.getBrowserTypeToUse())
+      else if (SysNatConstants.BrowserType.IE == executionInfo.getTestBrowserType())
       {
          initInternetExplorerWebDriver();
       }
-      else if (SysNatConstants.BrowserType.FIREFOX_45_9 == executionInfo.getBrowserTypeToUse())
+      else if (SysNatConstants.BrowserType.FIREFOX_45_9 == executionInfo.getTestBrowserType())
       {
          initFireFoxWeb_45_9_Driver();
       }
       else 
       {
-         throw new SysNatException("Unknown browser type: '" + executionInfo.getBrowserTypeToUse().name() + "'.");
+         throw new SysNatException("Unknown browser type: '" + executionInfo.getTestBrowserType().name() + "'.");
       }
       
       webDriver.manage().window().maximize();
@@ -99,12 +99,14 @@ public class BrowserStarter
       System.out.println("Initializing Internet Explorer web driver...");
 
       final InternetExplorerOptions options = new InternetExplorerOptions();
-      options.withInitialBrowserUrl("www.iks-gmbh.com");
       options.ignoreZoomSettings();
       options.introduceFlakinessByIgnoringSecurityDomains();
-      //options.withAttachTimeout(5, TimeUnit.SECONDS );
-      //options.requireWindowFocus();
       //options.enableNativeEvents();
+      //options.requireWindowFocus();
+
+      //options.takeFullPageScreenshot();
+      //options.withInitialBrowserUrl("www.iks-gmbh.com");
+      //options.withAttachTimeout(5, TimeUnit.SECONDS );
       //options.setPageLoadStrategy(PageLoadStrategy.EAGER);
       //options.destructivelyEnsureCleanSession();
       
@@ -113,9 +115,8 @@ public class BrowserStarter
           //System.setProperty("java.net.preferIPv4Stack", "true");
          System.setProperty("webdriver.ie.driver", getExecutable("sysnat.webdriver.executable.ie"));
          webDriver = new InternetExplorerDriver(options);
-         //webDriver.switchTo().defaultContent();
       } else {
-         throw new RuntimeException("Non-Windows systems not yet implemented.");
+         throw new RuntimeException("Non-Windows systems not yet supported.");
       }
    }
 
@@ -141,14 +142,13 @@ public class BrowserStarter
 
 		if (executionInfo.isOS_Windows()) {
 			System.setProperty("webdriver.chrome.driver", getExecutable("sysnat.webdriver.executable.chrome"));
-			// webDriver = new ChromeDriver(cap); does also not work :-)
 			webDriver = new ChromeDriver(options);
 		} else {
-			throw new RuntimeException("Non-Windows systems not yet implemented.");
+			throw new RuntimeException("Non-Windows systems not yet suppoerted.");
 		}
 	}
 
-   private void initFireFoxWebDriver() throws MalformedURLException 
+   private void initFirefoxWebDriver() throws MalformedURLException 
    {
       System.out.println("Initializing Firefox web driver using geckodriver...");
 
@@ -162,7 +162,6 @@ public class BrowserStarter
          System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
          System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
          webDriver = new FirefoxDriver(firefoxOptions);
-         
       } else {
          throw new RuntimeException("Non-Windows systems not yet supported.");
       }
@@ -181,9 +180,8 @@ public class BrowserStarter
          System.setProperty("webdriver.gecko.driver", getExecutable("sysnat.webdriver.executable.firefox_45_9.gecko"));
          System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "false");
          webDriver = new FirefoxDriver(firefoxOptions);
-         
       } else {
-         throw new RuntimeException("Non-Windows systems not yet implemented.");
+         throw new RuntimeException("Non-Windows systems not yet supported.");
       }
    }
 

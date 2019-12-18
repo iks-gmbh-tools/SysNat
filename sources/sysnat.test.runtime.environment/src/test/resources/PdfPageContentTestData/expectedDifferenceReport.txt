@@ -1,0 +1,14 @@
+Differences between
+Doc1: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_A.pdf (Number of pages: 4)
+and
+Doc2: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_B.pdf (Number of pages: 4)
+--------------------------------------------------------------------
+1. Difference:
+Doc1, Page 2, Line 2 : [Two]
+Doc2, Page 2, Line 2 : [2]
+2. Difference:
+Doc1, Page 2, Line 5 : [Five]
+Doc2, Page 2, Line 5 : [5]
+3. Difference:
+Doc1, Page 3, Line 3 : [Green]
+Doc2, Page 3, Line 3 : [Green and]

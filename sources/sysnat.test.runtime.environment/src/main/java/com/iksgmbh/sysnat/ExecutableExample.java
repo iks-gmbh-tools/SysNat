@@ -38,18 +38,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException.SkipReason;
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.exception.UnexpectedResultException;
 import com.iksgmbh.sysnat.common.exception.UnsupportedGuiEventException;
+import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.helper.HtmlLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.ResultLaunchOption;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.SysNatTestData;
@@ -65,14 +70,19 @@ import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 import com.iksgmbh.sysnat.testresult.archiving.SysNatTestResultArchiver;
 
 /**
- * Mother of all test classes.
+ * Mother of all test classes that stores context information about the currentlx executed test.
  * 
- * All technical but technological unspecific stuff belongs in here.
+ * All technical but technologically unspecific stuff belongs in here.
+ * 
+ * It knows the GuiControl and is therefore used by the PageObjects to trigger gui events.
+ * It is also used by the LanguageTemplateContainers, e.g. to access test data.
  * 
  * @author Reik Oberrath
  */
 abstract public class ExecutableExample
 {
+	private static final ResourceBundle ERR_MSG_BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
+
 	public static final String SMILEY_FAILED = "&#x1F61E;";
 	public static final String SMILEY_WRONG = "&#x1F612;";
 	public static final String SMILEY_OK = "&#x1F60A;";
@@ -97,7 +107,7 @@ abstract public class ExecutableExample
 	private String bddKeyword = "";
 	private String behaviourID;
 
-
+	// abstract methods
     abstract public void executeTestCase();
     abstract public String getTestCaseFileName();
     abstract public Package getTestCasePackage();
@@ -109,6 +119,7 @@ abstract public class ExecutableExample
 		{
 			boolean ok = initTestEnvironment();
 			if ( ! ok ) {
+				System.err.println("Test application could not be started or test environment failed to be initialized correctly.");
 				System.exit(1);
 			}
 		} else {
@@ -135,11 +146,8 @@ abstract public class ExecutableExample
 			setGuiController(new SeleniumGuiController());
 			executionInfo.setGuiController( getGuiController() );
 			boolean applicationStarted = false;
-			try {
-				applicationStarted = login();
-			} catch (Exception e) {
-				return false;
-			}
+			applicationStarted = login();
+			if ( ! applicationStarted ) return false;
     		executionInfo.setApplicationStarted(applicationStarted);
 			PopupHandler.setTestCase(this);
 		} else {
@@ -362,8 +370,8 @@ abstract public class ExecutableExample
     	clickElement(id);
     }
     
-    public void clickButton(String id, int timeOutInSeconds) {
-    	clickElement(id, timeOutInSeconds);
+    public void clickButton(String id, int timeOutInMillis) {
+    	clickElement(id, timeOutInMillis);
     }
     
 
@@ -383,31 +391,53 @@ abstract public class ExecutableExample
     public String getTextForId(String id) {
     	return getGuiController().getText(id);
     }
-
-    public void clickLink(String id, String stepName) {
-        clickLink(id);
-    }
     
     private boolean login() 
     {
-    	boolean applicationStarted;
-    	if ("false".equalsIgnoreCase( System.getProperty("sysnat.dummy.test.run"))) 
-    	{
-    		final TestApplication testApplication = executionInfo.getTestApplication();
-    		applicationStarted = getGuiController().init(testApplication.getStartParameterValue());
-    		getApplicationSpecificLanguageTemplates().doLogin(testApplication.getLoginParameter());
-    	} else {
-    		System.out.println("This is a dummy test run!");
-    		executionInfo.setApplicationStarted(true);
-    		applicationStarted = true;
-    	}
+		final TestApplication testApplication = executionInfo.getTestApplication();
+		String startParam = testApplication.getStartParameterValue();
+		boolean applicationStarted = getGuiController().init(startParam);
+		
+		if (applicationStarted) 
+		{
+	    	if ("false".equalsIgnoreCase( System.getProperty("sysnat.dummy.test.run"))) 
+	    	{
+	    		getApplicationSpecificLanguageTemplates().doLogin(testApplication.getLoginParameter());
+	    	} 
+	    	else 
+	    	{
+	    		System.err.println("ATTENSION: This is a dummy test run!");
+	    		executionInfo.setApplicationStarted(true);
+	    		applicationStarted = true;
+	    	}
+		} 
+		else 
+		{
+			String errorMessage = ERR_MSG_BUNDLE.getString("AppNotAvailable").replace("XY", startParam);
+			String hintMessage = ERR_MSG_BUNDLE.getString("AppNotAvailableHint");
+			ErrorPageLauncher.doYourJob(errorMessage, hintMessage,
+					                    ERR_MSG_BUNDLE.getString("InitialisationError"));
+		}
+    	
     	return applicationStarted;
     }
 	
-	
-    public void clickLink(String id) {
-        getGuiController().clickLink(id);
+    public void clickLink(String valueCandidate)
+    {
+    	String value = getTestDataValue(valueCandidate);
+    	getGuiController().clickLink(value);
     }
+	  
+    public void clickLinkIfPossible(String valueCandidate)
+    {
+       try {
+          clickLink(valueCandidate);
+       } catch (UnsupportedGuiEventException e) {
+    	   addCommentToReport(e.getMessage());
+       } catch (SysNatException e) {
+          // ignore this action
+       }
+    } 
 
     public void chooseFromComboBoxByIndex(String id, int index) {
     	getGuiController().selectComboboxEntry(id, index);
@@ -417,20 +447,20 @@ abstract public class ExecutableExample
     	getGuiController().selectComboboxEntry(id, value);
     }
     
-    public void clickElement(final String elementAsString, int timeoutInSeconds)
+    public void clickElement(final String elementAsString, int timeoutInMillis)
     {
-    	String errMsg = getGuiController().clickElement(elementAsString, timeoutInSeconds);
+	    String elementText = getTestDataValue(elementAsString);
+	    //clickElement(elementText);
+    	String errMsg = getGuiController().clickElement(elementAsString, timeoutInMillis);
 		if (errMsg != null) {
 			failWithMessage(errMsg);
 		}
+		addReportMessage("Es wurde auf <b>" + elementText + "</b> geklickt.");
     }
     
     public void clickElement(final String elementAsString)
     {
-    	String errMsg = getGuiController().clickElement(elementAsString);
-		if (errMsg != null) {
-			failWithMessage(errMsg);
-		}
+    	clickElement(elementAsString, executionInfo.getDefaultGuiElementTimeout());
     }
 
     public boolean isElementReadyToUse(String elementId) {
@@ -545,7 +575,8 @@ abstract public class ExecutableExample
 	
 	public void downloadPdf() 
 	{
-		boolean isPdfDisplayedInBrowserTab = waitUntilPdfGenerationIsFinished();
+		int numberOfOpenBrowserFrames = guiController.getNumberOfOpenApplicationWindows();
+		boolean isPdfDisplayedInBrowserTab = waitUntilPdfGenerationIsFinished(numberOfOpenBrowserFrames);
 		if (isPdfDisplayedInBrowserTab)  // PDF is shown in browser tab, now download it
 		{
 			int numberOfPDFs = SysNatFileUtil.findDownloadFiles("PDF").size();
@@ -558,38 +589,38 @@ abstract public class ExecutableExample
 		}
 	}
 	
-	private boolean waitUntilPdfGenerationIsFinished() 
+	private boolean waitUntilPdfGenerationIsFinished(int originalNumberOfBrowserWindows) 
 	{
 		long startTime = new Date().getTime();
-		int secondCounter = 0;
 		boolean tryAgain = true;
+		long waitPeriodInSeconds = 0;
 
-		while (tryAgain) 
-		{
-			try 
-			{
-				getGuiController().switchToLastWindow();
-				//System.err.println(guiController.getCurrentlyActiveWindowTitle());
+		while (tryAgain) {
+			try {
+				int numberOfBrowserFrames = getGuiController().getNumberOfOpenApplicationWindows();
+				int numberOfOpenTabs = ((SeleniumGuiController)getGuiController()).getNumberOfOpenTabs();
+				if (originalNumberOfBrowserWindows + 1 == numberOfBrowserFrames) {
+					getGuiController().switchToLastWindow();
+				}
 				boolean isDownloadButtonAvailable = getGuiController().isElementAvailable("download");
-				int numberOfOpenTabs = getGuiController().getNumberOfOpenTabs();
-				if (numberOfOpenTabs == 2 && isDownloadButtonAvailable) {
+				if ((numberOfOpenTabs == 2 || originalNumberOfBrowserWindows + 1 == numberOfBrowserFrames)
+				        && isDownloadButtonAvailable) {
 					return true;
 				}
 			} catch (Exception e) {
 				// do nothing
 			}
-			
-			secondCounter++;
+
 			sleep(1000);
-	    	if (secondCounter > executionInfo.getDefaultPrintTimeout()) {
-	    		addReportMessage("<b>Der Druckversuch wurde nach " + executionInfo.getDefaultPrintTimeout() + " Sekunden abgebrochen!</b>");
-	    		return false;
-	    	}
+			waitPeriodInSeconds = (new Date().getTime() - startTime) / 1000;
+			if (waitPeriodInSeconds > executionInfo.getDefaultPrintTimeout()) {
+				addReportMessage(
+				        "<b>Der Druckversuch wurde nach " + waitPeriodInSeconds + " Sekunden abgebrochen!</b>");
+				return false;
+			}
 		}
-    	
-	    long waitPeriodInSeconds = (new Date().getTime() - startTime) / 1000;
-	    addReportMessage("//Dieser Test musste " + waitPeriodInSeconds + " Sekunden auf den Druck warten.");
-	    return false;
+		
+		return false;
 	}
 	
 	public void setTickToCheckboxIfPossible(String checkboxId) 
@@ -664,7 +695,7 @@ abstract public class ExecutableExample
 				if (executionInfo.getNumberOfAllExecutedXXs() == 0) {
 					System.out.println("No test executed. Check execution filter and executable examples.");
 				} else {
-					System.out.println("Done with executing " + executionInfo.getReportName() + ".");
+					System.out.println("Done with executing " + executionInfo.getTestReportName() + ".");
 				}
 		    	
 	    		if (executionInfo.getGuiController() != null)  {
@@ -686,7 +717,8 @@ abstract public class ExecutableExample
         final String fullOverviewReportFilename = ReportCreator.getFullOverviewReportFilename();
         SysNatFileUtil.writeFile(fullOverviewReportFilename, fullReport);
   		
-        if ("true".equalsIgnoreCase( System.getProperty("sysnat.autolaunch.report"))) {    		
+        ResultLaunchOption resultLaunchOption = ExecutionRuntimeInfo.getInstance().getResultLaunchOption();
+		if (resultLaunchOption == ResultLaunchOption.Testing || resultLaunchOption == ResultLaunchOption.Both) {
 			HtmlLauncher.doYourJob( fullOverviewReportFilename );
     	}
           
@@ -694,7 +726,7 @@ abstract public class ExecutableExample
         final String shortOverview = ReportCreator.createShortOverviewReport();
         SysNatFileUtil.writeFile( ReportCreator.getShortOverviewReportFilename(), shortOverview);
           
-         if (executionInfo.areResultsToArchive()) {
+         if (executionInfo.isTestReportToArchive()) {
               SysNatTestResultArchiver.doYourJob( executionInfo.getReportFolder() );
          } else {
                 System.out.println("Archiving test results is omitted.");
@@ -702,7 +734,7 @@ abstract public class ExecutableExample
          
          // save executed Scripts to document what exactly has been executed for further analysis
          copyExecutedNLFilesToReportDir();
-         String zipFileName = executionInfo.getReportName() + "-" +
+         String zipFileName = executionInfo.getTestReportName() + "-" +
         		              executionInfo.getStartPointOfTimeAsFileStringForFileName() + ".zip";
          
          SysNatFileUtil.createZipFile(executionInfo.getReportFolder(), 
@@ -977,7 +1009,7 @@ abstract public class ExecutableExample
 		return loadedDatasets;
 	}
 	
-	protected TestDataImporter getTestDataImporter() 
+	public TestDataImporter getTestDataImporter() 
 	{
 		if (testDataImporter == null) {
 			testDataImporter = new TestDataImporter(executionInfo.getTestdataDir());
@@ -1065,6 +1097,11 @@ abstract public class ExecutableExample
 	
 	public String getBehaviorID() {
 		return behaviourID;
+	}
+	
+	
+	public List<String> getNlxxFilePathAsList() {
+		return new ArrayList<>();  // to be overwritten !
 	}
 
 }

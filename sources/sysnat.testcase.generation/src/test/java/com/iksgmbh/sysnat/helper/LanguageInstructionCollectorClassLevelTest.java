@@ -23,12 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.LanguageInstructionPattern;
 
@@ -40,7 +41,7 @@ public class LanguageInstructionCollectorClassLevelTest
 		GenerationRuntimeInfo.reset();
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.executableExample.source.dir", "../sysnat.testcase.generation/src/test/resources/testTestCases");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.executable.examples.source.dir", "../sysnat.testcase.generation/src/test/resources/testTestCases");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		GenerationRuntimeInfo.getInstance();
 	}
 

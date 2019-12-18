@@ -43,7 +43,7 @@ public class XXGroupBuilderClassLevelTest
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.testdata.import.directory", "../sysnat.testcase.generation/src/test/resources/testData");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("ApplicationUnderTest", "TestParameterTestApplication");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.properties.path", "../sysnat.testcase.generation/src/test/resources/testData/TestParameterTestApplication");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.testcase.generation/src/test/resources/testData/TestParameterTestApplication/TestParameterTestApplication.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.testcase.generation/src/test/resources/testData/TestParameterTestApplication/TestParameterTestApplication.config");
 		GenerationRuntimeInfo.getInstance();
 	}
 
@@ -62,7 +62,7 @@ public class XXGroupBuilderClassLevelTest
 		// arrange
 		assertEquals("Number of testcases", 4, javaCommandCollection.size());
 
-		final String toFind = "firstFile/behaviourid/XXId2_Test.java";
+		String toFind = "firstFile/BehaviourId/XXId2_Test.java";
 		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"BehaviourId\");", getCommandListFor(javaCommandCollection, toFind).get(0).value);
 		assertEquals("Java Command", "templateContainer.prepareOnce1();", getCommandListFor(javaCommandCollection, toFind).get(1).value);
 		assertEquals("Java Command", "templateContainer.prepareOnce2();", getCommandListFor(javaCommandCollection, toFind).get(2).value);
@@ -77,10 +77,11 @@ public class XXGroupBuilderClassLevelTest
 		assertEquals("Java Command", "templateContainer.cleanupOnce1();", getCommandListFor(javaCommandCollection, toFind).get(11).value);
 		assertEquals("Java Command", "templateContainer.cleanupOnce2();", getCommandListFor(javaCommandCollection, toFind).get(12).value);
 		
-		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Feature\");", getCommandListFor(javaCommandCollection, "secondFile/featureid/XXId1_Test.java").get(0).value);
-		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"FeatureId\");", getCommandListFor(javaCommandCollection, "secondFile/featureid/XXId1_Test.java").get(1).value);
-		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Scenario\");", getCommandListFor(javaCommandCollection, "secondFile/featureid/XXId1_Test.java").get(2).value);
-		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId1\");", getCommandListFor(javaCommandCollection, "secondFile/featureid/XXId1_Test.java").get(3).value);
+		toFind = "secondFile/FeatureId/XXId1_Test.java";
+		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Feature\");", getCommandListFor(javaCommandCollection, toFind).get(0).value);
+		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"FeatureId\");", getCommandListFor(javaCommandCollection, toFind).get(1).value);
+		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Scenario\");", getCommandListFor(javaCommandCollection, toFind).get(2).value);
+		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId1\");", getCommandListFor(javaCommandCollection, toFind).get(3).value);
 	}
 
 	@Test
@@ -145,6 +146,8 @@ public class XXGroupBuilderClassLevelTest
 	public void throwsExceptionForTwoXXWithoutGroupDeclaration() 
 	{
 		// arrange
+		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.report.dir", "target");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY, "TestReport");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.dummy.test.run", "true");
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw = new HashMap<>();
 		javaCommandCollectionRaw.put(new Filename("aFile"), createCommandListWithTwoXXWithoutGroup());

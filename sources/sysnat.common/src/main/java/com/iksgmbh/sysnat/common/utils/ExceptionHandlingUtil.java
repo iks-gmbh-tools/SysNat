@@ -24,7 +24,7 @@ import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 
 public class ExceptionHandlingUtil 
 {	
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
+	private static final ResourceBundle ERR_MSG_BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
 
 	public static void throwException(final String errorMessage) {
 		System.err.println("ERROR: " + errorMessage);
@@ -104,11 +104,9 @@ public class ExceptionHandlingUtil
                         .append(System.getProperty("line.separator"))
                         .append(System.getProperty("line.separator"))
                         .append(errorData[2]);
+			
 			System.err.println(errorMessage.toString());			
-			
-			ErrorPageLauncher.doYourJob(errorData[3], errorData[4], getErrorPageTitle());
-
-			
+			ErrorPageLauncher.doYourJob(errorData[3], errorData[4], ERR_MSG_BUNDLE.getString("GenerationError"));
 			throw new SysNatException(errorCode);
 
 		case JAVA_CODE_VERIFICATION__UNKNOWN_VARIABLE_NAME:
@@ -128,10 +126,6 @@ public class ExceptionHandlingUtil
 			throwException("Unknown errorCode " + errorCode);
 			break;
 		} 
-	}
-
-	private static String getErrorPageTitle() {
-		return "SysNat " + BUNDLE.getString("GenerationError");
 	}
 
 }

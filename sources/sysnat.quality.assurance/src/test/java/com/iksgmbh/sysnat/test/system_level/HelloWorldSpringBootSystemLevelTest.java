@@ -27,7 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
-import com.iksgmbh.sysnat.SysNatTestingExecutor;
+import com.iksgmbh.sysnat.SysNatExecutor;
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
@@ -135,9 +135,18 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 		
 		// assert
 		int expectedNumberSuccessfullyExecutedTests = 3;
-		assertTrue("Unexpected number of successful test cases found in report.", 
-				     report.contains( getHtmlReportSnippet(expectedNumberSuccessfullyExecutedTests,
-				    		                               SysNatConstants.GREEN_HTML_COLOR)));
+		String expected = getHtmlReportSnippet(expectedNumberSuccessfullyExecutedTests,
+                                                SysNatConstants.GREEN_HTML_COLOR);
+		boolean ok = report.contains( expected);
+		
+		if ( ! ok ) {
+			System.err.println("Report");
+			System.err.println("----------------------------------");
+			System.err.println(report);
+			System.err.println("----------------------------------");
+			System.err.println("Not found in report: " + expected);
+		}
+		assertTrue("Unexpected number of successful test cases found in report.", ok);
 	}
 
 	@Test
@@ -161,10 +170,10 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 		// act
 		super.setup();
 		SysNatJUnitTestClassGenerator.doYourJob();
-		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();
+		final String result = SysNatExecutor.startMavenCleanCompileTest();
 
 		// assert
-		assertEquals("Maven result", SysNatTestingExecutor.MAVEN_OK, result);
+		assertEquals("Maven result", SysNatExecutor.MAVEN_OK, result);
 		final File reportFile = getFullOverviewOfCurrentReport();
 		final String report = SysNatFileUtil.readTextFileToString(reportFile); 
 		final boolean testResultOk = ! report.contains(ExecutableExample.SMILEY_FAILED) && 

@@ -32,6 +32,7 @@ import org.junit.Test;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 
@@ -55,7 +56,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	public void createsJavaFilesForHelloWorldSpringBoot() throws Exception 
 	{
 		// arrange
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HelloWorldSpringBoot_All.config");
+		GenerationRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HelloWorldSpringBoot_All.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("Environment", "LOCAL");
 		GenerationRuntimeInfo.getInstance();
 		
@@ -78,7 +79,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	{
 		// arrange
 		GenerationRuntimeInfo.reset();
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
+		GenerationRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("Environment", "PRODUCTION");
 		GenerationRuntimeInfo.getInstance();
 		
@@ -111,7 +112,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	public void createsScriptFileForHomePageIKS() throws Exception 
 	{
 		// arrange
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
+		GenerationRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("Environment", "PRODUCTION");
 		GenerationRuntimeInfo.getInstance();
 		
@@ -231,7 +232,7 @@ public class TestcaseGeneration_ModuleLevelTest
 		testInputDir = SysNatFileUtil.findAbsoluteFilePath(testInputDir);
 		GenerationRuntimeInfo.reset();
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.executable.examples.source.dir", testInputDir);
-		GenerationRuntimeInfo.setSysNatSystemProperty("settings.config", testInputDir + "/settings.config");
+		GenerationRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, testInputDir + "/settings.config");
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.properties.path", testInputDir);
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.generation.target.dir", "target/" + appName);
 		GenerationRuntimeInfo.setSysNatSystemProperty("execution.properties", testInputDir + "/execution.properties");

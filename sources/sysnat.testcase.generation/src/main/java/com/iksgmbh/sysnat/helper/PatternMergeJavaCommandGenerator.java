@@ -28,7 +28,6 @@ import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
 import com.iksgmbh.sysnat.common.utils.ExceptionHandlingUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
-import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaCommand;
@@ -185,7 +184,7 @@ public class PatternMergeJavaCommandGenerator
 		userErrorMessage = userErrorMessage.replace("x2", filename);
 		userErrorMessage = userErrorMessage.replace("x3", ExecutionRuntimeInfo.getInstance().getTestApplicationName());
 
-		String testApp = System.getProperty(SysNatLocaleConstants.TESTAPP_SETTING_KEY);
+		String testApp = System.getProperty(SysNatConstants.TEST_APPLICATION_SETTING_KEY);
 		String libraryFilename = System.getProperty("sysnat.help.command.list.file")
 				                 .replace("<testapp>", testApp);
 		String languageTemplatesList = BUNDLE.getString("LanguageTemplatesList");
@@ -445,7 +444,7 @@ public class PatternMergeJavaCommandGenerator
 		result = SysNatStringUtil.cutExtension(result);
 		String simpleName = cutPackageDir(result);
 		String packageDir = cutSimpleName(result);
-		String toReturn = applicationUnderTest.toLowerCase() + "/" 
+		String toReturn = applicationUnderTest + "/" 
 		                  + packageDir + "/" 
 				          + simpleName + filenameSuffix;
 		if (instructionFileIn.value.endsWith(".nlxx")) {
@@ -464,7 +463,7 @@ public class PatternMergeJavaCommandGenerator
 		if (pos == -1) {
 			return "";
 		}
-		return s.substring(0, pos).toLowerCase();
+		return s.substring(0, pos);
 	}
 
 	private String cutPackageDir(String s) 

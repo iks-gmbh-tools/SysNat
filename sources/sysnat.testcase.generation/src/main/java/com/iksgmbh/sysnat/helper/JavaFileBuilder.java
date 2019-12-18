@@ -114,7 +114,7 @@ public class JavaFileBuilder
 		StringBuffer sb = new StringBuffer();
 		scriptMappings.forEach( (simpleName, fullName) -> sb.append(simpleName)
 				                                            .append("=")
-				                                            .append(fullName)
+				                                            .append(pathToLowerCase(fullName, '.'))
 				                                            .append(System.getProperty("line.separator")));
 		String filename = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.nls.lookup.file"));
 		SysNatFileUtil.writeFile(filename, sb.toString().trim());
@@ -232,7 +232,22 @@ public class JavaFileBuilder
 		final List<String> cleanupMethodBlock = getCleanUpMethodBlock(instructionFilename);
 		placeHolderBlocks.put("/* TO BE REPLACED: business cleanup */", cleanupMethodBlock);
 
+		final List<String> nlxxFilepath = getNlxxFilepath(instructionFilename);
+		placeHolderBlocks.put("/* TO BE REPLACED: nlxxFilepath */", nlxxFilepath);
+		
 		return placeHolderBlocks;
+	}
+
+	private List<String> getNlxxFilepath(Filename instructionFilename)
+	{
+		String[] splitResult = instructionFilename.value.split("/");
+		List<String> toReturn = new ArrayList<>();
+
+		for (int i = 0; i<splitResult.length-1; i++) {
+			toReturn.add("toReturn.add(\"" + splitResult[i] + "\");");
+		}
+
+		return toReturn;
 	}
 
 	private List<String> getConstantsBlock(Filename filename) 
@@ -457,14 +472,27 @@ public class JavaFileBuilder
 			toReturn = toReturn.substring(0, toReturn.length()-1);
 		}
 		
-		return toReturn;
+		return toReturn.toLowerCase();
 	}
 
 	private File buildTargetFilename(final Filename instructionFilename) 
 	{
 		String targetDir = System.getProperty("sysnat.generation.target.dir");
 		targetDir = SysNatFileUtil.findAbsoluteFilePath(targetDir);
-		return new File (targetDir,  instructionFilename.value);
+		String filename = pathToLowerCase(instructionFilename);
+		return new File (targetDir.toLowerCase(),  filename);
+	}
+
+	private String pathToLowerCase(final String path, char separator)
+	{
+		int pos = path.lastIndexOf(separator);
+		String filename = path.substring(0, pos).toLowerCase();
+		filename += path.substring(pos);
+		return filename;
+	}
+
+	private String pathToLowerCase(final Filename instructionFilename) {
+		return pathToLowerCase(instructionFilename.value, '/');
 	}
 
 	private List<String> getTestExecutionBlockFor(final Filename instructionFilename) 

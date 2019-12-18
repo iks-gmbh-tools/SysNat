@@ -25,6 +25,31 @@ import org.junit.Test;
 public class SysNatStringUtilClassLevelTest 
 {
 	@Test
+	public void checksPropertyLine() 
+	{
+		// act
+		boolean result1 = SysNatStringUtil.containsLinePropertyDefinition(" abc : xyz ");
+		boolean result2 = SysNatStringUtil.containsLinePropertyDefinition(" abc : xyz : ddd");
+		boolean result3 = SysNatStringUtil.containsLinePropertyDefinition(" abc  xyz ");
+		
+		// assert
+		assertTrue("Line is not a property line", result1);
+		assertFalse("Line must not be a property line", result2);
+		assertFalse("Line must not be a property line", result3);
+	}
+	
+	@Test
+	public void parsesValueFromPropertyLine() 
+	{
+		// act
+		String result = SysNatStringUtil.parseValueFromPropertyLine(" abc : xyz ");
+		
+		// assert
+		assertEquals("value", "xyz", result);
+	}
+	
+	
+	@Test
 	public void separatesStringIntoList() 
 	{
 		// act
@@ -150,6 +175,21 @@ public class SysNatStringUtilClassLevelTest
 		assertEquals("Text2", "", result2);
 	}
 
+	@Test
+	public void extractTextBetweenTwoMarkers() throws Exception 
+	{
+		// arrange
+		final String text = "YYY[abc 123]XXX";
+		final String marker1 = "Y[";
+		final String marker2 = "]X";
+
+		// act
+		final String result = SysNatStringUtil.extractTextBetween(text, marker1, marker2);
+
+		// assert
+		assertEquals("extract", "abc 123", result);
+	}
+	
 	@Test
 	public void replacesCommaInStringAmount() throws Exception 
 	{

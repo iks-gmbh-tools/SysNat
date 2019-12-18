@@ -93,6 +93,7 @@ public class JavaCommandCreator
 	private static String toFieldName(final String value) 
 	{
 		String variableName = SysNatStringUtil.replaceSpacesByUnderscore(value);
+		variableName = SysNatStringUtil.replaceDotsByUnderscore(variableName);
 		return SysNatStringUtil.firstCharToLowerCase(variableName);
 	}
 

@@ -28,7 +28,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
-import com.iksgmbh.sysnat.SysNatTestingExecutor;
+import com.iksgmbh.sysnat.SysNatExecutor;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.helper.ReportCreator;
 import com.iksgmbh.sysnat.test.utils.SysNatTestUtils;
@@ -50,7 +51,7 @@ public class TestExecution_ModuleLevelTest
 		SysNatFileUtil.deleteFolder(EXECUTION_DIR);
 		GenerationRuntimeInfo.reset();
 		System.setProperty("sysnat.dummy.test.run", "true");
-		System.setProperty("sysnat.autolaunch.report", "false");
+		System.setProperty(SysNatConstants.RESULT_LAUNCH_OPTION_SETTING_KEY, "None"); // former: System.setProperty("sysnat.autolaunch.report", "false");
 	}
 		
 	@Test
@@ -59,7 +60,7 @@ public class TestExecution_ModuleLevelTest
 		// arrange
 		final String testAppName = "FakeTestApp";
 		System.setProperty("sysnat.properties.path", TESTDATA_DIR + testAppName);
-		System.setProperty("settings.config", TESTDATA_DIR + testAppName + "/settings.config");
+		System.setProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, TESTDATA_DIR + testAppName + "/settings.config");
 
 		final String testCaseName = "FakeTestCase";
 		final List<String> fileList = new ArrayList<>();
@@ -71,10 +72,10 @@ public class TestExecution_ModuleLevelTest
 		final File expectedClassFile = makeSureThatExpectedClassFileDoesNotExist(testCaseName);
 
 		// act
-		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();
+		final String result = SysNatExecutor.startMavenCleanCompileTest();
 
 		// assert
-		assertEquals("Maven result", SysNatTestingExecutor.MAVEN_OK, result);
+		assertEquals("Maven result", SysNatExecutor.MAVEN_OK, result);
 		assertTrue("Expected class file not found.", expectedClassFile.exists());
 		assertTrue("Result file of test execution not found.", resultFile.exists());
 		assertEquals("Result file content.", "This is the result file of testcase '" + testCaseName + "'.", 
@@ -87,7 +88,7 @@ public class TestExecution_ModuleLevelTest
 		// arrange
 		final String testAppName = "MiniTestApp";
 		System.setProperty("sysnat.properties.path", TESTDATA_DIR + testAppName);
-		System.setProperty("settings.config", TESTDATA_DIR + testAppName + "/settings.config");
+		System.setProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, TESTDATA_DIR + testAppName + "/settings.config");
 		System.setProperty("sysnat.dummy.test.run", "true");
 		
 		final List<String> fileList = new ArrayList<>();
@@ -104,18 +105,26 @@ public class TestExecution_ModuleLevelTest
 				                 "MiniTestScript=com.iksgmbh.sysnat.test.integration.testcase.MiniTestScript");
 		
 		// act
-		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();
+		final String result = SysNatExecutor.startMavenCleanCompileTest();
 
 		// assert
-		assertEquals("Maven result", SysNatTestingExecutor.MAVEN_OK, result);
+		assertEquals("Maven result", SysNatExecutor.MAVEN_OK, result);
 		assertTrue("Expected class file not found.", expectedClassFile.exists());
 		assertTrue("Result file of test execution not found.", resultFile.exists());
 		assertEquals("Result file content.", "This result file is created by 'MiniTestScript'.", 
 				                             SysNatFileUtil.readTextFileToString(resultFile));
 
 		String path = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.report.dir"));
-		File reportFolder = Arrays.asList( new File( path ).listFiles() ).stream().filter(f->f.getName().startsWith("MiniTestCaseTestReport") && f.isDirectory()).findFirst().get();
-		SysNatTestUtils.assertFileExists(reportFolder);
+		List<File> fileFoundInPath = Arrays.asList( new File( path ).listFiles() );
+		File reportFolder = fileFoundInPath.stream()
+                .filter(f->f.getName().startsWith("com-") && f.isDirectory())
+                .findFirst().get();
+		path = reportFolder.getAbsolutePath();
+		fileFoundInPath = Arrays.asList( new File( path ).listFiles() );
+		File resultZipFile = fileFoundInPath.stream()
+				                      .filter(f->f.getName().startsWith("MiniTestCaseTestReport"))
+				                      .findFirst().get();
+		SysNatTestUtils.assertFileExists(resultZipFile);
 		SysNatTestUtils.assertFileExists( new File(reportFolder, ReportCreator.FULL_REPORT_RESULT_FILENAME) );
 		SysNatTestUtils.assertFileExists( new File(reportFolder, ReportCreator.SHORT_REPORT_RESULT_FILENAME) );
 		final File detailReportFile = new File(reportFolder, "MiniTestCase/" + ReportCreator.DETAIL_RESULT_FILENAME);

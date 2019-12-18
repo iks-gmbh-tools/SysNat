@@ -1,0 +1,5 @@
+Document Structure for document 'C:\Users\rob\Downloads\IKS-Software-zum-Anfassen-Gibt-es-so-etwas':
+Page 1: SummaryPart_1
+Page 2-7: MiddlePart_2 (MiddlePages)
+Page 8: AuthorPart_3
+Summary: 3 parts with a total of 8 pages.

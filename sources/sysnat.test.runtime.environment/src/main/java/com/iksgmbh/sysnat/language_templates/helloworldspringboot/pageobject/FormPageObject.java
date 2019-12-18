@@ -18,8 +18,8 @@ package com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject;
 import java.util.HashMap;
 import java.util.List;
 
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
-import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
 /**
@@ -31,9 +31,9 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
  */
 public class FormPageObject extends PageObject
 {	
-	public FormPageObject(LanguageTemplateBasics aLanguageTemplateBasics) 
+	public FormPageObject(ExecutableExample executableExample) 
 	{
-		this.languageTemplateBasics = aLanguageTemplateBasics;
+		this.executableExample = executableExample;
 		this.idMappingCollection = new HashMap<GuiType, HashMap<String, List<String>>>();
 		
 		HashMap<String, List<String>> idMappings = new HashMap<String, List<String>>();
@@ -56,14 +56,7 @@ public class FormPageObject extends PageObject
 
 	@Override
 	public boolean isCurrentlyDisplayed() {
-		return languageTemplateBasics.getExecutableExample().isElementAvailable("btnGreet");
+		return executableExample.isElementAvailable("btnGreet");
 	}
-	
-	@Override
-    public void clickButton(String buttonName)
-    {
-        super.clickButton(buttonName);
-        languageTemplateBasics.resetCurrentPage();
-    }
 	
 }

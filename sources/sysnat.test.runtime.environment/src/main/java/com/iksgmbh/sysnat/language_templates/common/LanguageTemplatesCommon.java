@@ -18,7 +18,6 @@ package com.iksgmbh.sysnat.language_templates.common;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.COMMENT_IDENTIFIER;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.NO_FILTER;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.FROM_FILENAME;
 
 import java.awt.Toolkit;
 import java.io.File;
@@ -231,8 +230,13 @@ public class LanguageTemplatesCommon
 	@LanguageTemplate(value = "Behaviour: ^^")
 	public void declareXXGroupForBehaviour(String aBehaviourID) 
 	{
-		if (aBehaviourID.equals("<filename>"))  {
-			aBehaviourID = executableExample.getTestCaseFileName();
+		if (aBehaviourID.equals(SysNatLocaleConstants.PLACEHOLDER_FILENAME) 
+			|| aBehaviourID.equals(SysNatLocaleConstants.PLACEHOLDER_FILENAME_EN))  
+		{
+			aBehaviourID = executableExample.getTestCasePackage().getName();
+			int pos = aBehaviourID.lastIndexOf('.');
+			aBehaviourID = aBehaviourID.substring(pos+1);
+			aBehaviourID = SysNatStringUtil.firstCharToUpperCase(aBehaviourID);
 		}
 		executableExample.setBehaviorID(aBehaviourID);
 	}
@@ -256,7 +260,8 @@ public class LanguageTemplatesCommon
 			throw new SkipTestCaseException(SkipReason.APPLICATION_TO_TEST);
 		}
 		
-		if (xxid.equals(FROM_FILENAME) || xxid.equals("<filename>"))  {
+		if (xxid.equals(SysNatLocaleConstants.PLACEHOLDER_FILENAME) || 
+			xxid.equals(SysNatLocaleConstants.PLACEHOLDER_FILENAME_EN))  {
 			xxid = executableExample.getTestCaseFileName();
 		}
 		
@@ -272,7 +277,8 @@ public class LanguageTemplatesCommon
 		executionInfo.countAsExecuted(xxid, executableExample.getBehaviorID());
 		executionInfo.countExistingXX();
 		
-		if ( ! executionInfo.isApplicationStarted() ) {
+		if ( ! executionInfo.isApplicationStarted() ) 
+		{
 			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
 			                          + "</b> steht derzeit nicht zur Verfügung!");
 		}
@@ -285,15 +291,15 @@ public class LanguageTemplatesCommon
 	{
 		boolean executeThisTest = true;
 		final List<String> execFilterOfExecutableExample = executableExample.buildExecutionFilterList(executionFilterOfThisTestCase);
-		execFilterOfExecutableExample.addAll(executableExample.getPackageNames());
+		execFilterOfExecutableExample.addAll(executableExample.getNlxxFilePathAsList());
+		execFilterOfExecutableExample.forEach(possibleFilter -> executionInfo.addFilterToCollection(possibleFilter));
 		final List<String> execFilterToExecute = executionInfo.getExecutionFilterList();
-		if (execFilterToExecute.size() > 1 || ! execFilterToExecute.get(0).equalsIgnoreCase(NO_FILTER)) {
+		if (execFilterToExecute.size() > 1 || 
+			(execFilterToExecute.size() == 1 && ! execFilterToExecute.get(0).equalsIgnoreCase(NO_FILTER))) 
+		{
 			executeThisTest = isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 		}
 		
-		for (String filter : execFilterOfExecutableExample) {
-			executionInfo.addFilterToCollection(filter);
-		}	
 		
 		if (! executeThisTest) {
 			executionInfo.uncountAsExecuted(executableExample.getXXID().trim()); 

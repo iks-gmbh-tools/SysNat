@@ -45,7 +45,7 @@ import com.iksgmbh.sysnat.helper.XXGroupBuilder;
  */
 public class SysNatJUnitTestClassGenerator 
 {
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
+	private static final ResourceBundle ERR_MSG_BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
 
 	/**
 	 * Reads natural language instruction files and transforms the instructions given in a domain language
@@ -113,14 +113,10 @@ public class SysNatJUnitTestClassGenerator
 					                   + "</b> there are no Executable Examples available.", 
 					                   "Please, write nlxx files in folder "
 					                   + "<b>sysnat.natural.language.executable.examples/ExecutableExamples/" 
-					                   + testApp + "</b>.", getErrorPageTitle());
+					                   + testApp + "</b>.", ERR_MSG_BUNDLE.getString("InitialisationError"));
 			return false;
 		}
 		return true;
-	}
-	
-	private String getErrorPageTitle() {
-		return "SysNat " + BUNDLE.getString("InitialisationError");
 	}
 
 }

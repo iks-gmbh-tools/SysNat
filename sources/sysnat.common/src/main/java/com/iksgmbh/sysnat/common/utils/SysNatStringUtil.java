@@ -22,12 +22,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.iksgmbh.sysnat.common.exception.SysNatException;
+
 public class SysNatStringUtil 
 {
 	final static char DECIMAL_SEPARATOR = ((DecimalFormat) DecimalFormat.getInstance()).getDecimalFormatSymbols().getDecimalSeparator();
 	
 	public static String replaceSpacesByUnderscore(final String s) {
 		return s.replaceAll(" ", "_");
+	}
+
+	public static String replaceDotsByUnderscore(final String s) {
+		return s.replaceAll("\\.", "_");
 	}
 	
 	public static String firstCharToLowerCase(final String s) {
@@ -42,15 +48,18 @@ public class SysNatStringUtil
 		if (executionFilterAsString != null)  
 		{
 			String[] splitResult = executionFilterAsString.split(",");
-			if (splitResult.length == 1 && splitResult[0].trim().length() == 0) {				
-				toReturn.add(NO_FILTER);
-				executionFilterAsString = NO_FILTER;
-			} else 
+			if (splitResult.length == 1 
+				&& (splitResult[0].trim().length() == 0) || splitResult[0].trim().equals(NO_FILTER)) 
+			{				
+				return toReturn;
+			} 
+			else 
 			{				
 				for (String filter : splitResult) 
 				{
 					filter = filter.replace('_', ' ');
-					if (SysNatLocaleConstants.FROM_PACKAGE.equals(filter)) 
+					if (SysNatLocaleConstants.PLACEHOLDER_PACKAGE.equals(filter) ||
+						SysNatLocaleConstants.PLACEHOLDER_PACKAGE_EN.equals(filter)) 
 					{
 						String[] splitResult2 = xxid.split("_");
 						for (String filter2 : splitResult2) {
@@ -185,6 +194,14 @@ public class SysNatStringUtil
 				.replaceAll("[\\W]&&[^.]", "");
 	}
 
+	public static String extractTextBetween(String s, String start, String end) 
+	{
+		int pos1 = s.indexOf(start) + start.length();
+		int pos2 = s.indexOf(end);
+		return s.substring(pos1, pos2);
+	}
+
+	
 	public static String extraxtTrailingDigits(String s) 
 	{
 		String toReturn = "";
@@ -232,10 +249,14 @@ public class SysNatStringUtil
 		return sb.toString().trim();
 	}
 
-	public static List<String> toListOfLines(String text)
+	public static List<String> toListOfLines(String text) {
+		return toListOfLines(text, System.getProperty("line.separator"));
+	}
+	
+	public static List<String> toListOfLines(String text, String separator)
 	{
 		final List<String> toReturn = new ArrayList<String>();
-		String[] splitResult = text.split(System.getProperty("line.separator"));
+		String[] splitResult = text.split(separator);
 		for (String line : splitResult) {
 			toReturn.add(line);
 		}
@@ -334,7 +355,24 @@ public class SysNatStringUtil
 		toReturn.add(listAsString);
 		
 		return toReturn;
+	}
+
+	public static String parseValueFromPropertyLine(String line)
+	{
+		int pos = line.indexOf(":");
+		if (pos == -1) {
+			throw new SysNatException("Line '" + line + "' does not represent a property line.");
+		}
+		return line.substring(pos+1).trim();
 	}	
 
+	public static boolean containsLinePropertyDefinition(String line)
+	{
+		final String[] splitResult = line.split(":");
+		return splitResult.length == 2;
+	}
 
+	public static String firstCharToUpperCase(String s) {
+		return s.substring(0,1).toUpperCase() + s.substring(1);
+	}
 }

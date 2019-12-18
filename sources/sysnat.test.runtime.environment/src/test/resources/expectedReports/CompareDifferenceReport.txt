@@ -1,0 +1,19 @@
+The data file <b>PDFCompare.nldocval</b> has been imported with <b>1</b> datasets.
+Differences between
+Doc1: C:\SysNat\sources\sysnat.test.runtime.environment\..\sysnat.test.runtime.environment\src\test\resources\validation\CompareTest.pdf (Number of pages: 1)
+and
+Doc2: C:\SysNat\sources\sysnat.test.runtime.environment\..\sysnat.test.runtime.environment\src\test\resources\validation\ShouldBeTest.pdf (Number of pages: 1)
+--------------------------------------------------------------------
+There are following configurations defined to ignore:
+1 Date Format(s)
+1 substring(s)
+1 prefix(es)
+3 line definition(s)
+--------------------------------------------------------------------
+1. Difference:
+Doc1, Page 1, Line 2 : [validates this file by comparing it with a Should-Be file.]
+Doc2, Page 1, Line 2 : [validates another file by comparing it with this file.]
+2. Difference:
+Doc1, Page 1, Line 8 : [This line containing the date value 10.10.2000 cannot be ignored by a DateFormatRule]
+Doc2, Page 1, Line 8 : [This line containing the date value 10.10.2022 cannot be ignored by a DateFormatRule]
+Does content of <b>CompareTest.pdf</b> and content of <b>ShouldBeTest.pdf</b> match when applying <b>PDFCompare.nldocval</b>? - Nein! &#x1F612;

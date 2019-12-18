@@ -64,9 +64,9 @@ public abstract class SysNatTestCase extends ExecutableExample
 			final File detailReportFile = new File(detailReportFilename);
 			detailReportFile.getParentFile().mkdirs();
 			SysNatFileUtil.writeFile(detailReportFile, ReportCreator.createSingleTestReport(this));
-			String totalTimePassed = executionInfo.getTotalTimePassed();
+			String totalTimePast = executionInfo.getTotalTimePast();
 
-			System.out.println("Time passed: " + testStatistics.duration + " (this test), " + totalTimePassed + " (total).");
+			System.out.println("Time past: " + testStatistics.duration + " (this test), " + totalTimePast + " (total).");
 		} 
 		else 
 		{
@@ -102,6 +102,7 @@ public abstract class SysNatTestCase extends ExecutableExample
 			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
 			String message = e.getMessage();
 			int pos = message.indexOf("For documentation on this error, please visit: http://seleniumhq.org");
+			if (pos == -1) failWithMessage(message);
 			failWithMessage(message.substring(0, pos));
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -124,9 +125,9 @@ public abstract class SysNatTestCase extends ExecutableExample
 	
 	@Override
 	public Package getTestCasePackage() {
-		return this.getClass().getPackage();
+		return this.getClass().getPackage();  // these are typically lower case expressions!
 	}
-	
+
 	@Override
 	public boolean doesTestBelongToApplicationUnderTest() {
 		return SysNatTestRuntimeUtil.doesTestBelongToApplicationUnderTest(this);

@@ -33,7 +33,7 @@ public class HtmlLauncher
 		try {
 			final File reportFile = new File(htmlFileAsString);
 			final String pathToHtmlFile = reportFile.getCanonicalPath();
-			final String browserTypeToUse = System.getProperty("Browser");
+			final String browserTypeToUse = System.getProperty(SysNatConstants.TEST_BROWSER_SETTING_KEY);
 			
 			if (browserTypeToUse.equalsIgnoreCase("CHROME")) 
 			{

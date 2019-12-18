@@ -25,7 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
-import com.iksgmbh.sysnat.SysNatTestingExecutor;
+import com.iksgmbh.sysnat.SysNatExecutor;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.helper.ReportCreator;
 import com.iksgmbh.sysnat.test.utils.SysNatTestUtils;
@@ -49,16 +50,15 @@ public class CalculatorApp_ModuleLevelTest
 	{
 		SysNatFileUtil.deleteFolder(EXECUTION_TEST_DIR);
 		GenerationRuntimeInfo.reset();
+		System.setProperty("sysnat.properties.path", TESTDATA_DIR + testAppName);
+		System.setProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, TESTDATA_DIR + testAppName + "/settings.config");
 		System.setProperty("sysnat.dummy.test.run", "true");
-		System.setProperty("sysnat.autolaunch.report", "false");
+		GenerationRuntimeInfo.getInstance().setResultLaunchOptionName("None"); // former: System.setProperty("sysnat.autolaunch.report", "false");
 
 		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/target");
 		Arrays.asList( new File( path ).listFiles() ).stream()
 		      .filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory())
 		      .forEach(SysNatFileUtil::deleteFolder);
-
-		System.setProperty("sysnat.properties.path", TESTDATA_DIR + testAppName);
-		System.setProperty("settings.config", TESTDATA_DIR + testAppName + "/settings.config");
 
 		SysNatFileUtil.copyTextFileToTargetDir(TESTDATA_DIR + testAppName,
 				"Calculator.java", 
@@ -85,16 +85,16 @@ public class CalculatorApp_ModuleLevelTest
 		GenerationRuntimeInfo.getInstance();
 
 		// act
-		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();
+		final String result = SysNatExecutor.startMavenCleanCompileTest();
 
 		// assert
-		assertEquals("Maven result", SysNatTestingExecutor.MAVEN_OK, result);
+		assertEquals("Maven result", SysNatExecutor.MAVEN_OK, result);
 		String targetDir = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/target");
 		File reportFolder = Arrays.asList( new File( targetDir ).listFiles() ).stream().filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory()).findFirst().get();
 		final File fullReportFile = new File(reportFolder, ReportCreator.FULL_REPORT_RESULT_FILENAME);
 		SysNatTestUtils.assertFileExists( fullReportFile );
 		final String report = SysNatFileUtil.readTextFileToString(fullReportFile); 
-		SysNatTestUtils.assertReportContains(report, "1. Feature: BDDKeywordTestCase");
+		SysNatTestUtils.assertReportContains(report, "1. Feature: Calculatortestapp");
 		SysNatTestUtils.assertReportContains(report, "1.1 Scenario: XX1");
 		SysNatTestUtils.assertReportContains(report, "1.1.1 <b>Given</b> Number <b>1</b> has been entered.");
 		SysNatTestUtils.assertReportContains(report, "1.1.2 <b>Given</b> Number <b>2</b> has been entered.");
@@ -117,10 +117,10 @@ public class CalculatorApp_ModuleLevelTest
 		GenerationRuntimeInfo.getInstance();
 		
 		// act
-		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();
+		final String result = SysNatExecutor.startMavenCleanCompileTest();
 
 		// assert
-		assertEquals("Maven result", SysNatTestingExecutor.MAVEN_OK, result);
+		assertEquals("Maven result", SysNatExecutor.MAVEN_OK, result);
 		String targetDir = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/target");
 		File reportFolder = Arrays.asList( new File( targetDir ).listFiles() ).stream().filter(f->f.getName().startsWith("BDDTestReport") && f.isDirectory()).findFirst().get();
 		final File fullReportFile = new File(reportFolder, ReportCreator.FULL_REPORT_RESULT_FILENAME);

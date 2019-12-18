@@ -41,6 +41,7 @@ import com.iksgmbh.sysnat._testcases.TestCaseInactive2Behaviour;
 import com.iksgmbh.sysnat._testcases.TestCaseInactive2Feature;
 import com.iksgmbh.sysnat._testcases.TestCaseOK;
 import com.iksgmbh.sysnat._testcases.TestCaseWrong;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 
@@ -52,7 +53,7 @@ public class ReportCreatorClassLevelTest
 	@Before
 	public void setUp() {
 		ExecutionRuntimeInfo.reset();
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 	}
 	
 	@Test

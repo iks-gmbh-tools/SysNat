@@ -1,0 +1,26 @@
+Differences between
+Doc1: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_C.pdf (Number of pages: 1)
+and
+Doc2: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_D.pdf (Number of pages: 1)
+--------------------------------------------------------------------
+There are following configurations defined to ignore:
+6 line definition(s)
+--------------------------------------------------------------------
+1. Difference:
+Doc1, Page 1, Line 1 : [XXXXXXXX]
+Doc2, Page 1, Line 1 : [XX]
+2. Difference:
+Doc1, Page 1, Line 2 : [XXXXX]
+Doc2, Page 1, Line 2 : [XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX]
+3. Difference:
+Doc1, Page 1, Line 3 : [123]
+Doc2, Page 1, Line 3 : [000]
+4. Difference:
+Doc1, Page 1, Line 4 : [321]
+Doc2, Page 1, Line 4 : [000]
+5. Difference:
+Doc1, Page 1, Line 5 : [123]
+Doc2, Page 1, Line 5 : [999]
+6. Difference:
+Doc1, Page 1, Line 6 : [321]
+Doc2, Page 1, Line 6 : [999]

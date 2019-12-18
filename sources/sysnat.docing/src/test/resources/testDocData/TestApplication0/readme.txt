@@ -1,0 +1,1 @@
+This folder must not contain a 'TestApplication.sysdoc' file for test purpose!

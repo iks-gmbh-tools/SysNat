@@ -17,7 +17,9 @@ package com.iksgmbh.sysnat.language_templates.helloworldspringboot;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIER;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
@@ -26,6 +28,7 @@ import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
 import com.iksgmbh.sysnat.domain.TestApplication;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
+import com.iksgmbh.sysnat.language_templates.PageObject;
 import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.ErrorPageObject;
 import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.FormPageObject;
 import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.LoginPageObject;
@@ -43,15 +46,16 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 {	
 	private LoginPageObject loginPageObject;
 	private FormPageObject formPageObject;
+	private ResultPageObject resultPageObject;
 	
 	public LanguageTemplatesBasics_HelloWorldSpringBoot(ExecutableExample anXX) 
 	{
 		this.executableExample = anXX;
 		this.executionInfo = ExecutionRuntimeInfo.getInstance();		
-		this.loginPageObject = createAndRegister(LoginPageObject.class, this);
-		this.formPageObject = createAndRegister(FormPageObject.class, this);
-		createAndRegister(ResultPageObject.class, this);
-		createAndRegister(ErrorPageObject.class, this);
+		this.loginPageObject = createAndRegister(LoginPageObject.class, executableExample);
+		this.formPageObject = createAndRegister(FormPageObject.class, executableExample);
+		this.resultPageObject = createAndRegister(ResultPageObject.class, executableExample);
+		createAndRegister(ErrorPageObject.class, executableExample);
 	}
 
 	private String getPageName() {
@@ -68,7 +72,7 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 		loginPageObject.enterTextInField("Username", startParameter.get(WebLoginParameter.LOGINID));
 		loginPageObject.enterTextInField("Password", startParameter.get(WebLoginParameter.PASSWORD));
 		loginPageObject.clickButton("Log in");			
-        resetCurrentPage();
+		resetCurrentPage();
 	}
 
 	@Override
@@ -135,15 +139,16 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 	{
 		if (mainMenuItem.equals("Form Page"))  {
 			executableExample.clickMenuHeader("Form Page");
+			setCurrentPage(formPageObject);
 		} else if (mainMenuItem.equals("Logout"))  {
 			doLogout();
 			executionInfo.setAlreadyLoggedIn(false);
+			setCurrentPage(loginPageObject);
 		} else {
 			executableExample.failWithMessage("Unknown menu item <b>" + mainMenuItem + "</b>.");
 		}
 		
 		executableExample.addReportMessage("Menu item <b>" + mainMenuItem + "</b> has been clicked.");
-		resetCurrentPage();
 	}
 
 	@LanguageTemplate(value = "Relogin.")
@@ -152,7 +157,7 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 		TestApplication testApp = executionInfo.getTestApplication();
 		doLogin(testApp.getLoginParameter());
 		executableExample.addReportMessage("Login has been perfomed with DefaultLoginData.");
-		resetCurrentPage();
+		setCurrentPage(formPageObject);
 	}
 
 	@LanguageTemplate(value = "Enter ^^ in text field ^^.")
@@ -161,13 +166,26 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 	}
 
 	@LanguageTemplate(value = "Click button ^^.")
-	public void clickButton(String buttonName) {
-		super.clickButton(buttonName);
+	public void clickButtonToChangePage(String buttonName) 
+	{ 
+		List<PageObject> possiblePages = new ArrayList<>();
+		if ("Greet".equals(buttonName)) 
+		{
+			possiblePages.add(resultPageObject);
+			setCurrentPage(formPageObject);
+			PageObject newPage = super.clickButtonToChangePage(buttonName, possiblePages , 0);
+			setCurrentPage(newPage);
+		} else {
+			super.clickButton(buttonName);
+			resetCurrentPage();
+		}
 	}
-
 
 	@LanguageTemplate(value = "Select ^^ in selection field ^^.")
 	public void choose(String valueCandidate, String fieldName) {
+		if ("Greeting".equals(fieldName)) {
+			setCurrentPage(formPageObject);
+		}
 		super.choose(valueCandidate, fieldName);
 	}
 

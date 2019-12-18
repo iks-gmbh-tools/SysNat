@@ -1,0 +1,29 @@
+# first define the should-be-file
+For document comparison, file "ExpectedDownload.pdf" is used as should-be-document.
+
+# then define which lines you like to ignore for comparison.
+# In this example here the two PDF documents are identical. If they wouldn't be,
+# the following options exist to make the ShouldBe document equal to a actual document
+# from the test or business point of view.
+
+
+# Substring rule (removes the first line from comparison in "Test.pdf" and "TestShouldBe.pdf")
+For document comparison, all lines that contain "this sequence" are ignored. 
+
+# Dateformat rule (removes three lines from comparison in "Test.pdf" and "TestShouldBe.pdf")
+For document comparison, all lines that start with, end with or represent a date value of format "DD.mm.YYYY" are ignored. 
+
+# Regex rule (removes the first line from comparison in "Test.pdf" and "TestShouldBe.pdf")
+For document comparison, all lines that match pattern "^\\d{4}-\\d{2}-\\d{2}$" are ignored. 
+
+# line definition rule (removes one line only in "Test.pdf")
+#For document comparison, the line 13 on page 1 in the actual document is ignored. 
+
+# line definition rule (removes one line only in "TestShouldBe.pdf")
+#For document comparison, the line 14 on page 1 in the should-be-document is ignored. 
+
+# line definition rule (removes one line in both "Test.pdf" and "TestShouldBe.pdf")
+#For document comparison, the line 10 on page 1 in both documents is ignored. 
+
+# Prefix rule (removes the last line from comparison in "Test.pdf" and "TestShouldBe.pdf")
+#For document comparison, all lines that start with prefix "15" are ignored. 

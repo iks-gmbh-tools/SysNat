@@ -62,7 +62,7 @@ public class XXGroupBuilder
 {
 	public static final String BEHAVIOUR_CONSTANT_DECLARATION = "private static final String BEHAVIOUR_ID";
 
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
+	private static final ResourceBundle ERR_MSG_BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
 
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw;
 	private HashMap<Filename, List<JavaCommand>> javaCommandCollectionTemp = new HashMap<>();
@@ -210,8 +210,8 @@ public class XXGroupBuilder
 	}
 
 	private boolean containsFilenamePlaceholder(String value) {
-		return value.contains("<filename>") || value.contains("<Dateiname>")
-		       || value.equalsIgnoreCase("<filename>") || value.equalsIgnoreCase("<Dateiname>");
+		return value.equalsIgnoreCase(SysNatLocaleConstants.PLACEHOLDER_FILENAME) 
+			   || value.equalsIgnoreCase(SysNatLocaleConstants.PLACEHOLDER_FILENAME_EN);
 	}
 	
 	private Filename createNewFilename(Filename filename, String xxid) 
@@ -224,7 +224,7 @@ public class XXGroupBuilder
 		int pos = filename.value.lastIndexOf('/');
 		if (pos == -1) pos = filename.value.length();
 		
-		String name = filename.value.substring(0, pos) + "/" + xxGroup.toLowerCase() + "/" + xxid + "_Test.java";
+		String name = filename.value.substring(0, pos) + "/" + xxGroup + "/" + xxid + "_Test.java";
 		name = name.replaceAll("//", "/").replaceAll(" ", "_");
 		return new Filename(name);
 	}
@@ -488,12 +488,12 @@ public class XXGroupBuilder
 		if (counterXXId > 1 && ! xxGroupIdentifierPresent) 
 		{
 			String link = "https://github.com/iks-github/SysNat/wiki/What-is-a-nlxx-file%3F";
-			ErrorPageLauncher.doYourJob("Without Behaviour declaration only one executable example "
+			ErrorPageLauncher.doYourJob("Without Behaviour declaration only one executable example " 
 					                     + "is allowed in the same nlxx file.", 
 					                     "To have more than one, add line 'Behaviour: &lt;unique name of behaviour&gt;' "
 					                     + "at the top of the nlxx file. Read more about "
 					                     + " <a href=\"" + link + "\">behaviours</a>.",
-					                     getErrorPageTitle());
+					                     ERR_MSG_BUNDLE.getString("GenerationError"));
 			throw new SysNatTestDataException("Missing Behaviour declaration in '" +
                     filename.value + "'.");
 		}
@@ -504,11 +504,6 @@ public class XXGroupBuilder
 		
 		return false;
 	}
-	
-	private String getErrorPageTitle() {
-		return "SysNat " + BUNDLE.getString("GenerationError");
-	}
-	
 
 	private boolean isTestCaseParameterized(final Filename filename)
 	{
@@ -544,7 +539,8 @@ public class XXGroupBuilder
 	{
 		final int pos = javaCommand.indexOf(METHOD_CALL_IDENTIFIER_START_XX) + METHOD_CALL_IDENTIFIER_START_XX.length() + 1;
 		String toReturn = javaCommand.substring(pos, javaCommand.length()-3).trim();
-		if (toReturn.equals(SysNatLocaleConstants.FROM_FILENAME) || toReturn.equals("<filename>")) {
+		if (toReturn.equals(SysNatLocaleConstants.PLACEHOLDER_FILENAME) 
+			|| toReturn.equals(SysNatLocaleConstants.PLACEHOLDER_FILENAME_EN)) {
 			return extractXXIdFromFilename(nameOfCurrentFile);
 		}
 		return toReturn;
