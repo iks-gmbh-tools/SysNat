@@ -38,7 +38,7 @@ public class SysNatConstants
 
 	public enum DialogStartTab { Testing, Docing, General };
 
-	public enum DocumentationFormat { PDF, HTML, XDOC };
+	public enum DocumentationFormat { PDF, HTML, DOCX };
     
 	public enum DocumentationType { SystemDescription, RequirementsReport };
 
@@ -122,6 +122,8 @@ public class SysNatConstants
 	public static final String METHOD_CALL_IDENTIFIER_BDD_KEYWORD_USAGE = ".setBddKeyword(";
 	public static final String METHOD_CALL_IDENTIFIER_START_XX = ".startNewXX(";
 	public static final String METHOD_CALL_IDENTIFIER_FILTER_DEFINITION = ".defineAndCheckExecutionFilter(";
+	public static final String METHOD_CALL_IDENTIFIER_TEST_DATA = ".setTestData(";
+	public static final String METHOD_CALL_IDENTIFIER_SET_ACTIVE_STATE = ".setActiveState(";
 
 	public static final String TOOLTIP_IDENTIFIER = "ToolTip:";
 	public static final String COMMENT_CONFIG_IDENTIFIER = "#";

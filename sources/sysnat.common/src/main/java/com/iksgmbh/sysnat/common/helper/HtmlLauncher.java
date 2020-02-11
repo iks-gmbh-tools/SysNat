@@ -27,12 +27,18 @@ import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 
 public class HtmlLauncher 
 {
+
 	public static void doYourJob(String htmlFileAsString)
+	{
+		final File file = new File(htmlFileAsString);
+		doYourJob(file);
+	}
+	
+	public static void doYourJob(File file)
 	{
 		Runtime rt = Runtime.getRuntime();
 		try {
-			final File reportFile = new File(htmlFileAsString);
-			final String pathToHtmlFile = reportFile.getCanonicalPath();
+			final String pathToHtmlFile = file.getCanonicalPath();
 			final String browserTypeToUse = System.getProperty(SysNatConstants.TEST_BROWSER_SETTING_KEY);
 			
 			if (browserTypeToUse.equalsIgnoreCase("CHROME")) 

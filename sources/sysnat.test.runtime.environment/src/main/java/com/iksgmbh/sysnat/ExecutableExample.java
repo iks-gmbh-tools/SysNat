@@ -427,7 +427,24 @@ abstract public class ExecutableExample
     	String value = getTestDataValue(valueCandidate);
     	getGuiController().clickLink(value);
     }
-	  
+
+    public void clickLink(String valueCandidate, String idToScrollIntoView)
+    {
+    	String value = getTestDataValue(valueCandidate);
+    	getGuiController().clickLink(value, idToScrollIntoView);
+    }
+
+    /**
+     * If link occurs more than once, the positionOfOccurrence tells which occurrence to click.
+     * @param valueCandidate
+     * @param positionOfOccurrence
+     */
+    public void clickLink(String valueCandidate, int positionOfOccurrence)
+    {
+    	String value = getTestDataValue(valueCandidate);
+    	getGuiController().clickLink(value, positionOfOccurrence);
+    }
+
     public void clickLinkIfPossible(String valueCandidate)
     {
        try {
@@ -785,9 +802,6 @@ abstract public class ExecutableExample
 	
 	public void answerQuestion(final String question, final boolean  ok)
 	{
-		if (question.contains("Home")) {
-			System.out.println();
-		}
 		if (ok) { 
 			addReportMessage(question + YES); 
 		} else {

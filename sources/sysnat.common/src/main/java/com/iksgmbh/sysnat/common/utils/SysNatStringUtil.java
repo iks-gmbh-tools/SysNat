@@ -375,4 +375,16 @@ public class SysNatStringUtil
 	public static String firstCharToUpperCase(String s) {
 		return s.substring(0,1).toUpperCase() + s.substring(1);
 	}
+	
+	public static String extractXXIdFromFilename(String filename) 
+	{
+		String toReturn = SysNatStringUtil.cutExtension(filename);
+		int pos = toReturn.replaceAll("\\\\", "/").lastIndexOf("/") + 1;
+		toReturn = toReturn.substring(pos);
+		if (toReturn.endsWith("Test")) {
+			toReturn = toReturn.substring(0, toReturn.length()-4);
+		}
+		return toReturn;
+	}
+
 }

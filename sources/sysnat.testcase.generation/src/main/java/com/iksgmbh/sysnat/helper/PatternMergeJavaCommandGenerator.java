@@ -103,21 +103,21 @@ public class PatternMergeJavaCommandGenerator
 	private void processInstructionPattern(final LanguageInstructionPattern instructionPattern) 
 	{
 		matchFound = false;
-		instructionPatternToMatch = instructionPattern;
+		instructionPatternToMatch = checkForBehaviourLevelInstructions(instructionPattern);
 		languageTemplateCollection.forEach( this::processTemplateList );
 		
-		if ( ! matchFound ) 
+		if ( matchFound ) 
+		{
+			if ( ! multiLineMode && testDataMultiLineString != null) {
+				replaceMultilineInCommand();
+			}
+		} 
+		else 
 		{
 			if ( testDataMultiLineString != null ) 
 			{
 				addInstructionPatternToMultiline();
 				matchFound = true;
-			}
-		} 
-		else 
-		{
-			if ( ! multiLineMode && testDataMultiLineString != null) {
-				replaceMultilineInCommand();
 			}
 		}
 		
@@ -125,6 +125,32 @@ public class PatternMergeJavaCommandGenerator
 			handleNoMatchFoundProblem(instructionPattern);
 		}
 	}
+
+	private LanguageInstructionPattern checkForBehaviourLevelInstructions(LanguageInstructionPattern instructionPattern)
+	{
+		String line = instructionPattern.getInstructionLine();
+		if (isBehaviourLevelInstruction(line)) 
+		{
+			int pos = line.indexOf(":");
+			String newLine =  line.substring(pos+1).trim();
+			return new LanguageInstructionPattern(newLine, instructionPattern.getFileName(), line.substring(0, pos));
+		}
+		return instructionPattern;
+	}
+	
+	private boolean isBehaviourLevelInstruction(String line)
+	{
+		if (line.startsWith("OneTimePrecondition:")) return true;
+		if (line.startsWith("Precondition:")) return true;
+		if (line.startsWith("OneTimeCleanup:")) return true;
+		if (line.startsWith("Cleanup:")) return true;
+		if (line.startsWith("EinmalVoraussetzung:")) return true;
+		if (line.startsWith("EinmalAufräumen:")) return true;
+		if (line.startsWith("Aufräumen:")) return true;
+		if (line.startsWith("Voraussetzung:")) return true;
+		return false;
+	}
+	
 
 	private void addInstructionPatternToMultiline() 
 	{
@@ -188,7 +214,7 @@ public class PatternMergeJavaCommandGenerator
 		String libraryFilename = System.getProperty("sysnat.help.command.list.file")
 				                 .replace("<testapp>", testApp);
 		String languageTemplatesList = BUNDLE.getString("LanguageTemplatesList");
-		String link = "<a href=\"../" + libraryFilename + "\">" + languageTemplatesList + "</a>";
+		String link = "<a href=\"../../" + libraryFilename + "\">" + languageTemplatesList + "</a>";
 		
 		String similarInstructions = getFindSimilarInstructions(instructionPattern.getInstructionLine());
 		String userHelpMessage = "";
@@ -232,7 +258,8 @@ public class PatternMergeJavaCommandGenerator
 
 	private void findSimilarInstructions(String languageTemplateToCompare,
 			                             List<String> similarLanguageTemplates, 
-			                             List<LanguageTemplatePattern> knownLanguageTemplates) {
+			                             List<LanguageTemplatePattern> knownLanguageTemplates) 
+	{
 		knownLanguageTemplates.forEach(languageTemplate -> findSimilarInstruction(languageTemplate, languageTemplateToCompare, similarLanguageTemplates));
 	}
 
@@ -313,8 +340,8 @@ public class PatternMergeJavaCommandGenerator
 	protected boolean isMatching(final LanguageTemplatePattern templatePattern,
 			                     final LanguageInstructionPattern instructionPattern) 
 	{
-		// for debug purpose:
-		// logInput(templatePattern, instructionPattern);
+		//for debug purpose:
+		//logMatchingInfo(templatePattern, instructionPattern, "Cleanup");
 		
 		if (templatePattern.getNumberOfParts() != instructionPattern.getNumberOfParts()) {			
 			return false;
@@ -398,18 +425,18 @@ public class PatternMergeJavaCommandGenerator
 		return true;
 	}
 
-	protected void logInput(final LanguageTemplatePattern templatePattern,
-			                final LanguageInstructionPattern instructionPattern) 
+	protected void logMatchingInfo(final LanguageTemplatePattern templatePattern,
+			                final LanguageInstructionPattern instructionPattern,
+			                final String logTrigger) 
 	{
-		String s = "TestData";
-		if (instructionPattern.getInstructionLine().contains(s)
-			&& templatePattern.getAnnotationValue().contains(s))
+		boolean triggerFound = instructionPattern.getInstructionLine().contains(logTrigger);
+		
+		if (triggerFound) {
+			triggerFound = templatePattern.getAnnotationValue().contains(logTrigger);
+		}
+		if (triggerFound)
 		{
 			System.err.println(instructionPattern.getInstructionLine() + " ### " + templatePattern.getAnnotationValue());
-		}
-		if (instructionPattern.getInstructionLine().startsWith(s)
-			&& templatePattern.getAnnotationValue().startsWith(s)) 
-		{
 			System.out.println("");
 		}
 	}

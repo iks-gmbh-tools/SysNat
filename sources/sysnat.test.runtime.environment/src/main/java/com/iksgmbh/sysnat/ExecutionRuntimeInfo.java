@@ -957,7 +957,7 @@ public class ExecutionRuntimeInfo
 		return getSetting(SysNatConstants.DOC_DEPTH_SETTING_KEY);
 	}
 	
-	public DocumentationDepth getDocumentation() {
+	public DocumentationDepth getDocumentationDepth() {
 		return DocumentationDepth.valueOf(getDocDepthName().toUpperCase());
 	}	
 	

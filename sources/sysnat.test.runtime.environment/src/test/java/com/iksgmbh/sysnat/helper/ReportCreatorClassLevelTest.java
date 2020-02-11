@@ -282,7 +282,8 @@ public class ReportCreatorClassLevelTest
 		// assert
 		result = result.replaceAll("&nbsp;", "").replaceAll("#", " # ").trim();
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
-				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/onetimeBehaviorInstructionTest.txt");
+				"../sysnat.test.runtime.environment/src/test/resources/expectedReports/"
+				+ "OnetimeBehaviorInstructionTest.txt");
         assertEquals("Expected report", expectedFileContent, result);
 	}
 	

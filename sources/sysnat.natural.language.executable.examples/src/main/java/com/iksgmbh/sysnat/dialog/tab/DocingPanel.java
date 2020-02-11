@@ -142,6 +142,25 @@ public class DocingPanel extends BasicTabPanel
 		executionInfo.setDocArchiveDir(txtDocArchiveDir.getText().trim());
 		executionInfo.setArchiveDocumentation(chbDocArchiving.isSelected());
 	}
+	
+	private String docDepthSettingKeyToDisplayValue()
+	{
+		String value = executionInfo.getDocDepthName();
+		
+		if (BUNDLE.getString("DOC_DEPTH_OPTION1").startsWith(value)
+		    || BUNDLE_EN.getString("DOC_DEPTH_OPTION1").startsWith(value)) 
+		{
+			return BUNDLE.getString("DOC_DEPTH_OPTION1");
+		}
+		if (BUNDLE.getString("DOC_DEPTH_OPTION3").startsWith(value)
+		    || BUNDLE_EN.getString("DOC_DEPTH_OPTION3").startsWith(value)) 
+				{
+					return BUNDLE.getString("DOC_DEPTH_OPTION3");
+				}
+		
+		return BUNDLE.getString("DOC_DEPTH_OPTION2");
+	}
+
 
 	private String docDepthDisplayValueToSettingKey()
 	{
@@ -158,6 +177,19 @@ public class DocingPanel extends BasicTabPanel
 		return SysNatConstants.DocumentationDepth.Medium.name();
 	}
 
+	private String docTypeSettingKeyToDisplayValue()
+	{
+		String value = executionInfo.getDocTypeName();
+		
+		if (BUNDLE.getString("DOCTYPE_OPTION_SYSTEM_DESCRIPTION").equals(value)
+		 || BUNDLE_EN.getString("DOCTYPE_OPTION_SYSTEM_DESCRIPTION").equals(value)) 
+		{
+			return BUNDLE.getString("DOCTYPE_OPTION_SYSTEM_DESCRIPTION");
+		}
+		
+		return BUNDLE.getString("DOCTYPE_OPTION_SYSTEM_DESCRIPTION");
+	}
+	
 	private String docTypeDisplayValueToSettingKey()
 	{
 		String value = cbxDocType.getSelectedItem().toString();
@@ -225,7 +257,7 @@ public class DocingPanel extends BasicTabPanel
 	{
 		yPos += deltaY;
 		initLabel(this, "DOCFORMAT_DIALOG_LABEL", yPos, NO_TOOLTIP);
-		String[] options = {"PDF", "XDOC", "HTML"};
+		String[] options = {"PDF", "DOCX", "HTML"};
 		cbxDocFormat = initCombo(this, options, yPos, executionInfo.getDocFormatName(), NO_TOOLTIP);
 		cbxDocFormat.addActionListener(docingNameListener);
 	}
@@ -248,19 +280,19 @@ public class DocingPanel extends BasicTabPanel
 	{
 		yPos += deltaY;
 		initLabel(this, "DOCDEPTH_DIALOG_LABEL", yPos, NO_TOOLTIP);
-		String[] values2 = {BUNDLE.getString("DOC_DEPTH_OPTION1"), 
+		String[] values = {BUNDLE.getString("DOC_DEPTH_OPTION1"), 
 				            BUNDLE.getString("DOC_DEPTH_OPTION2"),
 				            BUNDLE.getString("DOC_DEPTH_OPTION3")};
-		cbxDocDepth = initCombo(this, values2, yPos, executionInfo.getDocDepthName(), NO_TOOLTIP);
+		cbxDocDepth = initCombo(this, values, yPos, docDepthSettingKeyToDisplayValue(), NO_TOOLTIP);
 	}
 
 	private void initComboDocType()
 	{
 		yPos += deltaY;
 		initLabel(this, "DOCTYPE_DIALOG_LABEL", yPos, NO_TOOLTIP);
-		String[] options = {BUNDLE.getString("DOCTYPE_OPTION_SYSTEM_DESCRIPTION"), 
-				            BUNDLE.getString("DOCTYPE_OPTION_REQUIREMENTS_DOCUMENTATION")};
-		cbxDocType = initCombo(this, options, yPos, executionInfo.getDocTypeName(), NO_TOOLTIP);
+		String[] options = {BUNDLE.getString("DOCTYPE_OPTION_SYSTEM_DESCRIPTION")}; //, 
+				            //BUNDLE.getString("DOCTYPE_OPTION_REQUIREMENTS_DOCUMENTATION")};
+		cbxDocType = initCombo(this, options, yPos, docTypeSettingKeyToDisplayValue(), NO_TOOLTIP);
 		cbxDocType.addActionListener(docingNameListener);
 	}
 
@@ -271,7 +303,7 @@ public class DocingPanel extends BasicTabPanel
 		List<String> knownTestApps = executionInfo.getKnownTestApplications();
 		String[] options = knownTestApps.toArray(new String[knownTestApps.size()]);
 		cbxDocApplication = initCombo(this, options, yPos,
-		                              executionInfo.getTestApplicationName(), NO_TOOLTIP);
+		                              executionInfo.getDocApplicationName(), NO_TOOLTIP);
 		cbxDocApplication.addActionListener(docingNameListener);
 		cbxDocApplication.addActionListener(targetEnvDocingListener);
 	}

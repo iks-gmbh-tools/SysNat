@@ -15,6 +15,7 @@ import com.iksgmbh.sysnat.test.testTemplateContainers.scenariobasedapplication.C
 */
 public class TestScenario1_Test extends SysNatTestCase
 {
+private static final String BEHAVIOUR_ID = "TestFeature";
 
 protected ComplexInstructionTestApplication_LanguageTemplateContainer complexInstructionTestApplication_LanguageTemplateContainer;
 
@@ -53,7 +54,6 @@ complexInstructionTestApplication_LanguageTemplateContainer.setBddKeyword("When"
 complexInstructionTestApplication_LanguageTemplateContainer.doSomething();
 complexInstructionTestApplication_LanguageTemplateContainer.setBddKeyword("Then");
 complexInstructionTestApplication_LanguageTemplateContainer.doSomething();
-complexInstructionTestApplication_LanguageTemplateContainer.setBddKeyword("Scenario");
 
 closeCurrentTestCaseWithSuccess();
 } catch (Throwable e) {

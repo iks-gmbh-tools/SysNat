@@ -38,23 +38,31 @@ public class AppDocFileParser
 	{		
 		final TestApplicationDocData toReturn = new TestApplicationDocData(applicationDocFile);
 		
-		if ( ! applicationDocFile.exists() ) {
+		if ( ! applicationDocFile.exists() ) 
+		{
+			System.err.println("File '" + applicationDocFile.getAbsolutePath() + "' does not exist and was created with Default content.");
 			createDefaultApplicationSysDocFile(toReturn, applicationDocFile);
 		}
 		
 		parseApplicationDocFile(toReturn, applicationDocFile);
+		
 		return toReturn;
 	}
 
 	private void createDefaultApplicationSysDocFile(TestApplicationDocData docData, File applicationDocFile) 
 	{
 		applicationDocFile.getParentFile().mkdirs();
+		String sysDocFolder = applicationDocFile.getParentFile().getAbsolutePath().replaceAll("\\\\", "/");
+		try {
+			sysDocFolder = applicationDocFile.getParentFile().getCanonicalPath().replaceAll("\\\\", "/");
+		} catch (Exception e) {	/* do nothing */	};
+		
 		String defaultContent = "Name: <foldername>" 
 		                        + System.getProperty("line.separator")
 		                        + System.getProperty("line.separator")
 		                        + BUNDLE.getString("CHAPTER_IDENTIFIER") + " " + BUNDLE.getString("DefaultIntroChapterName")
 		                        + System.getProperty("line.separator")
-		                        + BUNDLE.getString("DefaultIntroContent");
+		                        + BUNDLE.getString("DefaultIntroContent").replace("XY", sysDocFolder);
 		SysNatFileUtil.writeFile(applicationDocFile, defaultContent);
 	}
 
@@ -64,6 +72,15 @@ public class AppDocFileParser
 		lines.forEach(line -> parseApplicationDocLine(line.trim(), docData));
 		if (chapterName != null) {
 			docData.addChapter(chapterName, chapterContent); // store last chapter data
+		}
+		
+		if ( ! docData.getChapterNames().contains(BUNDLE.getString("DEFAULT_CHAPTER_NAME"))
+		  && ! docData.getChapterNames().contains(BUNDLE_EN.getString("DEFAULT_CHAPTER_NAME")))
+		{
+			List<String> list = new ArrayList<>();
+			String line = BUNDLE.getString("DEFAULT_CHAPTER_CONTENT").replace("XY", applicationDocFile.getName());
+			list.add(line.replace("YZ", docData.getTestApplicationName()));
+			docData.addChapter(BUNDLE.getString("DEFAULT_CHAPTER_NAME"), list);
 		}
 	}
 

@@ -53,19 +53,19 @@ public class LanguageInstructionCollectorClassLevelTest
 		final List<String> list = new ArrayList<String>();
 
 		// act
-		cut.extractInstruction("Feature X", list);
-		cut.extractInstruction("OneTimeBackground Do Somthing in the beginning Once", list);
-		cut.extractInstruction("Background Do Somthing in the beginning", list);
-		cut.extractInstruction("Cleanup Clean this up", list);
-		cut.extractInstruction("OneTimeCleanup Clean this up once", list);
-		cut.extractInstruction("Scenario Y", list);
-		cut.extractInstruction("Given A", list);
-		cut.extractInstruction("But B", list);
-		cut.extractInstruction("When C", list);
-		cut.extractInstruction("* D", list);
-		cut.extractInstruction("But E", list);
-		cut.extractInstruction("Then F", list);
-		cut.extractInstruction("And G", list);
+		cut.extractBddInstruction("Feature X", list);
+		cut.extractBddInstruction("OneTimeBackground Do Somthing in the beginning Once", list);
+		cut.extractBddInstruction("Background Do Somthing in the beginning", list);
+		cut.extractBddInstruction("Cleanup Clean this up", list);
+		cut.extractBddInstruction("OneTimeCleanup Clean this up once", list);
+		cut.extractBddInstruction("Scenario Y", list);
+		cut.extractBddInstruction("Given A", list);
+		cut.extractBddInstruction("But B", list);
+		cut.extractBddInstruction("When C", list);
+		cut.extractBddInstruction("* D", list);
+		cut.extractBddInstruction("But E", list);
+		cut.extractBddInstruction("Then F", list);
+		cut.extractBddInstruction("And G", list);
 
 		// assert
 		assertEquals("number of test cases", 26, list.size() );

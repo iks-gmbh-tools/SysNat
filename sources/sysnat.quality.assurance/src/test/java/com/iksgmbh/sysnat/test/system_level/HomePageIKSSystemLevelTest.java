@@ -87,7 +87,7 @@ public class HomePageIKSSystemLevelTest extends SysNatSystemTest
 				"padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;" + System.getProperty("line.separator") +
 				"line-height:106%'>InactiveTestExample<");
 		
-		SysNatTestUtils.assertReportContains(report, "Checkmainmenuitems (6/6)");
+		SysNatTestUtils.assertReportContains(report, "MainMenuItems (9/9)");
 	}
 
 }

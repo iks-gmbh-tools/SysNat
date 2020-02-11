@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.domain.Filename;
@@ -64,6 +65,11 @@ public class SysNatJUnitTestClassGenerator
 		// step 1: find languageTemplateContainer in java template
 		final List<JavaFieldData> languageTemplateContainerJavaFields = 
 				LanguageTemplateContainerFinder.findLanguageTemplateContainers(testApplication.getName());
+		
+		
+		if (languageTemplateContainerJavaFields.size() == 0) {
+			throw new SysNatException("No Language Template Container found for test application '" + testApplication.getName() + "'.");
+		}
 		
 		// step 2: read natural language patterns from LanguageTemplateContainers
 		final HashMap<Filename, List<LanguageTemplatePattern>> languageTemplateCollection = 

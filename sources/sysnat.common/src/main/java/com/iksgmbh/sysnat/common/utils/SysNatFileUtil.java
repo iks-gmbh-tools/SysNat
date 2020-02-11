@@ -533,7 +533,21 @@ public class SysNatFileUtil
 		}
 	}
 
-	public static void copyFileToTargetDir(final String sourceFileAsString, final String targetDirAsString)
+	public static File copyFileToTargetDir(final File sourceFile, 
+                                           final String targetDir)
+	{
+		final File targetFile = new File(targetDir, sourceFile.getName());
+		return copyBinaryFile(sourceFile, targetFile);		
+	}
+	
+	public static File copyFileToTargetDir(final File sourceFile, 
+			                               final File targetDir)
+	{
+		final File targetFile = new File(targetDir, sourceFile.getName());
+		return copyBinaryFile(sourceFile, targetFile);		
+	}
+
+	public static File copyFileToTargetDir(final String sourceFileAsString, final String targetDirAsString)
 	{
 		final File targetDir = new File(targetDirAsString);
 		if (!targetDir.exists()) {
@@ -547,8 +561,7 @@ public class SysNatFileUtil
 			throw new RuntimeException("Source file does not exist: " + sourceFile.getAbsolutePath());
 		}
 
-		final File targetFile = new File(targetDir, sourceFile.getName());
-		copyBinaryFile(sourceFile, targetFile);
+		return copyFileToTargetDir(sourceFile, targetDir);
 	}
 
 	public static void copyBinaryFile(String fromFileName, String toFileName)
@@ -561,18 +574,22 @@ public class SysNatFileUtil
 		copyBinaryFile(fromFile, toFile);
 	}
 
+	/**
+	 * @param fromFile
+	 * @param toFileName name must represent a file not a directory!
+	 * @return created or overwritten target file
+	 */
 	public static File copyBinaryFile(final File fromFile, final String toFileName)
 	{
-		final File toFile = new File(toFileName);
-		copyBinaryFile(fromFile, toFile);
-		return toFile;
+		final File toFileOrDirectory = new File(toFileName);
+		return copyBinaryFile(fromFile, toFileOrDirectory);
 	}
 
-	public static void copyBinaryFile(String fromFileName, File toFile)
+	public static File copyBinaryFile(String fromFileName, File toFileOrDirectory)
 	{
 		fromFileName = SysNatFileUtil.findAbsoluteFilePath(fromFileName);
 		File fromFile = new File(fromFileName);
-		copyBinaryFile(fromFile, toFile);
+		return copyBinaryFile(fromFile, toFileOrDirectory);
 	}
 
 	/**
@@ -581,19 +598,25 @@ public class SysNatFileUtil
 	 * @param fromFile
 	 * @param toFile
 	 * @throws IOException
+	 * @return created file
 	 */
-	public static void copyBinaryFile(final File fromFile, File toFile)
+	public static File copyBinaryFile(final File fromFile, File toFileOrDirectory)
 	{
 		if (!fromFile.exists())
 			throw new RuntimeException("FileCopy: " + "no such source file: " + fromFile.getAbsolutePath());
 		if (!fromFile.isFile())
 			throw new RuntimeException("FileCopy: " + "can't copy directory: " + fromFile.getAbsolutePath());
-		if (!fromFile.canRead())
+		if (!fromFile.canRead()) {
 			throw new RuntimeException("FileCopy: " + "source file is unreadable: " + fromFile.getAbsolutePath());
-
-		if (toFile.isDirectory())
+		}
+		File toFile = toFileOrDirectory;
+		if (toFileOrDirectory.isDirectory())
 			toFile = new File(toFile, fromFile.getName());
 
+		if ( ! toFile.getParentFile().exists() ) {
+			toFile.getParentFile().mkdirs();
+		}
+		
 		if (toFile.exists()) {
 			if (!toFile.canWrite())
 				throw new RuntimeException(
@@ -637,6 +660,7 @@ public class SysNatFileUtil
 					e.printStackTrace();
 				}
 		}
+		return toFile;
 	}
 
 	public static File createFolder(final String toCreate)

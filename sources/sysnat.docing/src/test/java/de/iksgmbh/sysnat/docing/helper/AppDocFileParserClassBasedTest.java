@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.junit.Test;
 
@@ -14,6 +16,8 @@ import de.iksgmbh.sysnat.docing.testutils.TestUtil;
 
 public class AppDocFileParserClassBasedTest
 {
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Docing", Locale.getDefault());
+
 	private AppDocFileParser cut = new AppDocFileParser();
 
 	@Test
@@ -38,7 +42,7 @@ public class AppDocFileParserClassBasedTest
 	}
 
 	@Test
-	public void parsesApplicationFileWithoutChapters()
+	public void parsesApplicationFileWithoutChaptersAndAddsDefaultChapter()
 	{
 		// arrange
 		final String testAppName = "TestApplication1";
@@ -50,7 +54,8 @@ public class AppDocFileParserClassBasedTest
 
 		// arrange
 		assertEquals("Test Application Name", testAppName, result.getTestApplicationName());
-		assertEquals("Number of chapters", 0, result.getChapters().size());
+		assertEquals("Number of chapters", 1, result.getChapters().size());
+		assertEquals("Name of chapter", BUNDLE.getString("DEFAULT_CHAPTER_NAME"), result.getChapterName(1));
 	}
 
 	@Test

@@ -535,5 +535,4 @@ public class LanguageTemplatesCommon
 	public void setBddKeyword(String aKeyword) {
 		executableExample.setBddKeyword(aKeyword);
 	}
-	
 }

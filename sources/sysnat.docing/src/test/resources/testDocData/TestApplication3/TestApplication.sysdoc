@@ -1,9 +1,12 @@
 Name: <foldername>
 
-Chapter: Introdution
-This is the first paragraph of the introduction chapter.
+Chapter: Introduction
+This is the first paragraph of the introduction chapter. This is the second sentence of the first paragraph.
+This is the third sentence of the first paragraph.
 
-This is the second paragraph of the introduction chapter.
+
+This is the second paragraph of the introduction chapter. ***Please note that below Behaviour2 is intentionally listed before Behaviour1!***
+
 
 Chapter: Chapter 1
 This is the first chapter's content.

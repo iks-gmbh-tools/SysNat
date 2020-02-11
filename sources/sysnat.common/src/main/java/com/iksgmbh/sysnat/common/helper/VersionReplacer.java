@@ -32,7 +32,7 @@ import java.util.List;
 public class VersionReplacer
 {
     private static final String PATH_TO_SOURCES = "..";
-    private static final String VERSION_TO_SET = "1.1.0-SNAPTHOT";
+    private static final String VERSION_TO_SET = "1.1.0-SNAPSHOT";
     private static final String VERSION_LINE_START_IDENTIFIER = "<version>";
     private static final String VERSION_LINE_END_IDENTIFIER = "</version>";
     private static final String SYSNAT_SECTION_START_IDENTIFIER = "<groupId>com.iksgmbh.snt</groupId>";

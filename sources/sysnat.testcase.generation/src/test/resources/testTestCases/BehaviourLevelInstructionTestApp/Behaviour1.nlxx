@@ -1,0 +1,24 @@
+Feature: Behaviour with Behaviour Level Instructions
+This Behaviour uses the classic BDD-Keywords
+
+OneTimePrecondition: A first basic condition. 
+Precondition: A second basic condition.
+
+Scenario: First executable example
+Given a first condition
+When something happens
+Then this is true.
+
+Scenario: Second executable example
+Given a second condition
+When something else happens
+Then that is true.
+
+Scenario: Third executable example
+* a third condition
+* something strange happens
+* an error occurred.
+
+
+Cleanup: A first cleanup step. 
+OneTimeCleanup: A second cleanup step.

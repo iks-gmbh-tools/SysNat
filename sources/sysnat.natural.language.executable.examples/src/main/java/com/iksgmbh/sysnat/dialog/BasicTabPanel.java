@@ -41,6 +41,7 @@ public abstract class BasicTabPanel extends JPanel
 	protected static final ResourceBundle CONSTANTS_BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
 	protected static final ResourceBundle CONSTANTS_BUNDLE_EN = ResourceBundle.getBundle("bundles/Constants", Locale.ENGLISH);
 	protected static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/SysNatDialog", Locale.getDefault());
+	protected static final ResourceBundle BUNDLE_EN = ResourceBundle.getBundle("bundles/SysNatDialog", Locale.ENGLISH);
 
 	protected static final int deltaY = 40;
 	protected static final String NO_TOOLTIP = "NO_TOOLTIP";
@@ -156,12 +157,21 @@ public abstract class BasicTabPanel extends JPanel
 			                              boolean editable)
 	{
 		final JComboBox<String> cbx = new JComboBox<String>(optionList);
+		String initialOption = null;
+		for (String option : optionList) {
+			if (option.equals(initialSelection)) {
+				initialOption = option;
+			}
+		}
+		if (initialOption == null) {
+			initialOption = optionList[0];
+		}
 
 		cbx.setEditable(editable);
 		cbx.setBounds(xPosSecondColumn, yPos, secondColumnLength, 26);
 		cbx.setFont(fieldFont);
 		cbx.setBackground(Color.WHITE);
-		cbx.setSelectedItem(initialSelection);
+		cbx.setSelectedItem(initialOption);
 		if (isTooltipNotEmpty(tooltip)) cbx.setToolTipText(tooltip);
 		
 		parent.add(cbx);

@@ -63,25 +63,28 @@ public class XXGroupBuilderClassLevelTest
 		assertEquals("Number of testcases", 4, javaCommandCollection.size());
 
 		String toFind = "firstFile/BehaviourId/XXId2_Test.java";
-		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"BehaviourId\");", getCommandListFor(javaCommandCollection, toFind).get(0).value);
-		assertEquals("Java Command", "templateContainer.prepareOnce1();", getCommandListFor(javaCommandCollection, toFind).get(1).value);
-		assertEquals("Java Command", "templateContainer.prepareOnce2();", getCommandListFor(javaCommandCollection, toFind).get(2).value);
-		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"End of OneTimePrecondition\");", getCommandListFor(javaCommandCollection, toFind).get(3).value);
-		assertEquals("Java Command", "templateContainer.prepare1();", getCommandListFor(javaCommandCollection, toFind).get(4).value);
-		assertEquals("Java Command", "templateContainer.prepare2();", getCommandListFor(javaCommandCollection, toFind).get(5).value);
-		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId2\");", getCommandListFor(javaCommandCollection, toFind).get(6).value);
-		assertEquals("Java Command", "templateContainer.doSomethingElse();", getCommandListFor(javaCommandCollection, toFind).get(7).value);
-		assertEquals("Java Command", "templateContainer.cleanup1();", getCommandListFor(javaCommandCollection, toFind).get(8).value);
-		assertEquals("Java Command", "templateContainer.cleanup2();", getCommandListFor(javaCommandCollection, toFind).get(9).value);
-		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"Start of OneTimeCleanup\");", getCommandListFor(javaCommandCollection, toFind).get(10).value);
-		assertEquals("Java Command", "templateContainer.cleanupOnce1();", getCommandListFor(javaCommandCollection, toFind).get(11).value);
-		assertEquals("Java Command", "templateContainer.cleanupOnce2();", getCommandListFor(javaCommandCollection, toFind).get(12).value);
+		int i = 0;
+		assertEquals("Java Command", "private static final String BEHAVIOUR_ID = \"BehaviourId\";", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"BehaviourId\");", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.prepareOnce1();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.prepareOnce2();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"End of OneTimePrecondition\");", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId2\");", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.prepare1();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.prepare2();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.doSomethingElse();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.cleanup1();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.cleanup2();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"Start of OneTimeCleanup\");", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.cleanupOnce1();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "templateContainer.cleanupOnce2();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
 		
 		toFind = "secondFile/FeatureId/XXId1_Test.java";
-		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Feature\");", getCommandListFor(javaCommandCollection, toFind).get(0).value);
-		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"FeatureId\");", getCommandListFor(javaCommandCollection, toFind).get(1).value);
-		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Scenario\");", getCommandListFor(javaCommandCollection, toFind).get(2).value);
-		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId1\");", getCommandListFor(javaCommandCollection, toFind).get(3).value);
+		assertEquals("Java Command", "private static final String BEHAVIOUR_ID = \"FeatureId\";", getCommandListFor(javaCommandCollection, toFind).get(0).value);
+		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Feature\");", getCommandListFor(javaCommandCollection, toFind).get(1).value);
+		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"FeatureId\");", getCommandListFor(javaCommandCollection, toFind).get(2).value);
+		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Scenario\");", getCommandListFor(javaCommandCollection, toFind).get(3).value);
+		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId1\");", getCommandListFor(javaCommandCollection, toFind).get(4).value);
 	}
 
 	@Test

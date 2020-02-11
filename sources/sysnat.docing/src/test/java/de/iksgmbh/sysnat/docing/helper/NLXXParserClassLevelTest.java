@@ -7,8 +7,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 
 import de.iksgmbh.sysnat.docing.SysNatDocumentGenerator;
 import de.iksgmbh.sysnat.docing.domain.TestApplicationDocData;
@@ -18,7 +23,14 @@ import de.iksgmbh.sysnat.docing.testutils.TestUtil;
 
 public class NLXXParserClassLevelTest
 {
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Docing", Locale.getDefault());
+
 	private NLXXParser cut = new NLXXParser();
+	
+	@Before
+	public void init() {
+		System.setProperty(SysNatConstants.DOC_DEPTH_SETTING_KEY, "Minimum");
+	}
 
 	@Test
 	public void parsesWholeNLXXFiles()
@@ -33,11 +45,11 @@ public class NLXXParserClassLevelTest
 		
 		// assert
 		assertEquals("Test Application Name", testApplicationName, docData.getTestApplicationName());
-		assertEquals("Number of chapters", 3, docData.getChapters().size());
+		assertEquals("Number of chapters", 4, docData.getChapters().size());
 		List<String> chapterNames = new ArrayList<>(docData.getChapters().keySet());
-		assertEquals("Name of chapter 1", "Behaviour1", chapterNames.get(0));
-		assertEquals("Name of chapter 2", "Behaviour2", chapterNames.get(1));
-		assertEquals("Name of chapter 3", "Behaviour3", chapterNames.get(2));
+		assertEquals("Name of chapter 1", "Behaviour1", chapterNames.get(1));
+		assertEquals("Name of chapter 2", "Behaviour2", chapterNames.get(2));
+		assertEquals("Name of chapter 3", "Behaviour3", chapterNames.get(3));
 	}
 	
 	@Test
@@ -53,8 +65,11 @@ public class NLXXParserClassLevelTest
 		
 		// assert
 		List<String> chapterNames = new ArrayList<>(docData.getChapters().keySet());
-		String chapterContent = docData.getChapterContent(chapterNames.get(0));
-		assertTrue("Unexpected chapter content", chapterContent.startsWith("Behaviour1"));
+		assertEquals("Chapter Number", 4, chapterNames.size());
+		String chapterContent = docData.getChapterContent(chapterNames.get(0)).trim();
+		assertTrue("Unexpected chapter content", chapterContent.startsWith("# " + BUNDLE.getString("DEFAULT_CHAPTER_NAME")));
+		chapterContent = docData.getChapterContent(chapterNames.get(1)).trim();
+		assertTrue("Unexpected chapter content", chapterContent.startsWith("# Behaviour1"));
 		assertTrue("Unexpected chapter content", chapterContent.contains("This is a documentation of this behaviour "));
 		assertTrue("Unexpected chapter content", chapterContent.contains("This is a second paragraph of the SysDocing information."));
 	}
@@ -88,7 +103,7 @@ public class NLXXParserClassLevelTest
 		assertEquals("Instruction", "When something is performed", xxDocData.getActInstructions().get(0));
 		assertEquals("Instruction", "And something else is performed", xxDocData.getActInstructions().get(1));
 		assertEquals("Instruction", "Then a certain end condition is reached", xxDocData.getAssertInstructions().get(0));
-		assertEquals("Instruction", "* another end condition is reached", xxDocData.getAssertInstructions().get(1));
+		assertEquals("Instruction", "another end condition is reached", xxDocData.getAssertInstructions().get(1));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -137,18 +152,17 @@ public class NLXXParserClassLevelTest
 		
 		XXDocData xxDocData = xxGroupDocData.getXXDocData(xxGroupDocData.getAllXXIDs().get(0));
 		
-		assertEquals("Number of arrange instruction", 2, xxDocData.getArrangeInstructions().size());
-		assertEquals("Number of act instruction", 2, xxDocData.getActInstructions().size());
-		assertEquals("Number of assert instruction", 2, xxDocData.getAssertInstructions().size());
+		assertEquals("Number of arrange instruction", 3, xxDocData.getArrangeInstructions().size());
+		assertEquals("Number of act instruction", 3, xxDocData.getActInstructions().size());
+		assertEquals("Number of assert instruction", 3, xxDocData.getAssertInstructions().size());
+		assertEquals("Number of SysDoc lines", 0, xxGroupDocData.getSysDocingLines().size());
 		
-		assertEquals("Instruction", "Foo1", xxDocData.getArrangeInstructions().get(0));
-		assertEquals("Instruction", "Bar1", xxDocData.getArrangeInstructions().get(1));
-		assertEquals("Instruction", "Foo2", xxDocData.getActInstructions().get(0));
-		assertEquals("Instruction", "Bar2", xxDocData.getActInstructions().get(1));
-		assertEquals("Instruction", "Foo3", xxDocData.getAssertInstructions().get(0));
-		assertEquals("Instruction", "Bar3", xxDocData.getAssertInstructions().get(1));
-
-		assertEquals("SysDoc", "Bar3", xxDocData.getAssertInstructions().get(1));
+		assertEquals("Instruction", "Foo1", xxDocData.getArrangeInstructions().get(1));
+		assertEquals("Instruction", "Bar1", xxDocData.getArrangeInstructions().get(2));
+		assertEquals("Instruction", "Foo2", xxDocData.getActInstructions().get(1));
+		assertEquals("Instruction", "Bar2", xxDocData.getActInstructions().get(2));
+		assertEquals("Instruction", "Foo3", xxDocData.getAssertInstructions().get(1));
+		assertEquals("Instruction", "Bar3", xxDocData.getAssertInstructions().get(2));
 	}
 
 	@Test

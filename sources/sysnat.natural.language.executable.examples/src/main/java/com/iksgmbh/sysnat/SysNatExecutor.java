@@ -32,6 +32,8 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.dialog.SysNatDialog;
 import com.iksgmbh.sysnat.testresult.archiving.SysNatTestResultArchiver;
 
+import de.iksgmbh.sysnat.docing.SysNatDocumentGenerator;
+
 public class SysNatExecutor 
 {
 	public static final String MAVEN_OK = "OK";
@@ -61,7 +63,8 @@ public class SysNatExecutor
 		}
 		else
 		{
-			throw new RuntimeException("Docing not yet implemented...");			
+			String applicationUnderTest = ExecutionRuntimeInfo.getInstance().getDocApplicationName();
+			SysNatDocumentGenerator.doYourJob(applicationUnderTest);
 		}
 	}
 

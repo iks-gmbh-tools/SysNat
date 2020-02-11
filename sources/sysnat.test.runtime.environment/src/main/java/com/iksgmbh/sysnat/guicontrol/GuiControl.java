@@ -86,7 +86,10 @@ public interface GuiControl
 	
 	// misc
 	int getNumberOfLinesInTextArea(String xpath);
-	void clickLink(String elementIdentifier);
+	void clickLink(String idToClick);
+	void clickLink(String idToClick, String idToScrollIntoView);  // if idToClick is not in view
+	void clickLink(String idToClick, int positionOfOccurrence);  // if link exists more than once on a page
+	void clickLink(String idToClick, String idToScrollIntoView, int positionOfOccurrence); 
 	List<WebElement> getElements(String elementIdentifier);
 	String getTagName(String elementIdentifier);
 	boolean isTextCurrentlyDisplayed(String text);

@@ -1,0 +1,48 @@
+Behaviour: <filename>
+
+Precondition: Open main menu.
+
+XX: Unternehmen
+Filter: Smoketest
+Click main menu item "Unternehmen".
+Is page "Unternehmen" displayed?
+
+XX: Leistungen
+Filter: Smoketest
+Click main menu item "Leistungen".
+Is page "Leistungen" displayed?
+
+XX: Referenzen
+Filter: Smoketest
+Click main menu item "Referenzen".
+Is page "Referenzen" displayed?
+
+XX: Karriere
+Filter: Smoketest
+Click main menu item "Karriere".
+Is page "Karriere" displayed?
+
+XX: News
+Filter: Smoketest
+Click main menu item "News".
+Is page "News" displayed?
+
+XX: Blog
+Filter: Smoketest
+Click main menu item "Blog".
+Is page "Blog" displayed?
+
+XX: Vorträge
+Filter: Smoketest
+Click main menu item "Vorträge".
+Is page "Vorträge" displayed?
+
+XX: Kontakt
+Filter: Smoketest
+Click main menu item "Kontakt".
+Is page "Kontakt" displayed?
+
+XX: Startseite
+Filter: Smoketest
+Click main menu item "Startseite".
+Is page "Startseite" displayed?
