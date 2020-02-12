@@ -15,9 +15,7 @@
  */
 package com.iksgmbh.sysnat.guicontrol;
 
-import java.awt.AWTException;
 import java.awt.Robot;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -252,18 +250,18 @@ public class SeleniumGuiController implements GuiControl
 //	    }
 	}
 	
-	private Robot getRobot() 
-	{
-		if (robot == null) 
-		{
-			try {
-				robot = new Robot();
-			} catch (AWTException e) {
-				e.printStackTrace();
-			}
-		}
-		return robot;
-	}
+//	private Robot getRobot() 
+//	{
+//		if (robot == null) 
+//		{
+//			try {
+//				robot = new Robot();
+//			} catch (AWTException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return robot;
+//	}
 
 	@Override
 	public boolean isSelected(String elementIndentifier) {
