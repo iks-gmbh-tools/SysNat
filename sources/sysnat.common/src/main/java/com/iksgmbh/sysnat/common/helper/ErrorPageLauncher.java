@@ -15,35 +15,47 @@
  */
 package com.iksgmbh.sysnat.common.helper;
 
-import java.util.Locale;
+import java.io.File;
 
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class ErrorPageLauncher 
 {
 	private static final String ERROR_PAGE_TEMPLATE = 
-			"sources/sysnat.testcase.generation/src/main/resources/htmlTemplates/GenerationErrorPage.htm.Template."
-            + Locale.getDefault().getLanguage() + ".txt";
-
-	public static void doYourJob(String errorMessage, String helpMessage) 
+			"sources/sysnat.common/src/main/resources/ErrorPage.html.Template.txt";
+	
+	public static void doYourJob(final String errorMessage, 
+			                     final String helpMessage, 
+			                     final String title) 
 	{
-		if (! "true".equalsIgnoreCase(System.getProperty("sysnat.dummy.test.run"))) 
-		{
-			final String templateText = SysNatFileUtil.readTextFileToString(SysNatFileUtil.findAbsoluteFilePath(ERROR_PAGE_TEMPLATE));
-			String filename = System.getProperty("sysnat.report.dir") + "/GenerationError.html";
-			filename = SysNatFileUtil.findAbsoluteFilePath(filename);
+		final String templateText = SysNatFileUtil.readTextFileToString(SysNatFileUtil.findAbsoluteFilePath(ERROR_PAGE_TEMPLATE));
+		String filename = SysNatFileUtil.findAbsoluteFilePath(getErrorReportFileAsString());
+		File targetFolder = new File(filename).getParentFile();
+		SysNatFileUtil.deleteFolder(targetFolder);
+		targetFolder.mkdirs();
+		
+		final String errorReport = templateText.replace("TITLE_PLACEHOLDER", title)
+		                                       .replace("ERROR_MESSAGE_PLACEHOLDER", errorMessage);
+		try {
+			SysNatFileUtil.writeFile(filename, errorReport.replace("HELP_MESSAGE_PLACEHOLDER", helpMessage));
 			
-			final String errorReport = templateText.replace("ERROR_MESSAGE_PLACEHOLDER", errorMessage);
-			
-			try {
-				SysNatFileUtil.writeFile(filename, errorReport.replace("HELP_MESSAGE_PLACEHOLDER", helpMessage));
+			if (! "true".equalsIgnoreCase(System.getProperty("sysnat.dummy.test.run"))) {
 				HtmlLauncher.doYourJob(filename);
-			} catch (Exception e) {
-				System.err.println("Problem: Cannot start ErrorPageLauncher.");
-				throw new SysNatTestDataException(errorMessage);
 			}
+		} catch (Exception e) {
+			System.err.println("Problem: Cannot start ErrorPageLauncher.");
+			throw new SysNatTestDataException("Could not start ErrorPageLaunch with message: " + errorMessage);
 		}
 	}
+	
+	private static String getErrorReportFileAsString() 
+	{
+		return SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.report.dir")) + "/"
+				+ System.getProperty(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY)
+				+ "/GenerationError.html";
+	}
+	
 
 }

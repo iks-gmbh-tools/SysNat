@@ -18,8 +18,8 @@ package com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject;
 import java.util.HashMap;
 import java.util.List;
 
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
-import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
 /**
@@ -31,9 +31,9 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
  */
 public class ErrorPageObject extends PageObject
 {	
-	public ErrorPageObject(LanguageTemplateBasics aLanguageTemplateBasics) 
+	public ErrorPageObject(ExecutableExample executableExample) 
 	{
-		this.languageTemplateBasics = aLanguageTemplateBasics;
+		this.executableExample = executableExample;
 		this.idMappingCollection = new HashMap<GuiType, HashMap<String, List<String>>>();
 		
 		HashMap<String, List<String>> idMappings = new HashMap<String, List<String>>();
@@ -64,6 +64,6 @@ public class ErrorPageObject extends PageObject
 
 	@Override
 	public boolean isCurrentlyDisplayed() {
-		return languageTemplateBasics.getExecutableExample().isElementAvailable("/html/body/form/table/tbody/tr/td[2]");
+		return executableExample.isElementAvailable("/html/body/form/table/tbody/tr/td[2]");
 	}
 }

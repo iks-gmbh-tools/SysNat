@@ -1,0 +1,10 @@
+Funktionalität: <filename>
+
+Szenario: First Executable Example in this folder
+Given a certain start condition
+And another start condition
+When something is performed
+And something else is performed
+Then a certain end condition is reached
+* another end condition is reached
+

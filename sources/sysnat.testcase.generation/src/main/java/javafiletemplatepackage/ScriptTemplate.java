@@ -24,7 +24,6 @@ import com.iksgmbh.sysnat.testcasejavatemplate.SysNatScript;
  * Script for TestApplication 'XY'.
  * TO BE REPLACED: class java doc comment
 */
-@SuppressWarnings("unused")
 public class ScriptTemplate extends SysNatScript
 {
 	/* TO BE REPLACED: fields for language template containers */

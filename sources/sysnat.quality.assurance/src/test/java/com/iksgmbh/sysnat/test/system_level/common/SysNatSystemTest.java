@@ -21,6 +21,7 @@ import java.io.File;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.helper.ReportCreator;
 
@@ -54,12 +55,12 @@ public class SysNatSystemTest
 		SysNatFileUtil.deleteFolder(reportDir);
 		reportDir.mkdir();
 		SysNatFileUtil.deleteFolder(executionDir);
-		System.setProperty("sysnat.autolaunch.report", "false");
+		ExecutionRuntimeInfo.getInstance().setResultLaunchOptionName("None"); // former: System.setProperty("sysnat.autolaunch.report", "false");
 	}
 	
 	private void setSettingsConfig(String value) {
-		System.setProperty("settings.config", value);
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", value);
+		System.setProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, value);
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, value);
 	}
 	
 

@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -73,12 +74,13 @@ public class SysNatFileUtil
 		SysNatFileUtil.writeFile(new File(targetDir, sourceFilename), content);
 	}
 
-	public static void writeFile(String fileName,
+	public static File writeFile(String fileName,
 			                     String fileContent)
 	{
 		try {
 			fileName = findAbsoluteFilePath(fileName);
 			writeFile(new FileOutputStream(fileName), fileContent, fileName);
+			return new File(fileName);
 		} catch (Exception e) {
 			String message = "Could not write file " + new File(fileName).getAbsolutePath();
 			System.err.println(message);
@@ -137,12 +139,20 @@ public class SysNatFileUtil
 
 	}
   
-	public static FileList findFilesIn(String fileExtension, 
+	/**
+	 * Searches for files of a certain extension in a given directory (not recursively!).
+	 * 
+	 * @param aFileExtension
+	 * @param directory
+	 * @return list of matching files
+	 */
+	public static FileList findFilesIn(final String aFileExtension, 
 			                           final File directory)
 	{
-		fileExtension = fileExtension.toLowerCase();
+		final String fileExtension = aFileExtension.toLowerCase();
 		final FileList toReturn = new FileList();
 		final File[] listFiles = directory.listFiles();
+		
 		for (File file : listFiles) {
 			if (file.getAbsolutePath().toLowerCase().endsWith(fileExtension) && file.isFile()) {
 				toReturn.add(file);
@@ -151,6 +161,28 @@ public class SysNatFileUtil
 
 		return toReturn;
 	}
+	
+	public static File findFileRecursively(final String aFileName, final File directory)
+	{
+		List<File> result = FileFinder.findFiles(directory, null, null, null, null, aFileName);
+		
+		if (result.size() == 0) {
+			throw new SysNatTestDataException("No file <b>" + aFileName + "</b> found in <b>" 
+		                                       + directory.getAbsolutePath() + "</b>!");
+		}
+		
+		if (result.size() > 1) 
+		{
+			Optional<File> exactMatch = result.stream().filter(file -> file.getName().equals(aFileName)).findFirst();
+			if (exactMatch.isPresent()) {
+				return exactMatch.get();
+			}
+			
+			throw new SysNatTestDataException("Ambiguous data file <b>" + aFileName + "</b>!");
+		}
+		
+		return result.get(0);
+	}	
 
 	public static FileList findDownloadFiles(String... fileExtensions)
 	{
@@ -501,7 +533,21 @@ public class SysNatFileUtil
 		}
 	}
 
-	public static void copyFileToTargetDir(final String sourceFileAsString, final String targetDirAsString)
+	public static File copyFileToTargetDir(final File sourceFile, 
+                                           final String targetDir)
+	{
+		final File targetFile = new File(targetDir, sourceFile.getName());
+		return copyBinaryFile(sourceFile, targetFile);		
+	}
+	
+	public static File copyFileToTargetDir(final File sourceFile, 
+			                               final File targetDir)
+	{
+		final File targetFile = new File(targetDir, sourceFile.getName());
+		return copyBinaryFile(sourceFile, targetFile);		
+	}
+
+	public static File copyFileToTargetDir(final String sourceFileAsString, final String targetDirAsString)
 	{
 		final File targetDir = new File(targetDirAsString);
 		if (!targetDir.exists()) {
@@ -515,8 +561,7 @@ public class SysNatFileUtil
 			throw new RuntimeException("Source file does not exist: " + sourceFile.getAbsolutePath());
 		}
 
-		final File targetFile = new File(targetDir, sourceFile.getName());
-		copyBinaryFile(sourceFile, targetFile);
+		return copyFileToTargetDir(sourceFile, targetDir);
 	}
 
 	public static void copyBinaryFile(String fromFileName, String toFileName)
@@ -529,17 +574,22 @@ public class SysNatFileUtil
 		copyBinaryFile(fromFile, toFile);
 	}
 
-	public static void copyBinaryFile(final File fromFile, final String toFileName)
+	/**
+	 * @param fromFile
+	 * @param toFileName name must represent a file not a directory!
+	 * @return created or overwritten target file
+	 */
+	public static File copyBinaryFile(final File fromFile, final String toFileName)
 	{
-		final File toFile = new File(toFileName);
-		copyBinaryFile(fromFile, toFile);
+		final File toFileOrDirectory = new File(toFileName);
+		return copyBinaryFile(fromFile, toFileOrDirectory);
 	}
 
-	public static void copyBinaryFile(String fromFileName, File toFile)
+	public static File copyBinaryFile(String fromFileName, File toFileOrDirectory)
 	{
 		fromFileName = SysNatFileUtil.findAbsoluteFilePath(fromFileName);
 		File fromFile = new File(fromFileName);
-		copyBinaryFile(fromFile, toFile);
+		return copyBinaryFile(fromFile, toFileOrDirectory);
 	}
 
 	/**
@@ -548,19 +598,25 @@ public class SysNatFileUtil
 	 * @param fromFile
 	 * @param toFile
 	 * @throws IOException
+	 * @return created file
 	 */
-	public static void copyBinaryFile(final File fromFile, File toFile)
+	public static File copyBinaryFile(final File fromFile, File toFileOrDirectory)
 	{
 		if (!fromFile.exists())
 			throw new RuntimeException("FileCopy: " + "no such source file: " + fromFile.getAbsolutePath());
 		if (!fromFile.isFile())
 			throw new RuntimeException("FileCopy: " + "can't copy directory: " + fromFile.getAbsolutePath());
-		if (!fromFile.canRead())
+		if (!fromFile.canRead()) {
 			throw new RuntimeException("FileCopy: " + "source file is unreadable: " + fromFile.getAbsolutePath());
-
-		if (toFile.isDirectory())
+		}
+		File toFile = toFileOrDirectory;
+		if (toFileOrDirectory.isDirectory())
 			toFile = new File(toFile, fromFile.getName());
 
+		if ( ! toFile.getParentFile().exists() ) {
+			toFile.getParentFile().mkdirs();
+		}
+		
 		if (toFile.exists()) {
 			if (!toFile.canWrite())
 				throw new RuntimeException(
@@ -604,6 +660,7 @@ public class SysNatFileUtil
 					e.printStackTrace();
 				}
 		}
+		return toFile;
 	}
 
 	public static File createFolder(final String toCreate)
@@ -648,20 +705,25 @@ public class SysNatFileUtil
 	public static File getFirefoxExecutable()
 	{
 		if (firefoxExecutable == null) {
-			String firefoxDir = System.getProperty("absolute.path.to.firefox.root.dir");
-			if (firefoxDir == null) {
-				if (System.getProperty("relative.path.to.firefox.root.dir") == null) {
-					throw new RuntimeException("No path to Firefox Executable defined!");
+			String pathToFirefoxExecutable = System.getProperty("absolute.path.to.browser.executable");
+			if (pathToFirefoxExecutable != null) 
+			{
+				firefoxExecutable = new File(pathToFirefoxExecutable);
+			} 
+			else 
+			{
+				String firefoxExecutableName = System.getProperty("absolute.path.to.browser.executable");
+				if (firefoxExecutableName == null) {
+					throw new SysNatException("No Firefox Executable defined!");
 				}
-				firefoxDir = System.getProperty("relative.path.to.firefox.root.dir");
+				String firefoxDir = System.getProperty("relative.path.to.webdrivers");
 				if (firefoxDir.contains(SysNatConstants.ROOT_PATH_PLACEHOLDER)) {
-					firefoxDir = firefoxDir.replace(SysNatConstants.ROOT_PATH_PLACEHOLDER,
-					        System.getProperty("root.path"));
+					firefoxDir = firefoxDir.replace(SysNatConstants.ROOT_PATH_PLACEHOLDER, System.getProperty("root.path"));
 				} else {
 					firefoxDir = System.getProperty("user.dir") + '/' + firefoxDir;
 				}
+				firefoxExecutable = new File(firefoxDir, "firefox.exe");
 			}
-			firefoxExecutable = new File(firefoxDir, "firefox.exe");
 		}
 
 		return firefoxExecutable;

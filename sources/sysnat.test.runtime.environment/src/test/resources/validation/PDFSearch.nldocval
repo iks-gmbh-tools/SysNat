@@ -1,0 +1,15 @@
+The document contains the sequence "Softwarequalität".
+
+# absolute Validation
+The document contains on page 8 the sequence "Der Autor".
+The document contains on page 8 in line 2 the sequence "Die Akteure der Umsetzung".
+
+# relative Validation
+The document contains on page with sequence "Abb. 3" the sequence "Ein ganzheitliches Model".
+The document contains on page with sequence "Tabelle 1" in line 2 the sequence "Nutzer des Qualitätsmodell".
+
+# Validation with placeholders
+The document contains the sequence "Dr. <Autor>".
+The document contains on page with sequence "Literatur & Links" the sequence "<CCC>".
+The document contains on page with sequence "Literatur & Links" in line 2 the sequence "<Titel>".
+

@@ -64,7 +64,7 @@ public interface GuiControl
 	
 	// for any GUI elements
 	String clickElement(String elementIndentifier);
-	String clickElement(String elementIndentifier, int timeoutInSeconds);
+	String clickElement(String elementIndentifier, int timeoutInMillis);
 	boolean isElementAvailable(String elementIndentifier);
 	boolean isElementReadyToUse(String elementIndentifier);
 	void clickElement(String tableName, String tableEntryText);
@@ -73,6 +73,10 @@ public interface GuiControl
 	String getSelectedTabName();
 	void clickTab(String tabIdentifier, String tabName);
 	
+	// for checkboxes
+	boolean isCheckBoxTicked(String chbId);
+	void assureTickInCheckBox(String chbId);
+	void assureNoTickInCheckBox(String chbId);
 	
 	// for comboboxes
 	void selectComboboxEntry(String elementIdentifier, int index);
@@ -82,11 +86,16 @@ public interface GuiControl
 	
 	// misc
 	int getNumberOfLinesInTextArea(String xpath);
-	void clickLink(String elementIdentifier);
+	void clickLink(String idToClick);
+	void clickLink(String idToClick, String idToScrollIntoView);  // if idToClick is not in view
+	void clickLink(String idToClick, int positionOfOccurrence);  // if link exists more than once on a page
+	void clickLink(String idToClick, String idToScrollIntoView, int positionOfOccurrence); 
 	List<WebElement> getElements(String elementIdentifier);
 	String getTagName(String elementIdentifier);
 	boolean isTextCurrentlyDisplayed(String text);
 	void waitUntilElementIsAvailable(String elementIdentifier);
+	void waitUntilElementIsAvailable(String elementIdentifier, int timeoutInSeconds);	
+
 	/**
 	 * @return true if text is not displayed or disappeared during maxSecondsToWait, false if not
 	 */
@@ -96,8 +105,9 @@ public interface GuiControl
 	String getCurrentlyActiveWindowTitle();  // for selenium this is the tab title not the frame title (which not exist) !
 	void switchToWindow(String windowID);
 	void switchToLastWindow();
-	int getNumberOfOpenTabs();  // in all frames !
+	int getNumberOfOpenApplicationWindows();
 	void switchToFirstWindow();
+	void maximizeWindow();
 
 	public default void performDoubleClickOnPosition(int x, int y) 
 	{
@@ -136,5 +146,5 @@ public interface GuiControl
 	   } catch (AWTException e) {
 	      e.printStackTrace();
 	   }
-	}	
+	}
 }

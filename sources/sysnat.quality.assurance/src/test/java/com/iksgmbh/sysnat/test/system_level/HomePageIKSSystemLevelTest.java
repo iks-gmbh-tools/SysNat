@@ -19,68 +19,61 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.junit.Test;
 
-import com.iksgmbh.sysnat.SysNatTestCaseGenerator;
-import com.iksgmbh.sysnat.SysNatTestingExecutor;
+import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
+import com.iksgmbh.sysnat.SysNatExecutor;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
+import com.iksgmbh.sysnat.domain.TestApplication;
 import com.iksgmbh.sysnat.test.system_level.common.SysNatSystemTest;
 import com.iksgmbh.sysnat.test.utils.SysNatTestUtils;
 
 public class HomePageIKSSystemLevelTest extends SysNatSystemTest 
 {	
+	private static final ResourceBundle ERR_MSG_BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
+
 	@Test
-	public void triesToReachHomePageIKS() throws Exception
+	public void triesToExecuteXX_forHomePageIKS() throws Exception
 	{
 		// arrange
 		settingsConfigToUseInSystemTest = "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config";
 		super.setup();
+		System.setProperty("sysnat.dummy.test.run", "true");
 
 		// act
-		SysNatTestCaseGenerator.doYourJob();
-		final String result = SysNatTestingExecutor.startMavenCleanCompileTest();
+		SysNatJUnitTestClassGenerator.doYourJob();
+		final String result = SysNatExecutor.startMavenCleanCompileTest();
 		Thread.sleep(2000); // give maven time to execute tests
 		
 		// assert
-		assertEquals("Maven execution status", SysNatTestingExecutor.MAVEN_OK, result);
-
-		final File reportFile = getFullOverviewOfCurrentReport();
-		final String report = SysNatFileUtil.readTextFileToString(reportFile); 
-		final String errorMessageIfNotAvailable = "Die Anwendung <b>HomePageIKS</b> steht derzeit nicht zur Verfügung!";
-		final int numberErrorMessagesOccurrences = SysNatStringUtil.countNumberOfOccurrences(report, errorMessageIfNotAvailable); 
-		
-		
-		int expectedNumberOfInactiveTests = 1;
-		assertTrue("Unexpected number of inactive test cases found in report.", 
-				   report.contains( getHtmlReportSnippet(expectedNumberOfInactiveTests,
-						                                 SysNatConstants.YELLOW_HTML_COLOR)));
-	
-
-		if (numberErrorMessagesOccurrences == 0) {
-			// Internet available and IKS Hompage online
-			runsSystemTest_ForHompageIKS_Successfully(report);
-		} else {
-			// either no Internet available or IKS Hompage offline
-			writesCorrectErrorMessageInReportForUnreachableURL(numberErrorMessagesOccurrences,
-					                                           report);
+		if (result.equals(SysNatExecutor.MAVEN_OK)) 
+		{
+			final File reportFile = getFullOverviewOfCurrentReport();
+			final String report = SysNatFileUtil.readTextFileToString(reportFile); 			
+			int expectedNumberOfInactiveTests = 1;
+			boolean ok = report.contains( getHtmlReportSnippet(expectedNumberOfInactiveTests,
+	                                                          SysNatConstants.YELLOW_HTML_COLOR));
+			if ( ! ok ) System.err.println(report);
+			assertTrue("Unexpected number of inactive test cases found in report.", ok );
+			checkReportSuccess(report);
+		}
+		else
+		{
+			String filename = "../sysnat.natural.language.executable.examples/reports/"
+					          + "HomePageIKS/GenerationError.html";
+			String report = SysNatFileUtil.readTextFileToString(filename);
+			TestApplication testApplication = new TestApplication("HomePageIKS");
+			String expected = ERR_MSG_BUNDLE.getString("AppNotAvailable").replace("XY", testApplication.getStartParameterValue());
+			assertTrue("Unexpected error report message.", report.contains(expected));
 		}
 	}
 
-	private void writesCorrectErrorMessageInReportForUnreachableURL(int numberErrorMessagesOccurrences, 
-			                                                        String report) 
-	{
-		final int numberOfTestCases = 7; 
-		if (numberOfTestCases != numberErrorMessagesOccurrences) {
-			System.err.println(report);
-		}
-		assertEquals("Number of error message occurrences.", 
-				      numberOfTestCases, numberErrorMessagesOccurrences);
-	}
-
-	private void runsSystemTest_ForHompageIKS_Successfully(String report) throws Exception
+	private void checkReportSuccess(String report) throws Exception
 	{
 		final String expectedMessage = "Die Anwendung <b>HomePageIKS</b> steht derzeit nicht zur Verfügung!";
 		final int actualOccurrences = SysNatStringUtil.countNumberOfOccurrences(report, expectedMessage); 
@@ -93,6 +86,8 @@ public class HomePageIKSSystemLevelTest extends SysNatSystemTest
 		SysNatTestUtils.assertReportContains(report, "background:#CDE301;" + System.getProperty("line.separator") +
 				"padding:0cm;mso-padding-alt:0cm 0cm 1.0pt 0cm'><span style='font-size:14.0pt;" + System.getProperty("line.separator") +
 				"line-height:106%'>InactiveTestExample<");
+		
+		SysNatTestUtils.assertReportContains(report, "MainMenuItems (9/9)");
 	}
 
 }

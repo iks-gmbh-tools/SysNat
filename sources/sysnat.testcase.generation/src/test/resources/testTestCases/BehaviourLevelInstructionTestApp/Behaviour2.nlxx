@@ -1,0 +1,30 @@
+Behaviour: Other Behaviour with Behaviour Level Instructions
+This Behaviour uses SysNat 
+
+OneTimePrecondition: A first basic condition. 
+Precondition: A second basic condition.
+
+XX: First executable example
+Test-Phase: Arrange
+A first condition is true.
+Test-Phase: Act
+Something happens.
+Test-Phase: Assert
+Is this true?
+
+XX: Second executable example
+Test-Phase: Arrange
+A second condition is true.
+Test-Phase: Act
+Something else happens.
+Test-Phase: Assert
+That is true.
+
+XX: Third executable example
+A third condition is true.
+Something strange happens.
+An error occurred.
+
+
+Cleanup: A first cleanup step. 
+OneTimeCleanup: A second cleanup step.

@@ -1,0 +1,14 @@
+# This file contains information where the actual data on the DocumentStructure is to find.
+# Document Structure Data consists of two kinds of data
+# 1. Which are the known document parts of the document (and how are they to recognize)
+# 2. Which are the known document structures (and of which parts do they consist)
+# Both kinds od data are read from a ExcelFile. 
+# To find the needed data within the ExcelFile, a sheet and a root cell must be defined for each data type.
+
+ExcelFile=EBookStructureInfo.xlsx
+
+PartsExcelSheet=Parts
+PartsRootCell=B3
+
+StructuresExcelSheet=Structures
+StructuresRootCell=C2

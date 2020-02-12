@@ -1,0 +1,19 @@
+Differences between
+Doc1: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_Assymetric_Compare1.pdf (Number of pages: 3)
+and
+Doc2: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_Assymetric_Compare5.pdf (Number of pages: 4)
+--------------------------------------------------------------------
+There are following configurations defined to ignore:
+2 line definition(s) (from these 1 causes a whole page to be ignored)
+--------------------------------------------------------------------
+1. Difference:
+Doc1, Page 1, Line 1(2) : [Page1 Line 1]
+Doc2, Page 1, Line 1(1) : [Page1 Line 1 diff]
+2. Difference:
+Doc1, Page 3(3), Line 2 : []
+Doc2, Page 3(4), Line 2 : [Page3 Line 2]
+3. Difference:
+Doc1, Page 3(3), Line none : -
+Doc2, Page 3(4), Line 4 : []
+
+Values in parentheses represent original page and line numbers before applying the compare rules.

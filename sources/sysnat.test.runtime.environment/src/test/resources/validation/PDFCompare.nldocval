@@ -1,0 +1,23 @@
+# first define the should-be-file
+For document comparison, file "ShouldBeTest.pdf" is used as should-be-document.
+
+# Substring rule (removes the first line from comparison in "Test.pdf" and "TestShouldBe.pdf")
+For document comparison, all lines that contain "represents" are ignored. 
+
+# Dateformat rule (removes three lines from comparison in "Test.pdf" and "TestShouldBe.pdf")
+For document comparison, all lines that start with, end with or represent a date value of format "DD.mm.YYYY" are ignored. 
+
+# Regex rule (removes the first line from comparison in "Test.pdf" and "TestShouldBe.pdf")
+#For document comparison, all lines that match pattern ".*" are ignored. 
+
+# line definition rule (removes one line only in "Test.pdf")
+For document comparison, the line 13 on page 1 in the actual document is ignored. 
+
+# line definition rule (removes one line only in "TestShouldBe.pdf")
+For document comparison, the line 14 on page 1 in the should-be-document is ignored. 
+
+# line definition rule (removes one line in both "Test.pdf" and "TestShouldBe.pdf")
+For document comparison, the line 10 on page 1 in both documents is ignored. 
+
+# Prefix rule (removes the last line from comparison in "Test.pdf" and "TestShouldBe.pdf")
+For document comparison, all lines that start with prefix "15" are ignored. 

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>'ExampleResultDocument'</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<style>
+
+body {
+  background: linear-gradient(90deg, white, lightyellow);
+}
+
+h1 {
+  background: lightgray;
+}
+
+p.testphase {
+  color: blue;
+}
+
+/* 5 title lines */
+
+table:nth-of-type(1) tr:nth-of-type(1){
+  background: #0d73ff;
+  font-size: 40px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(2){
+  background: #0d73ff;
+  font-size: 28px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(3){
+  background: #0d73ff;
+  font-size: 40px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(4){
+  background: #0d73ff;
+  font-size: 20px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(5){
+  background: #0d73ff;
+  font-size: 20px;
+  border: solid 1px #0d73ff;
+}
+
+/* data tables */
+table {
+    table-layout:fixed;
+    width:100%;
+    border: solid 2px black;     /* Tabellenrahmen */
+    border-collapse: collapse;
+}
+
+table tr:nth-of-type(odd) {
+  background: lightgrey;
+}
+table tr:nth-of-type(even) {
+  background: #efefef;
+}
+
+
+</style>
+<table>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>System Beschreibung</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">für</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong><em>TestApplication3</em></strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mit Hilfe von <em>Pandoc</em></td>
+</tr>
+<tr class="odd">
+</tr>
+</tbody>
+</table>
+<h1 id="introduction">Introduction</h1>
+<p>This is the first paragraph of the introduction chapter. This is the second sentence of the first paragraph. This is the third sentence of the first paragraph.</p>
+<p>This is the second paragraph of the introduction chapter. <strong><em>Please note that below Behaviour2 is intentionally listed before Behaviour1!</em></strong></p>
+<h1 id="chapter-1">Chapter 1</h1>
+<p>This is the first chapter’s content.</p>
+<h1 id="chapter-2">Chapter 2</h1>
+<p>This is the second chapter’s content.</p>
+<h1 id="behaviour2">Behaviour2</h1>
+<p>Foo Bar.</p>
+<h2 id="an-executable-example">An Executable Example</h2>
+<p>Bar Foo Foo Bar</p>
+<h1 id="behaviour1">Behaviour1</h1>
+<p>This is a documentation of this behaviour which will be included in the generated system documentation (PDF, html or docx). This is a second sentence of the SysDoc part.</p>
+<p>This is a second paragraph of the SysDoc part.</p>
+<h2 id="first-executable-example">First Executable Example</h2>
+<p>Given a certain start condition And another start condition</p>
+<p>When something is performed And something else is performed</p>
+<p>Then a certain end condition is reached And another end condition is reached</p>
+<h2 id="second-executable-example">Second Executable Example</h2>
+<p>This is a second example.</p>
+</body>
+</html>

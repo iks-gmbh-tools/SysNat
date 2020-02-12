@@ -23,6 +23,8 @@ package javafiletemplatepackage;
 import org.junit.After;
 import org.junit.Before;
 
+import java.util.*;
+
 import com.iksgmbh.sysnat.testcasejavatemplate.SysNatTestCase;
 /* TO BE REPLACED: imports */
 
@@ -30,7 +32,6 @@ import com.iksgmbh.sysnat.testcasejavatemplate.SysNatTestCase;
  * JUnitTestCaseTemplate for TestApplication 'XY'.
  * TO BE REPLACED: class java doc comment
  */
-@SuppressWarnings("unused")
 public class JUnitTestcaseTemplate extends SysNatTestCase
 {
 	/* TO BE REPLACED: constants */
@@ -75,4 +76,13 @@ public class JUnitTestcaseTemplate extends SysNatTestCase
 	}
 	
 	/* TO BE REPLACED: business cleanup */			
+	
+	@Override
+	public List<String> getNlxxFilePathAsList() 
+	{
+		List<String> toReturn = new ArrayList<>();
+		/* TO BE REPLACED: nlxxFilepath */
+		return toReturn;
+	}
+	
 }

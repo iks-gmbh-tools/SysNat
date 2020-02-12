@@ -94,7 +94,7 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	@Override
 	public boolean isStartPageVisible() {
 		try {
-			return executableExample.getTextForId("//div[@class='content']//h1").equals("Projekte. Beratung. Spezialisten.");
+			return executableExample.getTextForId("//div[@class='text hasImage  float_right']//p").startsWith("Die unternehmerische Anforderung im Fokus");
 		} catch (Exception e) {
 			return false;
 		}
@@ -104,7 +104,7 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	@Override
 	public void gotoStartPage() {
 		if ( ! isStartPageVisible() ) {
-			executableExample.clickLink("Home");
+			executableExample.clickLink("Startseite");
 		}
 	}
 
@@ -120,19 +120,32 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	{
 		boolean ok = true;
 		executableExample.sleep(1500);
+		String xpath1 = "//h1[@class='ce_headline headline']";
+		String xpath2 = "//h1[@class='ce_headline headline_italic  headline']";
+		String xpath3 = "//div[@class='ce_form last tableless block']//h2";
+		String xpath4 = "//h1[@class='headline ']";
+		String xpath5 = "//h1[@class='headline  float_right']";
+		String xpath6 = "//h1[@class='ce_headline first last headline_italic  headline']";
 		
-		if (expectedPage.equals("Home"))  {
+		
+		if (expectedPage.equals("Startseite"))  {
 			ok = isStartPageVisible();
-		} else if (expectedPage.equals("Downloads"))  {
-			ok = executableExample.getTextForId("//div[@class='downloads-title']//h1").equals("Vorträge");
-		} else if (expectedPage.equals("Dienstleistungen"))  {
-			ok = executableExample.getTextForId("//div[@class='content']//h1").equals("Wir erstellen individuelle Softwarelösungen");
 		} else if (expectedPage.equals("Unternehmen"))  {
-			ok = executableExample.getTextForId("//div[@class='content']//h1").equals("Wir entwickeln individuelle Softwarelösungen");
+			ok = executableExample.getTextForId(xpath2).equals("Wir behalten den Blick für das Ganze");
+		} else if (expectedPage.equals("Leistungen"))  {
+			ok = executableExample.getTextForId(xpath5).equals("Maßgeschneiderte Lösungen");
+		} else if (expectedPage.equals("Referenzen"))  {
+			ok = executableExample.getTextForId(xpath6).equals("Jede Idee ist nur so gut, wie ihre Umsetzung");
 		} else if (expectedPage.equals("Karriere"))  {
-			ok = executableExample.getTextForId("//div[@class='content']//h2").equals("Was macht IKS?");
+			ok = executableExample.getTextForId(xpath2).equals("Spezialisten mit Persönlichkeit");
 		} else if (expectedPage.equals("Kontakt"))  {
-			ok = executableExample.getTextForId("//div[@class='content']//h1").equals("Schreiben Sie uns, wir freuen uns auf Ihre Nachricht!");
+			ok = executableExample.getTextForId(xpath3).equals("Schreiben Sie uns, wir freuen uns auf Ihre Nachricht!");
+		} else if (expectedPage.equals("Blog"))  {
+			ok = executableExample.getTextForId(xpath1).equals("Blog und Veröffentlichungen");
+		} else if (expectedPage.equals("Vorträge"))  {
+			ok = executableExample.getTextForId(xpath4).equals("IT Fachvorträge");
+		} else if (expectedPage.equals("News"))  {
+			ok = executableExample.getTextForId(xpath1).equals("News und Terminübersicht");
 		} else {
 			executableExample.failWithMessage("Unbekannte Seite <b>" + expectedPage + "</b>.");
 		}
@@ -144,8 +157,20 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	
 	@LanguageTemplate(value = "Klicke Hauptmenüpunkt ^^.")
 	@LanguageTemplate(value = "Click main menu item ^^.")
-	public void clickMainMenuItem(String menuItemText) {
-		executableExample.clickLink(menuItemText);
+	public void clickMainMenuItem(String menuItemText) 
+	{
+		String technicalTitle = menuItemText;
+		if (menuItemText.equals("Blog")) {
+			technicalTitle = "Blog und Veröffentlichungen";
+		}
+		else if (menuItemText.equals("News")) {
+			technicalTitle = "News und Terminübersicht";
+		}
+		else if (menuItemText.equals("Startseite")) {
+			technicalTitle = "Individuelle Softwareentwicklung und IT-Beratung";
+		}
+		
+		executableExample.clickLink("//a[@title='" + technicalTitle + "']", 2);
 		//executableExample.addReportMessage("Der Hauptmenüpunkt <b>" + menuItemText + "</b> wurde geklickt.");
 		executableExample.addReportMessage("Main menu item <b>" + menuItemText + "</b> has been clicked.");
 	}
@@ -155,11 +180,16 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	@LanguageTemplate("Klicke Link ^^.")
 	public void clickLink(String linkText) 
 	{
-		if (linkText.equals("IKS Software zum Anfassen Gibt es so etwas")) {
-			executableExample.clickLink("//a[@href='/assets/downloads/IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf']");
+		if (linkText.equals("Download Softwarequalität-zum-Anfassen.pdf")) {
+			executableExample.clickLink("//li[@class='item ext-pdf']", "//div[@class='ce_text block']");
+		} else if (linkText.equals("MainMenuSymbol")) {
+				executableExample.clickLink("//div[@class='menu_hamburger']");
+		} else if (linkText.equals("Softwarequalität")) {
+			executableExample.clickLink("filltext_51");
 		} else {			
 			executableExample.clickLink(linkText);
 		}
+		
 		executableExample.addReportMessage("Link <b>" + linkText + "</b> has been clicked.");
 		//executableExample.addReportMessage("Der Link <b>" + linkText + "</b> wurde geklickt.");
 	}
@@ -173,6 +203,12 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 		List<File> findDownloadFiles2 = SysNatFileUtil.findDownloadFiles("PDF").getFiles();
 		findDownloadFiles2.removeAll(findDownloadFiles1); 
 		return findDownloadFiles2.get(0);
+	}
+	
+	@LanguageTemplate(value = "Open main menu.")
+	@LanguageTemplate(value = "Öffne Hauptmenü.")
+	public void openMainMenu() {
+		clickLink("MainMenuSymbol");
 	}
 
 }

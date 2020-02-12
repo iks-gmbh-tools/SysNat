@@ -75,9 +75,9 @@ public class LanguagePatternParser
 		addDefaultPart(splitResult[0] + ":");
 		
 		if (splitResult.length == 1) {
-			addParamValuePart(0, "-");
+			addParamValuePart(0, "-", naturalLanguageLine);
 		} else {			
-			addParamValuePart(0, splitResult[1].trim());
+			addParamValuePart(0, splitResult[1].trim(), naturalLanguageLine);
 		}
 	}
 
@@ -105,7 +105,7 @@ public class LanguagePatternParser
 				}
 				else if (parseModus == NaturalLanguagePatternPartType.PARAM_VALUE)
 				{
-					addParamValuePart(parameterCount, currentPart);
+					addParamValuePart(parameterCount, currentPart, naturalLanguageLine);
 					currentPart = "";					
 					parseModus = NaturalLanguagePatternPartType.DEFAULT;
 					parameterCount++;
@@ -209,7 +209,9 @@ public class LanguagePatternParser
 		}
 	}
 
-	private void addParamValuePart(int paramCounter, String valueInInstruction) 
+	private void addParamValuePart(int paramCounter, 
+			                       String valueInInstruction, 
+			                       String naturalLanguageLine) 
 	{
 		if (parameterTypes != null) 
 		{
@@ -218,7 +220,8 @@ public class LanguagePatternParser
 			if (parameterTypes.length > paramCounter) {
 				parameterType = parameterTypes[paramCounter];
 			} else {
-				ExceptionHandlingUtil.throwException("Number of Parameter mismatch!");
+				ExceptionHandlingUtil.throwException("Number of parameter mismatch in method of language template '" 
+			                                         + naturalLanguageLine+ "'.");
 			}
 			patternParts.add(new NaturalLanguagePatternPart(NaturalLanguagePatternPartType.PARAM_VALUE, parameterType));
 		} else {

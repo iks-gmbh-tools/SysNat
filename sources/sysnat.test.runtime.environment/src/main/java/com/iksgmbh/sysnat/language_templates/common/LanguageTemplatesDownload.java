@@ -73,7 +73,7 @@ public class LanguageTemplatesDownload
 	@LanguageTemplate("Das heruntergeladene PDF wird als <> festgehalten.")
 	public File storeLastPdfFile() 
 	{
-		File latestPdfFile = SysNatFileUtil.findRecentDownloadFile(2000);
+		File latestPdfFile = SysNatFileUtil.findRecentDownloadFile(5000);
 		if (latestPdfFile == null) {
 			throw new SysNatException("No PDF found that was recently downloaded.");
 		}
@@ -82,14 +82,18 @@ public class LanguageTemplatesDownload
 	
 	@LanguageTemplate("Close PDF window ^^.")
 	@LanguageTemplate("Schließe das PDF-Fenster ^^.")
-	public void closePDFWindow(String windowTitle)
+	public void closePDFWindowIfPresent(String windowTitle)
 	{
 		executableExample.sleep(1000); // give system time 
 		
-		if ( ! doesWindowWithTitleExists(windowTitle) ) {
+		if ( doesWindowWithTitleExists(windowTitle) ) {
 			System.err.println("Warning: Window with title" + windowTitle + " not found.");
 			return;
 		};
+		
+		if (executableExample.getGuiController().getNumberOfOpenApplicationWindows() == 1) {
+			return;
+		}
 		
 		executableExample.getGuiController().switchToLastWindow();		
 		((WebDriver)executableExample.getGuiController().getWebDriver()).close();
@@ -109,5 +113,125 @@ public class LanguageTemplatesDownload
 		final String infoLine = result.stream().filter(line->line.contains(windowTitlePart)).findFirst().orElse("");
 		return infoLine.length() > 0;
 	}
+	/*
+	private File getDownloadedFileFromDownloadDir(List<File> currentFilesInDownloadDir, 
+			                                      String fileExtension)
+	{
+	    List<File> findDownloadFiles1 = currentFilesInDownloadDir;
+	    List<File> findDownloadFiles2 = SysNatFileUtil.findDownloadFiles(fileExtension).getFiles();
+
+	    int maxAttempt = 15;
+	    int count = 0;
+	    while (findDownloadFiles1.size() == findDownloadFiles2.size() && count < maxAttempt) {
+	        this.executableExample.sleep(100);
+	        findDownloadFiles2 = SysNatFileUtil.findDownloadFiles(fileExtension).getFiles();
+	        count++;
+	    }
+
+	    findDownloadFiles2.removeAll(findDownloadFiles1);
+	    if (findDownloadFiles2.size() == 1) {
+	        return findDownloadFiles2.get(0);
+	    }
+	    
+	    return null;
+	}
+
+	
+	private boolean waitUntilDownloadIsFinished(int originalNumberOfBrowserWindows)
+	{
+	   long startTime = new Date().getTime();
+	   boolean tryAgain = true;
+	   long waitPeriodInSeconds = 0;
+	   int tryCounter = 0;
+
+	   while (tryAgain) 
+	   {
+	      try 
+	      {
+	         int numberOfBrowserFrames = executableExample.getGuiController().getNumberOfBrowserFrames();
+	         int numberOfOpenTabs = executableExample.getGuiController().getNumberOfOpenTabs();
+
+	         if ( originalNumberOfBrowserWindows+1 == numberOfBrowserFrames) {
+	        	 executableExample.getGuiController().switchToLastWindow();
+	         }
+
+	         boolean isDownloadButtonAvailable = executableExample.getGuiController().isElementAvailable("download");
+	         if ( (numberOfOpenTabs == 2 || originalNumberOfBrowserWindows+1 == numberOfBrowserFrames)
+	              && isDownloadButtonAvailable)
+	         {
+	              return true;
+	         }
+
+	         if (tryCounter > 3 && 
+	        	 ExecutionRuntimeInfo.getInstance().getBrowserTypeToUse().equals(SysNatConstants.BrowserType.IE))
+	         {
+	            if (executableExample.getGuiController().isTextCurrentlyDisplayed("Es ist ein Fehler aufgetreten."))
+	            {
+	               System.err.println("Der Internet Explorer war nicht in der Lage, das PDF im dafür geöffneten Browserfenster anzuzeigen.");
+	               System.err.println("In den anderen Browsern ist dieses Problem nicht bekannt.");
+	               return false;
+	            }
+	            saveFileViaSaveDialog();
+	            return false;
+	         }
+
+	         tryCounter++;
+
+	      } catch (Exception e) {
+	         // do nothing
+	      }
+	      
+	      executableExample.sleep(1000);
+	      waitPeriodInSeconds = (new Date().getTime() - startTime) / 1000;
+	       if (waitPeriodInSeconds > ExecutionRuntimeInfo.getInstance().getDefaultPrintTimeout()) {
+	    	   executableExample.addReportMessage("<b>Der Druckversuch wurde nach " + waitPeriodInSeconds + " Sekunden abgebrochen!</b>");
+	          return false;
+	       }
+	    }
+
+	    executableExample.addReportMessage("//Dieser Test musste " + waitPeriodInSeconds + " Sekunden auf den Druck warten.");
+	    return false;
+	}
+	
+	public void saveFileViaSaveDialog() throws InterruptedException 
+	{
+	   try {
+	      Robot robot = new Robot();
+	
+	      // open Save Dialog
+	      robot.keyPress(KeyEvent.VK_CONTROL);
+	      robot.keyPress(KeyEvent.VK_SHIFT);   // needed ?
+	      robot.keyPress(KeyEvent.VK_S);
+	      robot.keyRelease(KeyEvent.VK_S);
+	      robot.keyRelease(KeyEvent.VK_SHIFT);  // needed ?
+	      robot.keyRelease(KeyEvent.VK_CONTROL);
+	
+	      // press pos1
+	      sleep(1000);
+	      robot.keyPress(KeyEvent.VK_HOME);
+	      robot.keyRelease(KeyEvent.VK_HOME);
+	
+	      // enter path to downloaddir
+	      sleep(1000);
+	      StringSelection selection = new StringSelection(SysNatFileUtil.getDownloadDir().getAbsolutePath() + "\\");
+	      Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+	      clipboard.setContents(selection, selection);
+	      robot.keyPress(KeyEvent.VK_CONTROL);
+	      robot.keyPress(KeyEvent.VK_V);
+	      robot.keyRelease(KeyEvent.VK_V);
+	      robot.keyRelease(KeyEvent.VK_CONTROL);
+	
+	      // press enter
+	      sleep(5000);
+	      robot.keyPress(KeyEvent.VK_ENTER);
+	      robot.keyRelease(KeyEvent.VK_ENTER);
+	   } catch (AWTException e) {
+	
+	      e.printStackTrace();
+	   }
+	}
+	
+	 
+	*/
 	
 }

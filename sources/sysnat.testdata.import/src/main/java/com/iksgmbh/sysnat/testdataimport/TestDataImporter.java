@@ -21,14 +21,16 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
-import java.util.Set;
+import java.util.ResourceBundle;
 
+import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.helper.FileFinder;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
-import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+import com.iksgmbh.sysnat.testdataimport.domain.DocumentValidationRule;
 
 
 /**
@@ -38,15 +40,23 @@ import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
  */
 public class TestDataImporter 
 {
+	public static final String DATA_SET_EXCEL_ID = "EXCEL_ID";
 	public static final String TESTDATA_LOCATION_SEPARATOR = "::";
-
+	public static final String EXCEL = ".xlsx";
+	public static final String DOC_VAL = ".nldocval";
+	
+	private static final ResourceBundle ERR_MSG_BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
 
 	protected static final char[] CHARS_TO_CUT_FROM_DATA_FILE_NAME = 
 		{'0','1','2','3','4','5','6','7','8','9','0','-','_', '.' };
 	
 	String testdataDir;
 	String testdataId;
+
+	private int validationRuleCounter;
 	
+	private List<File> lastFilesLoaded;
+
 	/**
 	 * @param aTestdataDir path to testdata dir
 	 *                   e.g. ../sysnat.natural.language.executable.examples/testdata/HelloWorldSpringBoot
@@ -72,6 +82,8 @@ public class TestDataImporter
 		
 		filesToLoad.forEach(file -> addToTestdata(file, testdata));
 		
+		lastFilesLoaded = filesToLoad;
+		
 		return testdata;
 	}
 
@@ -96,7 +108,7 @@ public class TestDataImporter
 			@Override 
 			public boolean accept(File dir, String filename) 
 			{
-				if (! filename.endsWith(".dat") && ! filename.endsWith(".xlsx") && ! filename.endsWith(".validation"))
+				if (! filename.endsWith(".dat") && ! filename.endsWith(".xlsx") && ! filename.endsWith(DOC_VAL))
 					return false;
 
 				if (filename.equals(filenameToSearch))
@@ -136,7 +148,8 @@ public class TestDataImporter
 		if (toReturn.size() == 0) {
 			String errorMessage = "For '" + filenameToSearch + "' there is no test data file found in " + testdataDir + ".";
 			String helpMessage = "Create test data file or remove its reference.";
-			ErrorPageLauncher.doYourJob(errorMessage, helpMessage );
+			ErrorPageLauncher.doYourJob(errorMessage, helpMessage, ERR_MSG_BUNDLE.getString("GenerationError"));
+			throw new SysNatTestDataException(errorMessage);
 		}
 		
 		return toReturn;
@@ -166,13 +179,13 @@ public class TestDataImporter
 		}
 	}
 
-	private Hashtable<String, Properties> loadDatasetsFromFile(final File file) 
+	public Hashtable<String, Properties> loadDatasetsFromFile(final File file) 
 	{
 		if (file.getName().endsWith(".dat")) {
 			return loadFromDatFile(file);
 		}
 
-		if (file.getName().endsWith(".validation")) {
+		if (file.getName().endsWith(DOC_VAL)) {
 			return loadFromValidationFile(file);
 		}
 
@@ -186,16 +199,28 @@ public class TestDataImporter
 	private Hashtable<String, Properties> loadFromValidationFile(File file)
 	{
 		final Hashtable<String, Properties> toReturn = new Hashtable<>();
-		final LinkedHashMap<String, String> keyValuePairs = ValidationFileReader.doYourJob(file);
-		final Set<String> keySet = keyValuePairs.keySet();
-		final String keyOrder = SysNatStringUtil.listToString(keySet, "|");
-		final Properties loadedDataSet = new Properties();
-
-		keySet.forEach(key -> loadedDataSet.setProperty(key, keyValuePairs.get(key)) );
-		loadedDataSet.setProperty("keyOrder", keyOrder);
-		toReturn.put("ValidationData", loadedDataSet);
+		final List<DocumentValidationRule> validationRules = ValidationFileReader.doYourJob(file);
+		final Properties loadedValidationData = new Properties();
+		final List<String> ruleOrder = new ArrayList<String>();
+		validationRuleCounter = 0;
+		validationRules.forEach(rule -> addRule(rule, loadedValidationData, ruleOrder));
+		loadedValidationData.put("RuleOrder", SysNatStringUtil.listToString(ruleOrder, "|"));
+		toReturn.put("ValidationRules", loadedValidationData);
 
 		return toReturn;
+	}
+
+	private void addRule(DocumentValidationRule rule, 
+			             Properties loadedValidationData, 
+			             List<String> ruleOrder)
+	{
+		String ruleName = buildRuleName();
+		loadedValidationData.put(ruleName, rule.toString());
+		ruleOrder.add(ruleName);
+	}
+
+	private String buildRuleName() {
+		return "ValidationRule" + ++validationRuleCounter;
 	}
 
 	private Hashtable<String, Properties> loadFromDatFile(File file)
@@ -220,9 +245,17 @@ public class TestDataImporter
 		return toReturn;
 	}
 
-	private Hashtable<String, Properties> loadDatasetsFromExcelFile(final File excelFile, String testdataId) {
-		return ExcelDataProvider.doYourJob(new File(excelFile.getAbsolutePath()));
+	private Hashtable<String, Properties> loadDatasetsFromExcelFile(final File excelFile, String testdataId) 
+	{
+		Hashtable<String, Properties> toReturn = new Hashtable<>();
+		LinkedHashMap<String, Properties> excelData = ExcelDataProvider.doYourJob(new File(excelFile.getAbsolutePath()));
+		excelData.entrySet().forEach(entry -> toReturn.put(entry.getKey(), entry.getValue()));
+		return toReturn;
 	}
-
+	
+	public List<File> getLastFilesLoaded()
+	{
+		return lastFilesLoaded;
+	}
 	
 }

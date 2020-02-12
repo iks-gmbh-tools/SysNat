@@ -403,7 +403,7 @@ public class TestApplicationExImportDialog extends JFrame
     
 	public static void doYourJob() 
 	{
-		if (ExecutionRuntimeInfo.getInstance().getUseSettingsDialog())
+		if (ExecutionRuntimeInfo.getInstance().useSettingsDialog())
 		{			
 			try {
 				CompletableFuture.runAsync( TestApplicationExImportDialog::runGUI ).get();

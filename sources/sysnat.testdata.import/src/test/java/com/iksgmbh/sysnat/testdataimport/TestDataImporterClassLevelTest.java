@@ -28,6 +28,7 @@ import java.util.Properties;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 
 public class TestDataImporterClassLevelTest 
 {
@@ -82,6 +83,11 @@ public class TestDataImporterClassLevelTest
 	@Test
 	public void throwsExceptionForMissingTestData() throws Exception 
 	{
+		// arrange
+		System.setProperty("sysnat.report.dir", "target");
+		System.setProperty(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY, "TestReport");
+		System.setProperty("sysnat.dummy.test.run", "true");
+		
 		try {
 			// act
 			cut.loadTestdata("unknown");
@@ -178,11 +184,19 @@ public class TestDataImporterClassLevelTest
 		assertEquals("DatasetID", "BigTestDataSeriesPart4_3", keys.get(14));
 		assertEquals("DatasetID", "BigTestDataSeriesPart4_4", keys.get(15));
 		
-		for (int i = 0; i < keys.size(); i++) {
+		for (int i = 0; i < 8; i++) {
+			// data sets read from excel file have one attribute more 
+			// i.e. 4 instead of 3 due to TestDataImporter.EXCEL_ID 
+			String message = "Number of fields in " + (i+1) + "th dataset";
+			assertEquals(message, 4, result.get(keys.get(i)).size());
+		}
+
+		for (int i = 8; i < keys.size(); i++) {
 			String message = "Number of fields in " + (i+1) + "th dataset";
 			assertEquals(message, 3, result.get(keys.get(i)).size());
 		}
-
+		
+		
 		assertEquals("Fieldname", "Hi Stephen!", result.get(keys.get(0)).get("GreetingResult"));
 		assertEquals("Fieldname", "Hello Lisa!", result.get(keys.get(5)).get("GreetingResult"));
 		assertEquals("Fieldname", " Good Day Dean!", result.get(keys.get(10)).get("GreetingResult"));

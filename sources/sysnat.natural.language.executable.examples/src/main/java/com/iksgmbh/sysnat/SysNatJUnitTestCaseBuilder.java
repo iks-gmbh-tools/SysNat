@@ -15,6 +15,8 @@
  */
 package com.iksgmbh.sysnat;
 
+import com.iksgmbh.sysnat.dialog.SysNatDialog;
+
 /**
  * Does only generate the Java code without compiling and executing it.
  * 
@@ -23,8 +25,8 @@ package com.iksgmbh.sysnat;
 public class SysNatJUnitTestCaseBuilder 
 {
 	public static void main(String[] args) {
-		SettingsConfigDialog.doYourJob();
-		SysNatTestCaseGenerator.doYourJob();
+		SysNatDialog.doYourJob();
+		SysNatJUnitTestClassGenerator.doYourJob();
 	}
 
 }

@@ -17,13 +17,17 @@ package com.iksgmbh.sysnat.testdataimport;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+import com.iksgmbh.sysnat.common.exception.SysNatValidationException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.testdataimport.domain.DocumentContentSearchValidationRule;
+import com.iksgmbh.sysnat.testdataimport.domain.DocumentContentSearchValidationRule.ContentRuleType;
+import com.iksgmbh.sysnat.testdataimport.domain.DocumentValidationRule;
+import com.iksgmbh.sysnat.testdataimport.domain.DocumentContentCompareValidationRule;
+import com.iksgmbh.sysnat.testdataimport.domain.DocumentContentCompareValidationRule.ComparisonRuleType;
 
 /**
  * Reads a dat file and parses the content to list of properties.
@@ -32,152 +36,407 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
  */
 public class ValidationFileReader
 {
-	static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/PDFContentValidation", Locale.getDefault());
-	static final ResourceBundle BUNDLE_EN = ResourceBundle.getBundle("bundles/PDFContentValidation", Locale.ENGLISH);
+	static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/DocumentContentValidation", Locale.getDefault());
+	static final ResourceBundle BUNDLE_EN = ResourceBundle.getBundle("bundles/DocumentContentValidation", Locale.ENGLISH);
 
-	private static final String PATTERN_SEARCH_WHOLE_DOCUMENT = BUNDLE.getString("Pattern_FileContains") + " \"";
-	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE1 = BUNDLE.getString("Pattern_PageContains_Variant1") + " \"";
-	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE2 = BUNDLE.getString("Pattern_PageContains_Variant2") + " ";
-	private static final String PATTERN_SEARCH_IN_LINE = " " + BUNDLE.getString("Pattern_LineContains") + " ";
-	private static final String PATTERN_SEQUENCE = " " + BUNDLE.getString("Pattern_sequence") + " ";
-
-	private static final String PATTERN_SEARCH_WHOLE_DOCUMENT_EN = BUNDLE_EN.getString("Pattern_FileContains") + " \"";
-	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE1_EN = BUNDLE_EN.getString("Pattern_PageContains_Variant1") + " \"";
-	private static final String PATTERN_SEARCH_IN_PAGE_VARIANTE2_EN = BUNDLE_EN.getString("Pattern_PageContains_Variant2") + " ";
-	private static final String PATTERN_SEARCH_IN_LINE_EN = " " + BUNDLE_EN.getString("Pattern_LineContains") + " ";
-	private static final String PATTERN_SEQUENCE_EN = " " + BUNDLE_EN.getString("Pattern_sequence") + " ";
+	static final String REGEX_ANY = ".*";
+	private static final String SPACE_MASK = "s_p_a_c_e";
 	
-	private File inputFile;
+	private static final String PATTERN_CONTENT_RULE_WHOLE_DOCUMENT = BUNDLE.getString("ContentValidationRuleContains").replace("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_CONTENT_RULE_PAGE = BUNDLE.getString("ContentValidationRuleContainsOnPage").replace("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_CONTENT_RULE_LINE = BUNDLE.getString("ContentValidationRuleContainsOnLine").replace("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_CONTENT_RULE_RELATIVE_PAGE = BUNDLE.getString("ContentValidationRuleContainsOnRelativePage").replaceAll("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_CONTENT_RULE_RELATIVE_LINE = BUNDLE.getString("ContentValidationRuleContainsOnRelativeLine").replaceAll("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
 
-	ValidationFileReader(final File aDataFile) {
-		inputFile = aDataFile;
+	private static final String PATTERN_CONTENT_RULE_WHOLE_DOCUMENT_EN = BUNDLE_EN.getString("ContentValidationRuleContains").replace("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_CONTENT_RULE_PAGE_EN = BUNDLE_EN.getString("ContentValidationRuleContainsOnPage").replace("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_CONTENT_RULE_LINE_EN = BUNDLE_EN.getString("ContentValidationRuleContainsOnLine").replace("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_CONTENT_RULE_RELATIVE_PAGE_EN = BUNDLE_EN.getString("ContentValidationRuleContainsOnRelativePage").replaceAll("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_CONTENT_RULE_RELATIVE_LINE_EN = BUNDLE_EN.getString("ContentValidationRuleContainsOnRelativeLine").replaceAll("\"\"", REGEX_ANY).replaceAll("NN", REGEX_ANY).trim();
+	
+	private static final String PATTERN_COMPARISON_RULE_IDENTIFIER = BUNDLE.getString("ComparisonRuleIdentifier");
+	private static final String PATTERN_COMPARISON_RULE_SHOULDBEFILE = BUNDLE.getString("ComparisonRuleShouldBeFile").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_DATEFORMAT = BUNDLE.getString("ComparisonRuleDateformat").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_PREFIX = BUNDLE.getString("ComparisonRulePrefix").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_SUBSTRING = BUNDLE.getString("ComparisonRuleSubstring").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_REGEX = BUNDLE.getString("ComparisonRuleRegex").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_LINE1 = BUNDLE.getString("ComparisonRuleLine1").replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_LINE2 = BUNDLE.getString("ComparisonRuleLine2").replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_LINEBOTH = BUNDLE.getString("ComparisonRuleLineBoth").replaceAll("NN", REGEX_ANY).trim();
+	
+	private static final String PATTERN_COMPARISON_RULE_IDENTIFIER_EN = BUNDLE_EN.getString("ComparisonRuleIdentifier");
+	private static final String PATTERN_COMPARISON_RULE_SHOULDBEFILE_EN = BUNDLE_EN.getString("ComparisonRuleShouldBeFile").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_DATEFORMAT_EN = BUNDLE_EN.getString("ComparisonRuleDateformat").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_PREFIX_EN = BUNDLE_EN.getString("ComparisonRulePrefix").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_SUBSTRING_EN = BUNDLE_EN.getString("ComparisonRuleSubstring").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_REGEX_EN = BUNDLE_EN.getString("ComparisonRuleRegex").replaceAll("\"\"", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_LINE1_EN = BUNDLE_EN.getString("ComparisonRuleLine1").replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_LINE2_EN = BUNDLE_EN.getString("ComparisonRuleLine2").replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_LINEBOTH_EN = BUNDLE_EN.getString("ComparisonRuleLineBoth").replaceAll("NN", REGEX_ANY).trim();
+	
+	private List<String> lines;
+	private boolean compareValidationMode;
+
+	ValidationFileReader(final File aDataFile) 
+	{
+		lines = extractDataLines(SysNatFileUtil.readTextFile(aDataFile));
+		compareValidationMode = lines.stream()
+				                     .filter( line -> line.startsWith(PATTERN_COMPARISON_RULE_IDENTIFIER)
+				                                   || line.startsWith(PATTERN_COMPARISON_RULE_IDENTIFIER_EN))
+                     	             .findFirst().isPresent();
+		
+		
+	}
+
+	public static List<DocumentValidationRule> doYourJob(final File file) {
+		return new ValidationFileReader(file).parseValidationRules();
 	}
 	
-	public static LinkedHashMap<String, String> doYourJob(final File file)
+    private List<DocumentValidationRule> parseValidationRules()
 	{
-		return new ValidationFileReader(file).readData();
+		if (compareValidationMode) {
+			return parseCompareValidationRules();
+
+		}
+		return parseSearchValidationRules();
 	}
 
-	private LinkedHashMap<String, String> readData()
+	/**
+     * Parses a validation file that configures the comparison of two documents
+     *  
+     * @param file that contains the validation rules as natural language instructions
+     * @return List<DocumentsComparisonValidationRule>
+     */
+	private List<DocumentValidationRule> parseCompareValidationRules()
 	{
-		final LinkedHashMap<String, String> toReturn = new LinkedHashMap<>();
-		final List<String> lines = extractDataLines(SysNatFileUtil.readTextFile(inputFile));
+		final List<DocumentValidationRule> toReturn = new ArrayList<>();
 
 		for (String line: lines) {
-			addToProperties(line, toReturn);
+			parseLineToCompareValidationRule(line.trim(), toReturn);
 		}
 
 		return toReturn;
 	}
 
-	void addToProperties(String line, LinkedHashMap<String, String> toReturn)
+	/**
+     * Parses a validation file that is used to verify content of a document 
+     * by searching for an expected text.
+     *  
+     * @param file that contains the validation rules as natural language instructions
+     * @return List<DocumentValidationRule>
+     */
+	private List<DocumentValidationRule> parseSearchValidationRules()
+	{
+		final List<DocumentValidationRule> toReturn = new ArrayList<>();
+
+		for (String line: lines) {
+			parseLineToSearchValidationRule(line, toReturn);
+		}
+
+		return toReturn;
+	}
+	
+	
+    void parseLineToCompareValidationRule(String line, List<DocumentValidationRule> toReturn)
 	{
 		try {
-			List<String> lineValues = extractValues(line);
-			switch (lineValues.size())
-			{
-				case 1: toReturn.put(lineValues.get(0), "");
-						break;
-				case 2: toReturn.put(lineValues.get(0), lineValues.get(1));
-						break;
-				case 3: toReturn.put(lineValues.get(0), lineValues.get(1) + "::" + lineValues.get(2));
-						break;
-			}
+			DocumentContentCompareValidationRule rule = toComparisonValidationRule(line);
+			if (rule == null) throwSysNatValidationExceptionFor(line);
+			toReturn.add(rule);
+		}
+		catch (SysNatValidationException e) 
+		{
+			throw e;
+		} 
+		catch (Exception e) 
+		{
+			//e.printStackTrace();
+			throwSysNatValidationExceptionFor(line);
+		}
+	}
+
+
+	private void throwSysNatValidationExceptionFor(String line)
+	{
+		String errorMessage = BUNDLE.getString("InvalidValidationRuleMessage");
+		errorMessage = errorMessage.replace("XY", line);
+		System.err.println("Error parsing Validation Rule: " + line);
+		System.err.println("Possible Reasons are");
+		System.err.println("- A quotation mark is missing for an alphanumeric values.");
+		System.err.println("- A space is missing to separate values embedded in the rule.");
+		System.err.println("- An alphanumeric value is used instead of an numeric one.");
+		System.err.println("- The rule is completely unknown.");
+		throw new SysNatValidationException(errorMessage);
+	}
+
+	void parseLineToSearchValidationRule(String line, List<DocumentValidationRule> toReturn)
+	{
+		try {
+			DocumentContentSearchValidationRule rule = toSearchValidationRule(line);
+			if (rule == null) throwSysNatValidationExceptionFor(line);
+			toReturn.add(rule);
+		}
+		catch (SysNatValidationException e) 
+		{
+			throw e;
 		}
 		catch (Exception e) 
 		{
 			//e.printStackTrace();
-			String errorMessage = BUNDLE.getString("InvalidValidationRuleMessage");
-			errorMessage = errorMessage.replace("XY", line);
-			throw new SysNatTestDataException(errorMessage);
+			throwSysNatValidationExceptionFor(line);
 		}
 	}
-
-	private List<String> extractValues(String line)
+	
+	
+	private DocumentContentCompareValidationRule toComparisonValidationRule(String line)
 	{
-		final List<String> lineValues = new ArrayList<>();
-		String textToSearchFor = null;
+		final List<String> ruleRawData = new ArrayList<>();
 
-		if (line.startsWith(PATTERN_SEARCH_WHOLE_DOCUMENT)) {
-			textToSearchFor = getTextToSearchFor(line, PATTERN_SEARCH_WHOLE_DOCUMENT);
-			lineValues.add(textToSearchFor);
-			return lineValues;
-		}
-		if (line.startsWith(PATTERN_SEARCH_WHOLE_DOCUMENT_EN)) {
-			textToSearchFor = getTextToSearchFor(line, PATTERN_SEARCH_WHOLE_DOCUMENT_EN);
-			lineValues.add(textToSearchFor);
-			return lineValues;
-		}
-
-		String pageToSearchIn = null;
-		String lineNo = null;
-
-		if (line.startsWith(PATTERN_SEARCH_IN_PAGE_VARIANTE1)) {
-			line = line.substring(PATTERN_SEARCH_IN_PAGE_VARIANTE1.length());
-			int pos = line.indexOf('"');
-			pageToSearchIn = line.substring(0, pos);
-			line = line.substring(pos+1);
-		} else if (line.startsWith(PATTERN_SEARCH_IN_PAGE_VARIANTE2)) {
-			line = line.substring(PATTERN_SEARCH_IN_PAGE_VARIANTE2.length());
-			int pos = line.indexOf(' ');
-			pageToSearchIn = line.substring(0, pos);
-			line = line.substring(pos);
-		} else if (line.startsWith(PATTERN_SEARCH_IN_PAGE_VARIANTE1_EN)) {
-			line = line.substring(PATTERN_SEARCH_IN_PAGE_VARIANTE1_EN.length());
-			int pos = line.indexOf('"');
-			pageToSearchIn = line.substring(0, pos);
-			line = line.substring(pos);
-		} else if (line.startsWith(PATTERN_SEARCH_IN_PAGE_VARIANTE2_EN)) {
-			line = line.substring(PATTERN_SEARCH_IN_PAGE_VARIANTE2_EN.length());
-			int pos = line.indexOf(' ');
-			pageToSearchIn = line.substring(0, pos);
-			line = line.substring(pos);
+		if (line.matches(PATTERN_COMPARISON_RULE_SHOULDBEFILE)) {
+			ruleRawData.add(ComparisonRuleType.ShouldBeFile.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_SHOULDBEFILE).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
+		} else if (line.matches(PATTERN_COMPARISON_RULE_SHOULDBEFILE_EN)) {
+			ruleRawData.add(ComparisonRuleType.ShouldBeFile.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_SHOULDBEFILE_EN).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
 		}
 
-		if (line.startsWith(PATTERN_SEARCH_IN_LINE))
-		{
-			line = line.substring(PATTERN_SEARCH_IN_LINE.length());
-			int pos = line.indexOf(' ');
-			lineNo = line.substring(0, pos);
-			line = line.substring(pos);
-		} 
-		else if (line.startsWith(PATTERN_SEARCH_IN_LINE_EN)) 
-		{
-			line = line.substring(PATTERN_SEARCH_IN_LINE_EN.length());
-			int pos = line.indexOf(' ');
-			lineNo = line.substring(0, pos);
-			line = line.substring(pos);
+		if (line.matches(PATTERN_COMPARISON_RULE_DATEFORMAT)) {
+			ruleRawData.add(ComparisonRuleType.Dateformat.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_DATEFORMAT).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
+		} else if (line.matches(PATTERN_COMPARISON_RULE_DATEFORMAT_EN)) {
+			ruleRawData.add(ComparisonRuleType.Dateformat.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_DATEFORMAT_EN).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
+		}
+		
+		if (line.matches(PATTERN_COMPARISON_RULE_PREFIX)) {
+			ruleRawData.add(ComparisonRuleType.Prefix.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_PREFIX).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
+		} else if (line.matches(PATTERN_COMPARISON_RULE_PREFIX_EN)) {
+			ruleRawData.add(ComparisonRuleType.Prefix.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_PREFIX_EN).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
 		}
 
-		if (line.contains(PATTERN_SEQUENCE)) 
-		{
-			textToSearchFor = line.substring(PATTERN_SEQUENCE.length());
-			int pos1 = textToSearchFor.indexOf('"');
-			int pos2 = textToSearchFor.lastIndexOf('"');
-			textToSearchFor = textToSearchFor.substring(pos1+1, pos2);
-		} 
-		else if (line.contains(PATTERN_SEQUENCE_EN)) 
-		{
-			textToSearchFor = line.substring(PATTERN_SEQUENCE_EN.length());
-			int pos1 = textToSearchFor.indexOf('"');
-			int pos2 = textToSearchFor.lastIndexOf('"');
-			textToSearchFor = textToSearchFor.substring(pos1+1, pos2);
+		if (line.matches(PATTERN_COMPARISON_RULE_SUBSTRING)) {
+			ruleRawData.add(ComparisonRuleType.Substring.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_SUBSTRING).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
+		} else if (line.matches(PATTERN_COMPARISON_RULE_SUBSTRING_EN)) {
+			ruleRawData.add(ComparisonRuleType.Substring.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_SUBSTRING_EN).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
+		}
+		
+		if (line.matches(PATTERN_COMPARISON_RULE_REGEX)) {
+			ruleRawData.add(ComparisonRuleType.Regex.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_REGEX).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
+		} else if (line.matches(PATTERN_COMPARISON_RULE_REGEX_EN)) {
+			ruleRawData.add(ComparisonRuleType.Regex.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_REGEX_EN).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
 		}
 
+		if (line.matches(PATTERN_COMPARISON_RULE_LINE1)) {
+			List<String> values = extractValues(line, PATTERN_COMPARISON_RULE_LINE1);
+			String lineDef = DocumentContentCompareValidationRule.buildLineDefinition(values.get(0), values.get(1), "Doc1");
+			return new DocumentContentCompareValidationRule(ComparisonRuleType.LineDefinition.name(), lineDef);
+		} else if (line.matches(PATTERN_COMPARISON_RULE_LINE1_EN)) {
+			List<String> values = extractValues(line, PATTERN_COMPARISON_RULE_LINE1_EN);
+			String lineDef = DocumentContentCompareValidationRule.buildLineDefinition(values.get(0), values.get(1), "Doc1");
+			return new DocumentContentCompareValidationRule(ComparisonRuleType.LineDefinition.name(), lineDef);
+		}
+		
+		if (line.matches(PATTERN_COMPARISON_RULE_LINE2)) {
+			List<String> values = extractValues(line, PATTERN_COMPARISON_RULE_LINE2);
+			String lineDef = DocumentContentCompareValidationRule.buildLineDefinition(values.get(0), values.get(1), "Doc2");
+			return new DocumentContentCompareValidationRule(ComparisonRuleType.LineDefinition.name(), lineDef);
+		} else if (line.matches(PATTERN_COMPARISON_RULE_LINE2_EN)) {
+			List<String> values = extractValues(line, PATTERN_COMPARISON_RULE_LINE2_EN);
+			String lineDef = DocumentContentCompareValidationRule.buildLineDefinition(values.get(0), values.get(1), "Doc2");
+			return new DocumentContentCompareValidationRule(ComparisonRuleType.LineDefinition.name(), lineDef);
+		}
 
-		lineValues.add(textToSearchFor.trim());
-		lineValues.add(pageToSearchIn.trim());
-		if (lineNo != null) lineValues.add(lineNo.trim());
-
-		return lineValues;
+		if (line.matches(PATTERN_COMPARISON_RULE_LINEBOTH)) {
+			List<String> values = extractValues(line, PATTERN_COMPARISON_RULE_LINEBOTH);
+			String lineDef = DocumentContentCompareValidationRule.buildLineDefinition(values.get(0), values.get(1), "BOTH");
+			return new DocumentContentCompareValidationRule(ComparisonRuleType.LineDefinition.name(), lineDef);
+		} else if (line.matches(PATTERN_COMPARISON_RULE_LINEBOTH_EN)) {
+			List<String> values = extractValues(line, PATTERN_COMPARISON_RULE_LINEBOTH_EN);
+			String lineDef = DocumentContentCompareValidationRule.buildLineDefinition(values.get(0), values.get(1), "BOTH");
+			return new DocumentContentCompareValidationRule(ComparisonRuleType.LineDefinition.name(), lineDef);
+		}
+		
+		return null;
 	}
 
-	private String getTextToSearchFor(final String line, 
-			                          final String pattern)
+
+	List<String> extractValues(String originalLine, String originalPattern)
 	{
-		String textToSearchFor = line.substring(pattern.length());
-		int pos = textToSearchFor.indexOf('"');
-		return textToSearchFor.substring(0, pos);
+		List<String> toReturn = new ArrayList<String>();
+		String line = maskSpacesInAlphanumericValues(originalLine);
+		String pattern = originalPattern;
+		
+		while (pattern.contains(REGEX_ANY)) 
+		{
+			int pos = pattern.indexOf(REGEX_ANY);
+			String patternPart = pattern.substring(0, pos);
+			pos = patternPart.length();
+			line = line.substring(pos).trim();
+			pattern = pattern.substring(pos).trim();
+			pos = line.indexOf(" ");
+			if (pos != -1) 
+			{
+				// value is separated by space
+				String value = unmaskSpacesInAlphanumericValues(line.substring(0, pos));
+				toReturn.add(value);
+				line = line.substring(pos).trim();
+				pos = pattern.indexOf(" ");
+				pattern = pattern.substring(pos).trim();
+			} 
+			else 
+			{				
+				// value is not separated by space
+				patternPart = pattern.substring(REGEX_ANY.length());
+				pos = patternPart.length();
+				String value = unmaskSpacesInAlphanumericValues(line.substring(0, line.length()-pos));
+				toReturn.add(value);
+				pattern = patternPart;
+			}
+		}
+
+		return toReturn;
+	}
+	
+	private String unmaskSpacesInAlphanumericValues(String value) 
+	{
+		value = value.replaceAll(SPACE_MASK, " ");
+		if (value.startsWith("\"")) value = value.substring(1, value.length()-1);
+		return value;
+	}
+
+	private String maskSpacesInAlphanumericValues(String originalLine)
+	{
+		String line = originalLine;
+		int pos = line.indexOf("\"");
+		if (pos == -1) return originalLine;
+		String prefix = line.substring(0, pos);
+		line = line.substring(pos+1);
+		pos = line.indexOf("\"");
+		String value = line.substring(0, pos);
+		String maskedValue = value.replaceAll(" ", SPACE_MASK);
+		originalLine = originalLine.replace(value, maskedValue);
+		String restOfLine = line.substring(pos+1);
+		
+		return prefix + "\"" + maskedValue + "\"" + maskSpacesInAlphanumericValues(restOfLine);
+	}
+
+
+	private DocumentContentSearchValidationRule toSearchValidationRule(String line)
+	{
+		final List<String> ruleRawData = new ArrayList<>();
+
+		if (line.matches(PATTERN_CONTENT_RULE_WHOLE_DOCUMENT)) {
+			ruleRawData.add(ContentRuleType.Contains.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_WHOLE_DOCUMENT);
+			ruleRawData.add(values.get(0));
+			return toContentValidationRule(ruleRawData);
+		} else if (line.matches(PATTERN_CONTENT_RULE_WHOLE_DOCUMENT_EN)) {
+			ruleRawData.add(ContentRuleType.Contains.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_WHOLE_DOCUMENT_EN);
+			ruleRawData.add(values.get(0));
+			return toContentValidationRule(ruleRawData);
+		}		
+		
+		if (line.matches(PATTERN_CONTENT_RULE_PAGE) && ! line.contains("in Zeile") && ! line.contains("mit dem Text")) {
+			ruleRawData.add(ContentRuleType.ContainsOnPage.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_PAGE);
+			ruleRawData.addAll(values);
+			return toContentValidationRule(ruleRawData);
+		} else if (line.matches(PATTERN_CONTENT_RULE_PAGE_EN) && ! line.contains("in line") && ! line.contains("with sequence")) {
+			ruleRawData.add(ContentRuleType.ContainsOnPage.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_PAGE_EN);
+			ruleRawData.addAll(values);
+			return toContentValidationRule(ruleRawData);
+		}		
+
+		if (line.matches(PATTERN_CONTENT_RULE_LINE) && line.contains("in Zeile") && ! line.contains("mit dem Text")) {
+			ruleRawData.add(ContentRuleType.ContainsInLine.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_LINE);
+			ruleRawData.addAll(values);
+			return toContentValidationRule(ruleRawData);
+		} else if (line.matches(PATTERN_CONTENT_RULE_LINE_EN) && line.contains("in line") && ! line.contains("with sequence")) {
+			ruleRawData.add(ContentRuleType.ContainsInLine.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_LINE_EN);
+			ruleRawData.addAll(values);
+			return toContentValidationRule(ruleRawData);
+		}
+		
+		if (line.matches(PATTERN_CONTENT_RULE_RELATIVE_PAGE) && ! line.contains("in Zeile")) {
+			ruleRawData.add(ContentRuleType.ContainsOnRelativePage.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_RELATIVE_PAGE);
+			ruleRawData.addAll(values);
+			return toContentValidationRule(ruleRawData);
+		} else if (line.matches(PATTERN_CONTENT_RULE_RELATIVE_PAGE_EN) && ! line.contains("in line")) {
+			ruleRawData.add(ContentRuleType.ContainsOnRelativePage.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_RELATIVE_PAGE_EN);
+			ruleRawData.addAll(values);
+			return toContentValidationRule(ruleRawData);
+		}
+
+		if (line.matches(PATTERN_CONTENT_RULE_RELATIVE_LINE)) {
+			ruleRawData.add(ContentRuleType.ContainsInRelativeLine.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_RELATIVE_LINE);
+			ruleRawData.addAll(values);
+			return toContentValidationRule(ruleRawData);
+		} else if (line.matches(PATTERN_CONTENT_RULE_RELATIVE_LINE_EN)) {
+			ruleRawData.add(ContentRuleType.ContainsInRelativeLine.name());
+			List<String> values = extractValues(line, PATTERN_CONTENT_RULE_RELATIVE_LINE_EN);
+			ruleRawData.addAll(values);
+			return toContentValidationRule(ruleRawData);
+		}
+		
+		return null;
+	}
+	
+	private DocumentContentSearchValidationRule toContentValidationRule(List<String> ruleRawData)
+	{
+		switch (ruleRawData.size())
+		{
+			case 2: return new DocumentContentSearchValidationRule(ruleRawData.get(1));
+			case 3: String pageInfo = ruleRawData.get(1);
+			        try {
+			        	int pageNumber = Integer.valueOf(pageInfo);
+			        	return new DocumentContentSearchValidationRule(ruleRawData.get(2), pageNumber);
+			        } catch (NumberFormatException e) {
+			        	return new DocumentContentSearchValidationRule(ruleRawData.get(2), pageInfo);
+			        }
+			case 4: int lineNumber = Integer.valueOf(ruleRawData.get(2));
+				    pageInfo = ruleRawData.get(1);
+			        try {
+			        	int pageNumber = Integer.valueOf(pageInfo);
+			        	return new DocumentContentSearchValidationRule(ruleRawData.get(3), pageNumber, lineNumber);
+			        } catch (NumberFormatException e) {
+			        	return new DocumentContentSearchValidationRule(ruleRawData.get(3), pageInfo, lineNumber);
+			        }
+		}
+		
+		throw new SysNatValidationException("");
 	}
 
 
@@ -191,5 +450,4 @@ public class ValidationFileReader
 		
 		return dataLines;
 	}
-
 }

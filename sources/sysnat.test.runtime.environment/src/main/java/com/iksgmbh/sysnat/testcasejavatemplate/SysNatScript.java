@@ -47,7 +47,7 @@ public abstract class SysNatScript extends ExecutableExample
 	@Override
 	public Package getTestCasePackage() {
 		return this.getClass().getPackage();
-	}
+	}	
 
 	@Override
 	public boolean doesTestBelongToApplicationUnderTest() {

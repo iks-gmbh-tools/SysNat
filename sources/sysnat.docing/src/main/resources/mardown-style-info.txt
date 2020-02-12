@@ -1,0 +1,63 @@
+<style>
+
+body {
+  background: linear-gradient(90deg, white, lightyellow);
+}
+
+h1 {
+  background: lightgray;
+}
+
+p.testphase {
+  color: blue;
+}
+
+/* 5 title lines */
+
+table:nth-of-type(1) tr:nth-of-type(1){
+  background: #0d73ff;
+  font-size: 40px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(2){
+  background: #0d73ff;
+  font-size: 28px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(3){
+  background: #0d73ff;
+  font-size: 40px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(4){
+  background: #0d73ff;
+  font-size: 20px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(5){
+  background: #0d73ff;
+  font-size: 20px;
+  border: solid 1px #0d73ff;
+}
+
+/* data tables */
+table {
+    table-layout:fixed;
+    width:100%;
+    border: solid 2px black;	 /* Tabellenrahmen */
+    border-collapse: collapse;
+}
+
+table tr:nth-of-type(odd) {
+  background: lightgrey;
+}
+table tr:nth-of-type(even) {
+  background: #efefef;
+}
+
+
+</style>

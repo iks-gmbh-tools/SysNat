@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
 import com.iksgmbh.sysnat.helper.ExceptionHandler;
@@ -35,9 +36,6 @@ import com.iksgmbh.sysnat.helper.ExceptionHandler;
 public abstract class PageObject
 {
     private static ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/PageObjectApi", Locale.getDefault());
-    
-    // the following fields must be set in subclass constructors
-    protected LanguageTemplateBasics languageTemplateBasics;
     
     /**
      * Contains for each element in the page a GuiType specific 1:n mapping.
@@ -54,6 +52,11 @@ public abstract class PageObject
      * to identify the element you wish to address.
      */
     protected HashMap<GuiType, HashMap<String, List<String>>> idMappingCollection;
+
+    /**
+     * Instance must be set in concrete subclass.
+     */
+	protected ExecutableExample executableExample;
 
     // abstract methods
     public abstract String getPageName();    
@@ -84,7 +87,7 @@ public abstract class PageObject
         
         for (String id: availableTechnicalIDs)
         {
-            if (languageTemplateBasics.getExecutableExample().isElementAvailable(id)) {
+            if (executableExample.isElementAvailable(id)) {
                 return id;
             }
         }
@@ -102,20 +105,20 @@ public abstract class PageObject
     public void clickButton(String buttonName)
     {
         final String technicalId = findTechnicalId(SysNatConstants.GuiType.Button, buttonName);
-        languageTemplateBasics.getExecutableExample().clickButton(technicalId);
+        executableExample.clickButton(technicalId);
     }
  
     public void enterTextInField(String fieldName, String value)
     {
         final String technicalId = findTechnicalId(SysNatConstants.GuiType.TextField, fieldName);
-        languageTemplateBasics.getExecutableExample().inputText(technicalId, value);
+        executableExample.inputText(technicalId, value);
     }
  
     public void chooseInCombobox(String fieldName, String value)
     {
         final String technicalId = findTechnicalId(SysNatConstants.GuiType.ComboBox, fieldName);
         try {        	
-        	languageTemplateBasics.getExecutableExample().chooseFromComboBoxByValue(technicalId, value);
+        	executableExample.chooseFromComboBoxByValue(technicalId, value);
         } catch (NoSuchElementException e) {
             String errorMessage = BUNDLE.getString("UnknownComboboxEntry")
                     .replace("xx", fieldName)
@@ -128,19 +131,31 @@ public abstract class PageObject
     public void selectRadioButtons(String selection, String option)
     {
         final String technicalId = findTechnicalId(SysNatConstants.GuiType.RadioButtonSelection, selection + "::" + option);
-        languageTemplateBasics.getExecutableExample().clickElement(technicalId);
+        executableExample.clickElement(technicalId);
     }
  
     public void tickCheckbox(String checkBoxTitle)
     {
         final String technicalId = findTechnicalId(SysNatConstants.GuiType.CheckBox, checkBoxTitle);
-        languageTemplateBasics.getExecutableExample().clickElement(technicalId);
+        executableExample.clickElement(technicalId);
+    }
+    
+    public boolean isCheckboxTicked(String checkBoxTitle)
+    {
+        final String technicalId = findTechnicalId(SysNatConstants.GuiType.CheckBox, checkBoxTitle);
+        return executableExample.isCheckboxSelected(technicalId);
+    }
+    
+    public void clickLink(String linkText) 
+    {
+        final String technicalId = findTechnicalId(SysNatConstants.GuiType.Link, linkText);
+        executableExample.clickElement(technicalId);
     }
  
     public String getText(String fieldName)
     {
         final String technicalId = findTechnicalId(SysNatConstants.GuiType.ElementToReadText, fieldName);
-        return languageTemplateBasics.getExecutableExample().getTextForElement(technicalId);
+        return executableExample.getTextForElement(technicalId);
     }
  
     public void throwUnsupportedGuiEventException(SysNatConstants.GuiType guiElementType, String elementName)

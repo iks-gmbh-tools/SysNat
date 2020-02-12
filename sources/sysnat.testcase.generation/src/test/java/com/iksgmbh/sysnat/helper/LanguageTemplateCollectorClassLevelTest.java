@@ -28,6 +28,7 @@ import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.JavaFieldData;
 import com.iksgmbh.sysnat.domain.LanguageTemplatePattern;
@@ -41,7 +42,7 @@ public class LanguageTemplateCollectorClassLevelTest
 		GenerationRuntimeInfo.reset();
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.languageTemplateContainer.source.dir", 
                 "../sysnat.testcase.generation/src/test/java/com/iksgmbh/sysnat/test/testTemplateContainers");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 
 		GenerationRuntimeInfo.getInstance();
 		cut = new LanguageTemplateCollector(

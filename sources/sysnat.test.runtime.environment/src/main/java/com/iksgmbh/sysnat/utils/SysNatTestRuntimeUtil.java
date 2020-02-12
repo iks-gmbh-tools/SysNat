@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnvironment;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.TestPhase;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
@@ -31,7 +31,7 @@ public class SysNatTestRuntimeUtil
 {
 	public static boolean doesTestBelongToApplicationUnderTest(ExecutableExample executableExample) 
 	{
-		String aut = ExecutionRuntimeInfo.getInstance().getTestApplicationNameAsPropertyKey();
+		String aut = ExecutionRuntimeInfo.getInstance().getTestApplicationName();
 		String fullClassName = executableExample.getClass().getName().toLowerCase();
 		int pos = fullClassName.indexOf('.');
 		if (pos == -1) {
@@ -39,7 +39,7 @@ public class SysNatTestRuntimeUtil
 			return true;
 		}
 		String mainPackage = fullClassName.substring(0, pos);
-		return aut.contains(mainPackage);
+		return aut.toLowerCase().contains(mainPackage);
 	}
 
 	public static String getScreenshotErrorFileName(String testCaseName) {
@@ -134,7 +134,7 @@ public class SysNatTestRuntimeUtil
 	public static boolean isTargetEnv(String value) 
 	{
 		try {
-			TargetEnv.valueOf(value);
+			TargetEnvironment.valueOf(value);
 		} catch (Exception e) {
 			return false;
 		}

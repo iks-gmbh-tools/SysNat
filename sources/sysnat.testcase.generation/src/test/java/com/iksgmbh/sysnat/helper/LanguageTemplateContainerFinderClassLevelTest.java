@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.domain.JavaFieldData;
 
 public class LanguageTemplateContainerFinderClassLevelTest 
@@ -34,7 +35,7 @@ public class LanguageTemplateContainerFinderClassLevelTest
 		GenerationRuntimeInfo.reset();
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.languageTemplateContainer.source.dir", 
 				"../sysnat.testcase.generation/src/test/java/com/iksgmbh/sysnat/test/testTemplateContainers");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		GenerationRuntimeInfo.getInstance();
 	}
 	

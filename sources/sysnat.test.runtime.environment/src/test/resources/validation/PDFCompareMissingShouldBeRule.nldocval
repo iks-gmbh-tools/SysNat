@@ -1,0 +1,7 @@
+For document comparison, all lines that contain "represents" are ignored. 
+For document comparison, all lines that start with, end with or represent a date value of format "DD.mm.YYYY" are ignored. 
+For document comparison, all lines that match pattern ".*" are ignored. 
+For document comparison, the line 13 on page 1 in the actual document is ignored. 
+For document comparison, the line 14 on page 1 in the should-be-document is ignored. 
+For document comparison, the line 10 on page 1 in both documents is ignored. 
+For document comparison, all lines that start with prefix "15" are ignored. 

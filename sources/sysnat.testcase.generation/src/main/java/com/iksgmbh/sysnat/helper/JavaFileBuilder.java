@@ -46,6 +46,8 @@ import com.iksgmbh.sysnat.domain.JavaFieldData;
  */
 public class JavaFileBuilder 
 {
+	private static final String REPORT_CREATOR = "ReportCreator";
+
 	private static final String PATH_TO_TEMPLATES = "../sysnat.testcase.generation/src/main/java/javafiletemplatepackage";
 
 	private static final String[] IGNORE_IMPORT_TYPE_ARRAY = {"java.lang.Object",
@@ -114,7 +116,7 @@ public class JavaFileBuilder
 		StringBuffer sb = new StringBuffer();
 		scriptMappings.forEach( (simpleName, fullName) -> sb.append(simpleName)
 				                                            .append("=")
-				                                            .append(fullName)
+				                                            .append(pathToLowerCase(fullName, '.'))
 				                                            .append(System.getProperty("line.separator")));
 		String filename = SysNatFileUtil.findAbsoluteFilePath(System.getProperty("sysnat.nls.lookup.file"));
 		SysNatFileUtil.writeFile(filename, sb.toString().trim());
@@ -232,7 +234,22 @@ public class JavaFileBuilder
 		final List<String> cleanupMethodBlock = getCleanUpMethodBlock(instructionFilename);
 		placeHolderBlocks.put("/* TO BE REPLACED: business cleanup */", cleanupMethodBlock);
 
+		final List<String> nlxxFilepath = getNlxxFilepath(instructionFilename);
+		placeHolderBlocks.put("/* TO BE REPLACED: nlxxFilepath */", nlxxFilepath);
+		
 		return placeHolderBlocks;
+	}
+
+	private List<String> getNlxxFilepath(Filename instructionFilename)
+	{
+		String[] splitResult = instructionFilename.value.split("/");
+		List<String> toReturn = new ArrayList<>();
+
+		for (int i = 0; i<splitResult.length-1; i++) {
+			toReturn.add("toReturn.add(\"" + splitResult[i] + "\");");
+		}
+
+		return toReturn;
 	}
 
 	private List<String> getConstantsBlock(Filename filename) 
@@ -333,13 +350,12 @@ public class JavaFileBuilder
 	private boolean belongsToXXGroup(final Entry<Filename, List<JavaCommand>> entry, 
 			                         final String behaviourId) 
 	{
-		return ! entry.getValue().stream()
+		return entry.getValue().stream()
 		              .filter(command -> command.commandType == CommandType.Constant)
 		              .map(command -> command.value)
 		              .filter(commandLine -> commandLine.startsWith(XXGroupBuilder.BEHAVIOUR_CONSTANT_DECLARATION))
 		              .filter(commandLine -> commandLine.contains(behaviourId))
-		              .findFirst().get().isEmpty();
-		
+		              .findFirst().isPresent();
 	}
 
 	private String getBehaviourIdFor(Filename filename) 
@@ -398,7 +414,9 @@ public class JavaFileBuilder
 		                              .filter(type -> type == CommandType.OneTimeCleanup 
 		                                           || type == CommandType.OneTimePrecondition)
 		                              .findFirst().isPresent();
-		if (add) typesToImport.add("ReportCreator");
+		
+		
+		if (add && ! typesToImport.contains(REPORT_CREATOR)) typesToImport.add(REPORT_CREATOR);
 	}
 
 	private void addReturnTypeIfNecessary(final List<String> typesToImport,
@@ -457,14 +475,27 @@ public class JavaFileBuilder
 			toReturn = toReturn.substring(0, toReturn.length()-1);
 		}
 		
-		return toReturn;
+		return toReturn.toLowerCase();
 	}
 
 	private File buildTargetFilename(final Filename instructionFilename) 
 	{
 		String targetDir = System.getProperty("sysnat.generation.target.dir");
 		targetDir = SysNatFileUtil.findAbsoluteFilePath(targetDir);
-		return new File (targetDir,  instructionFilename.value);
+		String filename = pathToLowerCase(instructionFilename);
+		return new File (targetDir.toLowerCase(),  filename);
+	}
+
+	private String pathToLowerCase(final String path, char separator)
+	{
+		int pos = path.lastIndexOf(separator);
+		String filename = path.substring(0, pos).toLowerCase();
+		filename += path.substring(pos);
+		return filename;
+	}
+
+	private String pathToLowerCase(final Filename instructionFilename) {
+		return pathToLowerCase(instructionFilename.value, '/');
 	}
 
 	private List<String> getTestExecutionBlockFor(final Filename instructionFilename) 
@@ -539,7 +570,7 @@ public class JavaFileBuilder
 	private JavaCommand findDeclareBehaviorCommand(List<JavaCommand> commands) 
 	{
 		return commands.stream()
-				       .filter(command -> command.value.contains(".declareXXGroupForBehaviour("))
+				       .filter(command -> command.value.contains(METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION))
 				       .findFirst()
 				       .orElse(null);
 	}

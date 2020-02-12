@@ -1,0 +1,18 @@
+# This validation files contains rules what details have to be ignored when a document
+# is validated by comparing it with a should-be-document.
+
+# English examples:
+The document contains the sequence "Software".
+The document contains on page 8 the sequence "Author".
+The document contains on page 9 in line 2 the sequence "Figure 1".
+The document contains on page with sequence "Content" the sequence "Preface".
+The document contains on page with sequence "Summary" in line 3 the sequence "Table".
+
+# German examples:
+Das Dokument enthält den Text "Software".
+Das Dokument enthält auf der Seite 8 den Text "Author".
+Das Dokument enthält auf der Seite 9 in Zeile 2 den Text "Figure 1".
+Das Dokument enthält auf der Seite mit dem Text "Content" den Text "Preface".
+Das Dokument enthält auf der Seite mit dem Text "Summary" in Zeile 3 den Text "Table".
+
+

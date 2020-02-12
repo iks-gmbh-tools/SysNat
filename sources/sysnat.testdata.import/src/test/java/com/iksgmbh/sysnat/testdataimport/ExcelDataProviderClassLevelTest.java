@@ -23,14 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 
-import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class ExcelDataProviderClassLevelTest {
 
@@ -42,7 +42,7 @@ public class ExcelDataProviderClassLevelTest {
 		final File excelFile = new File(path);
 		
 		// act
-		final Hashtable<String, Properties> result = ExcelDataProvider.doYourJob(excelFile);
+		final LinkedHashMap<String, Properties> result = ExcelDataProvider.doYourJob(excelFile);
 		
 		// assert
 		assertEquals("Number of Datasets", 4, result.size());
@@ -61,7 +61,7 @@ public class ExcelDataProviderClassLevelTest {
 		final File excelFile = new File(path);
 		
 		// act
-		final Hashtable<String, Properties> result = ExcelDataProvider.doYourJob(excelFile);
+		final LinkedHashMap<String, Properties> result = ExcelDataProvider.doYourJob(excelFile);
 		
 		// assert
 		assertEquals("Number of Datasets", 4, result.size());
@@ -121,7 +121,7 @@ public class ExcelDataProviderClassLevelTest {
 		}
 	}
 	
-	private List<String> getSortedKeys(final Hashtable<String, Properties> result) 
+	private List<String> getSortedKeys(final LinkedHashMap<String, Properties> result) 
 	{
 		final ArrayList<String> keys = new ArrayList<>(result.keySet());
 		Collections.sort( keys);

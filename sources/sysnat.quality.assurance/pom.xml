@@ -8,7 +8,7 @@
   <parent>
      <groupId>com.iksgmbh.snt</groupId>
      <artifactId>sysnat.parent</artifactId>
-     <version>1.0.0</version>
+     <version>1.1.0</version>
      <relativePath>../sysnat.parent/pom.xml</relativePath>
   </parent>
  
@@ -18,35 +18,35 @@
   	<dependency>
   	  <groupId>com.iksgmbh.snt</groupId>
    	  <artifactId>sysnat.testdata.import</artifactId>
-  	  <version>1.0.0</version>
+  	  <version>1.1.0</version>
   	  <scope>test</scope>
   	</dependency>
   	
    	<dependency>
   	  <groupId>com.iksgmbh.snt</groupId>
    	  <artifactId>sysnat.test.execution</artifactId>
-  	  <version>1.0.0</version>
+  	  <version>1.1.0</version>
   	  <scope>test</scope>
   	</dependency>
 
    	<dependency>
   	  <groupId>com.iksgmbh.snt</groupId>
    	  <artifactId>sysnat.test.runtime.environment</artifactId>
-  	  <version>1.0.0</version>
+  	  <version>1.1.0</version>
   	  <scope>test</scope>
   	</dependency>
   
   	<dependency>
   	  <groupId>com.iksgmbh.snt</groupId>
    	  <artifactId>sysnat.testcase.generation</artifactId>   	  
-  	  <version>1.0.0</version>
+  	  <version>1.1.0</version>
   	  <scope>test</scope>
   	</dependency>
   	
 	<dependency>
   	  <groupId>com.iksgmbh.snt</groupId>
    	  <artifactId>sysnat.natural.language.executable.examples</artifactId>
-  	  <version>1.0.0</version>
+  	  <version>1.1.0</version>
   	  <scope>test</scope>
   	</dependency>
     	

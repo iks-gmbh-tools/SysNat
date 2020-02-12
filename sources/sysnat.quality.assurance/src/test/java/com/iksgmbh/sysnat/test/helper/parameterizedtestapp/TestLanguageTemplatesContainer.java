@@ -17,7 +17,6 @@ package com.iksgmbh.sysnat.test.helper.parameterizedtestapp;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.COMMENT_IDENTIFIER;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWORD;
-import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.FROM_FILENAME;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -40,6 +39,7 @@ import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.UnexpectedResultException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.domain.SysNatTestData;
 import com.iksgmbh.sysnat.domain.SysNatTestData.SysNatDataset;
 import com.iksgmbh.sysnat.helper.VirtualTestCase;
@@ -152,7 +152,8 @@ public class TestLanguageTemplatesContainer
 			throw new SkipTestCaseException(SkipReason.APPLICATION_TO_TEST);
 		}
 		
-		if (xxid.equals(FROM_FILENAME) || xxid.equals("<filename>"))  {
+		if (xxid.equals(SysNatLocaleConstants.PLACEHOLDER_FILENAME) || 
+			xxid.equals(SysNatLocaleConstants.PLACEHOLDER_FILENAME_EN))  {
 			xxid = executableExample.getTestCaseFileName();
 		}
 		
@@ -161,8 +162,9 @@ public class TestLanguageTemplatesContainer
 		}
 
 		executableExample.setXXID( xxid.trim() );
-		System.out.println((executionInfo.getTotalNumberOfTestCases() + 1) + ". XXID: " + xxid);
-		executionInfo.countTestCase(executableExample.getBehaviorID());
+		System.out.println((executionInfo.getTotalNumberOfXXs() + 1) + ". XXID: " + xxid);
+		executionInfo.countAsExecuted(xxid, executableExample.getBehaviorID());
+		executionInfo.countExistingXX();
 		
 		if ( ! executionInfo.isApplicationStarted() ) {
 			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
@@ -332,7 +334,7 @@ public class TestLanguageTemplatesContainer
 			} catch (Exception e) {
 				virtualTestCase.addReportMessage(ERROR_KEYWORD + ": " + e. getMessage());
 			}
-			executionInfo.addToResultAsSeparateTestCase(virtualTestCase);
+			executionInfo.addToResultAsSeparateXX(virtualTestCase);
 		}
 		
 		executableExample.addReportMessage("A total of " + objectDataSets.size()	+ " datasets has been executed as separate test cases.");
@@ -353,7 +355,5 @@ public class TestLanguageTemplatesContainer
 	@LanguageTemplate(value = "Is the displayed text ^^ equal to ^^?")
 	public void isTextDisplayed(String s1, String s2) {
 	}
-	
-
 
 }

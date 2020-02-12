@@ -1,0 +1,4 @@
+Name: <foldername>
+
+Chapter: Introduction
+This "application" represents actually a Hompage. As such it needs no login and is used to demonstrate SysNat testing a test application without login. In addition, it is used to demonstrate the download of a PDF file and its easy content validation with SysNat's *DocVal*-Framework.

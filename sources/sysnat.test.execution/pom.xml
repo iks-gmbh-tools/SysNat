@@ -8,7 +8,7 @@
   <parent>
      <groupId>com.iksgmbh.snt</groupId>
      <artifactId>sysnat.parent</artifactId>
-     <version>1.0.0</version>
+     <version>1.1.0</version>
      <relativePath>../sysnat.parent/pom.xml</relativePath>
   </parent>
   
@@ -24,25 +24,25 @@
    	<dependency>
   	  <groupId>com.iksgmbh.snt</groupId>
    	  <artifactId>sysnat.common</artifactId>
-  	  <version>1.0.0</version>
+  	  <version>1.1.0</version>
   	</dependency>
 	
    	<dependency>
   	  <groupId>com.iksgmbh.snt</groupId>
    	  <artifactId>sysnat.testdata.import</artifactId>
-  	  <version>1.0.0</version>
+  	  <version>1.1.0</version>
   	</dependency>
   
    	<dependency>
   	  <groupId>com.iksgmbh.snt</groupId>
    	  <artifactId>sysnat.test.runtime.environment</artifactId>
-  	  <version>1.0.0</version>
+  	  <version>1.1.0</version>
   	</dependency>
 	
 	 <dependency>
 	    <groupId>org.seleniumhq.selenium</groupId>
 	    <artifactId>selenium-java</artifactId>
-	    <version>3.13.0</version>
+	    <version>3.141.59</version>
 	</dependency> 	
   
   </dependencies>

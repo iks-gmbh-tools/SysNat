@@ -1,0 +1,20 @@
+Behaviour: <filename>
+This is just a comment for the reader of this file.
+
+SysDoc:
+This is a documentation of this behaviour which will be included in the generated system documentation (PDF, html or docx).
+
+ReqDoc:
+This is a special note on this behaviour which will be only included in the generated requirement documentation (PDF, html or docx).
+
+XX: First Executable Example
+Given a certain start condition
+And another start condition
+When something is performed
+And something else is performed
+Then a certain end condition is reached
+And another end condition is reached
+
+XX: Second Executable Example
+* Foo
+* Bar

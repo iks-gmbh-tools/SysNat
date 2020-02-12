@@ -40,14 +40,23 @@ public class LanguageInstructionPattern
 	 */
 	private String fileName;
 	private String instructionLine;
+	private String metaInfo;
 	
 	private List<NaturalLanguagePatternPart> patternParts;
 
 	public LanguageInstructionPattern(final String aInstructionLine, 
-			                          final String aFileName)
+                                      final String aFileName)
+    {
+		this(aInstructionLine, aFileName, "");
+    }
+
+	public LanguageInstructionPattern(final String aInstructionLine, 
+			                          final String aFileName,
+			                          final String aMetaInfo)
 	{
 		this.fileName = aFileName;
 		this.instructionLine = aInstructionLine;
+		this.metaInfo = aMetaInfo;
 		
 		try {
 			this.patternParts = LanguagePatternParser.doYourJob(instructionLine, null, null);
@@ -105,6 +114,10 @@ public class LanguageInstructionPattern
 
 	public String getFileName() {
 		return fileName;
+	}
+
+	public String getMetaInfo() {
+		return metaInfo;
 	}
 
 	public String getReturnValueName() 

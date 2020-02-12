@@ -61,9 +61,16 @@ public class ExcelTableReader
 		currentSheet = workbook.getSheet(worksheetName);
 	}
 	
-	public void setSheet(final int sheetNumer)
+	/**
+	 * Starts with 1
+	 */
+	public int getSheetNumberFor(String sheetName) {
+		return workbook.getSheetIndex(sheetName) + 1;
+	}
+
+	public void setSheet(final int worksheetNumber)
 	{
-		currentSheet = workbook.getSheetAt(sheetNumer - 1); // -1 due to mapping on index
+		currentSheet = workbook.getSheetAt(worksheetNumber - 1); // -1 due to mapping on index
 	}
 
 	public Cell getNextEmptyCellInRow(final Cell firstCell)
@@ -189,7 +196,7 @@ public class ExcelTableReader
 		{
 			return "Cell [rowNo=" + rowNo + ", colNo=" + colNo + "]";
 		}
-		
+
 		public Cell getNeighbourToTableTop()
 		{
 			if (rowNo == 1)

@@ -51,6 +51,10 @@ public class SysNatException extends RuntimeException
 		this.errorData = errorData;
 	}
 
+	public SysNatException(String message, Exception e) {
+		super(message, e);
+	}
+
 	public ErrorCode getErrorCode() {
 		return errorCode;
 	}

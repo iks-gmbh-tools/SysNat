@@ -51,7 +51,7 @@ Preparation:
 
 11. Run the following launch configurations in the following order:
 - Maven-Clean-Install-All-skipTest 
-- Clean and build all projects (Menu *Run-Clean...*)
+- Clean and build all projects (Menu *Project-Clean...*)
 - ClassLevelTestExecutor 
 - ModuleLevelTestExecutor
 - SystemLevelTestExecutor 

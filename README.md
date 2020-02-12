@@ -1,11 +1,4 @@
 # SysNat
-
-***is a tool to manage the progress in software quality. This is achieved by***
-1. writing and managing requirements as Executable Examples, 
-3. enabling developers in various ways to translate natural language instructions in programm code
-3. executing the requirements as automated tests 
-4. generating current documentation about your software system. 
-
 ***This software development tool is made for***
 - driving requirements through a life cycle that you (or rather your team) define
 - translating natural language in programm code (with a minimum of developer effort)
@@ -20,6 +13,24 @@ a) Exectuable Examples become the Single Point of Truth (no or no unknown deviat
 b) There is always a current system documentation (it can be generated within seconds).
 
 c) Non-technical team members are able to modify existing Executable Examples, to create new ones and to execute them on their own without technical support (because the natural language used is intuitively understandable).
+=======
+All this is done in natural language and can thus be used by business experts, requirement engineers, developers, testers as well as operators. That is why *SysNat* supports ATDD, BDD, DDD, DevOps and cross functional teams. 
+
+
+* * *
+
+*SysNat* is made for
+- driving requirements through a life cycle that you (or rather your team) define
+- translating natural language in programm code (with a minimum of developer effort)
+- executing the system requirements as automated tests (by any team member also in a purely non-technical role)
+- generating requirement documentations about the current state of your software system
+- generating system description documenation
+
+Applying consequently *SysNat* is supposed to have the following effects in the long run:
+- Exectuable Examples become the Single Point of Truth (no or no unknown deviation between application and its description).
+- There is always a current system documentation (it can be generated within seconds).
+- Non-technical team members are able to modify existing Executable Examples, to create new ones and to execute them on their own without technical support (because the natural language used is intuitively understandable).
+>>>>>>> dev
 
 [Have a closer look...](https://github.com/iks-github/SysNatTesting/wiki)
 

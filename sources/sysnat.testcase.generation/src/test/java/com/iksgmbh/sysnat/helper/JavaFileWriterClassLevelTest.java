@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class JavaFileWriterClassLevelTest 
@@ -36,7 +37,7 @@ public class JavaFileWriterClassLevelTest
 	public void setup() {
 		GenerationRuntimeInfo.reset();
 		GenerationRuntimeInfo.setSysNatSystemProperty("sysnat.generation.target.dir", "target/testTargetDir");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("settings.config", "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
 		GenerationRuntimeInfo.getInstance();
 	}
 	

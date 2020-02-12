@@ -15,12 +15,17 @@
  */
 package com.iksgmbh.sysnat.common.utils;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
 import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 
 public class ExceptionHandlingUtil 
 {	
+	private static final ResourceBundle ERR_MSG_BUNDLE = ResourceBundle.getBundle("bundles/ErrorMessages", Locale.getDefault());
+
 	public static void throwException(final String errorMessage) {
 		System.err.println("ERROR: " + errorMessage);
 		throw new SysNatException(errorMessage);
@@ -99,11 +104,9 @@ public class ExceptionHandlingUtil
                         .append(System.getProperty("line.separator"))
                         .append(System.getProperty("line.separator"))
                         .append(errorData[2]);
+			
 			System.err.println(errorMessage.toString());			
-			
-			ErrorPageLauncher.doYourJob(errorData[3], errorData[4]);
-
-			
+			ErrorPageLauncher.doYourJob(errorData[3], errorData[4], ERR_MSG_BUNDLE.getString("GenerationError"));
 			throw new SysNatException(errorCode);
 
 		case JAVA_CODE_VERIFICATION__UNKNOWN_VARIABLE_NAME:

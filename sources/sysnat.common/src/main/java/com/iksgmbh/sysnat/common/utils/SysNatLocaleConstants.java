@@ -21,6 +21,7 @@ import java.util.ResourceBundle;
 public class SysNatLocaleConstants 
 {
 	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
+	private static final ResourceBundle BUNDLE_EN = ResourceBundle.getBundle("bundles/Constants", Locale.ENGLISH);
 	
 	public static final String PICTURE_PROOF = BUNDLE.getString("PICTURE_PROOF");
 	public static final String CATEGORY_BILDNACHWEIS = BUNDLE.getString("with") + PICTURE_PROOF;
@@ -33,20 +34,27 @@ public class SysNatLocaleConstants
 	public static final String CLEANUP_KEYWORD = BUNDLE.getString("CLEANUP_KEYWORD");
 	public static final String YES_KEYWORD = BUNDLE.getString("Yes") + ".";
 	public static final String NO_KEYWORD = BUNDLE.getString("No") + "!";
-	public static final String FROM_FILENAME = BUNDLE.getString("FROM_FILENAME");
-	public static final String FROM_PACKAGE = BUNDLE.getString("FROM_PACKAGE");
 	public static final String NON_KEYWORD = BUNDLE.getString("NON") + "-";
-
-	public static final String EXECUTION_FILTER = BUNDLE.getString("EXECUTION_FILTER");
-	public static final String POSSIBLE_VALUE_IDENTIFIER = BUNDLE.getString("POSSIBLE_VALUE_IDENTIFIER");
-	public static final String ENVIRONMENT_SETTING_KEY = BUNDLE.getString("ENVIRONMENT_SETTING_KEY");
-	public static final String TESTAPP_SETTING_KEY = BUNDLE.getString("TESTAPP_SETTING_KEY");
-	public static final String EXECUTION_SPEED_SETTING_KEY = BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY");
-	public static final String ARCHIVE_DIR_SETTING_KEY = BUNDLE.getString("ARCHIVE_DIR_SETTING_KEY");
-	public static final String REPORT_NAME_SETTING_KEY = BUNDLE.getString("REPORT_NAME_SETTING_KEY");
-	public static final String BROWSER_SETTING_KEY = BUNDLE.getString("BROWSER_SETTING_KEY");
+	public static final String AND_KEYWORD = BUNDLE.getString("And");
+	public static final String AND_KEYWORD_EN = BUNDLE_EN.getString("And");
 
 	public static final String SCENARIO_KEYWORD = BUNDLE.getString("SCENARIO");
+	public static final String SCENARIO_KEYWORD_EN = BUNDLE_EN.getString("SCENARIO");
 	public static final String BEHAVIOUR_KEYWORD = BUNDLE.getString("BEHAVIOUR");
+	public static final String BEHAVIOUR_KEYWORD_EN = BUNDLE_EN.getString("BEHAVIOUR");
+	public static final String FEATURE_KEYWORD = BUNDLE.getString("FEATURE");
+	public static final String FEATURE_KEYWORD_EN = BUNDLE_EN.getString("FEATURE");
+	public static final String NAME_KEYWORD = BUNDLE.getString("NAME");
+	public static final String NAME_KEYWORD_EN = BUNDLE_EN.getString("NAME");
+	public static final String CHAPTER_KEYWORD = BUNDLE.getString("CHAPTER");
+	public static final String CHAPTER_KEYWORD_EN = BUNDLE_EN.getString("CHAPTER");
 
+	public static final String PLACEHOLDER_FILENAME = BUNDLE.getString("PLACEHOLDER_FILENAME");
+	public static final String PLACEHOLDER_FILENAME_EN = BUNDLE_EN.getString("PLACEHOLDER_FILENAME");
+	public static final String PLACEHOLDER_FOLDERNAME = BUNDLE.getString("PLACEHOLDER_FOLDERNAME");
+	public static final String PLACEHOLDER_FOLDERNAME_EN = BUNDLE_EN.getString("PLACEHOLDER_FOLDERNAME");
+	public static final String PLACEHOLDER_PACKAGE = BUNDLE.getString("PLACEHOLDER_PACKAGE");
+	public static final String PLACEHOLDER_PACKAGE_EN = BUNDLE_EN.getString("PLACEHOLDER_PACKAGE");
+
+	public static final String POSSIBLE_VALUE_IDENTIFIER = BUNDLE.getString("POSSIBLE_VALUE_IDENTIFIER");
 }

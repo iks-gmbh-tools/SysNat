@@ -1,0 +1,13 @@
+Behaviour: <filename>
+This is just a comment for the reader of this file.
+
+SysDoc:
+Foo Bar.
+
+ReqDoc:
+Bar Foo.
+
+XX: An Executable Example
+
+Bar Foo
+Foo Bar

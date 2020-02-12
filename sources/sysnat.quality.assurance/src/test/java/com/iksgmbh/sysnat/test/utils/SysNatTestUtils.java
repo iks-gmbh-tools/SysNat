@@ -108,7 +108,7 @@ public class SysNatTestUtils
 		if ( ! report.contains(expected)) {			
 			System.err.println(report);
 		}
-		assertTrue("Unexpected report content.", report.contains(expected));		
+		assertTrue("Expected text '" + expected + "' not found in report.", report.contains(expected));		
 	}	
 	
 }

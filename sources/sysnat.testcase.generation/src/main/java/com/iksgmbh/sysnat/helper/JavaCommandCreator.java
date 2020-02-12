@@ -15,6 +15,7 @@
  */
 package com.iksgmbh.sysnat.helper;
 
+import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.JavaCommand;
 import com.iksgmbh.sysnat.domain.JavaCommand.CommandType;
@@ -52,29 +53,47 @@ public class JavaCommandCreator
 		sb.append(getParameters(instructionPattern, templatePattern.getParameterTypes()));
 		sb.append(");");
 		
-		final CommandType commandType = determineCommandType(instructionPattern.getInstructionLine());
+		String commandString = sb.toString();
+		String replacement = SysNatStringUtil.extractXXIdFromFilename(instructionPattern.getFileName());
+		if (commandString.contains(SysNatLocaleConstants.PLACEHOLDER_FILENAME)) {
+			commandString = commandString.replace(SysNatLocaleConstants.PLACEHOLDER_FILENAME, replacement);
+		}
+		if (commandString.contains(SysNatLocaleConstants.PLACEHOLDER_FILENAME_EN)) {
+			commandString = commandString.replace(SysNatLocaleConstants.PLACEHOLDER_FILENAME_EN, replacement);
+		}
+		
+		
+		final CommandType commandType = determineCommandType(instructionPattern);
 
-		return new JavaCommand(sb.toString(), templatePattern.getReturnType(), commandType );
+		return new JavaCommand(commandString, templatePattern.getReturnType(), commandType );
 	}
 
-	private static CommandType determineCommandType(String instructionLine) 
+	private static CommandType determineCommandType(LanguageInstructionPattern instructionPattern) 
 	{
-		if (instructionLine.startsWith("OneTimePrecondition:") || instructionLine.startsWith("EinmalVoraussetzung:")) {
+		String line = instructionPattern.getInstructionLine();
+		String metaInfo = instructionPattern.getMetaInfo();
+		
+		if (metaInfo.equals("OneTimePrecondition") || metaInfo.equals("EinmalVoraussetzung")) {
 			return CommandType.OneTimePrecondition;
 		}
 		
-		if (instructionLine.startsWith("Precondition:") || instructionLine.startsWith("Voraussetzung:")) {
+		if (metaInfo.equals("Precondition") || metaInfo.equals("Voraussetzung")) {
 	    	return CommandType.Precondition;
 		}
 		
-		if (instructionLine.startsWith("Cleanup:") || instructionLine.startsWith("Aufräumen:")) {
+		if (metaInfo.equals("OneTimeCleanup") || metaInfo.equals("EinmalAufräumen")) {
+			return CommandType.OneTimeCleanup;
+		} 
+		
+		if (metaInfo.equals("Cleanup") || metaInfo.equals("Aufräumen")) {
 	    	return CommandType.Cleanup;
 		} 
 
-		if (instructionLine.startsWith("OneTimeCleanup:") || instructionLine.startsWith("EinmalAufräumen:")) {
-	    	return CommandType.Cleanup;
+		if (line.startsWith("Behaviour:") || line.startsWith("Behavior:") || line.startsWith("Verhalten:")) {
+	    	return CommandType.Standard;
 		} 
-
+		
+		
 		return CommandType.Standard;
 	}
 
@@ -93,6 +112,7 @@ public class JavaCommandCreator
 	private static String toFieldName(final String value) 
 	{
 		String variableName = SysNatStringUtil.replaceSpacesByUnderscore(value);
+		variableName = SysNatStringUtil.replaceDotsByUnderscore(variableName);
 		return SysNatStringUtil.firstCharToLowerCase(variableName);
 	}
 

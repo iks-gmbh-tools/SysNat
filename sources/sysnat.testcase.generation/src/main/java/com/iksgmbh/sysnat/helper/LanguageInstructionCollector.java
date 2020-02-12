@@ -30,6 +30,7 @@ import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.LanguageInstructionPattern;
 import com.iksgmbh.sysnat.utils.BDDKeywordUtil;
+import com.iksgmbh.sysnat.utils.StageInstructionUtil;
 
 /**
  * Collects all natural language instructions from all nlxx-files of the given test application.
@@ -119,7 +120,7 @@ public class LanguageInstructionCollector
 				                       firstLine.startsWith("Scenario");
 
 		boolean behaviourHeaderDetected = false;
-		boolean firstXXDetected = false;
+		boolean lineInXXParsingSection = false;
 		
 		for (String line : content)
 		{
@@ -128,36 +129,39 @@ public class LanguageInstructionCollector
 				continue;
 			}
 					
-			if (   line.startsWith("Feature")
-				|| line.startsWith("Behavior")
-				|| line.startsWith("Behaviour")
-				|| line.startsWith("Verhalten"))
+			if (isBehaviourLine(line))
 			{
 				behaviourHeaderDetected = true;
-				extractInstruction(line.trim(), toReturn);
+				extractBddInstruction(line.trim(), toReturn);
 				continue;
 			}
 
-			if (   line.startsWith("Scenario")
-				|| line.startsWith("Szenario")
-				|| line.startsWith("XX")
-				|| line.startsWith("XXID")
-				|| line.startsWith("XXId")) 
+			if (isXXLine(line)) 
 			{
-				firstXXDetected = true;
-				extractInstruction(line.trim(), toReturn);
+				lineInXXParsingSection = true;
+				extractBddInstruction(line.trim(), toReturn);
 				continue;
 			}
+			
+			if (isCleanupLine(line)) {
+				lineInXXParsingSection = false;
+			}
+			
 
-			if (behaviourHeaderDetected && ! firstXXDetected) {
-				// ignore meta info header lines
-			} else {
+			if (behaviourHeaderDetected && ! lineInXXParsingSection) 
+			{
+				if (StageInstructionUtil.isStageInstruction(line)) {
+					toReturn.add(line);
+				}
+			} 
+			else 
+			{
 				if (line.isEmpty()) {
 					continue;
 				}
 				
 				if ( isFeatureBased ) {
-					extractInstruction(line.trim(), toReturn);
+					extractBddInstruction(line.trim(), toReturn);
 				} else {
 					toReturn.add(line);
 				}
@@ -169,6 +173,28 @@ public class LanguageInstructionCollector
 		toReturn = checkForSingleTestDataValueSetter(toReturn);
 
 		return toReturn;
+	}
+
+	private boolean isCleanupLine(String line)
+	{
+		return line.contains("Aufräumen")
+				|| line.contains("Cleanup");
+	}
+
+	private boolean isXXLine(String line)
+	{
+		return line.startsWith("Scenario:")
+			|| line.startsWith("Szenario:")
+			|| line.startsWith("XX:")
+			|| line.toLowerCase().startsWith("xxid:");
+	}
+
+	private boolean isBehaviourLine(String line)
+	{
+		return line.startsWith("Feature")
+			   || line.startsWith("Behavior")
+			   || line.startsWith("Behaviour")
+			   || line.startsWith("Verhalten");
 	}
 
 	private List<String> checkForSingleTestDataValueSetter(List<String> instructions) 
@@ -237,8 +263,9 @@ public class LanguageInstructionCollector
 		return GenerationRuntimeInfo.getInstance().getListOfKnownScriptNames().contains(instruction + "nls");
 	}
 
-	private boolean doesContainPlaceholder(String instruction) {
-		return    instruction.contains("<")
+	private boolean doesContainPlaceholder(String instruction) 
+	{
+		return instruction.contains("<")
 			   || instruction.contains(">")
 			   || instruction.contains("\"")
 			   || instruction.contains("'");
@@ -263,7 +290,7 @@ public class LanguageInstructionCollector
 					       .collect(Collectors.toList());
 	}
 
-	void extractInstruction(String line, List<String> instructions)
+	void extractBddInstruction(String line, List<String> instructions)
 	{
 		if (BDDKeywordUtil.startsWithBDDKeyword(line))
 		{
@@ -274,7 +301,6 @@ public class LanguageInstructionCollector
 		} else {
 			instructions.add(line.trim());
 		}
-
 	}
 
 	private void translateInSysNatCommands(LineData lineData) 

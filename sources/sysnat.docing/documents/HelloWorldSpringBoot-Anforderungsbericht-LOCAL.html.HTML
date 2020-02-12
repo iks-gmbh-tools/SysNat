@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>'HelloWorldSpringBoot-Anforderungsbericht-LOCAL.html'</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<style>
+
+body {
+  background: linear-gradient(90deg, white, lightyellow);
+}
+
+h1 {
+  background: lightgray;
+}
+
+p.testphase {
+  color: blue;
+}
+
+/* 5 title lines */
+
+table:nth-of-type(1) tr:nth-of-type(1){
+  background: #0d73ff;
+  font-size: 40px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(2){
+  background: #0d73ff;
+  font-size: 28px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(3){
+  background: #0d73ff;
+  font-size: 40px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(4){
+  background: #0d73ff;
+  font-size: 20px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(5){
+  background: #0d73ff;
+  font-size: 20px;
+  border: solid 1px #0d73ff;
+}
+
+/* data tables */
+table {
+    table-layout:fixed;
+    width:100%;
+    border: solid 2px black;     /* Tabellenrahmen */
+    border-collapse: collapse;
+}
+
+table tr:nth-of-type(odd) {
+  background: lightgrey;
+}
+table tr:nth-of-type(even) {
+  background: #efefef;
+}
+
+
+</style>
+<table>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>System Beschreibung</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">für</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong><em>HelloWorldSpringBoot</em></strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mit Hilfe von <em>Pandoc</em></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">erzeugt am 11.02.2020 um 13:28</td>
+</tr>
+</tbody>
+</table>
+<h1 id="introduction">Introduction</h1>
+<p>This “application” represents actually a Hompage. As such it needs no login and is used to demonstrate SysNat testing a test application without login. In addition, it is used to demonstrate the download of a PDF file and its easy content validation with SysNat’s <em>DocVal</em>-Framework.</p>
+<h1 id="greetingwithtabletestdata">GreetingWithTableTestData</h1>
+<p>TestData:<br />
+Datasets in columns</p>
+<table>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>Susi</td>
+</tr>
+<tr class="even">
+<td>Greeting</td>
+<td>Hi</td>
+</tr>
+<tr class="odd">
+<td>GreetingResult</td>
+<td>Hi Susi!</td>
+</tr>
+</tbody>
+</table>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>“EnterGreetingData”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “::GreetingResult”?</p>
+<h1 id="greetingwithtabletestparameter">GreetingWithTableTestParameter</h1>
+<p>Test-Parameter:<br />
+Datasets in columns</p>
+<table>
+<tbody>
+<tr class="odd">
+<td>Name</td>
+<td>Susi</td>
+</tr>
+<tr class="even">
+<td>Greeting</td>
+<td>Hi</td>
+</tr>
+<tr class="odd">
+<td>GreetingResult</td>
+<td>Hi Susi!</td>
+</tr>
+</tbody>
+</table>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>“EnterGreetingData”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “::GreetingResult”?</p>
+<h1 id="scriptbasedgreeting">ScriptBasedGreeting</h1>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>Execute with “Name” = “John” “Greeting” = “Hi” the script “EnterGreetingData”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “Hi John!”?</p>
+<h1 id="simplegreeting">SimpleGreeting</h1>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “Hello World!”?</p>
+<h1 id="testdatabasedgreeting1">TestDataBasedGreeting1</h1>
+<p>TestData: SingleGreetingData</p>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>“EnterGreetingData”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “Hey Elisabeth!”?</p>
+<h1 id="testdatabasedgreeting2">TestDataBasedGreeting2</h1>
+<p>TestData: HelloWorldTestData</p>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>Select “HelloWorldTestData_GreetingValidationData1::Greeting” in selection field “Greeting”. Enter “HelloWorldTestData_GreetingValidationData1::Name” in text field “Name”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “HelloWorldTestData_GreetingValidationData1::GreetingResult”?</p>
+<h1 id="testdatabasedgreeting3">TestDataBasedGreeting3</h1>
+<p>TestData: MultipleGreetingData_1<br />
+TestData: MultipleValidationData_1</p>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>Select “MultipleGreetingData_1::Greeting” in selection field “Greeting”. Enter “MultipleGreetingData_1::Name” in text field “Name”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “MultipleValidationData_1::GreetingResult”?</p>
+<h1 id="testdatabasedgreeting4">TestDataBasedGreeting4</h1>
+<p>TestData: MultipleGreetingData</p>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>Select “MultipleGreetingData_1::Greeting” in selection field “Greeting”. Enter “MultipleGreetingData_1::Name” in text field “Name”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “Hi Tim!”?</p>
+<hr />
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>Click menu item “Form Page”. Select “MultipleGreetingData_2::Greeting” in selection field “Greeting”. Enter “MultipleGreetingData_2::Name” in text field “Name”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “Hello Rose!”?</p>
+<hr />
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>Click menu item “Form Page”. Select “MultipleGreetingData_3::Greeting” in selection field “Greeting”. Enter “MultipleGreetingData_3::Name” in text field “Name”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “Hi Abdul!”?</p>
+<h1 id="testdatabasedgreeting5">TestDataBasedGreeting5</h1>
+<p>TestData: HelloWorldTestData_GreetingValidationData1</p>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>“EnterGreetingData”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “::GreetingResult”?</p>
+<h1 id="testparameterbasedgreeting">TestParameterBasedGreeting</h1>
+<p>Test-Parameter: HelloWorldTestData</p>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>“EnterGreetingData”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Click button “Greet”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is the displayed text “GreetingResult” equal to “HelloWorldTestData::GreetingResult”?</p>
+<h1 id="failedlogin">FailedLogin</h1>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>Is page “Form Page” visible? Click menu item “Logout”. Is page “Login Page” visible?</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Login with “Peter”, “wrongPW”.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is page “Error Page” visible? Is the displayed text “ErrorMessage” equal to “Invalid User Login Data.”?</p>
+<h1 id="relogin">Relogin</h1>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>Is page “Form Page” visible? Click menu item “Logout”. Is page “Login Page” visible?</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Relogin.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Is page “Form Page” visible?</p>
+<h1 id="smoketest">Smoketest</h1>
+<p>Is page “Form Page” visible?</p>
+</body>
+</html>

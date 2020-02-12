@@ -15,8 +15,6 @@
  */
 package com.iksgmbh.sysnat;
 
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
-
 import java.util.List;
 
 /**
@@ -49,15 +47,6 @@ public class GenerationRuntimeInfo extends ExecutionRuntimeInfo
     	instance = null;
     	ExecutionRuntimeInfo.reset();
     }
-
-	public void setTargetEnv(final String aValue) {
-		try {
-			TargetEnv targetEnv = TargetEnv.valueOf(aValue);
-			targetEnvironment = targetEnv;
-		} catch (Exception e) {
-			System.err.println("Unknown target environment: " + aValue);
-		}
-	}
 
 	public void setListOfKnownScriptNames(List<String> aList) {
 		listOfScriptNames = aList;

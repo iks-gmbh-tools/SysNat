@@ -19,84 +19,168 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
-import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.testdataimport.domain.DocumentContentSearchValidationRule;
+import com.iksgmbh.sysnat.testdataimport.domain.DocumentValidationRule;
 
 public class ValidationFileReaderClassLevelTest
 {
     @Test
-    public void loadsValidationData()
+    public void loadsDocumentsComparisonValidationData()
     {
         // arrange
-		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/test.validation");
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/"
+				       + "DocumentContentComparison.nldocval");
         File file = new File(path);
 
         // act
-        final LinkedHashMap<String, String> result = ValidationFileReader.doYourJob(file);
+        final List<DocumentValidationRule> result = ValidationFileReader.doYourJob(file);
 
         // arrange
-        assertEquals("Number of properties", 6, result.size());
-        assertEquals("Value", "", result.get("Softwarequalität"));
-        assertEquals("Value", "8::2", result.get("Die Akteure der Umsetzung"));
-        assertEquals("Value", "8", result.get("Der Autor"));
-        assertEquals("Value", "", result.get("Dr. <Autor>"));
-        assertEquals("Value", "Literatur & Links", result.get("<CCC>"));
-        assertEquals("Value", "Literatur & Links::2", result.get("<Titel>"));
+        assertEquals("Number of properties", 16, result.size());
+    }
 
+	
+	
+    @Test
+    public void loadsSearchValidationData()
+    {
+        // arrange
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/DocumentContentSearch.nldocval");
+        File file = new File(path);
+
+        // act
+        final List<DocumentValidationRule> result = ValidationFileReader.doYourJob(file);
+
+        // arrange
+        assertEquals("Number of properties", 10, result.size());
+        
+        DocumentContentSearchValidationRule rule = (DocumentContentSearchValidationRule) result.get(0);
+        assertEquals("ExpectedContent", "Software", rule.getExpectedContent());
+        assertEquals("PageNumber", -1, rule.getPageNumber());
+        assertEquals("LineNumber", -1, rule.getLineNumber());
+        assertEquals("PageIdentifier", null, rule.getPageIdentifier());
+
+        rule = (DocumentContentSearchValidationRule) result.get(1);
+        assertEquals("ExpectedContent", "Author", rule.getExpectedContent());
+        assertEquals("PageNumber", 8, rule.getPageNumber());
+        assertEquals("LineNumber", -1, rule.getLineNumber());
+        assertEquals("PageIdentifier", null, rule.getPageIdentifier());
+
+        rule = (DocumentContentSearchValidationRule) result.get(2);
+        assertEquals("ExpectedContent", "Figure 1", rule.getExpectedContent());
+        assertEquals("PageNumber", 9, rule.getPageNumber());
+        assertEquals("LineNumber", 2, rule.getLineNumber());
+        assertEquals("PageIdentifier", null, rule.getPageIdentifier());
+
+        rule = (DocumentContentSearchValidationRule) result.get(3);
+        assertEquals("ExpectedContent", "Preface", rule.getExpectedContent());
+        assertEquals("PageNumber", -1, rule.getPageNumber());
+        assertEquals("LineNumber", -1, rule.getLineNumber());
+        assertEquals("PageIdentifier", "Content", rule.getPageIdentifier());
+
+        rule = (DocumentContentSearchValidationRule) result.get(4);
+        assertEquals("ExpectedContent", "Table", rule.getExpectedContent());
+        assertEquals("PageNumber", -1, rule.getPageNumber());
+        assertEquals("LineNumber", 3, rule.getLineNumber());
+        assertEquals("PageIdentifier", "Summary", rule.getPageIdentifier());
     }
  
+    @Test
+    public void extractsNumericValuesFromRuleDefinitions()
+    {
+    	 // arrange
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/dummy.nldocval");
+        String pattern = "Test " + ValidationFileReader.REGEX_ANY + " Test " 
+    	                         + ValidationFileReader.REGEX_ANY + " Test " 
+        		                 + ValidationFileReader.REGEX_ANY + ".";
+		String rule = "Test 1 Test  22  Test 333.";
+		
+		// act
+        final List<String> result = new ValidationFileReader(new File(path)).extractValues(rule, pattern);
+
+        // arrange
+        assertEquals("Number of values", 3, result.size());
+        assertEquals("Value", "1", result.get(0));
+        assertEquals("Value", "22", result.get(1));
+        assertEquals("Value", "333", result.get(2));
+    }
+
+    @Test
+    public void extractsAlphanumericValueFromRuleDefinitions()
+    {
+    	 // arrange
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/dummy.nldocval");
+        String pattern = "Test " + ValidationFileReader.REGEX_ANY + " Test " 
+    	                         + ValidationFileReader.REGEX_ANY + " Test " 
+        		                 + ValidationFileReader.REGEX_ANY + ".";
+		String rule = "Test \"a a\" Test  \"b  b\"  Test \"c   c\".";
+		
+		// act
+        final List<String> result = new ValidationFileReader(new File(path)).extractValues(rule, pattern);
+
+        // arrange
+        assertEquals("Number of values", 3, result.size());
+        assertEquals("Value", "a a", result.get(0));
+        assertEquals("Value", "b  b", result.get(1));
+        assertEquals("Value", "c   c", result.get(2));
+    }
+
+    
     @Test
     public void throwsErrorForMissingQuotationMark()
     {
     	// arrange
+		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.testdata.import/src/test/resources/DocumentContentSearch.nldocval");
     	String errorMessage = ValidationFileReader.BUNDLE.getString("InvalidValidationRuleMessage");
-    	ValidationFileReader validationFileReader = new ValidationFileReader(null);
-    	LinkedHashMap<String, String> keyValuePairs = new LinkedHashMap<>();
+    	ValidationFileReader validationFileReader = new ValidationFileReader(new File(path));
+    	List<DocumentValidationRule> rules = new ArrayList<>();
 	
     	// check 1
-    	String validationRule = "The PDF contains on page with sequence Content\" the sequence \"Preface\".";
+    	String validationRule = "The document contains on page with sequence Content\" the sequence \"Preface\".";
     	if (Locale.getDefault().getLanguage().equals("de")) {
-    		validationRule = "Das PDF enthält auf der Seite mit dem Text Inhalt\" den Text \"Vorwort\".";
+    		validationRule = "Das Dokument enthält auf der Seite mit dem Text Inhalt\" den Text \"Vorwort\".";
     	}
-    	checkRule(errorMessage, validationFileReader, keyValuePairs, validationRule);
+    	checkRule(errorMessage, validationFileReader, rules, validationRule);
 		
 		
     	// check 2
-    	validationRule = "The PDF contains on page with sequence \"Content the sequence \"Preface\".";
+    	validationRule = "The document contains on page with sequence \"Content the sequence \"Preface\".";
     	if (Locale.getDefault().getLanguage().equals("de")) {
-    		validationRule = "Das PDF enthält auf der Seite mit dem Text \"Inhalt den Text \"Vorwort\".";
+    		validationRule = "Das Dokument enthält auf der Seite mit dem Text \"Inhalt den Text \"Vorwort\".";
     	}    	
-		checkRule(errorMessage, validationFileReader, keyValuePairs, validationRule);
+		checkRule(errorMessage, validationFileReader, rules, validationRule);
 		
     	// check 3
-    	validationRule = "The PDF contains on page with sequence \"Content\" the sequence Preface\".";
+    	validationRule = "The document contains on page with sequence \"Content\" the sequence Preface\".";
     	if (Locale.getDefault().getLanguage().equals("de")) {
-    		validationRule = "Das PDF enthält auf der Seite mit dem Text \"Inhalt\" den Text Vorwort\".";
+    		validationRule = "Das Dokument enthält auf der Seite mit dem Text \"Inhalt\" den Text Vorwort\".";
     	}    	
-		checkRule(errorMessage, validationFileReader, keyValuePairs, validationRule);
+		checkRule(errorMessage, validationFileReader, rules, validationRule);
 
     	// check 4
-    	validationRule = "The PDF contains on page with sequence \"Content\" the sequence \"Preface.";
+    	validationRule = "The document contains on page with sequence \"Content\" the sequence \"Preface.";
     	if (Locale.getDefault().getLanguage().equals("de")) {
-    		validationRule = "Das PDF enthält auf der Seite mit dem Text \"Inhalt\" den Text \"Vorwort.";
+    		validationRule = "Das Dokument enthält auf der Seite mit dem Text \"Inhalt\" den Text \"Vorwort.";
     	}    	
-		checkRule(errorMessage, validationFileReader, keyValuePairs, validationRule);
-		
+		checkRule(errorMessage, validationFileReader, rules, validationRule);
     }
 
-	private void checkRule(String errorMessage,
-	        ValidationFileReader validationFileReader,
-	        LinkedHashMap<String, String> keyValuePairs,
-	        String validationRule)
+	private void checkRule(final String errorMessage,
+			               final ValidationFileReader validationFileReader,
+			               final List<DocumentValidationRule> rules,
+			               final String validationRule)
 	{
 		try {
 			// act
-			validationFileReader.addToProperties(validationRule, keyValuePairs);
+			validationFileReader.parseLineToSearchValidationRule(validationRule, rules);
 			fail("Expected exception not thrown!");
 		} catch (SysNatException e) {
 			// assert

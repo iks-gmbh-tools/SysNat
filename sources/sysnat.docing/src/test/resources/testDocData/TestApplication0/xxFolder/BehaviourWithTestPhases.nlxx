@@ -1,0 +1,18 @@
+Behaviour: <filename>
+
+XX: Third Executable Example in this folder
+Test-Phase: Precondition
+Foo0
+Bar0
+Test-Phase: Arrange
+Foo1
+Bar1
+Test-Phase: Act
+Foo2
+Bar2
+Test-Phase: Assert
+Foo3
+Bar3
+Test-Phase: Cleanup
+Foo4
+Bar4

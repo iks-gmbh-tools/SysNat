@@ -18,8 +18,8 @@ package com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject;
 import java.util.HashMap;
 import java.util.List;
 
+import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
-import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
 /**
@@ -31,9 +31,9 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
  */
 public class LoginPageObject extends PageObject
 {	
-	public LoginPageObject(LanguageTemplateBasics aLanguageTemplateBasics) 
+	public LoginPageObject(ExecutableExample executableExample) 
 	{
-		this.languageTemplateBasics = aLanguageTemplateBasics;
+		this.executableExample = executableExample;
 		this.idMappingCollection = new HashMap<GuiType, HashMap<String, List<String>>>();
 		
 		HashMap<String, List<String>> idMappings = new HashMap<String, List<String>>();
@@ -53,7 +53,7 @@ public class LoginPageObject extends PageObject
 
 	@Override
 	public boolean isCurrentlyDisplayed() {
-		return languageTemplateBasics.getExecutableExample().isElementAvailable("login_button");
+		return executableExample.isElementAvailable("login_button");
 	}
 	
 }

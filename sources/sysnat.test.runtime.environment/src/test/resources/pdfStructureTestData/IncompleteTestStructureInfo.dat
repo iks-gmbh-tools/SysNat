@@ -1,0 +1,10 @@
+# Similar to ExpectedEBookStructure.txt but with structure definitions that 
+# do not contain all parts of the EBook!
+
+ExcelFile=EBookStructureInfo.xlsx
+
+PartsExcelSheet=IncompleteData
+PartsRootCell=B3
+
+StructuresExcelSheet=IncompleteData
+StructuresRootCell=B10

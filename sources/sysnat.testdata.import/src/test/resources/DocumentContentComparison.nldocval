@@ -1,0 +1,22 @@
+# This validation files contains rules that define text search conditions
+# in order to validate a document.
+
+# English Examples
+For document comparison, file "ShouldBe.pdf" is used as should-be-document. 
+For document comparison, all lines that start with, end with or represent a date value of format "DD.mm.YYYY" are ignored. 
+For document comparison, all lines that start with prefix "Order Number" are ignored. 
+For document comparison, all lines that contain "Addition:" are ignored. 
+For document comparison, all lines that match pattern ".*" are ignored. 
+For document comparison, the line 1 on page 2 in the actual document is ignored. 
+For document comparison, the line 3 on page 4 in the should-be-document is ignored. 
+For document comparison, the line 5 on page 6 in both documents is ignored. 
+
+# German Examples
+Für den Dokumentenvergleich wird die Datei "ShouldBe.pdf" als Soll-Dokument verwendet. 
+Für den Dokumentenvergleich werden alle Zeilen, die einen Datumswert im Format "DD.mm.YYYY" darstellen - oder mit einem solchen beginnen oder enden - ignoriert.
+Für den Dokumentenvergleich werden alle Zeilen, die mit dem Prefix "Order Number" beginnen, ignoriert.
+Für den Dokumentenvergleich werden alle Zeilen, die den Wert "Addition:" enthalten, ignoriert.
+Für den Dokumentenvergleich werden alle Zeilen, die dem Schema ".*" entsprechen ignoriert.
+Für den Dokumentenvergleich wird Zeile 1 auf Seite 2 im aktuellen Dokument ignoriert.
+Für den Dokumentenvergleich wird Zeile 3 auf Seite 4 im Soll-Dokument ignoriert.
+Für den Dokumentenvergleich wird Zeile 5 auf Seite 6 in beiden Dokumenten ignoriert.

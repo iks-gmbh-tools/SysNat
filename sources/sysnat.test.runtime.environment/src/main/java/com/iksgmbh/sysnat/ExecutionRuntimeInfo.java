@@ -20,12 +20,14 @@ import static com.iksgmbh.sysnat.common.utils.SysNatConstants.NO_FILTER;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -35,7 +37,14 @@ import org.joda.time.DateTime;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.BrowserType;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnv;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.DialogStartTab;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.DocumentationDepth;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.DocumentationFormat;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.DocumentationType;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.ExecSpeed;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.ResultLaunchOption;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.TargetEnvironment;
+import com.iksgmbh.sysnat.common.utils.SysNatDateUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
@@ -52,54 +61,51 @@ import com.iksgmbh.sysnat.helper.VirtualTestCase;
  */
 public class ExecutionRuntimeInfo 
 {
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
-	private static final ResourceBundle BUNDLE_EN = ResourceBundle.getBundle("bundles/Constants", Locale.ENGLISH);
-
 	private static final Hashtable<String, String> sysNatProperties = new Hashtable<>();
+	private static final ResourceBundle CONSTANTS_BUNDLE = ResourceBundle.getBundle("bundles/Constants", Locale.getDefault());
 
 	public static final String UNNAMED_XX_GROUP = "UNNAMED_XX_GROUP";
 	public static final String PROPERTIES_PATH = "sources/sysnat.test.runtime.environment/src/main/resources/execution_properties";
 	public static final String PROPERTIES_FILENAME = "execution.properties";
-	public static final String CONFIG_FILE_NAME = "sources/sysnat.natural.language.executable.examples/settings.config";
+	public static final String TESTING_CONFIG_FILE_NAME = "sources/sysnat.natural.language.executable.examples/testing.config";
+	public static final String DOCING_CONFIG_FILE_NAME = "sources/sysnat.natural.language.executable.examples/docing.config";
+	public static final String GENERAL_CONFIG_FILE_NAME = "sources/sysnat.natural.language.executable.examples/general.config";
 
 	// the following two constants define the behaviour for searching GUI-elements
-	private static final int DEFAULT_MILLIS_TO_WAIT_FOR_AVAILABILITY_CHECK = 100;
+	private static final int DEFAULT_MILLIS_TO_WAIT_FOR_AVAILABILITY_CHECK = 10;
 	private static final int DEFAULT_SECS_TO_WAIT_FOR_GUI_ELEMENT_TIMEOUT = 1;
 	private static final int DEFAULT_SECS_TO_WAIT_FOR_PRINT_TIMEOUT = 60;
-
-	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+	
+	private static final String PROPERTIES_FILE_EXTENSION = ".properties";
 	private static final SimpleDateFormat TODAY_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
 
 	private static ExecutionRuntimeInfo instance;
 
-	private String osName;
-	protected TargetEnv targetEnvironment;
-
 	private HashMap<String, List<String>> reportMessagesOK = new HashMap<>();
 	private HashMap<String, List<String>> reportMessagesWRONG = new HashMap<>(); // assertion failed (fachliches Problem)
-	private HashMap<String, List<String>> reportMessagesFAILED = new HashMap<>(); // excecption thrown (technisches Problem)
+	private HashMap<String, List<String>> reportMessagesFAILED = new HashMap<>(); // exception thrown (technisches Problem)
 	private HashMap<String, Integer> executionFilterMap = new HashMap<>(); // execution filter defined in the nlxx files
 	private HashMap<String, TestStatistics> testStatistics = new HashMap<>();
-	private HashMap<String, String> xxidBehaviourMap = new HashMap<>();   // stores for each XXID the named Behaviour if defined
-	private List<String> knownFeatures = new ArrayList<>();   // stores behaviour with Feature-Keyword
+	private LinkedHashMap<String, String> sortedXXidBehaviourMap = new LinkedHashMap<>();   // stores for each XXID its Behaviour/group in the executed order
+	private List<String> knownFeatures = new ArrayList<>();   // stores Behaviour with Feature-Keyword
 	private List<String> executedNLFiles = new ArrayList<>();   // list of executed natural language files
-	
-	private String executionFilters;
+	private String osName;
+	private HashMap<String, List<String>> testAppEnvironmentsMap = new HashMap<>();
 	private List<String> executionFilterList;
 	private List<String> inactiveXXIDs = new ArrayList<>();
 	private File reportFolder;
-	private int totalNumberOfTestCases = 0; // known for the given application/product under test
-	private int numberOfAllExecutedTestCases = 0;
+	private List<String> orderedListOfAllExecutedXXs = new ArrayList<>();	
+	private int totalNumberOfXX = 0; // known for the given application/product under test
 	private boolean alreadyLoggedIn = false;
 	private DateTime startPointOfTime = new DateTime();
-	private BrowserType browserTypeToUse;
 	private GuiControl guiController;
 	private boolean loginOk = true;
 	private Locale locale;
 	private boolean applicationStarted;
-	private boolean archiveResults;
+	private boolean archiveTestReport;
+	private boolean archiveDocumentation;
 	private boolean settingsOk;
 	private boolean testEnvironmentInitialized = false;
 	private boolean shutDownHookAdded;
@@ -111,6 +117,7 @@ public class ExecutionRuntimeInfo
 			System.out.println("SysNat v" + SysNatConstants.SYS_NAT_VERSION
 					+ " test environment initialisation...");
 			instance = new ExecutionRuntimeInfo();
+			instance.readConfiguredTestAppsAndTheirEnvironments();
 		}
 		return instance;
 	}
@@ -119,27 +126,12 @@ public class ExecutionRuntimeInfo
 	{
 		// load test properties
 		addToSystemProperties(getExecutionPropertiesAsString());
-		addToSystemProperties(getSettingsConfigAsString());
+		addToSystemProperties(getConfigFileAsString(SysNatConstants.GENERAL_CONFIG_PROPERTY, GENERAL_CONFIG_FILE_NAME));
+		addToSystemProperties(getConfigFileAsString(SysNatConstants.DOCING_CONFIG_PROPERTY, DOCING_CONFIG_FILE_NAME));
+		addToSystemProperties(getConfigFileAsString(SysNatConstants.TESTING_CONFIG_PROPERTY, TESTING_CONFIG_FILE_NAME));
 		addToSystemProperties(getPropertiesPath() + "/" + getTestApplicationName() + ".properties");
-
-		try {
-			browserTypeToUse = BrowserType.valueOf(getSystemProperty(BUNDLE.getString("BROWSER_SETTING_KEY")).toUpperCase());
-		} catch (Exception e) {
-			System.err.println("Unknown Browser in config.settings: " + getSystemProperty("Browser"));
-		}
-
-		try {
-			targetEnvironment = TargetEnv.valueOf(getSystemProperty(BUNDLE.getString("ENVIRONMENT_SETTING_KEY")).toUpperCase());
-		} catch (Exception e) {
-			targetEnvironment = TargetEnv.valueOf(getSystemProperty(BUNDLE_EN.getString("ENVIRONMENT_SETTING_KEY")).toUpperCase());
-		}
-
-		try {
-			executionFilters = getSystemProperty(BUNDLE.getString("EXECUTION_FILTER"));
-		} catch (Exception e) {
-			executionFilters = getSystemProperty(BUNDLE_EN.getString("EXECUTION_FILTER"));
-		}
 		
+		String executionFilters = getTestExecutionFilter();
 		executionFilterList = SysNatStringUtil.getExecutionFilterAsList(executionFilters, "");
 		assertPositiveFiltersInFrontOfNegativeOnes(executionFilterList);
 		if (executionFilters.length() == 0) {
@@ -148,8 +140,10 @@ public class ExecutionRuntimeInfo
 
 		osName = getOsName();
 
-		System.out.println("Starting " + getTestApplicationName() + " on " + targetEnvironment + " at "
-				+ getStartPointOfTimeAsFileStringForFileName() + "...");
+		System.out.println("Starting " + getTestApplicationName() + 
+				           " on " + getTestEnvironmentName() + 
+				           " at " + getStartPointOfTimeAsFileStringForFileName() + 
+				           "...");
 	}
 
 	void assertPositiveFiltersInFrontOfNegativeOnes(List<String> filterList) {
@@ -176,33 +170,6 @@ public class ExecutionRuntimeInfo
 		}
 	}
 
-	private String getSystemProperty(String key) 
-	{
-		String toReturn = System.getProperty(key);
-		if (toReturn == null) {
-			handleException("Unknown system property '" + key + "'!");
-		}
-		return toReturn.trim();
-	}
-
-	private void handleException(String errorMessage) {
-		System.err.println(errorMessage);
-		throw new SysNatException(errorMessage);
-	}
-
-	private String getExecutionProperty(String propertyEnding) {
-		if (targetEnvironment == null) {
-			throw new RuntimeException(
-					"Die property 'Zielumgebung' wurde in der Datei settings.config nicht gesetzt oder ist nicht gültig.");
-		}
-
-		return getTestApplicationNameAsPropertyKey() + "."
-				+ targetEnvironment.name().toLowerCase() + "." + propertyEnding;
-	}
-
-	public String getTestApplicationNameAsPropertyKey() {
-		return getTestApplicationName().toLowerCase().replaceAll("_", "");
-	}
 
 	public String getStartPointOfTimeAsFileStringForFileName() {
 		return getStartPointOfTimeAsString().replaceFirst(":", "h ").replaceFirst(":", "min ") + "sec";
@@ -215,12 +182,16 @@ public class ExecutionRuntimeInfo
 	public Date getStartPointOfTime() {
 		return startPointOfTime.toDate();
 	}
-
-	public void countExcecutedTestCase() {
-		numberOfAllExecutedTestCases++;
+	
+	public List<String> getOrderedListOfAllExecutedTestCases() {
+		return orderedListOfAllExecutedXXs;
 	}
 
-	public void countTestCase(String behaviourId) 
+	public void countAsExecuted(String xxid) {
+		orderedListOfAllExecutedXXs.add(xxid);
+	}
+	
+	public void countAsExecuted(String xxid, String behaviourId) 
 	{
 		if (behaviourId != null) {
 			Integer oldFrequence = numberOfExecutedXXPerGroupMap.get(behaviourId);
@@ -229,10 +200,26 @@ public class ExecutionRuntimeInfo
 				numberOfExecutedXXPerGroupMap.put(behaviourId, Integer.valueOf(newFrequence));
 			}
 		}
-		totalNumberOfTestCases++;
+		countAsExecuted(xxid);
 	}
 
-	public void addInactiveTestCase(String inactiveXXId, String behaviourID) {
+	public void countExistingXX() {
+		totalNumberOfXX++;
+	}
+	
+	public int getNumberOfAllExecutedXXs() {
+		return orderedListOfAllExecutedXXs.size();
+	}
+
+	public void uncountAsExecuted(String xxid) {
+		orderedListOfAllExecutedXXs.remove(xxid);
+	}
+
+	public int getTotalNumberOfXXs() {
+		return totalNumberOfXX;
+	}
+
+	public void addInactiveXX(String inactiveXXId, String behaviourID) {
 		inactiveXXIDs.add(inactiveXXId);
 		addToBehaviourXXMapping(inactiveXXId, behaviourID);
 	}
@@ -260,17 +247,11 @@ public class ExecutionRuntimeInfo
 		if (behaviourID == null || behaviourID.isEmpty()) {
 			behaviourID = UNNAMED_XX_GROUP;
 		}
-		xxidBehaviourMap.put(xxid, behaviourID);
+		sortedXXidBehaviourMap.put(xxid, behaviourID);
 	}
 
 	public List<String> getExecutionFilterList() {
 		return executionFilterList;
-	}
-	
-	public void setExecutionFilterString(String filter) {
-		if (filter != null) {
-			System.setProperty(BUNDLE.getString("EXECUTION_FILTER"), filter);
-		}
 	}
 
 	public void setExecutionFilterList(List<String> filterList) {
@@ -283,18 +264,6 @@ public class ExecutionRuntimeInfo
 
 	public void setAlreadyLoggedIn(boolean alreadyLoggedIn) {
 		this.alreadyLoggedIn = alreadyLoggedIn;
-	}
-
-	public int getTotalNumberOfTestCases() {
-		return totalNumberOfTestCases;
-	}
-
-	public int getNumberOfAllExecutedTestCases() {
-		return numberOfAllExecutedTestCases;
-	}
-
-	public void uncountAsExecutedTestCases() {
-		numberOfAllExecutedTestCases--;
 	}
 
 	private void addToSystemProperties(final String propertiesFilename)  
@@ -338,8 +307,8 @@ public class ExecutionRuntimeInfo
 	}
 
 	
-	public HashMap<String, String> getXXidBehaviourMap() {
-		return xxidBehaviourMap;
+	public LinkedHashMap<String, String> getSortedXXidBehaviourMap() {
+		return sortedXXidBehaviourMap;
 	}
 
 	public HashMap<String, List<String>> getReportMessagesOK() {
@@ -356,10 +325,6 @@ public class ExecutionRuntimeInfo
 
 	public int getNumberOfInactiveTests() {
 		return inactiveXXIDs.size();
-	}
-
-	public String getFiltersToExecute() {
-		return executionFilters;
 	}
 
 	public String getExecutionDurationAsString() {
@@ -379,17 +344,13 @@ public class ExecutionRuntimeInfo
 		return osname;
 	}
 
-	public BrowserType getBrowserTypeToUse() {
-		return browserTypeToUse;
-	}
-
 	public static void reset() {
 		instance = null;
 		clearSysNatProperties();
+		System.clearProperty(SysNatConstants.TEST_APPLICATION_SETTING_KEY);
 		System.clearProperty("execution.properties");
-		System.clearProperty(BUNDLE.getString("TESTAPP_SETTING_KEY"));
 		System.clearProperty("sysnat.properties.path");
-		System.clearProperty("settings.config");
+		System.clearProperty(SysNatConstants.TESTING_CONFIG_PROPERTY);
 	}
 
 	protected static void clearSysNatProperties() {
@@ -397,8 +358,10 @@ public class ExecutionRuntimeInfo
 		sysNatProperties.clear();
 	}
 
-	public String getLoginDataForDefaultLogin(final String loginDataItem) {
-		final String propertyKey = getExecutionProperty("login." + loginDataItem).toLowerCase();
+	public String getLoginDataForDefaultLogin(final String loginDataItem) 
+	{
+		final String propertyKey = "login." + getTestApplicationName().toLowerCase() + "." + 
+				                   getTestEnvironmentName().toLowerCase() + "." + loginDataItem;
 		final String toReturn = System.getProperty(propertyKey);
 
 		if (toReturn == null) {
@@ -423,57 +386,24 @@ public class ExecutionRuntimeInfo
 		return TODAY_FORMAT.format(new Date());
 	}
 
-	public TargetEnv getTargetEnv() {
-		return targetEnvironment;
-	}
-
-	/**
-	 * For test purpose only!
-	 */
-	public void setTestApplicationName(String name) {
-		System.setProperty(BUNDLE.getString("TESTAPP_SETTING_KEY"), name);
-	}
-
-	public String getTestApplicationName() 
+	public int getMillisToWaitForAvailabilityCheck() 
 	{
-		String toReturn = System.getProperty(BUNDLE.getString("TESTAPP_SETTING_KEY"));
+		ExecSpeed executionSpeed = getTestExecutionSpeed();
 
-		if (toReturn == null) {
-			toReturn = System.getProperty(BUNDLE_EN.getString("TESTAPP_SETTING_KEY"));
+		switch (executionSpeed) 
+		{
+			case LANGSAM:
+			case SLOW: 
+				   return Integer.valueOf(System.getProperty("execution.delay.millis.slow", "5000"));
+
+			case NORMAL:
+				return Integer.valueOf(System.getProperty("execution.delay.millis.normal", "1250"));
+
+			case QUICK:
+			case SCHNELL: 
+			default: 
+				return DEFAULT_MILLIS_TO_WAIT_FOR_AVAILABILITY_CHECK;
 		}
-
-		if (toReturn == null) {
-			throw new SysNatException("Application under test not specified!");
-		}
-
-		return toReturn;
-	}
-
-	public String getExecutionSpeed() {
-		try {
-			return getSystemProperty(BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY"));
-		} catch (Exception e) {
-			return getSystemProperty(BUNDLE_EN.getString("EXECUTION_SPEED_SETTING_KEY"));
-		}
-	}
-
-	public int getMaxMilliesForWaitState() {
-		String executionSpeed = getExecutionSpeed();
-
-		if ("verySlow".equals(executionSpeed)) {
-			return 5000;
-		}
-
-		if ("slow".equals(executionSpeed)) {
-			return 1500;
-		}
-
-		if ("fast".equals(executionSpeed)) {
-			return DEFAULT_MILLIS_TO_WAIT_FOR_AVAILABILITY_CHECK;
-		}
-
-		//System.out.println("Unbekannte Ausführungsgeschwindigkeit: " + executionSpeed + " Default 'schnell' wird genommen.");
-		return DEFAULT_MILLIS_TO_WAIT_FOR_AVAILABILITY_CHECK;
 	}
 
 	public int getDefaultGuiElementTimeout() {
@@ -515,7 +445,8 @@ public class ExecutionRuntimeInfo
 		return locale;
 	}
 
-	public boolean addToResultAsSeparateTestCase(VirtualTestCase virtualExecutableExample) {
+	public boolean addToResultAsSeparateXX(VirtualTestCase virtualExecutableExample) 
+	{
 		List<String> reportMessages = virtualExecutableExample.getReportMessages();
 		for (String message : reportMessages) {
 			if (message.contains(SysNatLocaleConstants.ERROR_KEYWORD)) {
@@ -533,20 +464,20 @@ public class ExecutionRuntimeInfo
 		return true;
 	}
 
-	private String getSettingsConfigAsString()
+	private String getConfigFileAsString(String propertyKey, String defaultValue)
 	{
-		String toReturn = System.getProperty("settings.config");
+		String toReturn = System.getProperty(propertyKey);
 		if (toReturn == null) {
-			String defaultValue = SysNatFileUtil.findAbsoluteFilePath(CONFIG_FILE_NAME);
-			System.setProperty("settings.config", defaultValue);
-			toReturn = defaultValue;
+			String absolutePath = SysNatFileUtil.findAbsoluteFilePath(defaultValue);
+			System.setProperty(propertyKey, absolutePath);
+			toReturn = absolutePath;
 		}
 
 		if ( ! SysNatFileUtil.isAbsolutePath(toReturn) ) {
 			toReturn = SysNatFileUtil.findAbsoluteFilePath(toReturn);
-			System.setProperty("settings.config", toReturn);
+			System.setProperty(propertyKey, toReturn);
 		}
-		System.out.println("settings.config used: " + toReturn);
+		System.out.println(propertyKey + " used: " + toReturn);
 		return toReturn;
 	}
 
@@ -591,93 +522,24 @@ public class ExecutionRuntimeInfo
 		return System.getProperty("sysnat.testdata.import.directory") + "/" + getTestApplicationName();
 	}
 
-	public List<String> getContentOfConfigSettingsFile()
-	{
-		String settingsConfig = getSettingsConfigAsString();
-		File f = new File(settingsConfig);
-		if (!f.exists()) {
-			throw new RuntimeException("Folgende notwendige Datei wurde nicht gefunden: " + settingsConfig);
-		}
-		String[] splitResult = SysNatFileUtil.readTextFileToString(f.getAbsolutePath()).split(System.getProperty("line.separator"));
-		return Arrays.asList(splitResult);
+	public boolean isTestReportToArchive() {
+		return archiveTestReport;
 	}
 
-	public boolean areResultsToArchive() {
-		return archiveResults;
+	public void setArchiveTestReport(boolean value) {
+		archiveTestReport = value;
 	}
 
-	public void setResultsToArchive(boolean value) {
-		archiveResults = value;
+	public boolean isDocumentationToArchive() {
+		return archiveDocumentation;
 	}
 
-	public void setTargetEnv(String targetEnv) {
-		if (TargetEnv.valueOf(targetEnv) != null) {
-			targetEnvironment = TargetEnv.valueOf(targetEnv);
-			System.setProperty(BUNDLE.getString("ENVIRONMENT_SETTING_KEY"), targetEnv);
-		} else {
-			throw new RuntimeException("Unknown target environment");
-		}
+	public void setArchiveDocumentation(boolean value) {
+		archiveDocumentation = value;
 	}
 
-	public String getReportName() {
-		String toReturn;
-		
-		try {
-			toReturn = System.getProperty(BUNDLE.getString("REPORT_NAME_SETTING_KEY")).trim();
-		} catch (Exception e) {
-			toReturn = System.getProperty(BUNDLE_EN.getString("REPORT_NAME_SETTING_KEY")).trim();
-		}		
-
-		if (toReturn == null || toReturn.trim().length() == 0) {
-			toReturn = buildDefaultReportName();
-			System.setProperty(BUNDLE.getString("REPORT_NAME_SETTING_KEY"), toReturn);
-		}
-
-		if (toReturn.endsWith("-")) {
-			toReturn = toReturn.substring(0, toReturn.length() - 1);
-		}
-
-		return toReturn;
-	}
-
-	public String buildDefaultReportName() {
-		String filters = getFiltersToExecute();
-		if (filters.equals(NO_FILTER)) {
-			filters = BUNDLE.getString("All");
-		}
-		return getTestApplicationName() + "-"
-				+ getTargetEnv().name() + "-"
-				+ filters;
-	}
-
-	public String getArchiveDir() {
-		try {			
-			return getSystemProperty(BUNDLE.getString("ARCHIVE_DIR_SETTING_KEY"));
-		} catch (Exception e) {
-			return getSystemProperty(BUNDLE_EN.getString("ARCHIVE_DIR_SETTING_KEY"));
-		}
-	}
-
-	public void setReportName(String value) {
-		System.setProperty(BUNDLE.getString("REPORT_NAME_SETTING_KEY"), value);
-	}
-
-	public void setArchiveDir(String value) {
-		System.setProperty(BUNDLE.getString("ARCHIVE_DIR_SETTING_KEY"), value);
-	}
-
-	public void setBrowserTypeToUse(String value) {
-		browserTypeToUse = BrowserType.valueOf(value.toUpperCase());
-		System.setProperty(BUNDLE.getString("BROWSER_SETTING_KEY"), value);
-	}
-
-	public void setExecSpeed(String value) {
-		System.setProperty(BUNDLE.getString("EXECUTION_SPEED_SETTING_KEY"), value);
-	}
-
-	public boolean getUseSettingsDialog() {
-		return System.getProperty("Start_With_SettingsConfigDialog").equalsIgnoreCase("on")
-				|| System.getProperty("Starte_Mit_SettingsConfigDialog").equalsIgnoreCase("an");
+	public boolean useSettingsDialog() {
+		return System.getProperty(SysNatConstants.USE_SYSNAT_DIALOG_SETTING_KEY).equalsIgnoreCase("yes");
 	}
 
 
@@ -688,14 +550,78 @@ public class ExecutionRuntimeInfo
 	public void setSettingsOk() {
 		settingsOk = true;
 	}
+	
+	public void readConfiguredTestAppsAndTheirEnvironments()
+	{
+		final File testAppConfigDir = new File(System.getProperty("sysnat.properties.path"));
+		final List<File> propertiesFiles = SysNatFileUtil.findFilesIn(PROPERTIES_FILE_EXTENSION, testAppConfigDir).getFiles();
+		propertiesFiles.stream()
+		               .filter(file -> ! file.getName().equals(ExecutionRuntimeInfo.PROPERTIES_FILENAME))
+		               .forEach(this::readTestAppProperties);
+	}
+	
+	private void readTestAppProperties(File propertiesFile) 
+	{
+		TestApplication testApp = new TestApplication(propertiesFile);
+		testAppEnvironmentsMap.put(testApp.getName(), testApp.getConfiguredEnvironments());
+	}
+	
+	public HashMap<String,List<String>> getTestAppEnvironmentsMap() {
+		return testAppEnvironmentsMap;
+	}
 
-	public String getReportFolderAsString() {
-		String toReturn = System.getProperty("sysnat.report.dir");
-		return SysNatFileUtil.findAbsoluteFilePath(toReturn) + "/"
-				+ getReportName() + " "
+	public List<String> getKnownTestApplications()
+	{
+		List<String> testApps = new ArrayList<>(testAppEnvironmentsMap.keySet());
+		Collections.sort(testApps);
+		return testApps;
+	}
+
+	public List<String> getKnownEnvironments(String testApplicationName) {
+		return testAppEnvironmentsMap.get(testApplicationName);
+	}
+	
+	public String getReportFolderAsString() 
+	{
+		String mainDir = System.getProperty("sysnat.report.dir");
+		String testReportName = checkReportName(getTestReportName());
+		return SysNatFileUtil.findAbsoluteFilePath(mainDir) + "/"
+				+ testReportName  + " "
 				+ getStartPointOfTimeAsFileStringForFileName();
 	}
 
+	private String checkReportName(String testReportName)
+	{
+		String testApp = getTestApplicationName();
+
+		if (testReportName.startsWith(testApp)) return testReportName;
+		
+		Optional<String> match = getKnownTestApplications().stream()
+		                            .filter(appName -> testReportName.startsWith(appName))
+		                            .findFirst();
+		
+		if ( ! match.isPresent() ) return testReportName;
+		
+		return buildDefaultReportName(testApp, getTestEnvironmentName(), getTestExecutionFilter());
+	}
+
+	public String buildDefaultReportName(String testApplication,
+			                             String targetEnvironment,
+			                             String executionFilter) 
+	{
+		if (executionFilter.equals(NO_FILTER)) {
+			executionFilter = CONSTANTS_BUNDLE.getString("All");
+		}
+
+		if (executionFilter.length() != 0) {
+			executionFilter = "-" + executionFilter;
+		}
+
+
+		
+		return testApplication + "-" + targetEnvironment + "-" + executionFilter;
+	}
+	
 	public File getReportFolder() {
 		if (reportFolder == null) {
 			reportFolder = SysNatFileUtil.createFolder(getReportFolderAsString());
@@ -707,22 +633,25 @@ public class ExecutionRuntimeInfo
 		testStatistics.put(xxid, statistics);
 	}
 
-	public static class TestStatistics {
+	public static class TestStatistics 
+	{
 		public TestStatistics(DateTime startTime, DateTime endTime) {
 			startPointOfTime = DATE_FORMAT.format(startTime.toDate());
-			duration = TIME_FORMAT.format(endTime.toDate().getTime() - startTime.toDate().getTime());
+			long millis = endTime.toDate().getTime() - startTime.toDate().getTime();
+			duration = SysNatDateUtil.formatDuration(millis);
 		}
+
 
 		public String startPointOfTime;
 		public String duration;
 	}
 
-	public String getTotalTimePassed() {
-		return TIME_FORMAT.format(new Date().getTime() - startPointOfTime.getMillis());
+	public String getTotalTimePast() {
+		return SysNatDateUtil.formatDuration(new Date().getTime() - startPointOfTime.getMillis());
 	}
 
 	public String getIntermediateResultLogText() {
-		int numTotal = getNumberOfAllExecutedTestCases();
+		int numTotal = getNumberOfAllExecutedXXs();
 		int numSuccess = getReportMessagesOK().size();
 
 		if (numTotal == 0) {
@@ -805,8 +734,278 @@ public class ExecutionRuntimeInfo
 		return executedNLFiles;
 	}
 
-	public String getTestCaseDir() {
+	public String getExecutableExampleDir() {
 		return System.getProperty("sysnat.executable.examples.source.dir");
 	}
+	
+	private String getSetting(String settingsKey) 
+	{
+		String toReturn = System.getProperty(settingsKey);
+
+		if (toReturn == null) {
+			throw new SysNatException(settingsKey + " is not specified!");
+		}
+
+		return toReturn.trim();
+	}
+	
+	// #################################################################################
+	//              S e t t e r   f o r    C o n f i g S e t t i n g s
+	// #################################################################################
+	
+	public void setTestApplicationName(String value) 
+	{
+		if (value != null) {			
+			System.setProperty(SysNatConstants.TEST_APPLICATION_SETTING_KEY, value);
+		}
+	}
+
+	public void setTestEnvironmentName(String value) 
+	{
+		value = value.toUpperCase();
+		if (TargetEnvironment.valueOf(value) != null) {
+			System.setProperty(SysNatConstants.TEST_ENVIRONMENT_SETTING_KEY, value);
+		} else {
+			throw new RuntimeException("Unknown " + SysNatConstants.TEST_ENVIRONMENT_SETTING_KEY + ": " + value);
+		}
+	}
+	
+	public void setTestExecutionFilter(String value) {
+		if (value != null) {
+			System.setProperty(SysNatConstants.TEST_EXECUTION_FILTER_SETTING_KEY, value);
+		}
+	}
+
+	public void setTestBrowserName(String value) 
+	{
+		value = value.toUpperCase();
+		if (BrowserType.valueOf(value) != null) {
+			System.setProperty(SysNatConstants.TEST_BROWSER_SETTING_KEY, value);
+		} else {
+			throw new RuntimeException("Unknown " + SysNatConstants.TEST_BROWSER_SETTING_KEY + ": " + value);
+		} 
+	}
+
+	public void setTestExecutionSpeedName(String value) 
+	{
+		value = value.toUpperCase();
+		if (ExecSpeed.valueOf(value) != null) {
+			System.setProperty(SysNatConstants.TEST_EXECUTION_SPEED_SETTING_KEY, value);
+		} else {
+			throw new RuntimeException("Unknown " + SysNatConstants.TEST_EXECUTION_SPEED_SETTING_KEY + ": " + value);
+		} 
+	}
+
+	public void setTestReportName(String value) {
+		if (value != null) {
+			System.setProperty(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY, value);
+		}
+	}
+
+	public void setTestArchiveDir(String value) {
+		if (value != null) {
+			System.setProperty(SysNatConstants.TEST_ARCHIVE_DIR_SETTING_KEY, value);
+		}
+	}
+	
+	// ############################################################################
+
+	public void setDocApplicationName(String value) 
+	{
+		if (value != null) {			
+			System.setProperty(SysNatConstants.DOC_APPLICATION_SETTING_KEY, value);
+		}
+	}
+
+	public void setDocTypeName(String value) 
+	{
+		if (DocumentationType.valueOf(value) != null) {
+			System.setProperty(SysNatConstants.DOC_TYPE_SETTING_KEY, value);
+		} else {
+			throw new RuntimeException("Unknown " + SysNatConstants.DOC_TYPE_SETTING_KEY + ": " + value);
+		}
+	}
+
+	public void setDocDepthName(String value) 
+	{
+		if (DocumentationDepth.valueOf(value) != null) {
+			System.setProperty(SysNatConstants.DOC_DEPTH_SETTING_KEY, value);
+		} else {
+			throw new RuntimeException("Unknown " + SysNatConstants.DOC_DEPTH_SETTING_KEY + ": " + value);
+		}
+	}
+	
+	public void setDocEnvironmentName(String value) 
+	{
+		value = value.toUpperCase();
+		if (TargetEnvironment.valueOf(value) != null) {
+			System.setProperty(SysNatConstants.DOV_ENVIRONMENT_SETTING_KEY, value);
+		} else {
+			throw new RuntimeException("Unknown " + SysNatConstants.DOV_ENVIRONMENT_SETTING_KEY + ": " + value);
+		}
+	}
+
+	public void setDocFormatName(String value) 
+	{
+		value = value.toUpperCase();
+		if (DocumentationFormat.valueOf(value) != null) {
+			System.setProperty(SysNatConstants.DOC_FORMAT_SETTING_KEY, value);
+		} else {
+			throw new RuntimeException("Unknown " + SysNatConstants.DOC_FORMAT_SETTING_KEY + ": " + value);
+		}
+	}
+
+	public void setDocumentationName(String value) {
+		if (value != null) {
+			System.setProperty(SysNatConstants.DOC_NAME_SETTING_KEY, value);
+		}
+	}
+
+	public void setDocArchiveDir(String value) {
+		if (value != null) {
+			System.setProperty(SysNatConstants.DOC_ARCHIVE_DIR_SETTING_KEY, value);
+		}
+	}
+
+
+	// ############################################################################
+
+	public void setUseSysNatDialog(String value) {
+		if (value != null) {
+			System.setProperty(SysNatConstants.USE_SYSNAT_DIALOG_SETTING_KEY, value);
+		}
+	}
+
+	public void setDialogStartTab(String value) 
+	{
+		if (DialogStartTab.valueOf(value) != null) {
+			System.setProperty(SysNatConstants.DIALOG_START_TAB_SETTING_KEY, value);
+		} else {
+			throw new RuntimeException("Unknown " + SysNatConstants.DIALOG_START_TAB_SETTING_KEY + ": " + value);
+		}
+	}
+
+	public void setResultLaunchOptionName(String value) 
+	{
+		if (ResultLaunchOption.valueOf(value) != null) {
+			System.setProperty(SysNatConstants.RESULT_LAUNCH_OPTION_SETTING_KEY, value);
+		} else {
+			throw new RuntimeException("Unknown " + SysNatConstants.RESULT_LAUNCH_OPTION_SETTING_KEY + ": " + value);
+		}
+	}
+	
+	// #################################################################################
+	//           G e t t e r   f o r    C o n f i g S e t t i n g s
+	// #################################################################################
+	
+	
+	public String getTestApplicationName() {
+		return getSetting(SysNatConstants.TEST_APPLICATION_SETTING_KEY);
+	}
+
+	public String getTestEnvironmentName() {
+		return getSetting(SysNatConstants.TEST_ENVIRONMENT_SETTING_KEY);
+	}
+	
+	public TargetEnvironment getTestEnvironment() {
+		return TargetEnvironment.valueOf(getTestEnvironmentName().toUpperCase());
+	}
+
+	public String getTestExecutionFilter() {
+		return getSetting(SysNatConstants.TEST_EXECUTION_FILTER_SETTING_KEY);
+	}
+	
+	public String getTestBrowserTypeName() {
+		return getSetting(SysNatConstants.TEST_BROWSER_SETTING_KEY);
+	}
+	
+	public BrowserType getTestBrowserType() {
+		return BrowserType.valueOf(getTestBrowserTypeName().toUpperCase());
+	}	
+	
+	public String getTestExecutionSpeedName() {
+		return getSetting(SysNatConstants.TEST_EXECUTION_SPEED_SETTING_KEY);
+	}
+
+	public ExecSpeed getTestExecutionSpeed() {
+		return ExecSpeed.valueOf(getTestExecutionSpeedName().toUpperCase());
+	}	
+
+	public String getTestArchiveDir() {
+		return getSetting(SysNatConstants.TEST_ARCHIVE_DIR_SETTING_KEY);
+	}
+	
+	public String getTestReportName() {
+		return getSetting(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY);
+	}
+
+	// ############################################################################
+	
+	public String getDocApplicationName() {
+		return getSetting(SysNatConstants.DOC_APPLICATION_SETTING_KEY);
+	}
+
+	public String getDocTypeName() {
+		return getSetting(SysNatConstants.DOC_TYPE_SETTING_KEY);
+	}
+	
+	public DocumentationType getDocType() {
+		return DocumentationType.valueOf(getDocTypeName().toUpperCase());
+	}
+
+	public String getDocDepthName() {
+		return getSetting(SysNatConstants.DOC_DEPTH_SETTING_KEY);
+	}
+	
+	public DocumentationDepth getDocumentationDepth() {
+		return DocumentationDepth.valueOf(getDocDepthName().toUpperCase());
+	}	
+	
+	public String getDocEnvironmentName() {
+		return getSetting(SysNatConstants.DOV_ENVIRONMENT_SETTING_KEY);
+	}
+
+	public TargetEnvironment getDocEnvironment() {
+		return TargetEnvironment.valueOf(getDocEnvironmentName().toUpperCase());
+	}	
+	
+	public String getDocFormatName() {
+		return getSetting(SysNatConstants.DOC_FORMAT_SETTING_KEY);
+	}
+
+	public DocumentationFormat getDocFormat() {
+		return DocumentationFormat.valueOf(getDocFormatName().toUpperCase());
+	}	
+
+	public String getDocArchiveDir() {
+		return getSetting(SysNatConstants.DOC_ARCHIVE_DIR_SETTING_KEY);
+	}
+	
+	public String getDocumentationName() {
+		return getSetting(SysNatConstants.DOC_NAME_SETTING_KEY);
+	}
+
+	// ############################################################################
+
+	public String getUseSysNatDialog() {
+		return getSetting(SysNatConstants.USE_SYSNAT_DIALOG_SETTING_KEY);
+	}
+	
+	public String getDialogStartTabName() {
+		return getSetting(SysNatConstants.DIALOG_START_TAB_SETTING_KEY);
+	}
+
+	public DialogStartTab getDialogStartTab() {
+		return DialogStartTab.valueOf(getDialogStartTabName());
+	}
+
+	public String getResultLaunchOptionName() {
+		return getSetting(SysNatConstants.RESULT_LAUNCH_OPTION_SETTING_KEY);
+	}
+
+	public ResultLaunchOption getResultLaunchOption() {
+		return ResultLaunchOption.valueOf(getResultLaunchOptionName());
+	}
+
 
 }
