@@ -17,6 +17,7 @@ package com.iksgmbh.sysnat.guicontrol;
 
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
@@ -188,18 +190,34 @@ public class SeleniumGuiController implements GuiControl
 		if (positionOfOccurrence > matchingElements.size()) {
 			throw new SysNatException("So many occurences (" + positionOfOccurrence + ") of " + idToClick + " has not been found on current page.");
 		}
+
+		int index = positionOfOccurrence-1;
+		WebElement element = matchingElements.get(index);
+
+//    	if (webDriver instanceof InternetExplorerDriver) 
+//    	{
+//			JavascriptExecutor js = (JavascriptExecutor) webDriver;
+//			js.executeScript("return arguments[0].click();", element);
+//    		
+//    		//getRobot().keyPress(KeyEvent.VK_ENTER);
+//    		return;
+//    	}
+//	
 		
     	try {
-    		int index = positionOfOccurrence-1;
-    		JavascriptExecutor js = (JavascriptExecutor) webDriver;
-    		WebElement element = matchingElements.get(index);
 			WebElement elementToScrollIntoView = element;
 			if ( ! idToScrollIntoView.equals(idToClick) ) {
 				elementToScrollIntoView = retrieveElement(idToScrollIntoView);
 			}
+			JavascriptExecutor js = (JavascriptExecutor) webDriver;
 			js.executeScript("arguments[0].scrollIntoView();", elementToScrollIntoView );
-    		Actions act=new Actions(webDriver);
-    		act.moveToElement(element).click().perform();
+			
+			if (webDriver instanceof InternetExplorerDriver) 
+			{
+				js.executeScript("return arguments[0].click();", element);
+			} else {
+				element.click();
+			}
     		return;
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -209,7 +227,7 @@ public class SeleniumGuiController implements GuiControl
 //    	
 //    	try {
 //    		Actions act=new Actions(webDriver);
-//    		act.moveToElement(element);
+//    		act.moveToElement(element).click().perform();
 //    		return;
 //    	} catch (Exception e) {
 //    		e.printStackTrace();

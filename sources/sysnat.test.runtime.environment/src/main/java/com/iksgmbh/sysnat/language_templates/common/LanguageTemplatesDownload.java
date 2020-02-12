@@ -73,7 +73,7 @@ public class LanguageTemplatesDownload
 	@LanguageTemplate("Das heruntergeladene PDF wird als <> festgehalten.")
 	public File storeLastPdfFile() 
 	{
-		File latestPdfFile = SysNatFileUtil.findRecentDownloadFile(2000);
+		File latestPdfFile = SysNatFileUtil.findRecentDownloadFile(5000);
 		if (latestPdfFile == null) {
 			throw new SysNatException("No PDF found that was recently downloaded.");
 		}

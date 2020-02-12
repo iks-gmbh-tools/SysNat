@@ -19,6 +19,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 
+import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -100,7 +101,9 @@ public class BrowserStarter
 
       final InternetExplorerOptions options = new InternetExplorerOptions();
       options.ignoreZoomSettings();
+      options.enablePersistentHovering();
       options.introduceFlakinessByIgnoringSecurityDomains();
+      options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.ACCEPT);
       //options.enableNativeEvents();
       //options.requireWindowFocus();
 
