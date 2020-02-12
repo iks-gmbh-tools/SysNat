@@ -1,4 +1,5 @@
 # SysNat
+
 ***This software development tool is made for***
 - driving requirements through a life cycle that you (or rather your team) define
 - translating natural language in programm code (with a minimum of developer effort)
@@ -13,7 +14,9 @@ a) Exectuable Examples become the Single Point of Truth (no or no unknown deviat
 b) There is always a current system documentation (it can be generated within seconds).
 
 c) Non-technical team members are able to modify existing Executable Examples, to create new ones and to execute them on their own without technical support (because the natural language used is intuitively understandable).
+
 =======
+
 All this is done in natural language and can thus be used by business experts, requirement engineers, developers, testers as well as operators. That is why *SysNat* supports ATDD, BDD, DDD, DevOps and cross functional teams. 
 
 
