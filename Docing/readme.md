@@ -1,5 +1,5 @@
-Pandoc is a free software that is used from SysNat to create html, xdoc and PDF files.
-For PDF generation is Prince used additionally (another free software in a non-commercial context).
+*Pandoc* is a free software that is used from SysNat to create html, xdoc and PDF files.
+For PDF generation is *Prince* used additionally (another free software in a non-commercial context).
 
 **ATTENTION:**
 
