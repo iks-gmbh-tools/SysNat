@@ -1,6 +1,6 @@
 # SysNat
 
-![](documentation/SysNatLogo.png)
+![](documentation/SysNatLogo.png){:height="50px"}
 
 ***This software development tool is made for***
 - translating natural language in programm code (with a minimum of developer effort)
