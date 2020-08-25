@@ -1,5 +1,7 @@
 # SysNat
 
+![](documentation/SysNatLogo.png)
+
 ***This software development tool is made for***
 - translating natural language in programm code (with a minimum of developer effort)
 - executing the system requirements as automated tests (by any team member also in a purely non-technical role)
