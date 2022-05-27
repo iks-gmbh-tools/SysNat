@@ -1,0 +1,10 @@
+{
+
+    @LanguageTemplate(value = "Do something.")
+    public void doSomething()
+    {
+        // TODO Implement here code that corresponds to the Language Template's promise.
+        executableExample.addReportMessage("Something done.");
+    }
+
+}

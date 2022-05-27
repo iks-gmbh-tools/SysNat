@@ -20,6 +20,8 @@ import java.util.List;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics.PageChangeEvent.EventType;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
 /**
@@ -31,8 +33,9 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
  */
 public class LoginPageObject extends PageObject
 {	
-	public LoginPageObject(ExecutableExample executableExample) 
+	public LoginPageObject(ExecutableExample executableExample, LanguageTemplateBasics aLanguageTemplateBasics) 
 	{
+		super(aLanguageTemplateBasics);
 		this.executableExample = executableExample;
 		this.idMappingCollection = new HashMap<GuiType, HashMap<String, List<String>>>();
 		
@@ -54,6 +57,13 @@ public class LoginPageObject extends PageObject
 	@Override
 	public boolean isCurrentlyDisplayed() {
 		return executableExample.isElementAvailable("login_button");
+	}
+	
+	@Override
+	public void clickButton(String buttonIdentifier)
+	{
+		super.clickButton(buttonIdentifier);
+		languageTemplateBasics.checkPageChange(buttonIdentifier, EventType.ButtonClick);
 	}
 	
 }

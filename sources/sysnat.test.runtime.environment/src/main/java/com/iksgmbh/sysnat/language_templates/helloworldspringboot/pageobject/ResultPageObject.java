@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 
 /**
@@ -31,8 +32,9 @@ import com.iksgmbh.sysnat.language_templates.PageObject;
  */
 public class ResultPageObject extends PageObject
 {	
-	public ResultPageObject(ExecutableExample executableExample) 
+	public ResultPageObject(ExecutableExample executableExample, LanguageTemplateBasics aLanguageTemplateBasics) 
 	{
+		super(aLanguageTemplateBasics);
 		this.executableExample = executableExample;
 		this.idMappingCollection = new HashMap<GuiType, HashMap<String, List<String>>>();
 		

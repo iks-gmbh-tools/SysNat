@@ -12,9 +12,8 @@
      <relativePath>../sysnat.parent/pom.xml</relativePath>
   </parent>  
   
-  
   <dependencies>
-  
+
    	<dependency>
   	  <groupId>com.iksgmbh.snt</groupId>
    	  <artifactId>sysnat.testdata.import</artifactId>
@@ -26,19 +25,59 @@
    	  <artifactId>sysnat.testresult.archiving</artifactId>
   	  <version>1.1.0</version>
   	</dependency>
+  	
+     <dependency>
+         <groupId>org.apache.openejb</groupId>
+         <artifactId>tomee-jaxrs</artifactId>
+         <version>1.7.4</version>
+     </dependency>  	
 
-	<dependency>
-	    <groupId>net.java.dev.jna</groupId>
-	    <artifactId>jna</artifactId>
-	    <version>4.1.0</version>
-	</dependency>
+     <dependency>
+         <groupId>org.quartz-scheduler</groupId>
+         <artifactId>quartz</artifactId>
+         <version>2.3.0</version>
+     </dependency>
+                 
+    <dependency>
+         <groupId>org.apache.commons</groupId>
+         <artifactId>commons-lang3</artifactId>
+         <version>3.6</version>
+     </dependency>
+        
+        
+	<!-- gui test framework dependencies -->
 
-	 <dependency>
-	    <groupId>org.seleniumhq.selenium</groupId>
-	    <artifactId>selenium-java</artifactId>
-	    <version>3.141.59</version>
-	</dependency> 	
+        <dependency>
+            <groupId>org.netbeans</groupId>
+            <artifactId>jemmy</artifactId>
+            <version>2.2.7.5</version>
+        </dependency>
+        
+		<dependency>
+		    <groupId>org.netbeans.api</groupId>
+		    <artifactId>org-netbeans-modules-jellytools-platform</artifactId>
+		    <version>RELEASE123</version>
+		</dependency>        
    
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-swing-junit</artifactId>
+            <version>3.9.2</version>
+        </dependency>
+
+		<dependency>
+		    <groupId>net.java.dev.jna</groupId>
+		    <artifactId>jna</artifactId>
+		    <version>4.1.0</version>
+		</dependency>
+        
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.13</version>
+		</dependency>
+        
+       
   </dependencies>  
  
 </project>

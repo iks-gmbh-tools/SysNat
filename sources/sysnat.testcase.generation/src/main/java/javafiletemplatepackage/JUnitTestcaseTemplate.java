@@ -44,13 +44,14 @@ public class JUnitTestcaseTemplate extends SysNatTestCase
 	public void setUp() 
 	{
 		super.setUp();
+		/* TO BE REPLACED: init number of test cases*/
 		/* TO BE REPLACED: field initialization */			
 	}
 
 	@After
 	public void shutdown() 
 	{
-		if ( ! isSkipped() && executionInfo.isApplicationStarted()) {
+		if ( ! isSkipped() && executionInfo.isTestEnvironmentInitialized()) {
 			//if (languageTemplateContainer != null) languageTemplateContainer.gotoStartPage();
 		}
 		/* TO BE REPLACED: technical cleanup */			

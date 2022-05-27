@@ -19,13 +19,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.junit.Test;
 
-import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
 import com.iksgmbh.sysnat.SysNatExecutor;
+import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
@@ -43,7 +45,6 @@ public class HomePageIKSSystemLevelTest extends SysNatSystemTest
 		// arrange
 		settingsConfigToUseInSystemTest = "../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config";
 		super.setup();
-		System.setProperty("sysnat.dummy.test.run", "true");
 
 		// act
 		SysNatJUnitTestClassGenerator.doYourJob();
@@ -64,11 +65,13 @@ public class HomePageIKSSystemLevelTest extends SysNatSystemTest
 		}
 		else
 		{
-			String filename = "../sysnat.natural.language.executable.examples/reports/"
-					          + "HomePageIKS/GenerationError.html";
+			final File filename = getFullOverviewOfCurrentReport();
 			String report = SysNatFileUtil.readTextFileToString(filename);
 			TestApplication testApplication = new TestApplication("HomePageIKS");
-			String expected = ERR_MSG_BUNDLE.getString("AppNotAvailable").replace("XY", testApplication.getStartParameterValue());
+			HashMap<String, String> params = testApplication.getStartParameterValues();
+			String key = new ArrayList<String>(params.keySet()).get(0);
+			String expected = ERR_MSG_BUNDLE.getString("AppNotAvailable").replace("XY", params.get(key));
+			System.err.println(report);
 			assertTrue("Unexpected error report message.", report.contains(expected));
 		}
 	}

@@ -48,7 +48,7 @@ public class LanguageTemplatesDownload
 	
 	@LanguageTemplate("List of PDF files in Download directory ^^ is saved as <>.")
 	@LanguageTemplate("Die Liste der PDF-Dateien im Download-Verzeichnis ^^ als <> festgehalten.")
-	public FileList getCurrentPdfFileList(String fileListName) 
+	public FileList storeTestObject_PdfFileList(String fileListName) 
 	{
 		FileList toReturn = SysNatFileUtil.findDownloadFiles("pdf");
 		toReturn.setName(fileListName);
@@ -91,13 +91,13 @@ public class LanguageTemplatesDownload
 			return;
 		};
 		
-		if (executableExample.getGuiController().getNumberOfOpenApplicationWindows() == 1) {
+		if (executableExample.getActiveGuiController().getNumberOfOpenApplicationWindows() == 1) {
 			return;
 		}
 		
-		executableExample.getGuiController().switchToLastWindow();		
-		((WebDriver)executableExample.getGuiController().getWebDriver()).close();
-		executableExample.getGuiController().switchToFirstWindow();		
+		executableExample.getActiveGuiController().switchToLastWindow();		
+		((WebDriver)executableExample.getActiveGuiController().getGuiHandle()).close();
+		executableExample.getActiveGuiController().switchToFirstWindow();		
  
 		executableExample.sleep(1000); // give system time 
 	}

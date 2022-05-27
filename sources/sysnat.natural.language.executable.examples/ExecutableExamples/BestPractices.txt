@@ -1,0 +1,24 @@
+
+Best Practices in SysNat:
+
+1.) Define and use UI-Element - Action - Combinations!
+Give all types of UI-elements an ubiquitous name.
+Refer to each certain kind of UI-element with certain verbs that represents actions on the corresponding UI-element.
+Use always those element-action-expressions in your natural language templates.
+
+2.) Use certain grammatical structures for certain purposes!
+- Use imperative instructions for UI-manipulations (i.e. let a sentence start with an imperative, e.b. "Click...")
+- Use questions with yes/no-answers for validation purpose (formulate in such way, that yes means green/valid)
+- Use passive structures in all other cases (e.g. "Value in field "Originator" is remembered.")
+
+3.) Combine instructions that closely belong together into separate natural language scripts!
+Those scripts must have the file ending "nls" (in contrast: the actual test or scenario must be written into a "nlxx"-file).
+The scripts represent the low-level-formulation of your Natural Language Executable Examples (nlxx).
+
+4.) Use declarariv style for your high level formulations!
+Names of script names are available as natural language templates in higher level scripts or the nlxx file.
+The highst level of your formulation are the nlxx-files.
+
+5.) Separate test data and instructions!
+Test data is best stored in "dat"-files that contain key-values-paires. 
+The keys represent placeholder supposed to be used in nlxx and nls-files.

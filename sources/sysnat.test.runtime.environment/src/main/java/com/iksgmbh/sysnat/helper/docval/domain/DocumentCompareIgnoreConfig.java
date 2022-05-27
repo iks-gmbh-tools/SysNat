@@ -17,6 +17,7 @@ package com.iksgmbh.sysnat.helper.docval.domain;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class DocumentCompareIgnoreConfig
 	public List<DateFormat> dateformats;  
 	public List<String> substrings;
 	public List<String> prefixes;
+	public HashMap<String,String> ignoreBetweenIdentifier;
 	public List<String> regexPatterns;
 	public List<String> lineDefinitions;
 	
@@ -83,6 +85,12 @@ public class DocumentCompareIgnoreConfig
 		this.lineDefinitions = aLineDefinitionsList;
 		return this;
 	}
+	
+	public DocumentCompareIgnoreConfig withIgnoreBetweenIdentifier(HashMap<String,String>  someIgnoreBetweenIdentifier) {
+		this.ignoreBetweenIdentifier = someIgnoreBetweenIdentifier;
+		return this;
+	}
+	
 
 	
 	// public Methods
@@ -136,6 +144,7 @@ public class DocumentCompareIgnoreConfig
 		
 		return false;
 	}
+
 
 	/**
 	 * @param pageNo number of page in file
@@ -263,6 +272,12 @@ public class DocumentCompareIgnoreConfig
 			  .append(System.getProperty("line.separator"));
 		}
 		
+		if (ignoreBetweenIdentifier != null && ignoreBetweenIdentifier.size() > 0) {			
+			sum += ignoreBetweenIdentifier.size();			
+			sb.append(ignoreBetweenIdentifier.size() + " IgnoreBetweenIdentifier").append(System.getProperty("line.separator"));
+		}
+		
+		
 		if (sum == 0) {
 			return "";
 		}
@@ -286,6 +301,11 @@ public class DocumentCompareIgnoreConfig
 		this.prefixes.add(aPrefix);
 	}
 
+	public void addIgnoreBetween(String startIdentifier, String endIdentifier) {
+		if (ignoreBetweenIdentifier == null) ignoreBetweenIdentifier = new HashMap<>();
+		this.ignoreBetweenIdentifier.put(startIdentifier, endIdentifier);
+	}
+	
 	public void addRegex(String aRegex) {
 		if (regexPatterns == null) regexPatterns = new ArrayList<String>();
 		this.regexPatterns.add(aRegex);
@@ -417,6 +437,6 @@ public class DocumentCompareIgnoreConfig
 			return false;
 		
 		return isDate(lineWithoutSpace.substring(length-10));
-	}
+	}	
 	
 }

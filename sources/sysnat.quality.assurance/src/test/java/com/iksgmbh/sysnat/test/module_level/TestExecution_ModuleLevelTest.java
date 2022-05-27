@@ -50,7 +50,7 @@ public class TestExecution_ModuleLevelTest
 	public void setup() {
 		SysNatFileUtil.deleteFolder(EXECUTION_DIR);
 		GenerationRuntimeInfo.reset();
-		System.setProperty("sysnat.dummy.test.run", "true");
+		System.setProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "true");
 		System.setProperty(SysNatConstants.RESULT_LAUNCH_OPTION_SETTING_KEY, "None"); // former: System.setProperty("sysnat.autolaunch.report", "false");
 	}
 		
@@ -89,7 +89,7 @@ public class TestExecution_ModuleLevelTest
 		final String testAppName = "MiniTestApp";
 		System.setProperty("sysnat.properties.path", TESTDATA_DIR + testAppName);
 		System.setProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, TESTDATA_DIR + testAppName + "/settings.config");
-		System.setProperty("sysnat.dummy.test.run", "true");
+		System.setProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "true");
 		
 		final List<String> fileList = new ArrayList<>();
 		fileList.add("MiniTestCaseTest.java");

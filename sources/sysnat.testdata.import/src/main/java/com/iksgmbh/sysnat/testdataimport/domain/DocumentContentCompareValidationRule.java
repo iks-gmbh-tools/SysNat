@@ -25,6 +25,7 @@ public class DocumentContentCompareValidationRule implements DocumentValidationR
 		                             Substring,      // rule to ignore lines that contain a certain value
 		                             Prefix,         // rule to ignore lines that start a certain value
 		                             Regex,          // rule to ignore lines that match a certain regular expression
+		                             IgnoreBetween,  // rule to ignore chars between to identifier values in all lines
 		                             LineDefinition  // rule to ignore lines that are defined by a <page number>-<line number>-<scope> combination, e.g. 5-21-1
 		                                             //         scope is either 1 (apply to first document only)
 			                                         //         or 2 (apply to second document only)
@@ -80,8 +81,6 @@ public class DocumentContentCompareValidationRule implements DocumentValidationR
 		// check validity
 		ApplyIgnoreLineDefinitionScope scope = ApplyIgnoreLineDefinitionScope.valueOf(aScope);
 		int pageNo = Integer.valueOf(aPageNo);
-		Integer.valueOf(aLineNo);
-		
 		return buildLineDefinitionIdentifier(scope, pageNo, aLineNo);
 	}
 

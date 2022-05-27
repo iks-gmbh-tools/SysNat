@@ -26,6 +26,7 @@ public class SysNatLocaleConstants
 	public static final String PICTURE_PROOF = BUNDLE.getString("PICTURE_PROOF");
 	public static final String CATEGORY_BILDNACHWEIS = BUNDLE.getString("with") + PICTURE_PROOF;
 	public static final String ERROR_KEYWORD = BUNDLE.getString("Error");	
+	public static final String PROBLEM_KEYWORD = BUNDLE.getString("Problem");	
 	public static final String TECHNICAL_ERROR_TEXT = BUNDLE.getString("TECHNICAL_ERROR_TEXT");
 	public static final String ASSERT_ERROR_TEXT = BUNDLE.getString("ASSERT_ERROR_TEXT");
 	public static final String ARRANGE_KEYWORD = BUNDLE.getString("ARRANGE_KEYWORD");

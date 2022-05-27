@@ -33,7 +33,11 @@ public class ExceptionHandlingUtil
 	
 	public static void throwClassifiedException(final ErrorCode errorCode, String... errorData) 
 	{
-		switch (errorCode) {
+		StringBuffer errorMessage;
+		String message;
+		
+		switch (errorCode) 
+		{
 		case LANGUAGE_TEMPLATE_PARSING__MISSING_JAVA_RETURN_VALUE:
 			System.err.println("LanguageTemplate \"" + errorData[1] + "\" of method \""
 			+ errorData[0] + "\" indicates a return value of the java method which is missing!");
@@ -65,29 +69,38 @@ public class ExceptionHandlingUtil
 			throw new SysNatException(errorCode);
 			
 		case NATURAL_LANGUAGE_INSTRUCTING_PARSING__PARAMETER_TYPE_MISMATCH:
-			System.err.println("A match between Method (" + errorData[0] + ") and "
-					           + "instruction line (" + errorData[1] + ") is found, but the "
-					           + "parameter type is mismatching!");
+			message = "A match between Method <b>" + errorData[0] + "</b> and "
+					           + "instruction line <b>" + errorData[1] + "</b> is found, but the "
+					           + "parameter type is mismatching!";
+			System.err.println(message);
 			throw new SysNatException(errorCode);
 
 		case NATURAL_LANGUAGE_INSTRUCTING_PARSING__EMPTY_PARAMETER_IDENTIFIER:
-			System.err.println("The instruction line (" + errorData[0] + ") contains an empty parameter!");
+			message = "The instruction line <b>" + errorData[0] + "</b> defines a parameter without a value!";
+			System.err.println(message);
+			ErrorPageLauncher.doYourJob(message, "Use \"\" as value to define an empty parameter value.", ERR_MSG_BUNDLE.getString("GenerationError"));
 			throw new SysNatException(errorCode);
 
 		case NATURAL_LANGUAGE_INSTRUCTING_PARSING__EMPTY_RETURN_VALUE_IDENTIFIER:
-			System.err.println("The instruction line (" + errorData[0] + ") contains an empty return value!");
+			message = "The instruction line <b>" + errorData[0] + "</b> contains an empty return value!";
+			System.err.println(message);
+			ErrorPageLauncher.doYourJob(message, "", ERR_MSG_BUNDLE.getString("GenerationError"));
 			throw new SysNatException(errorCode);
 			
 		case NATURAL_LANGUAGE_PARSING__MISSING_CLOSING_PART_IDENTIFIER:
 			if (errorData.length == 3) {
-				System.err.println("The natural language statement \"" + errorData[2] + "\" in file \""
-						+ errorData[1] + "\" is missing the closing character >" + errorData[0] + "<!");
+			errorMessage = new StringBuffer(System.getProperty("line.separator"));
+			errorMessage.append("The natural language statement <b>\"" + errorData[2] + "\"</b><br> in file <b>\""
+					+ errorData[1] + "\"</b><br> is missing the closing character <b>" + errorData[0] + "</b>!");
+			System.err.println(errorMessage.toString());			
+			ErrorPageLauncher.doYourJob(errorMessage.toString(), "", ERR_MSG_BUNDLE.getString("GenerationError"));
+			throw new SysNatException(errorCode);
+			} else {
+				throw new SysNatException(errorCode, errorData[0]);
 			}
-			throw new SysNatException(errorCode, errorData[0]);
-			
 		case MATCHING_INSTRUCTION_AND_LANGUAGE_TEMPLATES__UNKNOWN_INSTRUCTION:
 			
-			StringBuffer errorMessage = new StringBuffer(System.getProperty("line.separator"));
+			errorMessage = new StringBuffer(System.getProperty("line.separator"));
 			
 			errorMessage.append("The natural language statement")
 			            .append(System.getProperty("line.separator"))
@@ -109,17 +122,14 @@ public class ExceptionHandlingUtil
 			ErrorPageLauncher.doYourJob(errorData[3], errorData[4], ERR_MSG_BUNDLE.getString("GenerationError"));
 			throw new SysNatException(errorCode);
 
-		case JAVA_CODE_VERIFICATION__UNKNOWN_VARIABLE_NAME:
-			System.err.println("The executable example file \"" + errorData[0] + "\"");
-			System.err.println("uses the parameter '" + errorData[1] + "'");
-			System.err.println("which is not previously defined as return value!");
-			throw new SysNatException(errorCode);
-
 		case JAVA_CODE_VERIFICATION__WRONG_VARIABLE_TYPE:
-			System.err.println("The executable example file \"" + errorData[0] + "\"");
-			System.err.println("defines the variable '" + errorData[1] + "' with type <" + errorData[2] + ">");
-			System.err.println("which is used as parameter in instruction \"" + errorData[3] + "\"!");
-			System.err.println("with a differing type \"" + errorData[4] + "\"!");
+			errorMessage = new StringBuffer(System.getProperty("line.separator"));
+			errorMessage.append("The executable example file <b>" + errorData[0] + "</b>")
+								.append(" defines the variable <b>" + errorData[1] + "</b> with type <b>" + errorData[2] + "</b>")
+								.append(" which is used as parameter in instruction <b>" + errorData[3] + "</b>")
+								.append(" with a differing type <b>" + errorData[4] + "</b>!");
+			System.err.println(errorMessage.toString());			
+			ErrorPageLauncher.doYourJob(errorMessage.toString(), "", ERR_MSG_BUNDLE.getString("GenerationError"));
 			throw new SysNatException(errorCode);
 			
 		default:

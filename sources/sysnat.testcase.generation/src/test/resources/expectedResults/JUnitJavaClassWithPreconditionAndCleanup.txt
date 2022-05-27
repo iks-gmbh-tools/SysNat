@@ -8,7 +8,6 @@ import java.util.*;
 
 import com.iksgmbh.sysnat.testcasejavatemplate.SysNatTestCase;
 import com.iksgmbh.sysnat.test.testTemplateContainers.testcasegeneratortestapplication.ComplexInstructionTestApplication_LanguageTemplateContainer;
-import ReportCreator;
 
 /**
  * Executable Example for TestApplication 'HomePageIKS'.
@@ -28,13 +27,14 @@ public class ExampleTest extends SysNatTestCase
 	public void setUp() 
 	{
 		super.setUp();
+		initNumberOfTestCases(1);
 		complexInstructionTestApplication_LanguageTemplateContainer = new ComplexInstructionTestApplication_LanguageTemplateContainer(this);
 	}
 
 	@After
 	public void shutdown() 
 	{
-		if ( ! isSkipped() && executionInfo.isApplicationStarted()) {
+		if ( ! isSkipped() && executionInfo.isTestEnvironmentInitialized()) {
 			if (languageTemplatesCommon != null) languageTemplatesCommon.gotoStartPage();
 		}
 		complexInstructionTestApplication_LanguageTemplateContainer = null;
@@ -47,7 +47,6 @@ public class ExampleTest extends SysNatTestCase
 	    {
 	        languageTemplatesCommon.prepareOnce1();
 	        languageTemplatesCommon.prepareOnce2();
-	        languageTemplatesCommon.createComment(ReportCreator.END_OF_ONETIME_PRECONDTIONS_COMMENT);
 	    }
 	}
 	
@@ -57,11 +56,11 @@ public class ExampleTest extends SysNatTestCase
 	{
 		try {		
 			languageTemplatesCommon.declareXXGroupForBehaviour("BehaviourId");
+			languageTemplatesCommon.startNewXX("XXId");
+			languageTemplatesCommon.defineAndCheckExecutionFilter("-");
 			prepareOnceIfNeeded();
 			languageTemplatesCommon.prepare1();
 			languageTemplatesCommon.prepare2();
-			languageTemplatesCommon.startNewXX("XXId");
-			languageTemplatesCommon.defineAndCheckExecutionFilter("-");
 			templateContainer.doSomethingElse();
 			languageTemplatesCommon.cleanup1();
 			languageTemplatesCommon.cleanup2();
@@ -77,7 +76,6 @@ public class ExampleTest extends SysNatTestCase
 	{
 	    if (executionInfo.isLastXXOfGroup(BEHAVIOUR_ID))
 	    {
-	        languageTemplatesCommon.createComment(ReportCreator.START_OF_ONETIME_CLEANUPS_COMMENT);
 	        languageTemplatesCommon.cleanupOnce1();
 	        languageTemplatesCommon.cleanupOnce2();
 	    }
@@ -87,10 +85,11 @@ public class ExampleTest extends SysNatTestCase
 	public List<String> getNlxxFilePathAsList() 
 	{
 		List<String> toReturn = new ArrayList<>();
-		toReturn.add("com");
-		toReturn.add("iksgmbh");
-		toReturn.add("sysnat");
-		toReturn.add("test");
+		toReturn.add("com"); 
+		toReturn.add("iksgmbh"); 
+		toReturn.add("sysnat"); 
+		toReturn.add("test"); 
+		toReturn.add("Example"); 
 		return toReturn;
 	}
 	

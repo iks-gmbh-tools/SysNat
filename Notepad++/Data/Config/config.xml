@@ -1,21 +1,41 @@
 <?xml version="1.0" encoding="Windows-1252" ?>
 <NotepadPlus>
-    <FindHistory nbMaxFindHistoryPath="10" nbMaxFindHistoryFilter="10" nbMaxFindHistoryFind="10" nbMaxFindHistoryReplace="10" matchWord="no" matchCase="no" wrap="yes" directionDown="yes" fifRecuisive="yes" fifInHiddenFolder="no" dlgAlwaysVisible="no" fifFilterFollowsDoc="no" fifFolderFollowsDoc="no" searchMode="0" transparencyMode="1" transparency="150" dotMatchesNewline="no" isSearch2ButtonsMode="no">
+    <FindHistory nbMaxFindHistoryPath="10" nbMaxFindHistoryFilter="10" nbMaxFindHistoryFind="10" nbMaxFindHistoryReplace="10" matchWord="no" matchCase="no" wrap="yes" directionDown="no" fifRecuisive="yes" fifInHiddenFolder="no" dlgAlwaysVisible="no" fifFilterFollowsDoc="no" fifFolderFollowsDoc="no" searchMode="0" transparencyMode="1" transparency="150" dotMatchesNewline="no" isSearch2ButtonsMode="no">
         <Filter name="" />
-        <Find name="picture" />
+        <Filter name="" />
+        <Filter name="" />
+        <Filter name="" />
+        <Filter name="" />
+        <Filter name="" />
+        <Filter name="" />
+        <Find name="#############" />
+        <Find name="xml" />
+        <Find name="Schlie&#x00DF;e die ge&#x00F6;ffenete Akte." />
+        <Find name="SAP" />
+        <Find name="++" />
+        <Find name="##" />
+        <Find name="wech" />
+        <Find name="wechsel" />
+        <Find name="tabelle" />
+        <Find name="Warte" />
+        <Replace name="" />
+        <Replace name="" />
+        <Replace name="" />
+        <Replace name="" />
+        <Replace name="" />
+        <Replace name="" />
         <Replace name="" />
     </FindHistory>
     <History nbMaxFile="10" inSubMenu="no" customLength="-1">
-        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\Hauptmen&#x00FC;\CheckMainMenuItems.nlxx" />
-        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HomePageIKS\PdfContent\CheckPdfContent.nlxx" />
-        <File filename="C:\Users\rob\Desktop\ResultDetails" />
-        <File filename="C:\SysNat\SysNatNotepad++.bat" />
-        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HelloWorldSpringBoot\Greeting\SimpleGreeting.nlxx" />
-        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\HelloWorldSpringBoot\Greeting\GreetingWithTableTestData.nlxx" />
-        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles\deleteAllPdfFilesInDownloadDir.bat" />
-        <File filename="C:\SysNat\sources\sysnat.natural.language.executable.examples\src\main\resources\batFiles\clearReportDir.bat" />
-        <File filename="C:\Bubu3\SysNat_Notepad++.bat" />
-        <File filename="C:\Bubu3\Notepad++\StartSysNatTesting.bat" />
+        <File filename="C:\dev\Tools\MOGLiCC\application.properties" />
+        <File filename="C:\dev\Tools\SysNat\sources\sysnat.natural.language.executable.examples\testdata\InkaClient\Erwartungswerte\ExpectedSAPExportResultB.xml" />
+        <File filename="C:\dev\Tools\SysNat\sources\sysnat.natural.language.executable.examples\testdata\InkaClient\Eingabewerte\TilgungsdatenB.dat" />
+        <File filename="C:\Users\OberratR\AppData\Roaming\InkaClient\ImportExport\SAPExportTest.xml" />
+        <File filename="C:\dev\Tomee\config\InkaServer.properties" />
+        <File filename="C:\dev\Tools\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\CTI\scripts\Gl&#x00E4;uber-Daten sind gesetzt.nls" />
+        <File filename="P:\0311_AIA_Anwendung\InkA-Logs\PRI\inkaserver_automatischerSchriftwechsel_PRI.log" />
+        <File filename="P:\0311_AIA_Anwendung\InkA-Logs\PRI\inkaserver_PRI.log" />
+        <File filename="C:\dev\Tools\SysNat\sources\sysnat.natural.language.executable.examples\ExecutableExamples\InkaClient\BV-Ereignis zu Tilgungsereignissen erfassen.nlxx" />
     </History>
     <GUIConfigs>
         <GUIConfig name="ToolBar" visible="yes">standard</GUIConfig>
@@ -24,8 +44,8 @@
         <GUIConfig name="ScintillaViewsSplitter">vertical</GUIConfig>
         <GUIConfig name="UserDefineDlg" position="undocked">hide</GUIConfig>
         <GUIConfig name="TabSetting" replaceBySpace="no" size="4" />
-        <GUIConfig name="AppPosition" x="0" y="0" width="1100" height="700" isMaximized="yes" />
-        <GUIConfig name="noUpdate" intervalDays="15" nextUpdateDate="20190805">no</GUIConfig>
+        <GUIConfig name="AppPosition" x="31" y="33" width="1100" height="700" isMaximized="yes" />
+        <GUIConfig name="noUpdate" intervalDays="15" nextUpdateDate="20220415">no</GUIConfig>
         <GUIConfig name="Auto-detection">yes</GUIConfig>
         <GUIConfig name="CheckHistoryFiles">no</GUIConfig>
         <GUIConfig name="TrayIcon">no</GUIConfig>
@@ -50,7 +70,7 @@
         <GUIConfig name="ScintillaGlobalSettings" enableMultiSelection="no" />
         <GUIConfig name="openSaveDir" value="0" defaultDirPath="" />
         <GUIConfig name="titleBar" short="no" />
-        <GUIConfig name="stylerTheme" path="C:\Bubu3\Notepad++\App\Notepad++\stylers.xml" />
+        <GUIConfig name="stylerTheme" path="C:\dev\Tools\SysNat\Notepad++\App\Notepad++\stylers.xml" />
         <GUIConfig name="wordCharList" useDefault="yes" charsAdded="" />
         <GUIConfig name="delimiterSelection" leftmostDelimiter="40" rightmostDelimiter="41" delimiterSelectionOnEntireDocument="no" />
         <GUIConfig name="multiInst" setting="0" />
@@ -58,7 +78,7 @@
         <GUIConfig name="searchEngine" searchEngineChoice="2" searchEngineCustom="" />
         <GUIConfig name="SmartHighLight" matchCase="no" wholeWordOnly="yes" useFindSettings="no" onAnotherView="no">yes</GUIConfig>
         <GUIConfig name="ScintillaPrimaryView" lineNumberMargin="show" bookMarkMargin="show" indentGuideLine="show" folderMarkStyle="box" lineWrapMethod="aligned" currentLineHilitingShow="show" scrollBeyondLastLine="no" disableAdvancedScrolling="no" wrapSymbolShow="hide" Wrap="no" borderEdge="yes" edge="no" edgeNbColumn="80" zoom="0" zoom2="0" whiteSpaceShow="hide" eolShow="hide" borderWidth="2" smoothFont="no" />
-        <GUIConfig name="DockingManager" leftWidth="499" rightWidth="200" topHeight="200" bottomHeight="200">
+        <GUIConfig name="DockingManager" leftWidth="620" rightWidth="200" topHeight="200" bottomHeight="200">
             <PluginDlg pluginName="Explorer.dll" id="0" curr="0" prev="-1" isVisible="yes" />
             <PluginDlg pluginName="Explorer.dll" id="1" curr="0" prev="-1" isVisible="yes" />
             <ActiveTabs cont="0" activeTab="0" />

@@ -30,6 +30,7 @@ import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.utils.JavaFileWriterUtil;
 
 public class JavaFileWriterClassLevelTest 
 {
@@ -55,7 +56,7 @@ public class JavaFileWriterClassLevelTest
 		toSave.put(file2, fileContent2);
 
 		// act
-		JavaFileWriter.writeToTargetDir(toSave);
+		JavaFileWriterUtil.writeToTargetDir(toSave);
 		
 		// arrange
 		assertTrue("Missing file " + file1.getAbsolutePath(), file1.exists());
@@ -72,7 +73,7 @@ public class JavaFileWriterClassLevelTest
 		final HashMap<File, String> toSave = new HashMap<>();
 		final File file1 = createFile("TestFile1.java", testApp);
 		toSave.put(file1, "test content");
-		JavaFileWriter.writeToTargetDir(toSave);
+		JavaFileWriterUtil.writeToTargetDir(toSave);
 		assertTrue("Missing file " + file1.getAbsolutePath(), file1.exists());
 		
 		// arrange 2: run a second test
@@ -81,7 +82,7 @@ public class JavaFileWriterClassLevelTest
 		toSave.put(file2, "test content");
 		
 		// act
-		JavaFileWriter.writeToTargetDir(toSave);
+		JavaFileWriterUtil.writeToTargetDir(toSave);
 		
 		// assert
 		assertFalse("First run-results were not deleted!" + file1.getAbsolutePath(), file1.exists());

@@ -17,9 +17,12 @@ package com.iksgmbh.sysnat.domain;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.SysNatTestData.SysNatDataset;
 
 public class SysNatTestDataClassLevelTest 
@@ -100,6 +103,27 @@ public class SysNatTestDataClassLevelTest
 		
 		// assert
 		assertEquals("value of field", "firstValue", result);
+	}
+
+	@Test
+	public void returnsValueForSynonymReference() throws Exception 
+	{
+		// arrange
+		cut.addSynonym("firstKey", "1thKey");
+		cut.addSynonym("firstKey", "Key1");
+		cut.addSynonym("KeyA", "firstKey");
+		
+		// act
+		final List<String> result1 = cut.getSynonmysFor("::firstKey");
+		final List<String> result2 = cut.getSynonmysFor("::1thKey");
+		final List<String> result3 = cut.getSynonmysFor("::Key1");
+		final List<String> result4 = cut.getSynonmysFor("::KeyA");
+		
+		// assert
+		assertEquals("value of field", "1thKey Key1 KeyA", SysNatStringUtil.listToString(result1, " ") );
+		assertEquals("value of field", "firstKey", SysNatStringUtil.listToString(result2, " ") );
+		assertEquals("value of field", "firstKey", SysNatStringUtil.listToString(result3, " ") );
+		assertEquals("value of field", "firstKey", SysNatStringUtil.listToString(result4, " ") );
 	}
 	
 }

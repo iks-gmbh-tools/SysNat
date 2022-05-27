@@ -1,0 +1,22 @@
+# Common Application Properties 
+ApplicationType=Swing
+withLogin=true
+runGuiInSeparateThread=true
+maximizeApplicationWindow=true
+LoginId=Tester
+Password=12345
+
+# Environment specific properties
+JavaStartClass=null
+LibDirs=testlib
+ConfigFiles=testconfig
+MainFrameTitle=TestTitle
+
+# Environment specific properties
+
+LOCAL.InstallDir=testdir
+LOCAL.DisplayName=test
+LOCAL.LoginId=Tester
+LOCAL.Password=12345
+
+# Note: Environment specific properties do overwrite common ones with the same key

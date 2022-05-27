@@ -27,7 +27,7 @@ public class TestCaseWrong extends TestCaseTestImpl
 {
 	public TestCaseWrong()  {
 		languageTemplatesCommon = new LanguageTemplatesCommonTestImpl(this);
-		ExecutionRuntimeInfo.getInstance().setApplicationStarted(true);
+		ExecutionRuntimeInfo.getInstance().setTestEnvironmentInitialized();
 	}
 	
 	@Override

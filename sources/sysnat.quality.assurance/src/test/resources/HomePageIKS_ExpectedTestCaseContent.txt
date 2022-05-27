@@ -26,11 +26,15 @@ protected LanguageTemplatesCommon languageTemplatesCommon;
 protected LanguageTemplatesDocVal languageTemplatesDocVal;
 protected LanguageTemplatesDownload languageTemplatesDownload;
 
+public Karriere_Test() {
+executionInfo.register(BEHAVIOUR_ID, 9);
+}
 
 @Before
 public void setUp()
 {
 super.setUp();
+initNumberOfTestCases(11);
 languageTemplatesBasics_HomePageIKS = new LanguageTemplatesBasics_HomePageIKS(this);
 languageTemplatesCommon = new LanguageTemplatesCommon(this);
 languageTemplatesDocVal = new LanguageTemplatesDocVal(this);
@@ -40,7 +44,7 @@ languageTemplatesDownload = new LanguageTemplatesDownload(this);
 @After
 public void shutdown()
 {
-if ( ! isSkipped() && executionInfo.isApplicationStarted()) {
+if ( ! isSkipped() && executionInfo.isTestEnvironmentInitialized()) {
 if (languageTemplatesBasics_HomePageIKS != null) languageTemplatesBasics_HomePageIKS.gotoStartPage();
 }
 languageTemplatesBasics_HomePageIKS = null;
@@ -74,9 +78,9 @@ super.handleThrowable(e);
 public List<String> getNlxxFilePathAsList()
 {
 List<String> toReturn = new ArrayList<>();
-toReturn.add("HomePageIKS");
 toReturn.add("Hauptmenue");
 toReturn.add("MainMenuItems");
+toReturn.add("Karriere");
 return toReturn;
 }
 

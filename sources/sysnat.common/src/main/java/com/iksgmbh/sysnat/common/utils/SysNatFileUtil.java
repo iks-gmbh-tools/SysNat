@@ -17,6 +17,7 @@
 package com.iksgmbh.sysnat.common.utils;
 
 import java.awt.Desktop;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
@@ -38,7 +40,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -79,8 +80,12 @@ public class SysNatFileUtil
 	{
 		try {
 			fileName = findAbsoluteFilePath(fileName);
-			writeFile(new FileOutputStream(fileName), fileContent, fileName);
-			return new File(fileName);
+			File file = new File(fileName);
+			//if (! file.exists()) 
+			{
+				writeFile(new FileOutputStream(fileName), fileContent, fileName);
+			}
+			return file;
 		} catch (Exception e) {
 			String message = "Could not write file " + new File(fileName).getAbsolutePath();
 			System.err.println(message);
@@ -137,6 +142,34 @@ public class SysNatFileUtil
 				}
 		}
 
+	}
+	
+	/**
+	 * Searches a list of directories recursively for files with the given extension.
+	 * Note: if different directories contain files with the same name,
+	 *       only the first match is taken. Thus, the order of the directories matter!
+	 * @param fileExtension
+	 * @param directories
+	 * @return List of matching files with unique filename from all directories 
+	 */
+	public static List<File> findUniqueFilesRecursively(String fileExtension, List<File> directories)
+	{
+		List<File> toReturn = new ArrayList<>();
+		List<String> filenames = new ArrayList<>();
+		
+		for (File dir : directories) 
+		{
+			final FilenameFilter fileFilter = new FilenameFilter() {
+				@Override public boolean accept(File dir, String name) {
+					return name.endsWith(fileExtension);
+				}
+			};
+			List<File> matches = FileFinder.searchFilesRecursively(dir, fileFilter);
+			matches.stream().filter(match -> ! filenames.contains(match.getName())).forEach(match -> toReturn.add(match));
+			matches.stream().filter(match -> ! filenames.contains(match.getName())).forEach(match -> filenames.add(match.getName()));
+		}
+		
+		return toReturn;
 	}
   
 	/**
@@ -383,9 +416,12 @@ public class SysNatFileUtil
 
 		final List<String> fileContent = new ArrayList<String>();
 
-		try (Stream<String> stream = Files.lines(Paths.get(pathAndfilename.trim()))) {
-			stream.forEach(line -> fileContent.add(line));
-		} catch (IOException e) {
+
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(pathAndfilename),"utf-8"));
+			bufferedReader.lines().forEach(line -> fileContent.add(line));
+			bufferedReader.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -677,6 +713,7 @@ public class SysNatFileUtil
 	public static void createZipFile(File directoryToZip, File targetZipFile)
 	{
 		List<File> filesToZip = FileFinder.findFiles(directoryToZip, null, null, null, ".zip", null);
+		System.out.println(filesToZip.size());
 		String rootZipDir = directoryToZip.getName();
 
 		byte[] buffer = new byte[1024];
@@ -792,5 +829,21 @@ public class SysNatFileUtil
 		return true;
 	}
 
+	public static File getTestExecutionRootDir()
+	{
+		String targetDir = System.getProperty("sysnat.generation.target.dir");
+		File rootDir = new File(targetDir + "/../../..");
+		return rootDir;
+	}
+
+	public static String replaceInvalidFilenameChars(String filepath)
+	{
+		return filepath.replaceAll(" ", "").replaceAll("-", "_")
+		               .replaceAll("ü", "ue").replaceAll("Ü", "Ue")
+		               .replaceAll("ä", "ae").replaceAll("Ä", "Ae")
+		               .replaceAll("ö", "oe").replaceAll("Ö", "Oe")
+		               .replaceAll("ß", "ss").replaceAll("//", "/")
+		               .replaceAll(",", "");
+	}
 
 }

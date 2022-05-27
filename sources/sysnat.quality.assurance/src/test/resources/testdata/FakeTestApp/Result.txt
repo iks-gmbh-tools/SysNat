@@ -23,13 +23,14 @@ protected FakeLanguageTemplatesContainer fakeLanguageTemplatesContainer;
 public void setUp()
 {
 super.setUp();
+initNumberOfTestCases(2);
 fakeLanguageTemplatesContainer = new FakeLanguageTemplatesContainer(this);
 }
 
 @After
 public void shutdown()
 {
-if ( ! isSkipped() && executionInfo.isApplicationStarted()) {
+if ( ! isSkipped() && executionInfo.isTestEnvironmentInitialized()) {
 if (languageTemplatesCommon != null) languageTemplatesCommon.gotoStartPage();
 }
 fakeLanguageTemplatesContainer = null;
@@ -56,10 +57,9 @@ super.handleThrowable(e);
 public List<String> getNlxxFilePathAsList()
 {
 List<String> toReturn = new ArrayList<>();
-toReturn.add("FakeTestApp");
-toReturn.add("FakeTestApp");
 toReturn.add("mainDir");
 toReturn.add("subDir");
+toReturn.add("FakeTestCase");
 return toReturn;
 }
 

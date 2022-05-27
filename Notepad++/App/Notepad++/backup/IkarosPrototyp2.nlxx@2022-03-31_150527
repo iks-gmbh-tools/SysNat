@@ -1,0 +1,20 @@
+Szenario:  <filename>   # This Executable Example will be named as its file
+Active:	 no
+TestData: PrototypData
+
+Test-Phase: Arrange
+Erstelle eine neue Akte.
+
+Test-Phase: Act
+Lege die Hauptforderung zur Akte an.
+
+Test-Phase: Assert
+Wechsel zum Reiter "Übersicht".
+Gibt es einen Vorgang mit dem Kürzel "H43" und dem Betrag "::BetragH43"?
+Gibt es einen Vorgang mit dem Kürzel "QU001" und dem Betrag "::BetragQU001"?
+Gibt es einen Vorgang mit dem Kürzel "RVG01" und dem Betrag "::BetragRVG01"?
+Gibt es einen Vorgang mit dem Kürzel "K0020" und dem Betrag "::BetragK0020"?
+
+Test-Phase: Cleanup
+Aktenzeichen speichern und Akte schließen.
+Lösche Akte.

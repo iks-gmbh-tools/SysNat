@@ -17,6 +17,7 @@ package com.iksgmbh.sysnat.language_templates.common;
 
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.COMMENT_IDENTIFIER;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.NO_FILTER;
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIER;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWORD;
 
 import java.awt.Toolkit;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
@@ -72,6 +74,7 @@ public class LanguageTemplatesCommon
 	protected ExecutionRuntimeInfo executionInfo;
 	protected ExecutableExample executableExample;
 	private Properties nlsProperties;
+	private List<String> alreadyLoadedDataFiles = new ArrayList<String>();
 
 	public LanguageTemplatesCommon(ExecutableExample aExecutableExample) 
 	{
@@ -90,7 +93,7 @@ public class LanguageTemplatesCommon
 			return true;
 		}
 
-		final List<String> listOfNegativeMatchingFilters = new ArrayList<>();
+		final List<String> listOfNegativeMatchingFilters = new ArrayList<>();;
 		final List<String> listOfPositiveMatchingFilters = new ArrayList<>();
 		final List<String> listOfPositiveFilterToExecute = new ArrayList<>();
 
@@ -98,16 +101,27 @@ public class LanguageTemplatesCommon
 		{
 			if (filterToExecute.startsWith(SysNatLocaleConstants.NON_KEYWORD + ""))
 			{
-				final String excludedFilter = SysNatStringUtil.cutPrefix(filterToExecute,
-						SysNatLocaleConstants.NON_KEYWORD);
+				String excludedFilter = SysNatStringUtil.cutPrefix(filterToExecute,
+						                                           SysNatLocaleConstants.NON_KEYWORD);
 
 				if (execFilterOfExecutableExample.contains(excludedFilter)) {
 					listOfNegativeMatchingFilters.add(excludedFilter);
 				}
+				
+				excludedFilter = excludedFilter.replace("-", "_").replace("-", "_").replace(" ", "");
+				if (execFilterOfExecutableExample.contains(excludedFilter)) {
+					listOfNegativeMatchingFilters.add(excludedFilter);
+				}
+				
 			}
 			else
 			{
 				listOfPositiveFilterToExecute.add(filterToExecute);
+				filterToExecute = filterToExecute.replace("-", "_").replace(" ", "");
+				if (execFilterOfExecutableExample.contains(filterToExecute)) {
+					listOfPositiveMatchingFilters.add(filterToExecute);
+				}
+
 				if (execFilterOfExecutableExample.contains(filterToExecute)) {
 					listOfPositiveMatchingFilters.add(filterToExecute);
 				}
@@ -140,8 +154,49 @@ public class LanguageTemplatesCommon
 	//##########################################################################################
 
 
+	private String checkForTestDataValue(String comment)
+	{
+		try {
+			String toParse = comment;
+			StringBuffer toReturn = new StringBuffer();
+			
+			while (! toParse.isEmpty()) 
+			{
+				if (toParse.charAt(0) == '\'') 
+				{
+					toParse = toParse.substring(1);
+					int pos = toParse.indexOf("'");
+					String temp = toParse.substring(0, pos);
+					if (temp.contains("getTestDataValue")) 
+					{
+						toParse = toParse.substring(temp.length());
+						pos = toParse.indexOf("'");
+						toParse = toParse.substring(pos+1);
+						pos = toParse.indexOf("'");
+						String value = toParse.substring(0, pos);
+						toReturn.append(executableExample.getTestDataValue(value));
+						toParse = toParse.substring(pos+1);
+						pos = toParse.indexOf("'");
+						toParse = toParse.substring(pos+1);
+					} else {
+						toReturn.append("'");
+					}
+				} else {
+					toReturn.append(toParse.charAt(0));
+					toParse = toParse.substring(1);
+				}
+			}
+			
+			return toReturn.toString();
+			
+		} catch (Exception e) {
+			return comment;
+		}
+	}
+
 	private Class<?> getClassFor(String simpleScriptName) throws ClassNotFoundException 
 	{
+		simpleScriptName = simpleScriptName.replaceAll("-", "_");
 		String fullyQualifiedScriptName = getScripts().getProperty(simpleScriptName);
 		
 		if (fullyQualifiedScriptName == null) {			
@@ -181,14 +236,15 @@ public class LanguageTemplatesCommon
 	
 	protected void executeScript(String scriptName, ExecutableExample aExecutableExample)
 	{
+		scriptName = scriptName.replaceAll(",", "");
 		executionInfo.registerExecutedNLFile(scriptName + ".nls");
 		scriptName = SysNatStringUtil.toFileName(scriptName);
 		Method executeTestMethod = null;
-		Object newInstance = null;
+		Object scriptJavaCode = null;
 		try {
 			Class<?> classForName = getClassFor(scriptName);
 			Constructor<?> constructor = classForName.getConstructor(ExecutableExample.class);
-			newInstance = constructor.newInstance(aExecutableExample);
+			scriptJavaCode = constructor.newInstance(aExecutableExample);
 			executeTestMethod = classForName.getMethod("executeScript");
 		} catch (ClassNotFoundException e) {
 			aExecutableExample.failWithMessage(e.getMessage());
@@ -198,27 +254,45 @@ public class LanguageTemplatesCommon
 					                 + System.getProperty("line.separator") + e.getMessage());
 		}
 		
-		if (executeTestMethod != null  && newInstance != null) 
+		if (executeTestMethod != null  && scriptJavaCode != null) 
 		{
-			try {
-				aExecutableExample.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptStart") 
-				                          + ": <b>" + scriptName + "</b> ----------");
-				executeTestMethod.invoke(newInstance);
-				aExecutableExample.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptEnd") 
-				                          + ": <b>" + scriptName + "</b> ----------");
+			executeScript(scriptName, aExecutableExample, executeTestMethod, scriptJavaCode);
+			aExecutableExample.setCurrentPage(((ExecutableExample)scriptJavaCode).getCurrentPage());
+		}
+	}
+
+	private int toInteger(String intAsString, String valueName) {
+		try {
+			return Integer.valueOf(intAsString);
+		} catch (NumberFormatException e) {
+			executableExample.failWithMessage("Der Wert <b>" + valueName + "</b> ist keine Ganzzahl (<b>" + intAsString + "</b>).");
+			return Integer.MIN_VALUE;
+		}
+	}
+	
+	private void executeScript(final String scriptName,
+                               final ExecutableExample aExecutableExample,
+                               final Method executeTestMethod,
+                               final Object newInstance)
+	{
+		try {
+			aExecutableExample.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptStart") 
+			                          + ": <b>" + scriptName + "</b> ----------");
+			executeTestMethod.invoke(newInstance);
+			aExecutableExample.addReportMessage(COMMENT_IDENTIFIER + "---------- " + BUNDLE.getString("ScriptEnd") 
+			                          + ": <b>" + scriptName + "</b> ----------");
+		}
+		catch (InvocationTargetException ite) 
+		{
+			Throwable targetException = ite.getTargetException();
+			if (targetException instanceof SysNatException) {
+				throw (SysNatException)targetException;
 			}
-			catch (InvocationTargetException ite) 
-			{
-				Throwable targetException = ite.getTargetException();
-				if (targetException instanceof SysNatException) {
-					throw (SysNatException)targetException;
-				}
-				throw new RuntimeException(ite.getTargetException());
-			}
-			catch (Exception e) 
-			{
-				aExecutableExample.failWithMessage(BUNDLE.getString("FailedScriptExecutionComment").replace("x", scriptName));
-			}
+			throw new RuntimeException(ite.getTargetException());
+		}
+		catch (Exception e) 
+		{
+			aExecutableExample.failWithMessage(BUNDLE.getString("FailedScriptExecutionComment").replace("x", scriptName));
 		}
 	}
 
@@ -248,7 +322,7 @@ public class LanguageTemplatesCommon
 			aBehaviourID = executableExample.getTestCaseFileName();
 		}
 		executableExample.setBehaviorID(aBehaviourID);
-	}
+	}	
 
 	@LanguageTemplate(value = "XX: ^^")
 	@LanguageTemplate(value = "XXID: ^^")
@@ -277,7 +351,7 @@ public class LanguageTemplatesCommon
 		executionInfo.countAsExecuted(xxid, executableExample.getBehaviorID());
 		executionInfo.countExistingXX();
 		
-		if ( ! executionInfo.isApplicationStarted() ) 
+		if ( ! executionInfo.isTestEnvironmentInitialized() ) 
 		{
 			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
 			                          + "</b> steht derzeit nicht zur Verfügung!");
@@ -293,20 +367,35 @@ public class LanguageTemplatesCommon
 		final List<String> execFilterOfExecutableExample = executableExample.buildExecutionFilterList(executionFilterOfThisTestCase);
 		execFilterOfExecutableExample.addAll(executableExample.getNlxxFilePathAsList());
 		execFilterOfExecutableExample.forEach(possibleFilter -> executionInfo.addFilterToCollection(possibleFilter));
-		final List<String> execFilterToExecute = executionInfo.getExecutionFilterList();
+		final List<String> execFilterToExecute = executionInfo.getExecutionFilterList()
+				                                              .stream().map(e -> SysNatStringUtil.replaceGermanUmlauts(e))
+				                                              .collect(Collectors.toList());
+		
 		if (execFilterToExecute.size() > 1 || 
 			(execFilterToExecute.size() == 1 && ! execFilterToExecute.get(0).equalsIgnoreCase(NO_FILTER))) 
 		{
 			executeThisTest = isThisTestToExecute(execFilterOfExecutableExample, execFilterToExecute);
 		}
 		
-		
 		if (! executeThisTest) {
-			executionInfo.uncountAsExecuted(executableExample.getXXID().trim()); 
+			executionInfo.uncountAsExecuted(executableExample.getXXID().trim(), executableExample.getBehaviorID()); 
 			throw new SkipTestCaseException(SkipReason.EXECUTION_FILTER);
 		}
 	}
-
+	
+	@LanguageTemplate(value = "Synonym: ^^")
+	public void declareSynonym(String keyValuePair) 
+	{
+		String[] splitResult = keyValuePair.split("=");
+		if (splitResult.length != 2) {
+			executableExample.failWithMessage("Unable to parse Synonym instruction: <b>" + keyValuePair + "</b>.");
+		}
+		String alternative = splitResult[0].trim();
+		String original = splitResult[1].trim();
+		executableExample.getTestData().addSynonym(alternative, original);
+		executableExample.addReportMessage(COMMENT_IDENTIFIER + "Synonym <b>" + keyValuePair + "</b> has been stored.");
+	}
+	
 	@LanguageTemplate(value = "Aktiv: ^^")
 	@LanguageTemplate(value = "Active: ^^")
 	public void setActiveState(String value)  
@@ -314,7 +403,7 @@ public class LanguageTemplatesCommon
 		if (value.trim().equalsIgnoreCase("nein") 
 			|| value.trim().equalsIgnoreCase("no"))  
 		{
-			executionInfo.uncountAsExecuted(executableExample.getXXID());  // undo previously added 
+			executionInfo.uncountAsExecuted(executableExample.getXXID(), executableExample.getBehaviorID());  // undo previously added 
 			executionInfo.addInactiveXX( executableExample.getXXID(), executableExample.getBehaviorID() );
 			throw new SkipTestCaseException(SkipReason.ACTIVATION_STATE);
 		}
@@ -322,7 +411,9 @@ public class LanguageTemplatesCommon
 
 	@LanguageTemplate(value = "Kommentar: ^^")
 	@LanguageTemplate(value = "Comment: ^^")
-	public void createComment(String comment) {
+	public void createComment(String comment) 
+	{
+		comment = checkForTestDataValue(comment);
 		executableExample.addReportMessage(COMMENT_IDENTIFIER + comment);
 	}
 
@@ -336,6 +427,9 @@ public class LanguageTemplatesCommon
 	}
 
 	@LanguageTemplate(value = "Wait ^^ second(s).") 
+	@LanguageTemplate(value = "Wait ^^ seconds.") 
+	@LanguageTemplate(value = "Warte ^^ Sekunden.")
+	@LanguageTemplate(value = "Warte ^^ Sekunde.")
 	@LanguageTemplate(value = "Warte ^^ Sekunde(n).")
 	public void waitSeconds(String seconds) 
 	{
@@ -353,8 +447,10 @@ public class LanguageTemplatesCommon
 
 	@LanguageTemplate(value = "Date of today is stored as <>.")  
 	@LanguageTemplate(value = "Das heutige Datum wird als <> festgehalten.")
-	public String returnTodayDateAsString() {
-		return executionInfo.getTodayDateAsString();
+	public String storeTestObject_TodayDateAsString() {
+		String toReturn = executionInfo.getTodayDateAsString();
+		executableExample.addReportMessage("The current date (<b>" + toReturn + "</b>) has been stored as <today>.");
+		return toReturn;
 	}
 
 	@LanguageTemplate(value = "Beep ^^ times.") 
@@ -381,15 +477,20 @@ public class LanguageTemplatesCommon
 	public void setTestData(String dataReference)  
 	{
 		final List<String> datatypesList = getObjectNameList(dataReference);
-		
 		for (String datatype : datatypesList) 
 		{
 			if (datatype.contains("=")) {
 				String[] splitResult = dataReference.split("=");
-				setSingleTestDataValue(splitResult[0], splitResult[1]);
+				setSingleTestDataValue(splitResult[0].trim(), splitResult[1].trim());
 			} 
-			else if ( ! executableExample.getTestData().isKnown(datatype) ) {
+			else if (executableExample.getTestData().isKnown(datatype) ) {
+				executableExample.getTestData().setMarker(executableExample.getTestData().getDataSet(datatype));
+			} else {
+				if (alreadyLoadedDataFiles.contains(datatype)) {
+					return;
+				}
 				executableExample.importTestData(datatype);
+				alreadyLoadedDataFiles.add(datatype);
 			}
 		}		
 	}	
@@ -419,6 +520,8 @@ public class LanguageTemplatesCommon
 	 */
 	@LanguageTemplate(value = "^^=^^") 
 	@LanguageTemplate(value = "^^ = ^^") 
+	@LanguageTemplate(value = "^^ =^^") 
+	@LanguageTemplate(value = "^^= ^^") 
 	public void setSingleTestDataValue(String objectAndfieldName, String value) 
 	{
 		String[] splitResult = objectAndfieldName.split("\\.");
@@ -460,22 +563,35 @@ public class LanguageTemplatesCommon
 	}
 
 	@LanguageTemplate(value = "Execute script ^^ with input data ^^.")  
-	@LanguageTemplate(value = "Führe das Skript ^^ mit den Eingabedaten ^^ aus.")
+	@LanguageTemplate(value = "Führe das Skript ^^ aus mit den Eingabedaten ^^.")
 	@LanguageTemplate(value = "^^ mit den Eingabedaten ^^.")  
 	@LanguageTemplate(value = "^^ with input data ^^.")  
-	public void executeScriptWithDataset(String scriptName, String datasetNameCandidate) {
+	public void executeScriptWithDataset(String scriptName, String datasetNameCandidate) 
+	{
 		if (executableExample.getTestData().findMatchingDataSet(datasetNameCandidate) == null) {
 			executableExample.importTestData(datasetNameCandidate);
 		};
 		executableExample.getTestData().setMarker( executableExample.getTestData().findMatchingDataSet(datasetNameCandidate) );
 		executeScript(scriptName);
 	}	
+
+	@LanguageTemplate(value = "Execute script ^^ with input data ^^ and")  
+	@LanguageTemplate(value = "Führe das Skript ^^ aus mit den Eingabedaten ^^ und")
+	@LanguageTemplate(value = "^^ mit den Eingabedaten ^^ und")  
+	@LanguageTemplate(value = "^^ with input data ^^ and")  
+	public void setScriptNameAndDataset(String scriptName, String datasetNameCandidate) {
+		if (executableExample.getTestData().findMatchingDataSet(datasetNameCandidate) == null) {
+			executableExample.importTestData(datasetNameCandidate);
+		};
+		// do not set a dataset-marker here so that additional data values can override those of the dataset defined here.
+		executableExample.setScriptToExecute(scriptName);
+	}	
 	
 	
 	@LanguageTemplate(value = "Execute script ^^ with")  
 	@LanguageTemplate(value = "Execute script ^^ with input data")  
 	@LanguageTemplate(value = "^^ with input data")  
-	@LanguageTemplate(value = "^^ with ")  
+	@LanguageTemplate(value = "^^ with")  
 	@LanguageTemplate(value = "Führe das Skript ^^ aus mit")
 	@LanguageTemplate(value = "Führe das Skript ^^ aus mit den Eingabedaten")
 	@LanguageTemplate(value = "^^ mit den Eingabedaten")  
@@ -498,7 +614,7 @@ public class LanguageTemplatesCommon
 	}	
 	
 	@LanguageTemplate(value = "Save screenshot now as ^^.") 
-	@LanguageTemplate(value = "Ein Screenshot wird als ^^ gespeichert.")
+	@LanguageTemplate(value = "Speichere jetzt einen Screenshot unter ^^.")
 	public void saveScreenshotWithName(String filename) 
 	{
 		filename = filename.replace("<XXId>", executableExample.getXXID());
@@ -514,9 +630,16 @@ public class LanguageTemplatesCommon
 			takeScreenshotNow( executableExample.getPictureProofName() );
 		}
 	}
+	
+	@LanguageTemplate(value = "Save a screenshoot as picture proof.")
+	@LanguageTemplate(value = "Speichere einen Screenshot als Bildnachweis.")
+	public void savePictureProof() 
+	{
+		takeScreenshotNow( executableExample.getPictureProofName() );
+	}
 
 	@LanguageTemplate(value = "Take a screenshoot now and save with name ^^.")
-	@LanguageTemplate(value = "Erzeuge jetzt einen Screenshot und speichere ihn unter den Namen ^^.")
+	@LanguageTemplate(value = "Erzeuge einen Screenshot und speichere ihn unter den Namen ^^.")
 	public void takeScreenshotNow(String screenshotName) {
 		executableExample.takeScreenshot(screenshotName);
 		executableExample.addCommentToReport(BUNDLE.getString("ScreenshotSavedComment").replace("x", screenshotName));
@@ -534,5 +657,127 @@ public class LanguageTemplatesCommon
 	@LanguageTemplate(value = "Set BDD-Keyword ^^.")
 	public void setBddKeyword(String aKeyword) {
 		executableExample.setBddKeyword(aKeyword);
+	}
+	
+	/**
+	 * Performs a series of clicks in the menu of an application.
+	 * @param menuPath names of menu items separated by the '/'-symbol.
+	 */
+	@LanguageTemplate(value = "Öffne den Menüpfad ^^.")
+	public void openMenuPath(String menuPath) 
+	{
+		String[] splitResult = menuPath.split("/");
+		for (String menuItem : splitResult) {
+			executableExample.clickMenuHeader(menuItem);
+		}
+		executableExample.addReportMessage("Der Menüpfad <b>" + menuPath + "</b> wurde geöffnet.");
+	}	
+	
+	@LanguageTemplate(value = "Env: ^^ = ^^.")
+	public void setTestDataEnvSpecific(String key, String value) {
+		executableExample.getTestData().addValue(key, value);
+	}		
+	
+	@LanguageTemplate(value = "Der Wert ^^ wird als <> festgehalten.")
+	public String storeTestObject(String valueCandidate)
+	{
+		final String value = executableExample.getTestDataValue(valueCandidate);
+		return value;  // storing is done automatically by the return value !
+	}
+
+	@LanguageTemplate(value = "Drücke die Tastenkombination ^^.")
+	@LanguageTemplate(value = "Press keysDrücke die Tastenkombination ^^.")
+	public void pressKeys(String keyCombination)
+	{
+		String keys = keyCombination.replaceAll(" ", "");
+		if ("AltShiftTab".equalsIgnoreCase(keys)) {
+			executableExample.getActiveGuiController().pressAltShiftTab();
+		} else if ("AltTab".equalsIgnoreCase(keys)) {
+			executableExample.getActiveGuiController().pressAltTab();
+		} else if ("Tab".equalsIgnoreCase(keys)) {
+			executableExample.getActiveGuiController().pressTab();
+		} else if ("AltF4".equalsIgnoreCase(keys)) {
+			executableExample.getActiveGuiController().pressFunctionKey("F4", true, false);
+		} else if ("Enter".equalsIgnoreCase(keys)) {
+			executableExample.getActiveGuiController().pressEnter();
+		} else if (keys.toUpperCase().startsWith("ALT")) {
+			char key = keys.charAt(3); 
+			executableExample.getActiveGuiController().pressAltWith(key);
+		} else if (keys.toUpperCase().startsWith("STRG")) {
+			char key = keys.charAt(4); 
+			executableExample.getActiveGuiController().pressStrgWith(key);
+		} else if (keys.toUpperCase().startsWith("ALTSTRG") || keys.toUpperCase().startsWith("STRGALT")) {
+			char key = keys.charAt(7); 
+			executableExample.getActiveGuiController().pressStrgAltWith(key);
+		} else if (keys.length() == 1) {
+			executableExample.getActiveGuiController().pressKey(keys.charAt(0));
+		} else {
+			executableExample.addCommentToReport("Die Tastenkombination <b>" + keyCombination + "</b> wird noch nicht unterstützt.");
+		}
+		
+		executableExample.addReportMessage("Die Tastenkombination <b>" + keyCombination + "</b> wurde gedrückt.");
+	}
+
+	@LanguageTemplate(value = "Klicke auf Bildschirmposition ^^/^^.")
+	public void clickOnScreenCoordinate(String xPos, String yPos)
+	{
+		int x = toInteger(xPos, "X-Koordinate");
+		int y = toInteger(yPos, "Y-Koordinate");
+		
+		executableExample.getActiveGuiController().clickOnScreenCoordinate(x,y);
+		executableExample.addReportMessage("Es wurde auf die Bildschirmposition<b>" + x + "/" + y + "</b> geklickt.");
+	}
+	
+		
+	@LanguageTemplate(value = "Minimiere das Anwendungsfenster.")
+	public void minimizeWindow()
+	{
+		executableExample.getActiveGuiController().minimizeWindow();
+		executableExample.addReportMessage("Das Anwendungsfenster wurde minimiert.");
+	}
+
+	@LanguageTemplate(value = "Maximiere das Anwendungsfenster.")
+	public void maximizeWindow()
+	{
+		executableExample.getActiveGuiController().maximizeWindow();
+		executableExample.addReportMessage("Das Anwendungsfenster wurde maximiert.");
+	}
+
+	@LanguageTemplate(value = "Prüfe, ob das Verzeichnis ^^ zur Verfügung steht.")
+	public void checkDir(String dir)
+	{
+		File file = new File(dir);
+		final String question = "Does directory <b>" + dir + "</b> exist" + QUESTION_IDENTIFIER;
+		executableExample.answerQuestion(question, 	! file.exists());	
+	}
+	
+	@LanguageTemplate(value = "Aus ^^ und '' wird <>.")
+	@LanguageTemplate(value = "Concat ^^ and '' to <>.")
+	public String concatStrings1(String s1, String s2){
+		return s1 + s2;
+	}
+	
+	@LanguageTemplate(value = "Aus '' und ^^ wird <>.")
+	@LanguageTemplate(value = "Concat '' and ^^ to <>.")
+	public String concatStrings2(String s1, String s2){
+		return s1 + s2;
+	}
+	
+	@LanguageTemplate(value = "Aus '' und '' wird <>.")
+	@LanguageTemplate(value = "Concat '' and '' to <>.")
+	public String concatStrings3(String s1, String s2){
+		return s1 + s2;
+	}
+	
+	@LanguageTemplate(value = "Aus ^^ und '' und ^^ wird <>.")
+	@LanguageTemplate(value = "Concat ^^ and '' und ^^ wird <>.")
+	public String concatStrings4(String s1, String s2, String s3){
+		return s1 + s2 + s3;
+	}
+
+	public void gotoStartPage()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

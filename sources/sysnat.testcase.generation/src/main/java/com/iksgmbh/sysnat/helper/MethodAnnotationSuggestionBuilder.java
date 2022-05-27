@@ -26,7 +26,6 @@ public class MethodAnnotationSuggestionBuilder
 	 */
 	public static String buildAnnotationSuggestion(String instructionLine) 
 	{
-		instructionLine = instructionLine.replaceAll("\"", "^");
 		final String annotationValueString = buildAnnotationValue(instructionLine);
 		final String paramsString = buildParamsString(instructionLine);
 		final String returnValueString = buildReturnValueString(instructionLine);
@@ -39,7 +38,7 @@ public class MethodAnnotationSuggestionBuilder
 		       "}";
 	}
 
-	static String buildReturnValueString(String s) 
+	public static String buildReturnValueString(String s) 
 	{
 		int pos1 = s.indexOf('<');
 		int pos2 = s.indexOf('>');
@@ -51,8 +50,9 @@ public class MethodAnnotationSuggestionBuilder
 		}
 	}
 
-	static String buildParamsString(String s) 
+	public static String buildParamsString(String s) 
 	{
+		s = s.replaceAll("\"", "^");
 		int pos1 = s.indexOf('^');
 		int pos2 = s.indexOf('\'');
 		String toReturn = "";
@@ -120,20 +120,18 @@ public class MethodAnnotationSuggestionBuilder
 		boolean goOn = true;
 		while (goOn) 
 		{
-			instruction=toReturn;
 			toReturn = deleteAllCharsBetween(toReturn, "'", "'");
-			goOn = ! toReturn.equals(instruction);
+			goOn = toReturn.replace("''", "").contains("'");
 		}
 		
 		goOn = true;
 		while (goOn) 
 		{
-			toReturn = deleteAllCharsBetween(toReturn, "^", "^");
-			goOn = ! toReturn.equals(instruction);
-			instruction=toReturn;
+			toReturn = deleteAllCharsBetween(toReturn, "\"", "\"");
+			goOn = toReturn.replace("\"\"", "").contains("\"");
 		}
 		
-		return toReturn;
+		return toReturn.replace("\"", "^");
 	}
 
 	static String deleteAllCharsBetween(String s, String id1, String id2) 

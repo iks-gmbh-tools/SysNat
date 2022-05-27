@@ -63,6 +63,7 @@ public class ValidationFileReader
 	private static final String PATTERN_COMPARISON_RULE_LINE1 = BUNDLE.getString("ComparisonRuleLine1").replaceAll("NN", REGEX_ANY).trim();
 	private static final String PATTERN_COMPARISON_RULE_LINE2 = BUNDLE.getString("ComparisonRuleLine2").replaceAll("NN", REGEX_ANY).trim();
 	private static final String PATTERN_COMPARISON_RULE_LINEBOTH = BUNDLE.getString("ComparisonRuleLineBoth").replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_IGNORE_BEWTEEN = BUNDLE.getString("ComparisonRuleIgnoreBetween").replaceAll("NN", REGEX_ANY).trim();
 	
 	private static final String PATTERN_COMPARISON_RULE_IDENTIFIER_EN = BUNDLE_EN.getString("ComparisonRuleIdentifier");
 	private static final String PATTERN_COMPARISON_RULE_SHOULDBEFILE_EN = BUNDLE_EN.getString("ComparisonRuleShouldBeFile").replaceAll("\"\"", REGEX_ANY).trim();
@@ -73,6 +74,7 @@ public class ValidationFileReader
 	private static final String PATTERN_COMPARISON_RULE_LINE1_EN = BUNDLE_EN.getString("ComparisonRuleLine1").replaceAll("NN", REGEX_ANY).trim();
 	private static final String PATTERN_COMPARISON_RULE_LINE2_EN = BUNDLE_EN.getString("ComparisonRuleLine2").replaceAll("NN", REGEX_ANY).trim();
 	private static final String PATTERN_COMPARISON_RULE_LINEBOTH_EN = BUNDLE_EN.getString("ComparisonRuleLineBoth").replaceAll("NN", REGEX_ANY).trim();
+	private static final String PATTERN_COMPARISON_RULE_IGNORE_BEWTEEN_EN = BUNDLE_EN.getString("ComparisonRuleIgnoreBetween").replaceAll("NN", REGEX_ANY).trim();
 	
 	private List<String> lines;
 	private boolean compareValidationMode;
@@ -281,6 +283,20 @@ public class ValidationFileReader
 			String lineDef = DocumentContentCompareValidationRule.buildLineDefinition(values.get(0), values.get(1), "BOTH");
 			return new DocumentContentCompareValidationRule(ComparisonRuleType.LineDefinition.name(), lineDef);
 		}
+		
+		if (line.matches(PATTERN_COMPARISON_RULE_IGNORE_BEWTEEN)) {
+			ruleRawData.add(ComparisonRuleType.IgnoreBetween.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_IGNORE_BEWTEEN).get(0) + "|#|" 
+			              + extractValues(line, PATTERN_COMPARISON_RULE_IGNORE_BEWTEEN).get(1);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
+		} else if (line.matches(PATTERN_COMPARISON_RULE_IGNORE_BEWTEEN)) {
+			ruleRawData.add(ComparisonRuleType.IgnoreBetween.name());
+			String value = extractValues(line, PATTERN_COMPARISON_RULE_IGNORE_BEWTEEN_EN).get(0);
+			ruleRawData.add(value);
+			return new DocumentContentCompareValidationRule(ruleRawData.get(0), ruleRawData.get(1));
+		}
+			
 		
 		return null;
 	}

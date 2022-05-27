@@ -166,7 +166,7 @@ public class TestLanguageTemplatesContainer
 		executionInfo.countAsExecuted(xxid, executableExample.getBehaviorID());
 		executionInfo.countExistingXX();
 		
-		if ( ! executionInfo.isApplicationStarted() ) {
+		if ( ! executionInfo.isTestEnvironmentInitialized() ) {
 			executableExample.failWithMessage("Die Anwendung <b>" + executionInfo.getTestApplicationName() 
 			                          + "</b> steht derzeit nicht zur Verfügung!");
 		}

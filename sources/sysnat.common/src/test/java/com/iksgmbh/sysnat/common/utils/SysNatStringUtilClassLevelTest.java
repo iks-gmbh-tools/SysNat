@@ -94,6 +94,10 @@ public class SysNatStringUtilClassLevelTest
 		assertEquals("String similarity", "0.75", ""+SysNatStringUtil.calcSimilatity("xx ab yy", "xx ba yy"));
 		assertEquals("String similarity", "0.75", ""+SysNatStringUtil.calcSimilatity("xx ab yy", "xx AB yy"));
 		assertEquals("String similarity", "0.875", ""+SysNatStringUtil.calcSimilatity("xx ab yy", "xx as yy"));
+		assertEquals("String similarity", "0.91666", (""+SysNatStringUtil.calcSimilatity("TestData: ^^", 
+				                                                                         "TestDat: ^^")).substring(0,7));
+		assertEquals("String similarity", "0.59677", (""+SysNatStringUtil.calcSimilatity("Erzeuge einen Screenshot und speichere ihn unter den Namen ^^.", 
+				                                                                         "Erzeuge einen Screenshot mit Namen ^^.")).substring(0,7));
 	}
 	
 	
@@ -201,6 +205,58 @@ public class SysNatStringUtilClassLevelTest
 		assertEquals("Unexpected Replacement", "1.00", SysNatStringUtil.replaceCommaInStringAmount("1,00")); 
 		assertEquals("Unexpected Replacement", "1.0", SysNatStringUtil.replaceCommaInStringAmount("1,0")); 
 		assertEquals("Unexpected Replacement", "1", SysNatStringUtil.replaceCommaInStringAmount("1"));
+		
+	}
+
+	@Test
+	public void replacesPathSeparatorInFilePathIfNecessary() throws Exception 
+	{
+		assertEquals("Unexpected Replacement", "C:/temp/Buchungen.xlsx", SysNatStringUtil.checkFilePath("C:\\temp\\Buchungen.xlsx"));
+	}
+	
+	@Test
+	public void removesFirstOccurrences() throws Exception 
+	{
+		assertEquals("Unexpected Replacement", "bd", SysNatStringUtil.cutFirstOccurences("abcde", "a", "c", "e"));
+		assertEquals("Unexpected Replacement", "bdabcde", SysNatStringUtil.cutFirstOccurences("abcdeabcde", "a", "c", "e"));
+		assertEquals("Unexpected Replacement", "One  three", SysNatStringUtil.cutFirstOccurences("One two three", "two"));
+	}
+	
+	@Test
+	public void splitsString() throws Exception 
+	{
+		assertNull(SysNatStringUtil.split(null, "s"));
+		assertNull(SysNatStringUtil.split("abcde", null));
+		assertNull(SysNatStringUtil.split("abcde", ""));
+		
+		List<String> result = SysNatStringUtil.split("", "f");
+		assertEquals("result size", 1, result.size());
+		assertEquals("splitResult", "", result.get(0));
+		
+		result = SysNatStringUtil.split("abcde", "f");
+		assertEquals("result size", 1, result.size());
+		assertEquals("splitResult", "abcde", result.get(0));
+		
+		result = SysNatStringUtil.split("abcde", "c");
+		assertEquals("result size", 2, result.size());
+		assertEquals("splitResult", "ab", result.get(0));
+		assertEquals("splitResult", "de", result.get(1));
+		
+		result = SysNatStringUtil.split("abcde", "a");
+		assertEquals("result size", 2, result.size());
+		assertEquals("splitResult", "", result.get(0));
+		assertEquals("splitResult", "bcde", result.get(1));
+
+		result = SysNatStringUtil.split("abcde", "e");
+		assertEquals("result size", 2, result.size());
+		assertEquals("splitResult", "abcd", result.get(0));
+		assertEquals("splitResult", "", result.get(1));
+
+		result = SysNatStringUtil.split("abcdeabcde", "bcd");
+		assertEquals("result size", 3, result.size());
+		assertEquals("splitResult", "a", result.get(0));
+		assertEquals("splitResult", "ea", result.get(1));
+		assertEquals("splitResult", "e", result.get(2));
 		
 	}
 	

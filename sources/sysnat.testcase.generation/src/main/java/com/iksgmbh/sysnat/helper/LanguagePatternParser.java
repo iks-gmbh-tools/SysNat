@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
 import com.iksgmbh.sysnat.common.utils.ExceptionHandlingUtil;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.NaturalLanguagePatternPart;
 import com.iksgmbh.sysnat.domain.NaturalLanguagePatternPart.NaturalLanguagePatternPartType;
@@ -71,14 +72,35 @@ public class LanguagePatternParser
 			throw new IllegalArgumentException("Line '" + naturalLanguageLine + "' is no valid stage instruction!");
 		}
 		
-		final String[] splitResult = naturalLanguageLine.split(":");
-		addDefaultPart(splitResult[0] + ":");
-		
-		if (splitResult.length == 1) {
+		String stageInstruction = naturalLanguageLine.substring(0, pos+1);
+		String instructionContent = naturalLanguageLine.substring(pos+1);
+		instructionContent = checkForTestDataPlaceholder(instructionContent);
+		addDefaultPart(stageInstruction);
+
+		if (naturalLanguageLine.endsWith(":")) {
 			addParamValuePart(0, "-", naturalLanguageLine);
-		} else {			
-			addParamValuePart(0, splitResult[1].trim(), naturalLanguageLine);
+		} else {
+			addParamValuePart(0, instructionContent.trim(), naturalLanguageLine);
+		}		
+	}
+
+	private String checkForTestDataPlaceholder(String instructionContent)
+	{
+		String toReturn = instructionContent;
+		String placeholderIdentifier = '"' + SysNatConstants.DC;
+		int pos = toReturn.indexOf(placeholderIdentifier);
+		String DC_Masking_Identifier = "<|>";
+		
+		while (pos > -1) {
+			String s1 = toReturn.substring(0, pos+1);
+			String s2 = toReturn.substring(pos+1);
+			pos = s2.indexOf("\"");
+			String placeholder = s2.substring(0, pos).replace(SysNatConstants.DC, DC_Masking_Identifier);
+			toReturn = s1 + " + getTestDataValue(\"" + placeholder + "\") + \"" + s2.substring(pos+1);
+			pos = toReturn.indexOf(placeholderIdentifier);
 		}
+		
+		return toReturn.replace(DC_Masking_Identifier, SysNatConstants.DC);
 	}
 
 	private List<NaturalLanguagePatternPart> getPatternParts() {
@@ -89,7 +111,7 @@ public class LanguagePatternParser
 	{
 		final char[] charArray = naturalLanguageLine.toCharArray();
 		
-		String currentPart = "";
+		String currentPart = "" + "";
 		int parameterCount = 0;
 		NaturalLanguagePatternPartType parseModus = NaturalLanguagePatternPartType.DEFAULT;
 		for (char c : charArray) 

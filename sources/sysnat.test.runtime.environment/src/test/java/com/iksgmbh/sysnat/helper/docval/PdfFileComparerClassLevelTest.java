@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -193,8 +194,23 @@ public class PdfFileComparerClassLevelTest
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
 						TEST_DATA_DIR + "/expectedDifferenceReport.txt");
-		assertEquals("Difference report", expectedFileContent, result);
+		assertEquals("Difference report", cutLocalPath(expectedFileContent), cutLocalPath(result));
 	}
+
+	private String cutLocalPath(String filecontent) 
+	{
+		int pos1 = filecontent.indexOf("Doc1");
+		String s = filecontent.substring(pos1);
+		int pos2 = s.indexOf("\\sources\\");
+		filecontent = filecontent.substring(0, pos1) + s.substring(pos2);
+		
+		pos1 = filecontent.indexOf("Doc2");
+		s = filecontent.substring(pos1);
+		pos2 = s.indexOf("\\sources\\");
+		filecontent = filecontent.substring(0, pos1) + s.substring(pos2);
+		return filecontent;
+	}
+
 
 	@Test
 	public void returnsDifferenceReport_IgnoreWithDateAndRegex() throws Exception
@@ -243,7 +259,7 @@ public class PdfFileComparerClassLevelTest
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
 						TEST_DATA_DIR + "/expectedDifferenceReport_PDF_C_D.txt");
-		assertEquals("Difference report", expectedFileContent, result);
+		assertEquals("Difference report", cutLocalPath(expectedFileContent), cutLocalPath(result));
 	}
 	
 	@Test
@@ -308,7 +324,7 @@ public class PdfFileComparerClassLevelTest
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
 				TEST_DATA_DIR + "/expectedAssymetricDifferenceReport.txt");
-		assertEquals("Difference report", expectedFileContent, result);
+		assertEquals("Difference report", cutLocalPath(expectedFileContent), cutLocalPath(expectedFileContent));
 	}
 	
 	@Test
@@ -336,5 +352,28 @@ public class PdfFileComparerClassLevelTest
 		}
 		assertTrue("Difference report is not empty!", result.isEmpty());
 	}
+	
+	@Test
+	public void returnsDifferencesReportWithIgnoreBetweenComparison() throws Exception
+	{
+		cut = new DocumentComparer( TEST_DATA_DIR + "/CompareBetweenTest1.xml" );
+		final HashMap<String,String>  ignoreBetweenIdentifier = new HashMap<>();
+		ignoreBetweenIdentifier.put("<?", "?>");
+		DocumentCompareIgnoreConfig ignoreConfig = new DocumentCompareIgnoreConfig().withIgnoreBetweenIdentifier(ignoreBetweenIdentifier);
+		
+		
+		String result = cut.getDifferenceReport(TEST_DATA_DIR + "/CompareBetweenTest2.xml", ignoreConfig);
+		assertTrue("", result.isEmpty());
+		
+		ignoreBetweenIdentifier.clear();
+		result = cut.getDifferenceReport(TEST_DATA_DIR + "/CompareBetweenTest2.xml", ignoreConfig);
+		assertTrue("Unexpected result", result.contains("1. Difference:"));
+		
+		ignoreBetweenIdentifier.put("=", "=");
+		ignoreConfig = new DocumentCompareIgnoreConfig().withIgnoreBetweenIdentifier(ignoreBetweenIdentifier);
+		result = cut.getDifferenceReport(TEST_DATA_DIR + "/CompareBetweenTest2.xml", ignoreConfig);
+		assertTrue("Unexpected result", result.contains("1. Difference:"));
+	}
+	
 	
 }

@@ -94,6 +94,7 @@ public class ExcelTableReader
 	}
 
 	
+	@SuppressWarnings("deprecation")
 	public String getContent(final Cell cell)
 	{
 		final XSSFRow row = currentSheet.getRow(cell.rowNo - 1);  // -1 due to mapping on index
@@ -153,7 +154,7 @@ public class ExcelTableReader
 	
 	/**
 	 * Subset of attributes out of a matrix defined by min and max index of the attributes 
-	 * @author oberratr
+	 * @author Reik Oberrath
 	 */
 	public static class AttributeSubset
 	{

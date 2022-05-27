@@ -68,9 +68,9 @@ public class TestDataImport_ModuleLevelTest
 		final List<String> reportMessages = executionInfo.getReportMessagesOK().get("TestCaseForTestPurpose");
 		assertEquals("Number of report message", 2, reportMessages.size());
 		assertEquals("Report message", "3 datasets have been loaded.", reportMessages.get(1));
-		assertEquals("Value of field", "value11", fakeTestCase.getTestData().getValue(testDataIdentifier + "_1", "fieldname11"));
-		assertEquals("Value of field", "value22", fakeTestCase.getTestData().getValue(testDataIdentifier + "_2", "fieldname22"));
-		assertEquals("Value of field", "value31", fakeTestCase.getTestData().getValue(testDataIdentifier + "_3", "fieldname31"));
+		assertEquals("Value of field", "value11", fakeTestCase.getTestData().getValue(testDataIdentifier + "__1", "fieldname11"));
+		assertEquals("Value of field", "value22", fakeTestCase.getTestData().getValue(testDataIdentifier + "__2", "fieldname22"));
+		assertEquals("Value of field", "value31", fakeTestCase.getTestData().getValue(testDataIdentifier + "__3", "fieldname31"));
 	}
 	
 	@Test
@@ -78,8 +78,8 @@ public class TestDataImport_ModuleLevelTest
 	{
 		// arrange
 		String testDataIdentifier = "DistributedDatasetSeries";
-		String dataFileName1 = testDataIdentifier + "_1.dat";
-		String dataFileName2 = testDataIdentifier + "_2.dat";
+		String dataFileName1 = testDataIdentifier + "__1.dat";
+		String dataFileName2 = testDataIdentifier + "__2.dat";
 		SysNatFileUtil.deleteFile(SysNatFileUtil.findAbsoluteFilePath(testFolder + "/" + dataFileName1));
 		SysNatFileUtil.deleteFile(SysNatFileUtil.findAbsoluteFilePath(testFolder + "/" + dataFileName2));
 		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/src/test/resources/testSettingConfigs/HomePageIKS.config");
@@ -106,9 +106,9 @@ public class TestDataImport_ModuleLevelTest
 		final List<String> reportMessages = executionInfo.getReportMessagesOK().get("TestCaseForTestPurpose");
 		assertEquals("Number of report message", 2, reportMessages.size());
 		assertEquals("Report message", "3 datasets have been loaded.", reportMessages.get(1));
-		assertEquals("Value of field", "value11", fakeTestCase.getTestData().getValue(testDataIdentifier + "_1", "fieldname11"));
-		assertEquals("Value of field", "value22", fakeTestCase.getTestData().getValue(testDataIdentifier + "_2_1", "fieldname22"));
-		assertEquals("Value of field", "value31", fakeTestCase.getTestData().getValue(testDataIdentifier + "_2_2", "fieldname31"));
+		assertEquals("Value of field", "value11", fakeTestCase.getTestData().getValue(testDataIdentifier + "__1", "fieldname11"));
+		assertEquals("Value of field", "value22", fakeTestCase.getTestData().getValue(testDataIdentifier + "__2__1", "fieldname22"));
+		assertEquals("Value of field", "value31", fakeTestCase.getTestData().getValue(testDataIdentifier + "__2__2", "fieldname31"));
 	}
 
 	@Test
@@ -145,9 +145,9 @@ public class TestDataImport_ModuleLevelTest
 		final List<String> reportMessages = executionInfo.getReportMessagesOK().get("TestCaseForTestPurpose");
 		assertEquals("Number of report message", 2, reportMessages.size());
 		assertEquals("Report message", "3 datasets have been loaded.", reportMessages.get(1));
-		assertEquals("Value of field", "value12", fakeTestCase.getTestData().getValue(testDataIdentifier + "_dataset1", "fieldname2"));
-		assertEquals("Value of field", "value23", fakeTestCase.getTestData().getValue(testDataIdentifier + "_dataset2", "fieldname3"));
-		assertEquals("Value of field", "value31", fakeTestCase.getTestData().getValue(testDataIdentifier + "_dataset3", "fieldname1"));
+		assertEquals("Value of field", "value12", fakeTestCase.getTestData().getValue(testDataIdentifier + "__dataset1", "fieldname2"));
+		assertEquals("Value of field", "value23", fakeTestCase.getTestData().getValue(testDataIdentifier + "__dataset2", "fieldname3"));
+		assertEquals("Value of field", "value31", fakeTestCase.getTestData().getValue(testDataIdentifier + "__dataset3", "fieldname1"));
 	}
 	
 }

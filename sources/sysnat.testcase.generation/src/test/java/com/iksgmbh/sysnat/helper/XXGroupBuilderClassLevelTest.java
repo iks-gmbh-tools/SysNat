@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +36,6 @@ import com.iksgmbh.sysnat.domain.JavaCommand.CommandType;
 
 public class XXGroupBuilderClassLevelTest 
 {
-	
 	@Before
 	public void setup() 
 	{
@@ -46,6 +46,12 @@ public class XXGroupBuilderClassLevelTest
 		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.testcase.generation/src/test/resources/testData/TestParameterTestApplication/TestParameterTestApplication.config");
 		GenerationRuntimeInfo.getInstance();
 	}
+	
+	@AfterClass
+	public static void reset() {
+		ExecutionRuntimeInfo.reset();
+	}
+	
 
 	@Test
 	public void findsXXInGroups() 
@@ -62,33 +68,39 @@ public class XXGroupBuilderClassLevelTest
 		// arrange
 		assertEquals("Number of testcases", 4, javaCommandCollection.size());
 
-		String toFind = "firstFile/BehaviourId/XXId2_Test.java";
+		List<JavaCommand> commandList = getCommandListFor(javaCommandCollection, "firstFile/BehaviourId/XXId2_Test.java");
+		commandList.forEach(System.err::println);
 		int i = 0;
-		assertEquals("Java Command", "private static final String BEHAVIOUR_ID = \"BehaviourId\";", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"BehaviourId\");", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.prepareOnce1();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.prepareOnce2();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"End of OneTimePrecondition\");", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId2\");", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.prepare1();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.prepare2();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.doSomethingElse();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.cleanup1();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.cleanup2();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"Start of OneTimeCleanup\");", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.cleanupOnce1();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
-		assertEquals("Java Command", "templateContainer.cleanupOnce2();", getCommandListFor(javaCommandCollection, toFind).get(i++).value);
+		assertEquals("Java Command", "private static final String BEHAVIOUR_ID = \"BehaviourId\";", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"BehaviourId\");", commandList.get(i++).value);
+		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"Start of OneTimePrecondition\");", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.prepareOnce1();", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.prepareOnce2();", commandList.get(i++).value);
+		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"End of OneTimePrecondition\");", commandList.get(i++).value);
+		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"\");", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.prepare1();", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.prepare2();", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId2\");", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.doSomethingElse();", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.cleanup1();", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.cleanup2();", commandList.get(i++).value);
+		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"\");", commandList.get(i++).value);
+		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"Start of OneTimeCleanup\");", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.cleanupOnce1();", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.cleanupOnce2();", commandList.get(i++).value);
+		assertEquals("Java Command", "languageTemplatesCommon.createComment(\"End of OneTimeCleanup\");", commandList.get(i++).value);
 		
-		toFind = "secondFile/FeatureId/XXId1_Test.java";
-		assertEquals("Java Command", "private static final String BEHAVIOUR_ID = \"FeatureId\";", getCommandListFor(javaCommandCollection, toFind).get(0).value);
-		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Feature\");", getCommandListFor(javaCommandCollection, toFind).get(1).value);
-		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"FeatureId\");", getCommandListFor(javaCommandCollection, toFind).get(2).value);
-		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Scenario\");", getCommandListFor(javaCommandCollection, toFind).get(3).value);
-		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId1\");", getCommandListFor(javaCommandCollection, toFind).get(4).value);
+		commandList = getCommandListFor(javaCommandCollection, "secondFile/FeatureId/XXId1_Test.java");
+		i = 0;
+		assertEquals("Java Command", "private static final String BEHAVIOUR_ID = \"FeatureId\";", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Feature\");", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.declareXXGroupForBehaviour(\"FeatureId\");", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.setBddKeyword(\"Scenario\");", commandList.get(i++).value);
+		assertEquals("Java Command", "templateContainer.startNewXX(\"XXId1\");", commandList.get(i++).value);
 	}
 
 	@Test
-	public void findsParameterizedXX() 
+	public void findsParameterizedXX()
 	{
 		// arrange
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw = new HashMap<>();
@@ -96,15 +108,14 @@ public class XXGroupBuilderClassLevelTest
 		javaCommandCollectionRaw.put(new Filename("secondFile"), createParametrizedCommandList());
 		
 		// act
-		final HashMap<Filename, List<JavaCommand>> javaCommandCollection = 
-				XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
+		final HashMap<Filename, List<JavaCommand>> javaCommandCollection = XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
 		
 		// arrange
 		assertEquals("Number of testcases", 3, javaCommandCollection.size());
-		assertEquals("Java Command", "languageTemplatesCommon.startNewXX(\"ParamXXId_1\");", 
-				                     getCommandListFor(javaCommandCollection, "ParamXXId_1_Test.java").get(1).value);
-		assertEquals("Java Command", "languageTemplatesCommon.setTestData(\"TestParam_1\");", 
-				                     getCommandListFor(javaCommandCollection, "ParamXXId_1_Test.java").get(2).value);
+		assertEquals("Java Command", "languageTemplatesCommon.startNewXX(\"ParamXXId__1\");", 
+				                     getCommandListFor(javaCommandCollection, "ParamXXId__1_Test.java").get(1).value);
+		assertEquals("Java Command", "languageTemplatesCommon.setTestData(\"TestParam__1\");", 
+				                     getCommandListFor(javaCommandCollection, "ParamXXId__1_Test.java").get(2).value);
 	}
 
 	@Test
@@ -151,7 +162,7 @@ public class XXGroupBuilderClassLevelTest
 		// arrange
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.report.dir", "target");
 		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY, "TestReport");
-		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.dummy.test.run", "true");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "true");
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw = new HashMap<>();
 		javaCommandCollectionRaw.put(new Filename("aFile"), createCommandListWithTwoXXWithoutGroup());
 		

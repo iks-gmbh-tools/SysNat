@@ -20,6 +20,7 @@ import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWOR
 import java.io.File;
 
 import org.joda.time.DateTime;
+import org.netbeans.jemmy.TimeoutExpiredException;
 import org.openqa.selenium.NoSuchElementException;
 
 import com.iksgmbh.sysnat.ExecutableExample;
@@ -27,22 +28,26 @@ import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo.TestStatistics;
 import com.iksgmbh.sysnat.common.exception.SkipTestCaseException;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
+import com.iksgmbh.sysnat.common.exception.SysNatSuccessException;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.exception.UnexpectedResultException;
 import com.iksgmbh.sysnat.common.exception.UnsupportedGuiEventException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.helper.ReportCreator;
 import com.iksgmbh.sysnat.utils.SysNatTestRuntimeUtil;
 
 /**
  * This class represents a wrapper class of a Executable Example
- * which allows the example to execute in the SysNat test runtime.
+ * which allows the Executable Example to be executed in the SysNat test runtime.
  * 
  * @author Reik Oberrath
  */
 public abstract class SysNatTestCase extends ExecutableExample
 {
+	protected static Integer numberOfRemainingTestCaseStillToExecute;
+
 	public void setUp() 
 	{
 		super.setUp();
@@ -77,7 +82,7 @@ public abstract class SysNatTestCase extends ExecutableExample
 		System.out.println("Intermediate Result: " + executionInfo.getIntermediateResultLogText() + ".");
 	}
 	
-	protected void handleThrowable(Throwable t)  
+	protected void handleThrowable(Throwable t)
 	{
 		try {
 			throw t;
@@ -98,13 +103,26 @@ public abstract class SysNatTestCase extends ExecutableExample
 		} catch (SysNatException e) {
 			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
 			failWithMessage(e.getMessage());
+		} catch (TimeoutExpiredException e) {
+			handleJemmyTimeOut(e);
 		} catch (NoSuchElementException e) {
 			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
 			String message = e.getMessage();
 			int pos = message.indexOf("For documentation on this error, please visit: http://seleniumhq.org");
 			if (pos == -1) failWithMessage(message);
 			failWithMessage(message.substring(0, pos));
-		} catch (Throwable e) {
+		} catch (AssertionError e) {
+			throw e;
+		} catch (SysNatSuccessException e) {
+			return;
+		} catch (Throwable e) 
+		{
+			if (e.getCause() instanceof TimeoutExpiredException) {
+				handleJemmyTimeOut((TimeoutExpiredException) e.getCause());
+			}
+			if (e.getCause() instanceof AssertionError) {
+				throw ((AssertionError)e.getCause());
+			}
 			e.printStackTrace();
 			takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
 			failWithMessage("Unerwarteter " + ERROR_KEYWORD + ": " 
@@ -114,11 +132,26 @@ public abstract class SysNatTestCase extends ExecutableExample
 		}		
 	}
 
+	private void handleJemmyTimeOut(TimeoutExpiredException e)
+	{
+		e.printStackTrace();
+		takeScreenshot(SysNatTestRuntimeUtil.getScreenshotErrorFileName(this.getClass().getSimpleName()));
+		String message = e.getMessage();
+		String guiComponent = SysNatStringUtil.getSubstringBetween(message, "\"");
+		if (guiComponent.contains("\"")) {
+			guiComponent = SysNatStringUtil.getSubstringBetween(guiComponent, "\"");
+		}
+		failWithMessage("Das grafische Element mit der technischen ID <b>" + guiComponent + "</b> wurde in der erwarteten Zeit nicht angezeigt.");
+	}
+
 	@Override
 	public String getTestCaseFileName() {
 		String toReturn = this.getClass().getSimpleName();
 		if (toReturn.endsWith("Test")) {
 			toReturn = toReturn.substring(0, toReturn.length()-4);
+		}
+		if (toReturn.endsWith("_")) {
+			toReturn = toReturn.substring(0, toReturn.length()-1);
 		}
 		return toReturn;
 	}	
@@ -138,4 +171,11 @@ public abstract class SysNatTestCase extends ExecutableExample
 		executionInfo.countAsExecuted(xxid, getBehaviorID());
 		executionInfo.countAsExecuted(xxid);
 	}
+
+	protected void initNumberOfTestCases(int num)
+	{
+		if (numberOfRemainingTestCaseStillToExecute == null) {
+			numberOfRemainingTestCaseStillToExecute = num;
+		}
+	}	
 }

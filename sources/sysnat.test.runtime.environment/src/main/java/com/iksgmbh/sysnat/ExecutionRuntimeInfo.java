@@ -31,11 +31,13 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.ApplicationType;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.BrowserType;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.DialogStartTab;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.DocumentationDepth;
@@ -100,14 +102,14 @@ public class ExecutionRuntimeInfo
 	private int totalNumberOfXX = 0; // known for the given application/product under test
 	private boolean alreadyLoggedIn = false;
 	private DateTime startPointOfTime = new DateTime();
-	private GuiControl guiController;
+	private LinkedHashMap<String, GuiControl> guiControllerMap = new LinkedHashMap<>();
 	private boolean loginOk = true;
 	private Locale locale;
-	private boolean applicationStarted;
 	private boolean archiveTestReport;
 	private boolean archiveDocumentation;
 	private boolean settingsOk;
 	private boolean testEnvironmentInitialized = false;
+	private boolean testEnvironmentInitializionFailed = false;
 	private boolean shutDownHookAdded;
 	private HashMap<String, Integer> numberOfExistingXXPerGroupMap = new HashMap<>();
 	private HashMap<String, Integer> numberOfExecutedXXPerGroupMap = new HashMap<>();
@@ -117,7 +119,7 @@ public class ExecutionRuntimeInfo
 			System.out.println("SysNat v" + SysNatConstants.SYS_NAT_VERSION
 					+ " test environment initialisation...");
 			instance = new ExecutionRuntimeInfo();
-			instance.readConfiguredTestAppsAndTheirEnvironments();
+			instance.readTestAppProperties();
 		}
 		return instance;
 	}
@@ -211,8 +213,17 @@ public class ExecutionRuntimeInfo
 		return orderedListOfAllExecutedXXs.size();
 	}
 
-	public void uncountAsExecuted(String xxid) {
+	public void uncountAsExecuted(String xxid, String behaviourId) 
+	{
 		orderedListOfAllExecutedXXs.remove(xxid);
+		if (behaviourId != null) 
+		{
+			Integer oldFrequence = numberOfExecutedXXPerGroupMap.get(behaviourId);
+			if (oldFrequence != null) {
+				int newFrequence = oldFrequence - 1;
+				numberOfExecutedXXPerGroupMap.put(behaviourId, Integer.valueOf(newFrequence));
+			}
+		}
 	}
 
 	public int getTotalNumberOfXXs() {
@@ -374,12 +385,12 @@ public class ExecutionRuntimeInfo
 		return toReturn.trim();
 	}
 
-	public GuiControl getGuiController() {
-		return guiController;
+	public LinkedHashMap<String, GuiControl> getGuiControllerMap() {
+		return guiControllerMap;
 	}
 
-	public void setGuiController(GuiControl aGuiController) {
-		guiController = aGuiController;
+	public void addGuiController(String appName, GuiControl aGuiController) {
+		guiControllerMap.put(appName, aGuiController);
 	}
 
 	public String getTodayDateAsString() {
@@ -397,7 +408,7 @@ public class ExecutionRuntimeInfo
 				   return Integer.valueOf(System.getProperty("execution.delay.millis.slow", "5000"));
 
 			case NORMAL:
-				return Integer.valueOf(System.getProperty("execution.delay.millis.normal", "1250"));
+				return Integer.valueOf(System.getProperty("execution.delay.millis.normal", "1000"));
 
 			case QUICK:
 			case SCHNELL: 
@@ -426,7 +437,8 @@ public class ExecutionRuntimeInfo
 		return getOsName().startsWith("Windows");
 	}
 
-	public void addFilterToCollection(String filter) {
+	public void addFilterToCollection(String filter) 
+	{
 		Integer frequency = executionFilterMap.get(filter);
 
 		if (frequency != null) {
@@ -505,14 +517,6 @@ public class ExecutionRuntimeInfo
 		return System.getProperty("root.path");
 	}
 
-	public void setApplicationStarted(boolean applicationStarted) {
-		this.applicationStarted = applicationStarted;
-	}
-
-	public boolean isApplicationStarted() {
-		return applicationStarted;
-	}
-
 	public TestApplication getTestApplication() {
 		final String applicationUnderTest = getTestApplicationName();
 		return new TestApplication(applicationUnderTest);
@@ -551,7 +555,7 @@ public class ExecutionRuntimeInfo
 		settingsOk = true;
 	}
 	
-	public void readConfiguredTestAppsAndTheirEnvironments()
+	public void readTestAppProperties()
 	{
 		final File testAppConfigDir = new File(System.getProperty("sysnat.properties.path"));
 		final List<File> propertiesFiles = SysNatFileUtil.findFilesIn(PROPERTIES_FILE_EXTENSION, testAppConfigDir).getFiles();
@@ -576,6 +580,18 @@ public class ExecutionRuntimeInfo
 		Collections.sort(testApps);
 		return testApps;
 	}
+	
+	public List<String> getKnownTestApplications(ApplicationType toIgnore)
+	{
+		List<String> testApps = testAppEnvironmentsMap.keySet().stream()
+				                                       .map(appName -> new TestApplication(appName))
+				                                       .filter(app -> app.getType() != toIgnore)
+				                                       .map(app -> app.getName())
+				                                       .collect(Collectors.toList());
+		Collections.sort(testApps);
+		return testApps;
+	}
+	
 
 	public List<String> getKnownEnvironments(String testApplicationName) {
 		return testAppEnvironmentsMap.get(testApplicationName);
@@ -612,12 +628,6 @@ public class ExecutionRuntimeInfo
 		if (executionFilter.equals(NO_FILTER)) {
 			executionFilter = CONSTANTS_BUNDLE.getString("All");
 		}
-
-		if (executionFilter.length() != 0) {
-			executionFilter = "-" + executionFilter;
-		}
-
-
 		
 		return testApplication + "-" + targetEnvironment + "-" + executionFilter;
 	}
@@ -678,7 +688,11 @@ public class ExecutionRuntimeInfo
 	}
 
 	public boolean isTestEnvironmentInitialized() {
-		return testEnvironmentInitialized;
+		return testEnvironmentInitialized || isNoGuiMode();
+	}
+
+	public boolean isNoGuiMode() {
+		return "true".equalsIgnoreCase(System.getProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN));
 	}
 
 	public void setTestEnvironmentInitialized() {
@@ -694,9 +708,7 @@ public class ExecutionRuntimeInfo
 	}
 
 	/**
-	 * Registers a group of XX (i.e. a Behavior or Feature) and counts the
-	 * members of this group as indicator of how many XXs of this group
-	 * are already executed.
+	 * Registers a group of XX (i.e. a Behavior or Feature) 
 	 * 
 	 * @param behaviorId as id of XX group
 	 * @param numberOfXXInGroup of XX belonging to group <behaviorId>
@@ -705,10 +717,7 @@ public class ExecutionRuntimeInfo
 	{
 		if (numberOfExistingXXPerGroupMap.get(behaviorId) == null) {
 			numberOfExistingXXPerGroupMap.put(behaviorId, Integer.valueOf(numberOfXXInGroup));
-			numberOfExecutedXXPerGroupMap.put(behaviorId, Integer.valueOf(1));
-		} else {
-			Integer xxCounter = numberOfExecutedXXPerGroupMap.get(behaviorId);
-			numberOfExecutedXXPerGroupMap.put(behaviorId, Integer.valueOf( ++xxCounter ));
+			numberOfExecutedXXPerGroupMap.put(behaviorId, Integer.valueOf(0));
 		}
 	}
 
@@ -908,11 +917,17 @@ public class ExecutionRuntimeInfo
 	}
 	
 	public TargetEnvironment getTestEnvironment() {
-		return TargetEnvironment.valueOf(getTestEnvironmentName().toUpperCase());
+		try {			
+			return TargetEnvironment.valueOf(getTestEnvironmentName().toUpperCase());
+		} catch (Exception e) {
+			return TargetEnvironment.LOCAL;
+		}
 	}
 
 	public String getTestExecutionFilter() {
-		return getSetting(SysNatConstants.TEST_EXECUTION_FILTER_SETTING_KEY);
+		String toReturn = getSetting(SysNatConstants.TEST_EXECUTION_FILTER_SETTING_KEY);
+		toReturn = toReturn.replace("XX: ", "");
+		return toReturn;
 	}
 	
 	public String getTestBrowserTypeName() {
@@ -936,7 +951,9 @@ public class ExecutionRuntimeInfo
 	}
 	
 	public String getTestReportName() {
-		return getSetting(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY);
+		String toReturn = getSetting(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY);
+		toReturn = toReturn.replace("XX: ", "");
+		return toReturn;
 	}
 
 	// ############################################################################
@@ -1007,5 +1024,58 @@ public class ExecutionRuntimeInfo
 		return ResultLaunchOption.valueOf(getResultLaunchOptionName());
 	}
 
+	public HashMap<String, String> getEnvironmentsMap()
+	{
+		HashMap<String, String> toReturn = new HashMap<>();
+		
+//        SysNatFileUtil.writeFile("C:\\dev\\Tools\\SysNat\\sources\\sysnat.quality.assurance\\target\\log.txt", 
+//        		this.getTestApplicationName() + " " + SysNatStringUtil.listToString(testAppEnvironmentsMap.keySet(), " "));		
+		
+		List<String> knownEnvironments = this.getKnownEnvironments(this.getTestApplicationName());
+		if (knownEnvironments != null) {
+			knownEnvironments.forEach(env -> toReturn.put(env, getDisplayName(env, this.getTestApplication())));
+		}
+		
+		return toReturn;
+	}
 
+	public String getDisplayName(String env, TestApplication testApplication)
+	{
+		if (testApplication.isCompositeApplication()) 
+		{
+			String value = testApplication.getProperty("EnvironmentNames");
+			List<String> envNames = SysNatStringUtil.toList(value, ",");
+			TargetEnvironment[] values = SysNatConstants.TargetEnvironment.values();
+			int index = -1;
+			for (TargetEnvironment targetEnvironment : values) 
+			{
+				index++;
+				if (targetEnvironment.name().equals(env)) {
+					break;
+				}
+			}
+			return envNames.get(index);
+		}
+		
+
+		String toReturn = testApplication.getProperty(env + "." + SysNatConstants.ENV_DISPLAY_NAME);
+		if (toReturn == null) {
+			toReturn = env;
+		}
+		return toReturn;
+	}
+
+	public String firstElementApplication() {
+		return new ArrayList<>(guiControllerMap.keySet()).get(0);
+	}
+
+	public boolean isTestEnvironmentInitializionFailed()
+	{
+		return testEnvironmentInitializionFailed;
+	}
+
+	public void setTestEnvironmentInitializionFailed()
+	{
+		this.testEnvironmentInitializionFailed = true;
+	}
 }

@@ -19,6 +19,8 @@ import java.io.File;
 
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 
@@ -52,6 +54,14 @@ public class HtmlLauncher
 				chromeDriver.manage().window().maximize();
 				chromeDriver.get("file:///" + pathToHtmlFile);
 			} 
+			else if (browserTypeToUse.equalsIgnoreCase("Edge")) 
+			{
+				System.setProperty("webdriver.edge.driver", getPathToBrowserExe(browserTypeToUse));
+				final EdgeOptions options = new EdgeOptions();
+				EdgeDriver webDriver = new EdgeDriver(options);
+				webDriver.manage().window().maximize();
+				webDriver.get("file:///" + pathToHtmlFile);
+			}
 			else if (browserTypeToUse.equalsIgnoreCase("IE")) 
 			{
 				System.setProperty("webdriver.ie.driver", getPathToBrowserExe(browserTypeToUse));
@@ -101,16 +111,12 @@ public class HtmlLauncher
 			return relativePathToWebdriverDir + "//" + System.getProperty("sysnat.webdriver.executable.ie");
 		}
 
-		if (browserTypeToUse.equalsIgnoreCase("Firefox_45_9")) {
-			return relativePathToWebdriverDir + "//" + System.getProperty("sysnat.webdriver.executable.firefox_45_9");
-		}
-
-		if (browserTypeToUse.equalsIgnoreCase("Firefox_54")) {
-			return relativePathToWebdriverDir + "//" + System.getProperty("sysnat.webdriver.executable.firefox_54");
-		}
-		
 		if (browserTypeToUse.equalsIgnoreCase("Firefox")) {
 			return relativePathToWebdriverDir + "//" + System.getProperty("sysnat.webdriver.executable.firefox");
+		}
+		
+		if (browserTypeToUse.equalsIgnoreCase("Edge")) {
+			return relativePathToWebdriverDir + "//" + System.getProperty("sysnat.webdriver.executable.edge");
 		}
 		
 		throw new SysNatException("Browser type '" + browserTypeToUse + "' is not supported.");

@@ -20,14 +20,16 @@ import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIE
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.ApplicationLoginParameter;
 import com.iksgmbh.sysnat.domain.TestApplication;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
+import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics.PageChangeEvent.EventType;
 import com.iksgmbh.sysnat.language_templates.PageObject;
 import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.ErrorPageObject;
 import com.iksgmbh.sysnat.language_templates.helloworldspringboot.pageobject.FormPageObject;
@@ -47,6 +49,7 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 	private LoginPageObject loginPageObject;
 	private FormPageObject formPageObject;
 	private ResultPageObject resultPageObject;
+	private ErrorPageObject errorPageObject;
 	
 	public LanguageTemplatesBasics_HelloWorldSpringBoot(ExecutableExample anXX) 
 	{
@@ -55,7 +58,16 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 		this.loginPageObject = createAndRegister(LoginPageObject.class, executableExample);
 		this.formPageObject = createAndRegister(FormPageObject.class, executableExample);
 		this.resultPageObject = createAndRegister(ResultPageObject.class, executableExample);
-		createAndRegister(ErrorPageObject.class, executableExample);
+		this.errorPageObject = createAndRegister(ErrorPageObject.class, executableExample);
+		
+		// define page change events
+		addPageChangeEvent(new PageChangeEventBuilder().from(loginPageObject).via(EventType.ButtonClick).on("Log in").to(formPageObject).build());
+		addPageChangeEvent(new PageChangeEventBuilder().from(formPageObject).via(EventType.ButtonClick).on("Greet").to(resultPageObject).build());
+		addPageChangeEvent(new PageChangeEventBuilder().from(resultPageObject).via(EventType.MenuItemClick).on("Form Page").to(formPageObject).build());
+		// NOTE: The following event is valid for each possible current page!
+		addPageChangeEvent(new PageChangeEventBuilder().via(EventType.MenuItemClick).on("Logout").to(loginPageObject).build());
+		addPageChangeEvent(new PageChangeEventBuilder().from(errorPageObject).via(EventType.ButtonClick).on("Back").to(formPageObject).build());
+		
 	}
 
 	private String getPageName() {
@@ -67,18 +79,16 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 	//##########################################################################################
 	
 	@Override
-	public void doLogin(final HashMap<WebLoginParameter,String> startParameter) 
+	public void doLogin(final Map<ApplicationLoginParameter,String> startParameter) 
 	{
-		loginPageObject.enterTextInField("Username", startParameter.get(WebLoginParameter.LOGINID));
-		loginPageObject.enterTextInField("Password", startParameter.get(WebLoginParameter.PASSWORD));
+		loginPageObject.enterTextInTextField("Username", startParameter.get(ApplicationLoginParameter.LoginId));
+		loginPageObject.enterTextInTextField("Password", startParameter.get(ApplicationLoginParameter.Password));
 		loginPageObject.clickButton("Log in");			
-		resetCurrentPage();
 	}
 
 	@Override
     public void doLogout() {
         executableExample.clickMenuHeader("Logout");
-        resetCurrentPage();
     }
     
 	@Override
@@ -113,15 +123,20 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 	//                   L A N G U A G E   T E M P L A T E    M E T H O D S
 	//##########################################################################################
 
-	
+	@LanguageTemplate(value = "Tell current page name.")
+	public void tellCurrentPageName() {
+		executableExample.addCommentToReport("Current page name is <b>" + getCurrentPage().getPageName() + "</b>.");		
+	}
+
 	@LanguageTemplate(value = "Login with ^^, ^^.")
 	public void loginWith(String username, String password)  
 	{
-		final HashMap<WebLoginParameter, String> startParameter = new HashMap<>();
-		startParameter.put(WebLoginParameter.LOGINID, username);
-		startParameter.put(WebLoginParameter.PASSWORD, password);
+		final HashMap<ApplicationLoginParameter, String> startParameter = new HashMap<>();
+		startParameter.put(ApplicationLoginParameter.LoginId, username);
+		startParameter.put(ApplicationLoginParameter.Password, password);
 		doLogin(startParameter);
-		executableExample.addReportMessage("Login performed with <b>" + username + "</b>.");		
+		executableExample.addReportMessage("Login performed with <b>" + username + "</b>.");
+		findCurrentPage(); // may error page will be displayed !
 	}
 
 	@LanguageTemplate(value = "Is page ^^ visible?")
@@ -139,15 +154,14 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 	{
 		if (mainMenuItem.equals("Form Page"))  {
 			executableExample.clickMenuHeader("Form Page");
-			setCurrentPage(formPageObject);
 		} else if (mainMenuItem.equals("Logout"))  {
 			doLogout();
 			executionInfo.setAlreadyLoggedIn(false);
-			setCurrentPage(loginPageObject);
 		} else {
 			executableExample.failWithMessage("Unknown menu item <b>" + mainMenuItem + "</b>.");
 		}
-		
+
+		checkPageChange(mainMenuItem, EventType.MenuItemClick);
 		executableExample.addReportMessage("Menu item <b>" + mainMenuItem + "</b> has been clicked.");
 	}
 
@@ -157,7 +171,6 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 		TestApplication testApp = executionInfo.getTestApplication();
 		doLogin(testApp.getLoginParameter());
 		executableExample.addReportMessage("Login has been perfomed with DefaultLoginData.");
-		setCurrentPage(formPageObject);
 	}
 
 	@LanguageTemplate(value = "Enter ^^ in text field ^^.")
@@ -173,20 +186,18 @@ public class LanguageTemplatesBasics_HelloWorldSpringBoot extends LanguageTempla
 		{
 			possiblePages.add(resultPageObject);
 			setCurrentPage(formPageObject);
-			PageObject newPage = super.clickButtonToChangePage(buttonName, possiblePages , 0);
-			setCurrentPage(newPage);
+			super.clickButtonToChangePage(buttonName, possiblePages , 0);
 		} else {
-			super.clickButton(buttonName);
-			resetCurrentPage();
+			super.clickButtonWithCheckPageChange(buttonName);
 		}
 	}
 
 	@LanguageTemplate(value = "Select ^^ in selection field ^^.")
-	public void choose(String valueCandidate, String fieldName) {
+	public void chooseInCombobox(String valueCandidate, String fieldName) {
 		if ("Greeting".equals(fieldName)) {
 			setCurrentPage(formPageObject);
 		}
-		super.choose(valueCandidate, fieldName);
+		super.chooseInCombobox(valueCandidate, fieldName);
 	}
 
 	@LanguageTemplate(value = "Is the displayed text ^^ equal to ^^?")

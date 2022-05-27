@@ -38,6 +38,7 @@ import com.iksgmbh.sysnat.GenerationRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.Filename;
@@ -118,7 +119,7 @@ public class XXGroupBuilder
 	
 	private void buildXXGroupForBehaviour(final Filename filename)
 	{
-		nameOfCurrentFile = filename.value;
+		nameOfCurrentFile = filename.value;;
 		xxCounter = 0;
 		final List<JavaCommand> commands = javaCommandCollectionRaw.get(filename);
 		final HashMap<CommandType, List<JavaCommand>> sortedCommands = sortCommandsForType(commands, filename);
@@ -127,9 +128,8 @@ public class XXGroupBuilder
 				                                                            separatedXXs.get(xxid))); 
 	}
 	
-	private HashMap<CommandType, List<JavaCommand>> sortCommandsForType(
-			final List<JavaCommand> commands, 
-			final Filename filename) 
+	private HashMap<CommandType, List<JavaCommand>> sortCommandsForType(final List<JavaCommand> commands, 
+			                                                            final Filename filename) 
 	{
 		final List<JavaCommand> constantsDeclaration = new ArrayList<>();
 		final List<JavaCommand> oneTimePreconditions = new ArrayList<>();
@@ -140,6 +140,7 @@ public class XXGroupBuilder
 		
 		String behaviourId = null;
 		int groupDeclarationCounter = 0;
+		int xxDeclarationCounter = 0;
 		groupInstructions = new ArrayList<>();
 
 		for (JavaCommand javaCommand : commands) 
@@ -165,6 +166,18 @@ public class XXGroupBuilder
 				continue;
 			}
 
+			if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_START_XX)) {
+				xxDeclarationCounter++;
+			}
+			
+			if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_FILTER_DEFINITION)) 
+			{
+				if (xxDeclarationCounter == 0 ) {
+					groupInstructions.add(javaCommand);
+					continue;				
+				}
+			}
+			
 			switch ( javaCommand.commandType ) 
 			{
 				case OneTimePrecondition:
@@ -230,7 +243,7 @@ public class XXGroupBuilder
 		if (pos == -1) pos = filename.value.length();
 		
 		String name = filename.value.substring(0, pos) + "/" + xxGroup + "/" + xxid + "_Test.java";
-		name = name.replaceAll("//", "/").replaceAll(" ", "_");
+		name = SysNatFileUtil.replaceInvalidFilenameChars(name);
 		return new Filename(name);
 	}
 
@@ -238,6 +251,10 @@ public class XXGroupBuilder
 			final HashMap<CommandType, List<JavaCommand>> sortedCommands,
 			final Filename filename)
 	{
+		if (filename.value.contains("NeueWiedervorlageInEloErzeugenTest")) {
+			//System.out.println("");
+		}				
+
 		final LinkedHashMap<String, List<JavaCommand>> separatedXXs = new LinkedHashMap<>();
 		final List<JavaCommand> standardCommandsOfGroup = sortedCommands.get(CommandType.Standard);
 
@@ -262,8 +279,7 @@ public class XXGroupBuilder
 			{
 				if (xxid != null) 
 				{
-					final List<JavaCommand> completeCommandsOfseparatedXX = 
-							buildCompleteCommandList(sortedCommands, standardCommandsOfseparatedXX);
+					final List<JavaCommand> completeCommandsOfseparatedXX = buildCompleteCommandList(sortedCommands, standardCommandsOfseparatedXX);
 					if (separatedXXs.keySet().contains(xxid)) {
 						ErrorPageLauncher.doYourJob("The ID <b>" + xxid + "<\b> for XX (or name of Feature) is not unique.", 
 			                     "Please change ID of XX (or name of feature) .",
@@ -276,7 +292,7 @@ public class XXGroupBuilder
 				if (hangoverCommand != null) standardCommandsOfseparatedXX.add(hangoverCommand);
 		
 				if (containsFilenamePlaceholder(javaCommand.value)) {
-					javaCommand = replaceFilenamePlaceholderIfPresent(filename, javaCommand, "_" + ++xxCounter);
+					javaCommand = replaceFilenamePlaceholderIfPresent(filename, javaCommand, "__" + ++xxCounter);
 				}
 				xxid = extractXXID(javaCommand.value);
 			}
@@ -294,17 +310,25 @@ public class XXGroupBuilder
 		return separatedXXs;
 	}
 
-	private List<JavaCommand> buildCompleteCommandList(
-			final HashMap<CommandType, List<JavaCommand>> sortedCommands,
-			final List<JavaCommand> standardCommandsOfseparatedXX) 
+	private List<JavaCommand> buildCompleteCommandList(final HashMap<CommandType, List<JavaCommand>> sortedCommands,
+			                                           final List<JavaCommand> standardCommandsOfseparatedXX) 
 	{
 		final List<JavaCommand> toReturn = new ArrayList<>();
 		toReturn.addAll(sortedCommands.get(CommandType.Constant));
 		toReturn.addAll(groupInstructions);
+		if (containsFilterCommand(groupInstructions)) 
+		{
+			if (containsFilterCommand(standardCommandsOfseparatedXX)) {
+				JavaCommand groupFilterCommand = removeFilterCommand(toReturn);
+				joinFilterCommand(standardCommandsOfseparatedXX, groupFilterCommand);
+			}
+		}
 		
 		if ( ! sortedCommands.get(CommandType.OneTimePrecondition).isEmpty() ) {
+			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"Start of OneTimePrecondition\");", CommandType.OneTimePrecondition));			
 			toReturn.addAll(sortedCommands.get(CommandType.OneTimePrecondition));
-			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"End of OneTimePrecondition\");"));			
+			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"End of OneTimePrecondition\");", CommandType.OneTimePrecondition));			
+			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"\");", CommandType.OneTimePrecondition));
 		}
 		
 		injectPreconditions(standardCommandsOfseparatedXX, sortedCommands.get(CommandType.Precondition));
@@ -312,8 +336,10 @@ public class XXGroupBuilder
 		toReturn.addAll(sortedCommands.get(CommandType.Cleanup));
 		
 		if ( ! sortedCommands.get(CommandType.OneTimeCleanup).isEmpty() ) {
-			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"Start of OneTimeCleanup\");"));
+			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"\");", CommandType.OneTimeCleanup));
+			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"Start of OneTimeCleanup\");", CommandType.OneTimeCleanup));
 			toReturn.addAll(sortedCommands.get(CommandType.OneTimeCleanup));
+			toReturn.add(new JavaCommand("languageTemplatesCommon.createComment(\"End of OneTimeCleanup\");", CommandType.OneTimeCleanup));			
 		}
 		
 		return toReturn;
@@ -333,7 +359,6 @@ public class XXGroupBuilder
 		if (pos3 > pos) pos = pos3;
 		if (pos4 > pos) pos = pos4;
 		if (pos5 > pos) pos = pos5;
-		pos++;
 		
 		for (int i = preconditions.size()-1; i >= 0; i--) {
 			standardCommandsOfseparatedXX.add(pos, preconditions.get(i));
@@ -403,12 +428,8 @@ public class XXGroupBuilder
 		final Hashtable<String, Properties> datasets;
 		final boolean tableDataMode;
 		
-		String behaviourID = testParameterValue;
-		if (testParameterValue.contains(SysNatConstants.LINE_SEPARATOR)) {
-			behaviourID = extractNlxxFileNameFromJavaFile(filename.value);
-		}
-		
-		JavaCommand constant = new JavaCommand("private static final String BEHAVIOR_ID = \"" + behaviourID + "\";",
+		String behaviourID = extractNlxxFileNameFromJavaFile(filename.value);
+		JavaCommand constant = new JavaCommand("private static final String BEHAVIOUR_ID = \"" + behaviourID + "\";",
 				                                CommandType.Constant);
 		commands.add(0, constant);
 
@@ -451,12 +472,13 @@ public class XXGroupBuilder
 		final List<JavaCommand> newCommands = new ArrayList<>();
 		String datasetId = getDatasetUniqueIdentifier(datasetName);
 		String xxid = "";
-		
+
 		for (JavaCommand javaCommand : commands) 
 		{
 			if (javaCommand.value.contains( METHOD_CALL_IDENTIFIER_START_XX )) {
 				xxid = extractXXID(javaCommand.value);
-				newCommands.add(new JavaCommand("languageTemplatesCommon.startNewXX(\"" + xxid + "_" + datasetId + "\");"));
+				newCommands.add(new JavaCommand("languageTemplatesCommon" + SysNatConstants.METHOD_CALL_IDENTIFIER_START_XX 
+						                        + "\"" + xxid + "__" + datasetId + "\");"));
 			}
 			else if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_TEST_PARAMETER_DEFINITION)) 
 			{
@@ -469,13 +491,13 @@ public class XXGroupBuilder
 			else 
 			{
 				if (javaCommand.value.contains(":") && ! testParameterValue.contains("|")) {
-					newCommands.add(new JavaCommand(javaCommand.value.replaceAll(testParameterValue + ":", datasetName + ":")));
+					newCommands.add(new JavaCommand(javaCommand.value.replace(testParameterValue + ":", datasetName + ":")));
 				} else {
 					newCommands.add(javaCommand);
 				}
 			}
 		}
-
+		newCommands.add(new JavaCommand("languageTemplatesCommon" + METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION + "\"" + xxid + "\");"));
 		javaCommandCollectionResult.put(buildTargetFilename(nameOfCurrentFile, xxid, datasetId), newCommands);
 	}
 
@@ -487,9 +509,18 @@ public class XXGroupBuilder
 		String packagePath = "";
 		String compressedXXid = xxid.replaceAll(" ", "");
 		if (pos > -1) packagePath = inputFilename.substring(0, pos) + "/" + compressedXXid + "/";
-		final String filenameWithPath = packagePath + compressedXXid + "_"
-				                        + datasetId + "_Test.java";
+		
+		String id = "xlsx__";
+		pos = datasetId.indexOf(id);
+		String testId = datasetId;
+		if (pos > -1) {
+			testId = datasetId.substring(pos + id.length());
+		}
+		
+		String filenameWithPath = packagePath + compressedXXid + "__"
+				                        + testId + "_Test.java";
 
+		filenameWithPath = SysNatFileUtil.replaceInvalidFilenameChars(filenameWithPath);
 		return new Filename(filenameWithPath);
 	}
 
@@ -621,4 +652,37 @@ public class XXGroupBuilder
 		return toReturn;
 	}
 
+	private Optional<JavaCommand> searchFilterCommand(List<JavaCommand> commands)
+	{
+		return commands.stream()
+			           .filter(c -> c.value.contains(METHOD_CALL_IDENTIFIER_FILTER_DEFINITION))
+			           .findFirst();
+	}
+	
+	private boolean containsFilterCommand(List<JavaCommand> commands) {
+		return searchFilterCommand(commands).isPresent();
+	}
+	
+	private JavaCommand removeFilterCommand(List<JavaCommand> commands)
+	{
+		Optional<JavaCommand> findFirst = searchFilterCommand(commands);
+		if (findFirst.isPresent()) {
+			commands.remove(findFirst.get());
+			return findFirst.get();
+		}
+		
+		return null;
+	}
+	
+	private void joinFilterCommand(List<JavaCommand> commands, JavaCommand otherFilterCommand)
+	{
+		Optional<JavaCommand> findFirst = searchFilterCommand(commands);
+		if (findFirst.isPresent()) {
+			JavaCommand filterCommand = findFirst.get();
+			String s1 = SysNatStringUtil.extractTextBetween(otherFilterCommand.value, "\"", "\"");
+			String s2 = SysNatStringUtil.extractTextBetween(filterCommand.value, "\"", "\"");
+			filterCommand.value = filterCommand.value.replace(s2, s1 + "," + s2);  
+		}
+	}	
+	
 }

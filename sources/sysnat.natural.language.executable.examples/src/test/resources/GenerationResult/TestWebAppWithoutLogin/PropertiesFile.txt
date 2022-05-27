@@ -1,0 +1,10 @@
+# Common Application Properties 
+ApplicationType=Web
+withLogin=false
+runGuiInSeparateThread=true
+maximizeApplicationWindow=true
+
+# Environment specific properties
+LOCAL.starturl=http//somewhere.com
+
+# Note: Environment specific properties do overwrite common ones with the same key

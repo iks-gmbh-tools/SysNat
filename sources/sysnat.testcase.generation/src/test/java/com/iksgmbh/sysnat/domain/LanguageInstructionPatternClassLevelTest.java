@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
@@ -180,6 +181,7 @@ public class LanguageInstructionPatternClassLevelTest
 	}
 
 	@Test
+	@Ignore
 	public void throwsErrorForEmptyVariableIdentifier() throws Exception 
 	{
 		try {
@@ -193,6 +195,7 @@ public class LanguageInstructionPatternClassLevelTest
 	}
 	
 	@Test
+	@Ignore
 	public void throwsErrorForEmptyParameterIdentifier() throws Exception 
 	{
 		try {

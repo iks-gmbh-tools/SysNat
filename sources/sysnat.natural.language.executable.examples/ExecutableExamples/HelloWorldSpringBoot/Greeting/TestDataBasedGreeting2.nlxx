@@ -9,8 +9,8 @@ TestData: HelloWorldTestData
 
 # arrange
 Test-Phase: Arrange    # setup all test requirements
-Select "HelloWorldTestData_GreetingValidationData1::Greeting" in selection field "Greeting".
-Enter "HelloWorldTestData_GreetingValidationData1::Name" in text field "Name".
+Select "HelloWorldTestData__GreetingValidationData1::Greeting" in selection field "Greeting".
+Enter "HelloWorldTestData__GreetingValidationData1::Name" in text field "Name".
 
 # act 
 Test-Phase: Act  # Perform action under test
@@ -18,4 +18,4 @@ Click button "Greet".
 
 # assert
 Test-Phase: Assert    # check expectations
-Is the displayed text "GreetingResult" equal to "HelloWorldTestData_GreetingValidationData1::GreetingResult"?
+Is the displayed text "GreetingResult" equal to "HelloWorldTestData__GreetingValidationData1::GreetingResult"?

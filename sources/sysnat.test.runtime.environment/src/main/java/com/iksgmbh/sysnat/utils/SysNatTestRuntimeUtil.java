@@ -72,11 +72,14 @@ public class SysNatTestRuntimeUtil
 	public static void copyContextData(ExecutableExample source, ExecutableExample target)
 	{
 		target.setXXID(source.getXXID());
-		target.setGuiController(source.getGuiController());
+		target.setActiveGuiController(source.getActiveGuiController());
 		target.setReportMessages(source.getReportMessages());
 		target.setExecutionFilter(source.getExecutionFilterList());
 		target.setTestData(source.getTestData());
 		target.setTestObjects(source.getTestObjects());
+		target.setCurrentPage(source.getCurrentPage());
+		target.setActiveGuiController(source.getActiveGuiController());
+		target.setBehaviorID(source.getBehaviorID());
 	}
 
 

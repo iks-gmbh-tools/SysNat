@@ -98,9 +98,9 @@ public class LanguageInstructionPattern
 		{
 			if (part.type == NaturalLanguagePatternPartType.PARAM_VARIABLE || 
 				part.type == NaturalLanguagePatternPartType.PARAM_VALUE	) {
-					ExceptionHandlingUtil.throwClassifiedException(
-							ErrorCode.NATURAL_LANGUAGE_INSTRUCTING_PARSING__EMPTY_PARAMETER_IDENTIFIER, 
-							getOrigin());
+//					ExceptionHandlingUtil.throwClassifiedException(
+//							ErrorCode.NATURAL_LANGUAGE_INSTRUCTING_PARSING__EMPTY_PARAMETER_IDENTIFIER, 
+//							getOrigin());
 				
 			}
 			if (part.type == NaturalLanguagePatternPartType.RETURN_VALUE) {

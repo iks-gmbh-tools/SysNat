@@ -178,10 +178,10 @@ public class ExcelDataProvider
 		{
 			Properties fieldValuePairs = new Properties();
 			for (int column = 1; column < matrixData[row].length; column++) {
-				fieldValuePairs.setProperty(fieldNames.get(column-1), matrixData[row][column]);
+				fieldValuePairs.setProperty(fieldNames.get(column-1).trim(), matrixData[row][column].trim());
 			}
 			fieldValuePairs.setProperty(TestDataImporter.DATA_SET_EXCEL_ID, matrixData[row][0]);
-			testData.put(excelFileName + "_" + datasetNames.get(row-1), fieldValuePairs);
+			testData.put(excelFileName + "__" + datasetNames.get(row-1), fieldValuePairs);
 		}
 		
 		return testData;

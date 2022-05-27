@@ -86,7 +86,7 @@ public class TestDataImporterClassLevelTest
 		// arrange
 		System.setProperty("sysnat.report.dir", "target");
 		System.setProperty(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY, "TestReport");
-		System.setProperty("sysnat.dummy.test.run", "true");
+		System.setProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "true");
 		
 		try {
 			// act
@@ -94,7 +94,7 @@ public class TestDataImporterClassLevelTest
 			fail("Expected exception not thrown!");
 		} catch (SysNatTestDataException e) {
 			// assert
-			assertEquals("Error Message", "For 'unknown' there is no test data file found in ../sysnat.testdata.import/src/test/resources/testTestdata.", e.getMessage() );	
+			assertEquals("Error Message", "<b>unknown</b> is not found in ../sysnat.testdata.import/src/test/resources/testTestdata.", e.getMessage() );	
 		}
 	}
 
@@ -115,8 +115,8 @@ public class TestDataImporterClassLevelTest
 		Collections.sort(keys);
 		final String key1 = keys.get(0);
 		final String key2 = keys.get(1);
-		assertEquals("DatasetID", testdataId + "_1", key1);
-		assertEquals("DatasetID", testdataId + "_2", key2);
+		assertEquals("DatasetID", testdataId + "__1", key1);
+		assertEquals("DatasetID", testdataId + "__2", key2);
 		assertEquals("Number of datafields in dataset", 2, result.get(key1).size());
 		assertEquals("Number of datafields in dataset", 1, result.get(key2).size());
 	}
@@ -144,13 +144,13 @@ public class TestDataImporterClassLevelTest
 		final String key6 = keys.get(5);
 		final String key7 = keys.get(6);
 
-		assertEquals("DatasetID", testdataId + "_1_1", key1);
-		assertEquals("DatasetID", testdataId + "_1_2", key2);
-		assertEquals("DatasetID", testdataId + "_2_1", key3);
-		assertEquals("DatasetID", testdataId + "_2_2", key4);
-		assertEquals("DatasetID", testdataId + "_3_1", key5);
-		assertEquals("DatasetID", testdataId + "_3_2", key6);
-		assertEquals("DatasetID", testdataId + "_3_3", key7);
+		assertEquals("DatasetID", testdataId + "__1__1", key1);
+		assertEquals("DatasetID", testdataId + "__1__2", key2);
+		assertEquals("DatasetID", testdataId + "__2__1", key3);
+		assertEquals("DatasetID", testdataId + "__2__2", key4);
+		assertEquals("DatasetID", testdataId + "__3__1", key5);
+		assertEquals("DatasetID", testdataId + "__3__2", key6);
+		assertEquals("DatasetID", testdataId + "__3__3", key7);
 	}
 	
 	@Test
@@ -167,22 +167,22 @@ public class TestDataImporterClassLevelTest
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		final List<String> keys = new ArrayList(result.keySet());
 		Collections.sort(keys);
-		assertEquals("DatasetID", "BigTestDataSeriesPart1_GreetingValidationData1", keys.get(0));
-		assertEquals("DatasetID", "BigTestDataSeriesPart1_GreetingValidationData2", keys.get(1));
-		assertEquals("DatasetID", "BigTestDataSeriesPart1_GreetingValidationData3", keys.get(2));
-		assertEquals("DatasetID", "BigTestDataSeriesPart1_GreetingValidationData4", keys.get(3));
-		assertEquals("DatasetID", "BigTestDataSeriesPart2_GreetingValidationData1", keys.get(4));
-		assertEquals("DatasetID", "BigTestDataSeriesPart2_GreetingValidationData2", keys.get(5));
-		assertEquals("DatasetID", "BigTestDataSeriesPart2_GreetingValidationData3", keys.get(6));
-		assertEquals("DatasetID", "BigTestDataSeriesPart2_GreetingValidationData4", keys.get(7));
-		assertEquals("DatasetID", "BigTestDataSeriesPart3_1", keys.get(8));
-		assertEquals("DatasetID", "BigTestDataSeriesPart3_2", keys.get(9));
-		assertEquals("DatasetID", "BigTestDataSeriesPart3_3", keys.get(10));
-		assertEquals("DatasetID", "BigTestDataSeriesPart3_4", keys.get(11));
-		assertEquals("DatasetID", "BigTestDataSeriesPart4_1", keys.get(12));
-		assertEquals("DatasetID", "BigTestDataSeriesPart4_2", keys.get(13));
-		assertEquals("DatasetID", "BigTestDataSeriesPart4_3", keys.get(14));
-		assertEquals("DatasetID", "BigTestDataSeriesPart4_4", keys.get(15));
+		assertEquals("DatasetID", "BigTestDataSeriesPart1__GreetingValidationData1", keys.get(0));
+		assertEquals("DatasetID", "BigTestDataSeriesPart1__GreetingValidationData2", keys.get(1));
+		assertEquals("DatasetID", "BigTestDataSeriesPart1__GreetingValidationData3", keys.get(2));
+		assertEquals("DatasetID", "BigTestDataSeriesPart1__GreetingValidationData4", keys.get(3));
+		assertEquals("DatasetID", "BigTestDataSeriesPart2__GreetingValidationData1", keys.get(4));
+		assertEquals("DatasetID", "BigTestDataSeriesPart2__GreetingValidationData2", keys.get(5));
+		assertEquals("DatasetID", "BigTestDataSeriesPart2__GreetingValidationData3", keys.get(6));
+		assertEquals("DatasetID", "BigTestDataSeriesPart2__GreetingValidationData4", keys.get(7));
+		assertEquals("DatasetID", "BigTestDataSeriesPart3__1", keys.get(8));
+		assertEquals("DatasetID", "BigTestDataSeriesPart3__2", keys.get(9));
+		assertEquals("DatasetID", "BigTestDataSeriesPart3__3", keys.get(10));
+		assertEquals("DatasetID", "BigTestDataSeriesPart3__4", keys.get(11));
+		assertEquals("DatasetID", "BigTestDataSeriesPart4__1", keys.get(12));
+		assertEquals("DatasetID", "BigTestDataSeriesPart4__2", keys.get(13));
+		assertEquals("DatasetID", "BigTestDataSeriesPart4__3", keys.get(14));
+		assertEquals("DatasetID", "BigTestDataSeriesPart4__4", keys.get(15));
 		
 		for (int i = 0; i < 8; i++) {
 			// data sets read from excel file have one attribute more 

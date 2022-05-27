@@ -1,0 +1,10 @@
+{
+
+    @LanguageTemplate(value = "Do something with '' and ''.")
+    public void doSomethingWith(Object anObject, Object anotherObject)
+    {
+        // TODO Implement here code that corresponds to the Language Template's promise.
+        executableExample.addReportMessage("Something done with <b>" + anObject + "</b> and <b>" + anotherObject + "</b>.");
+    }
+
+}

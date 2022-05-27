@@ -1,0 +1,8 @@
+# Common Application Properties 
+ApplicationType=Composite
+withLogin=null
+runGuiInSeparateThread=true
+maximizeApplicationWindow=true
+
+# Environment specific properties
+Composites=TestApp1, TestApp2

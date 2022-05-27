@@ -15,18 +15,19 @@
 */
 package com.iksgmbh.sysnat.dialog;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.ToolTipManager;
 import javax.swing.UIDefaults;
@@ -37,10 +38,14 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.DialogStartTab;
-import com.iksgmbh.sysnat.dialog.tab.DocingPanel;
-import com.iksgmbh.sysnat.dialog.tab.GeneralSettingsPanel;
-import com.iksgmbh.sysnat.dialog.tab.HorizontalLine;
-import com.iksgmbh.sysnat.dialog.tab.TestingPanel;
+import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.dialog.tab.UserCommonSettingsPanel;
+import com.iksgmbh.sysnat.dialog.tab.UserDocingPanel;
+import com.iksgmbh.sysnat.dialog.tab.GenerateNLInstructionPanel;
+import com.iksgmbh.sysnat.dialog.tab.GeneratePageObjectPanel;
+import com.iksgmbh.sysnat.dialog.tab.GenerateTestAppPanel;
+import com.iksgmbh.sysnat.dialog.tab.GenerationDeleteTestAppPanel;
+import com.iksgmbh.sysnat.dialog.tab.UserTestingPanel;
 
 /**
 * Graphical User Interface to ask user for configuration settings.
@@ -56,29 +61,45 @@ import com.iksgmbh.sysnat.dialog.tab.TestingPanel;
 */
 public class SysNatDialog extends JFrame 
 {
-	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/SysNatDialog", Locale.getDefault());
+	private static final String SYS_NAT_START_DIALOG = "SysNat-Start-Dialog";
 
+	public enum DialogMode { User,  Developer};
+	
+	private static final String START_TAB = "StartTab";	
+	private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("bundles/SysNatDialog", Locale.getDefault());
 	private static final long serialVersionUID = 1L;
-	private static final Font tabFont = new Font("Arial", Font.BOLD, 20);
+
+	public static final Font tabFont = new Font("Arial", Font.BOLD, 20);
 
 	public static final int buttonDistanceToLowerFrameEdge = 130;
 	public static final int firstColumnLength = 350;
-	public static final int secondColumnLength = 350;
+	public static final int secondColumnLength = 600;
 	public static final int thirdColumnLength = 100;
-	public static final int xPosFirstColumn = 30;
 	public static final int columnDistance = 10;
+	public static final int xPosFirstColumn = 30;
 	public static final int xPosSecondColumn = xPosFirstColumn + firstColumnLength;
 	public static final int xPosThirdColumn = xPosSecondColumn + secondColumnLength + columnDistance;
 	public static final int frameWidth = xPosThirdColumn + thirdColumnLength + 50;
-	public static final int frameHeight = 675;
+	public static final int frameHeight = 685;
+	public static final int lineHeight = 26;
 	
-	private TestingPanel testingPanel;
-	private DocingPanel docingPanel;
-	private GeneralSettingsPanel generalSettingsPanel;
+	private static DialogMode mode = DialogMode.User;
 
+	private JTabbedPane tabbedPane;
+	private UserTestingPanel testingPanel;
+	private UserDocingPanel docingPanel;
+	private UserCommonSettingsPanel commonSettingsPanel;
+	private GeneratePageObjectPanel pageObjectCreationPanel;
+	private GenerateTestAppPanel testApplicationCreationPanel;
+	private GenerateNLInstructionPanel languageInstructionCreationPanel;
+	private GenerationDeleteTestAppPanel testAppDeletePanel;
 
-	public SysNatDialog() throws Exception {
+	private File devgenConfigFile = new File("./devgen.config");
+
+	public SysNatDialog() throws Exception 
+	{
 		init();
+		if (testingPanel != null) testingPanel.getStartButton().requestFocus();
 	}
 
 	public static void doYourJob()
@@ -103,11 +124,18 @@ public class SysNatDialog extends JFrame
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 
 	public static void main(String[] args) throws Exception
 	{
+		try {
+			DialogMode aMode = DialogMode.valueOf(args[0]);
+			mode = aMode;
+		} catch (Exception e) {
+			// igmore
+		}
 		ExecutionRuntimeInfo.getInstance();
 		new SysNatDialog();
 	}
@@ -121,16 +149,40 @@ public class SysNatDialog extends JFrame
 		ToolTipManager.sharedInstance().setDismissDelay(60000);
 		
 		setMinimumSize(new Dimension(frameWidth, frameHeight));
-		setTitle("SysNat Start Dialog");
+		setTitle(SYS_NAT_START_DIALOG);
 		setLocationRelativeTo(null);
 		initWindowsCloseEventHandler();
-		JTabbedPane tabbedPane = new JTabbedPane();
+		this.tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, frameWidth, frameHeight);
 		getContentPane().add(tabbedPane);
 		initComponents(tabbedPane);
 		setVisible(true);
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+	    public boolean dispatchKeyEvent(KeyEvent e) {
+	    	return checkModeChange(e);
+	    }});	
+		initShutDownHook();
 	}
 
+	protected boolean checkModeChange(KeyEvent e)
+	{
+		if (e.getID() == KeyEvent.KEY_PRESSED && e.isControlDown() && e.isAltDown() && e.isShiftDown() && e.getKeyCode() == KeyEvent.VK_M) 
+		{
+			tabbedPane.removeAll();
+			if (mode == DialogMode.User) {
+				mode = DialogMode.Developer;
+				setTitle(SYS_NAT_START_DIALOG + "  Developer Tools");
+			} else {
+				mode = DialogMode.User;
+				setTitle(SYS_NAT_START_DIALOG);
+			}
+			initComponents(tabbedPane);
+			tabbedPane.update(tabbedPane.getGraphics());
+			tabbedPane.updateUI();
+			return true;
+		}
+		return false;
+	}
 
 	private void initWindowsCloseEventHandler()
 	{
@@ -143,25 +195,70 @@ public class SysNatDialog extends JFrame
 	}
 
 
-	private void initComponents(JTabbedPane tabbedPane)
+	protected void initComponents(JTabbedPane tabbedPane)
 	{
 		tabbedPane.setFont(tabFont);
-
-		testingPanel = new TestingPanel(this);
-		tabbedPane.addTab(BUNDLE.getString("TAB_TESTING_SETTING"), null, testingPanel, "Start XX as tests...");
-		tabbedPane.setMnemonicAt(0, KeyEvent.VK_T);
-
-		docingPanel = new DocingPanel(this);
-		tabbedPane.addTab(BUNDLE.getString("TAB_DOCING_SETTING"), null, docingPanel, "Start generation of documentation...");
-		tabbedPane.setMnemonicAt(1, KeyEvent.VK_D);
-
-		generalSettingsPanel = new GeneralSettingsPanel(this);
-		tabbedPane.addTab(BUNDLE.getString("TAB_GENERAL_SETTING"), null, generalSettingsPanel, "Define general settings...");
-		tabbedPane.setMnemonicAt(2, KeyEvent.VK_G);
 		
-		tabbedPane.setSelectedIndex(getIndexOf(ExecutionRuntimeInfo.getInstance().getDialogStartTab()));
+		if (mode == DialogMode.User) 
+		{
+			testingPanel = new UserTestingPanel(this);
+			tabbedPane.addTab(BUNDLE.getString("TAB_TESTING_SETTING"), null, testingPanel, "Start XX as tests...");
+			tabbedPane.setMnemonicAt(0, KeyEvent.VK_T);
+	
+			docingPanel = new UserDocingPanel(this);
+			tabbedPane.addTab(BUNDLE.getString("TAB_DOCING_SETTING"), null, docingPanel, "Start generation of documentation...");
+			tabbedPane.setMnemonicAt(1, KeyEvent.VK_D);
+	
+			commonSettingsPanel = new UserCommonSettingsPanel(this);
+			tabbedPane.addTab(BUNDLE.getString("TAB_GENERAL_SETTING"), null, commonSettingsPanel, "Define general settings...");
+			tabbedPane.setMnemonicAt(2, KeyEvent.VK_G);
+			
+			tabbedPane.setSelectedIndex(getIndexOf(ExecutionRuntimeInfo.getInstance().getDialogStartTab()));
+			
+		} else {
+			
+			testApplicationCreationPanel = new GenerateTestAppPanel(this);
+			tabbedPane.addTab("New TestApp", null, testApplicationCreationPanel, "Create a new TestApplications...");
+			tabbedPane.setMnemonicAt(0, KeyEvent.VK_T);
+			
+			pageObjectCreationPanel = new GeneratePageObjectPanel(this);
+			tabbedPane.addTab("New PageObject", null, pageObjectCreationPanel, "Create a new PageObject for an existing TestApplications...");
+			tabbedPane.setMnemonicAt(1, KeyEvent.VK_P);
+			
+			languageInstructionCreationPanel = new GenerateNLInstructionPanel(this);
+			tabbedPane.addTab("New LanguageTemplate", null, languageInstructionCreationPanel, "Create a new Natural Language instruction for an existing TestApplications...");
+			tabbedPane.setMnemonicAt(2, KeyEvent.VK_L);
+			
+			testAppDeletePanel = new GenerationDeleteTestAppPanel(this);
+			tabbedPane.addTab("Del TestApp", null, testAppDeletePanel, "Delete an existing TestApplications...");
+			tabbedPane.setMnemonicAt(3, KeyEvent.VK_D);
+			
+			tabbedPane.setSelectedIndex(setActiveDevGenTabIndex());
+		}
 	}
 
+	private int setActiveDevGenTabIndex()
+	{
+		if (! devgenConfigFile.exists()) {
+			SysNatFileUtil.writeFile(devgenConfigFile, START_TAB + "=0");
+			return 0;
+		} else {
+			Integer i;
+			String content = SysNatFileUtil.readTextFileToString(devgenConfigFile);
+			String[] splitResult = content.split("=");
+			if (splitResult.length == 2 && splitResult[0].equals(START_TAB)) {
+				try {
+					i = Integer.valueOf(splitResult[1]);
+				} catch (Exception e) {
+					i = 1;
+				}
+			} else {
+				i = 1;
+			}
+			return i;
+		}		
+	}
+	
 	private int getIndexOf(DialogStartTab dialogStartTab)
 	{
 
@@ -183,16 +280,17 @@ public class SysNatDialog extends JFrame
 		SysNatDialog.this.dispose();
 		testingPanel.setSettingsToExecutionInfo();
 		docingPanel.setSettingsToExecutionInfo();
-		generalSettingsPanel.setSettingsToExecutionInfo();
+		commonSettingsPanel.setSettingsToExecutionInfo();
 		ExecutionRuntimeInfo.getInstance().setSettingsOk();
 	}
 	
 
 	public void saveCurrentSettings()
 	{
+		testingPanel.updateFilterOptions();
 		testingPanel.saveCurrentSettings();
 		docingPanel.saveCurrentSettings();
-		generalSettingsPanel.saveCurrentSettings();
+		commonSettingsPanel.saveCurrentSettings();
 	}
 	
 
@@ -201,6 +299,21 @@ public class SysNatDialog extends JFrame
 		System.out.println("Die Ausführung von SysNat wurde abgebrochen!");
 		System.exit(0);
 	}
+	
+	public void finishSysNatExecution()
+	{
+		System.exit(0);
+	}
+
+	protected void initShutDownHook() 
+	{
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				SysNatFileUtil.writeFile(devgenConfigFile, START_TAB + "=" + tabbedPane.getSelectedIndex());
+			}
+		});
+	}
+
 	
 	// ###########################################################################
 	//                         I n n e r    C l a s s e s  
@@ -222,10 +335,6 @@ public class SysNatDialog extends JFrame
 		}
 	}
 	
-	public void insertSeparationLine(JPanel parent, int yPos) {
-        new HorizontalLine(parent, Color.BLACK, xPosFirstColumn, yPos, 
-        		           xPosThirdColumn + thirdColumnLength - xPosFirstColumn, 2);
-	}
 
 
 }

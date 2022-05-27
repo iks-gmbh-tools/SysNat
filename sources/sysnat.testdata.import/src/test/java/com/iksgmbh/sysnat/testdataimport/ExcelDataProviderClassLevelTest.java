@@ -48,7 +48,7 @@ public class ExcelDataProviderClassLevelTest {
 		assertEquals("Number of Datasets", 4, result.size());
 		final List<String> sortedListOfDatasetNames = getSortedKeys(result);
 		final String firstOrderedDatasetName = sortedListOfDatasetNames.get(0);
-		assertEquals("DatasetName", "RotatedExcelTestData_GreetingValidationData1", firstOrderedDatasetName);
+		assertEquals("DatasetName", "RotatedExcelTestData__GreetingValidationData1", firstOrderedDatasetName);
 		assertEquals("DatasetName", "Stephen", result.get(firstOrderedDatasetName).getProperty("Name").toString());
 	}
 	
@@ -66,7 +66,7 @@ public class ExcelDataProviderClassLevelTest {
 		// assert
 		assertEquals("Number of Datasets", 4, result.size());
 		final List<String> sortedListOfDatasetNames = getSortedKeys(result);
-		assertEquals("DatasetName", "ExcelTestData_GreetingValidationData1", sortedListOfDatasetNames.get(0));
+		assertEquals("DatasetName", "ExcelTestData__GreetingValidationData1", sortedListOfDatasetNames.get(0));
 		assertEquals("DatasetName", "Stephen", result.get(sortedListOfDatasetNames.get(0)).getProperty("Name").toString());
 	}
 
