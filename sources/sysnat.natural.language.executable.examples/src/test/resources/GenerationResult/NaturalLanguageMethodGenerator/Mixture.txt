@@ -1,0 +1,13 @@
+{
+
+    @LanguageTemplate(value = "Do something with '' and ^^ and return <>.")
+    public Object doSomethingWith(String aValue, Object anObject)
+    {
+        // String value = executableExample.getTestDataValue(aValue); // comment in if needed
+        Object toStore = null; // TODO create this object - SysNat will store automatically the returned object at runtime 
+        String displayName = toStore.toString(); // adapt if needed 
+        executableExample.addReportMessage("Test object <b>" + displayName + "</b> has been stored.");
+        return toStore;
+    }
+
+}

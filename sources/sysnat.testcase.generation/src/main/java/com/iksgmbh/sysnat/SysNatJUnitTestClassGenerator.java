@@ -32,12 +32,12 @@ import com.iksgmbh.sysnat.domain.LanguageTemplatePattern;
 import com.iksgmbh.sysnat.domain.TestApplication;
 import com.iksgmbh.sysnat.helper.CommandLibraryCreator;
 import com.iksgmbh.sysnat.helper.JavaFileBuilder;
-import com.iksgmbh.sysnat.helper.JavaFileWriter;
 import com.iksgmbh.sysnat.helper.LanguageInstructionCollector;
 import com.iksgmbh.sysnat.helper.LanguageTemplateCollector;
 import com.iksgmbh.sysnat.helper.LanguageTemplateContainerFinder;
-import com.iksgmbh.sysnat.helper.PatternMergeJavaCommandGenerator;
+import com.iksgmbh.sysnat.helper.PatternMergeJavaCommandCreator;
 import com.iksgmbh.sysnat.helper.XXGroupBuilder;
+import com.iksgmbh.sysnat.utils.JavaFileWriterUtil;
 
 /**
  * Generates java test code from nlxx-files and executes it.
@@ -53,7 +53,8 @@ public class SysNatJUnitTestClassGenerator
 	 * into java commands of JUnit java files.
 	 * @return true if JUnit test classes has been generated
 	 */
-	public static boolean doYourJob() {
+	public static boolean doYourJob() 
+	{
 		return new SysNatJUnitTestClassGenerator().generateJUnitTestCaseFiles();
 	}
 
@@ -86,7 +87,7 @@ public class SysNatJUnitTestClassGenerator
 		// step 4: find matches between language patterns and template patterns
 		//         and merge matches into java code
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw = 
-				PatternMergeJavaCommandGenerator.doYourJob(languageTemplateCollection, 
+				PatternMergeJavaCommandCreator.doYourJob(languageTemplateCollection, 
 						                                   languageInstructionCollection,
 						                                   testApplication.getName());
 		
@@ -102,7 +103,7 @@ public class SysNatJUnitTestClassGenerator
 						                  languageTemplateContainerJavaFields);		
 
 		// step 7: write JUnit test case to file in sysnat.test.execution
-		JavaFileWriter.writeToTargetDir(javaFilesToCompile);  
+		JavaFileWriterUtil.writeToTargetDir(javaFilesToCompile);  
 		
 		System.out.println(SysNatConstants.SYS_OUT_SEPARATOR);
 		System.out.println("Done with generating JUnit test classes.");

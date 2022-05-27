@@ -12,6 +12,7 @@ import java.util.List;
 public class XXGroupDocData
 {
 	private String xxGroupId;
+	private String groupTags = "";
 	private LinkedHashMap<String, XXDocData> xxMap = new LinkedHashMap<>();
 	private List<String> sysDoc = new ArrayList<>();
 	private List<String> reqDoc = new ArrayList<>();
@@ -54,5 +55,15 @@ public class XXGroupDocData
 
 	public List<String> getReqDocingLines() {
 		return reqDoc;
+	}
+
+	public String getGroupTags()
+	{
+		return groupTags;
+	}
+
+	public void setGroupTags(String groupTags)
+	{
+		this.groupTags = groupTags;
 	}
 }

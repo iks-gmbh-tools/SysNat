@@ -33,6 +33,7 @@ import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 public class LanguageTemplatesDocValClassLevelTest
 {
     private String testDataDir = "../sysnat.test.runtime.environment/src/test/resources/validation";
+    
     private ExecutableExample executableExample = new ExecutableExample() 
     {
     	@Override
@@ -142,7 +143,7 @@ public class LanguageTemplatesDocValClassLevelTest
         assertEquals("Number of report messages", 9, executableExample.getReportMessages().size());
         
         assertEquals("Report messages", 
-  		             "The data file <b>PDFSearch.nldocval</b> has been imported with <b>1</b> datasets.",
+  		             "The data file <b>PDFSearch.nldocval</b> has been imported with <b>1</b> dataset(s).",
                      executableExample.getReportMessages().get(0));
         assertEquals("Report messages", 
         		      "Does document <b>IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf</b> "
@@ -237,11 +238,34 @@ public class LanguageTemplatesDocValClassLevelTest
     		String expected = expectedMessages.get(i);
     		if (i != 0 && i+1 < size) expected = "//" + expected;
     		
-			expected = expected.replace("sysnat.test.runtime.environment\\..\\", "");
-			String actual = reportMessages.get(i).replace("sysnat.quality.assurance\\..\\", "");
+			expected = cutLocalPath(expected.replace("sysnat.test.runtime.environment\\..\\", ""));
+			String actual = cutLocalPath(reportMessages.get(i).replace("sysnat.quality.assurance\\..\\", ""));
 
             assertEquals( i + "th report message", expected, actual);
     	}
+	}
+
+	private String cutLocalPath(String str)
+	{
+		int pos1 = str.indexOf("Doc1");
+		int pos2 = -1;
+		
+		if (pos1 > -1) {
+			String s = str.substring(pos1);
+			pos2 = s.indexOf("\\sources\\");
+			if (pos2 == -1) return str;
+			str = str.substring(0, pos1) + s.substring(pos2);
+		}
+		
+		pos1 = str.indexOf("Doc2");
+		if (pos1 > -1) {
+			String s = str.substring(pos1);
+			pos2 = s.indexOf("\\sources\\");
+			if (pos2 == -1) return str;
+			str = str.substring(0, pos1) + s.substring(pos2);
+		}
+		
+		return str;
 	}
 
 	private List<String> loadExpectedLines(String filename)

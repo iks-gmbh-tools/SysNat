@@ -72,7 +72,7 @@ public class LanguageTemplateCollectorClassLevelTest
 	{
 		// arrange
 		cut = new LanguageTemplateCollector(
-				getLanguageTemplateContainerJavaFields("TestApplication2"));		
+				getLanguageTemplateContainerJavaFields("TestApplication3"));		
 		try {
 			// act
 			cut.findAllLanguageTemplates();

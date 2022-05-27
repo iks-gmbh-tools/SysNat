@@ -63,7 +63,7 @@ public class ExecutionRuntimeInfoClassLevelTest
 		
 		// act
 		System.setProperty("sysnat.properties.path", "../sysnat.natural.language.executable.examples/src/test/resources");
-		executionRuntimeInfo.readConfiguredTestAppsAndTheirEnvironments();
+		executionRuntimeInfo.readTestAppProperties();
 		
 		// cleanup
 		System.setProperty("sysnat.properties.path", oldPropertyValue);

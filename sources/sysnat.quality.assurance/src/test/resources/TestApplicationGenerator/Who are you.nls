@@ -1,0 +1,5 @@
+# Example to demonstrate the use of Natural Language Scripts (nls)
+
+Comment: I am <b>"::AppName"</b> and I was created on <b>"::CreationDate"</b>.
+Comment: This example script demonstrates the use of testdata and their reference in natural language instructions.
+Comment: SysNat replaces the value references <b>::AppName</b> and <b>::CreationDate</b> by the values read from <b>sysnat.natural.language.executable.examples/testdata/<AppName>/ExampleTestData.dat</b>.

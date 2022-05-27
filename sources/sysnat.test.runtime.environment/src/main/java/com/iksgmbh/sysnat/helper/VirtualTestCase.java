@@ -15,15 +15,19 @@
  */
 package com.iksgmbh.sysnat.helper;
 
-import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.iksgmbh.sysnat.ExecutableExample;
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 
 public class VirtualTestCase extends ExecutableExample 
 {
 	public VirtualTestCase(String id) {
 		super.setXXID(id);
 		executionInfo = ExecutionRuntimeInfo.getInstance();
-		setGuiController(executionInfo.getGuiController());
+		List<String> keys = new ArrayList<>(executionInfo.getGuiControllerMap().keySet());
+		setActiveGuiController(executionInfo.getGuiControllerMap().get(keys.get(0)));
 	}
 	
 	@Override

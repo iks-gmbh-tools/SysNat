@@ -1,7 +1,6 @@
 Differences between
-Doc1: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_A.pdf (Number of pages: 4)
-and
-Doc2: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_B.pdf (Number of pages: 4)
+Doc1: C:\dev\Tools\SysNat\sources\sysnat.test.runtime.environment\src\test\resources\PdfPageContentTestData\PDF_A.pdf (Number of pages: 4) and
+Doc2: C:\dev\Tools\SysNat\sources\sysnat.test.runtime.environment\src\test\resources\PdfPageContentTestData\PDF_B.pdf (Number of pages: 4)
 --------------------------------------------------------------------
 1. Difference:
 Doc1, Page 2, Line 2 : [Two]

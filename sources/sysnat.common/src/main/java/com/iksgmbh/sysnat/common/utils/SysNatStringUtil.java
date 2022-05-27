@@ -35,8 +35,13 @@ public class SysNatStringUtil
 	public static String replaceDotsByUnderscore(final String s) {
 		return s.replaceAll("\\.", "_");
 	}
+
+	public static String replaceDashByUnderscore(final String s) {
+		return s.replaceAll("-", "_");
+	}
 	
 	public static String firstCharToLowerCase(final String s) {
+		if (s == null) return s;
 		final String firstChar = "" + s.charAt(0);
 		return firstChar.toLowerCase() + s.substring(1);
 	}
@@ -57,7 +62,7 @@ public class SysNatStringUtil
 			{				
 				for (String filter : splitResult) 
 				{
-					filter = filter.replace('_', ' ');
+					//filter = filter.replace('_', ' ');
 					if (SysNatLocaleConstants.PLACEHOLDER_PACKAGE.equals(filter) ||
 						SysNatLocaleConstants.PLACEHOLDER_PACKAGE_EN.equals(filter)) 
 					{
@@ -196,9 +201,10 @@ public class SysNatStringUtil
 
 	public static String extractTextBetween(String s, String start, String end) 
 	{
-		int pos1 = s.indexOf(start) + start.length();
-		int pos2 = s.indexOf(end);
-		return s.substring(pos1, pos2);
+		int pos = s.indexOf(start) + start.length();
+		s = s.substring(pos);
+		pos = s.indexOf(end);
+		return s.substring(0, pos);
 	}
 
 	
@@ -284,9 +290,12 @@ public class SysNatStringUtil
 	private static int editDistance(String s1, String s2) 
 	{
 	    int[] costs = new int[s2.length() + 1];
-	    for (int i = 0; i <= s1.length(); i++) {
+	    
+	    for (int i = 0; i <= s1.length(); i++) 
+	    {
 	      int lastValue = i;
-	      for (int j = 0; j <= s2.length(); j++) {
+	      for (int j = 0; j <= s2.length(); j++) 
+	      {
 	        if (i == 0)
 	          costs[j] = j;
 	        else {
@@ -303,6 +312,7 @@ public class SysNatStringUtil
 	      if (i > 0)
 	        costs[s2.length()] = lastValue;
 	    }
+	    
 	    return costs[s2.length()];
 	}
 
@@ -334,6 +344,7 @@ public class SysNatStringUtil
 
 	public static String listToString(List<String> list, String separator)
 	{
+		if (list.isEmpty()) return "";
 		final StringBuffer sb = new StringBuffer();
 		list.forEach(element -> sb.append(element).append(separator) );
 		String toReturn = sb.toString();
@@ -385,6 +396,59 @@ public class SysNatStringUtil
 			toReturn = toReturn.substring(0, toReturn.length()-4);
 		}
 		return toReturn;
+	}
+
+	public static String getSubstringBetween(String text, String boundary)
+	{
+		int pos = text.indexOf(boundary);
+		String tmp = text.substring(pos+boundary.length());
+		pos = tmp.lastIndexOf(boundary);
+		return tmp.substring(0, pos);
+	}
+
+	public static String checkFilePath(String s)
+	{
+		while (s.contains("\\\\")) {
+			s = s.replace("\\\\", "\\");
+		}
+		while (s.contains("\\")) {
+			s = s.replace("\\", "/");
+		}
+		
+		return s;
+	}
+
+	/**
+	 * Removes all first occurrences of substrings to remove
+	 * @param s input String
+	 * @param toRemove array of substrings
+	 * @return s without first occurrences of substrings 
+	 */
+	public static String cutFirstOccurences(String s, String... toRemove)
+	{
+		for (String subString : toRemove) {
+			int pos = s.indexOf(subString);
+			if (pos > -1) s = s.substring(0, pos) + s.substring(pos + subString.length());
+		}
+		return s;
+	}
+
+	public static List<String> split(String parameters, String separator)
+	{
+		if (parameters == null || separator == null || separator.isEmpty()) return null;
+		List<String> toReturn = new ArrayList<>();
+		
+		while (true) 
+		{
+			int pos = parameters.indexOf(separator);
+			if (pos == -1) {
+				toReturn.add(parameters);
+				return toReturn;
+			}
+			String element = parameters.substring(0, pos);
+			toReturn.add(element);
+			parameters = parameters.substring(pos + separator.length());
+		}
 	}
 
 }

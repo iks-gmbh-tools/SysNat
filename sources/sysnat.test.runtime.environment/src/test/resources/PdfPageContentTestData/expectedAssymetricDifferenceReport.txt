@@ -1,7 +1,6 @@
 Differences between
-Doc1: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_Assymetric_Compare1.pdf (Number of pages: 3)
-and
-Doc2: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_Assymetric_Compare5.pdf (Number of pages: 4)
+Doc1: C:\dev\Tools\SysNat\sources\sysnat.test.runtime.environment\src\test\resources\PdfPageContentTestData\PDF_Assymetric_Compare1.pdf (Number of pages: 3) and
+Doc2: C:\dev\Tools\SysNat\sources\sysnat.test.runtime.environment\src\test\resources\PdfPageContentTestData\PDF_Assymetric_Compare5.pdf (Number of pages: 4)
 --------------------------------------------------------------------
 There are following configurations defined to ignore:
 2 line definition(s) (from these 1 causes a whole page to be ignored)

@@ -23,6 +23,8 @@ import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -33,6 +35,7 @@ import org.openqa.selenium.ie.InternetExplorerOptions;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.BrowserType;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class BrowserStarter 
@@ -50,6 +53,10 @@ public class BrowserStarter
          e.printStackTrace();
          throw new RuntimeException(e);
       }
+   }
+   
+   public static BrowserType getCurrentBrowserType() {
+	   return ExecutionRuntimeInfo.getInstance().getTestBrowserType();
    }
    
 	public void closeCurrentUI()
@@ -83,9 +90,9 @@ public class BrowserStarter
       {
          initInternetExplorerWebDriver();
       }
-      else if (SysNatConstants.BrowserType.FIREFOX_45_9 == executionInfo.getTestBrowserType())
+      else if (SysNatConstants.BrowserType.EDGE == executionInfo.getTestBrowserType())
       {
-         initFireFoxWeb_45_9_Driver();
+         initEdgeWebDriver();
       }
       else 
       {
@@ -162,7 +169,7 @@ public class BrowserStarter
       if (executionInfo.isOS_Windows())  
       {
          System.setProperty("webdriver.gecko.driver", getExecutable("sysnat.webdriver.executable.firefox.gecko"));
-         System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true");
+         // System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true"); Selenium 3 Setting
          System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
          webDriver = new FirefoxDriver(firefoxOptions);
       } else {
@@ -170,19 +177,17 @@ public class BrowserStarter
       }
    }
 
-   private void initFireFoxWeb_45_9_Driver() throws MalformedURLException 
+   private void initEdgeWebDriver() throws MalformedURLException 
    {
-      System.out.println("Initializing Firefox v45.9 web driver...");
+      System.out.println("Initializing Edge web driver...");
 
-      final FirefoxOptions firefoxOptions = new FirefoxOptions();
-      firefoxOptions.setBinary(getFireFoxBinary("sysnat.path.to.firefox_45_9.dir"));
-      firefoxOptions.setProfile(createFirefoxProfile());
+      final EdgeOptions options = new EdgeOptions();
+      options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.ACCEPT);
 
       if (executionInfo.isOS_Windows())  
       {
-         System.setProperty("webdriver.gecko.driver", getExecutable("sysnat.webdriver.executable.firefox_45_9.gecko"));
-         System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE, "false");
-         webDriver = new FirefoxDriver(firefoxOptions);
+         System.setProperty("webdriver.edge.driver", getExecutable("sysnat.webdriver.executable.edge"));
+         webDriver = new EdgeDriver(options);
       } else {
          throw new RuntimeException("Non-Windows systems not yet supported.");
       }
@@ -211,20 +216,6 @@ public class BrowserStarter
       profile.setPreference("plugin.disable_full_page_plugin_for_types", "application/rtf");
       */
       return profile;
-   }
-   
-    private FirefoxBinary getFireFoxBinary(final String systemPropertyKey) 
-    {
-      final File firefoxExe = SysNatFileUtil.getFirefoxExecutable();
-      if (! firefoxExe.exists()) {
-         throw new RuntimeException("Firefox Executable not found: " + firefoxExe.getAbsolutePath());
-      }
-      try {
-         return new FirefoxBinary(firefoxExe);
-      } catch (Throwable t) {
-         t.printStackTrace();
-         throw t;
-      }
    }
    
    private String getExecutable(final String executableType)

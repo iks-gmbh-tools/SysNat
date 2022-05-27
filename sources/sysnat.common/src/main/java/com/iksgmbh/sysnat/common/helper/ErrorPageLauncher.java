@@ -41,7 +41,7 @@ public class ErrorPageLauncher
 		try {
 			SysNatFileUtil.writeFile(filename, errorReport.replace("HELP_MESSAGE_PLACEHOLDER", helpMessage));
 			
-			if (! "true".equalsIgnoreCase(System.getProperty("sysnat.dummy.test.run"))) {
+			if (! "true".equalsIgnoreCase(System.getProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN))) {
 				HtmlLauncher.doYourJob(filename);
 			}
 		} catch (Exception e) {

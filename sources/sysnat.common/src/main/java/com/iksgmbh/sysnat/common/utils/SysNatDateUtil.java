@@ -36,5 +36,27 @@ public class SysNatDateUtil
 	public static String getNowTimeString() {
 		return TIME_FORMATTER.format(new Date());
 	}
+	
+	public static long getNowAsMillis() {
+		return new Date().getTime();
+	}
+	
+	public static int getDiffInSeconds(Date d1, Date d2) {
+		return (int) ((d2.getTime() - d1.getTime()) / 1000);
+	}
+	
+	public static int getDiffInMillis(Date d1, Date d2) {
+		return (int) ((d2.getTime() - d1.getTime()));
+	}
+
+	public static String toStringWithLeadingZerosIfNeeded(int dayOrMonthValue)
+	{
+		String toReturn = "" + dayOrMonthValue;
+		if (toReturn.length() == 1) {
+			toReturn = "0" + toReturn;
+		}
+		return toReturn;
+	}
+	
 
 }

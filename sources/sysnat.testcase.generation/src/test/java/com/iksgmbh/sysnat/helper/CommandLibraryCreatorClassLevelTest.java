@@ -43,10 +43,10 @@ public class CommandLibraryCreatorClassLevelTest {
 		
 		// act
 		String result = new CommandLibraryCreator(languageTemplateCollection).buildFileContent();
+		// System.err.println(result);
 		
 		// assert
-		String expectedContent = CommandLibraryCreator.BUNDLE.getString("LanguageTemplatesFrom") 
-				                  + "LanguageTemplateContainerTestImpl:"; 
+		String expectedContent =  "LanguageTemplateContainerTestImpl"; 
 		assertTrue("Unexpected content of library", result.contains(expectedContent));
 		expectedContent = "Natural language instruction without parameter.";
 		assertTrue("Unexpected content of library", result.contains(expectedContent));
@@ -72,13 +72,14 @@ public class CommandLibraryCreatorClassLevelTest {
 		
 		// act
 		String result = new CommandLibraryCreator(languageTemplateCollection).buildFileContent();
+		// System.err.println(result);
 		
 		// assert
-		String expectedContent = "LanguageTemplateContainer2TestImpl:";
+		String expectedContent = "LanguageTemplateContainer2TestImpl";
 		assertTrue("Unexpected Content of library ", result.contains(expectedContent));
 		expectedContent = "Natural ^^ language ^^ instruction ^^ with ^^ parameters.";
 		assertTrue("Unexpected Content of library ", result.contains(expectedContent));
-		expectedContent = "LanguageTemplateContainerTestImpl:";
+		expectedContent = "LanguageTemplateContainerTestImpl";
 		assertTrue("Unexpected Content of library ", result.contains(expectedContent));
 		expectedContent = "Natural language instruction without parameter.";
 		assertTrue("Unexpected Content of library ", result.contains(expectedContent));

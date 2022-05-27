@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.testimpl.SysNatDialogTestImpl;
 
 public class SysNatStartDialogClassLevelTest
@@ -16,7 +17,7 @@ public class SysNatStartDialogClassLevelTest
 	{
 		// arrange
 		ExecutionRuntimeInfo.reset();
-		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.dummy.test.run", "true");
+		System.setProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "true");
 		ExecutionRuntimeInfo executionRuntimeInfo = ExecutionRuntimeInfo.getInstance();
 		
 		// act

@@ -22,6 +22,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -34,6 +35,21 @@ import com.iksgmbh.sysnat.common.helper.FileFinder;
 public class SysNatFileUtilClassLevelTest 
 {
 
+	@Test
+	public void findUniqueFilesRecursively() throws IOException 
+	{
+		// arrange
+		final List<File> directories = new ArrayList<>();
+		directories.add(new File("../sysnat.common/src/test/resources/searchFiles/subdir1"));
+		directories.add(new File("../sysnat.common/src/test/resources/searchFiles/subdir2"));
+
+		// act
+		List<File> result = SysNatFileUtil.findUniqueFilesRecursively("txt", directories);
+
+		// assert
+		assertEquals(5, result.size());
+	}
+	
 	@Test
 	public void findsRecentDocumentInDownloadDir() throws IOException 
 	{

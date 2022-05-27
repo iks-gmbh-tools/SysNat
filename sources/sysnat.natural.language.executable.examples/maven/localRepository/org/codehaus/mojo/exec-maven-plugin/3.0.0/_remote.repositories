@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Thu Sep 10 14:39:51 CEST 2020
+exec-maven-plugin-3.0.0.jar>nexus-vvc=
+exec-maven-plugin-3.0.0.pom>nexus-vvc=

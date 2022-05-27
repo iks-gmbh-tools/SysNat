@@ -16,6 +16,7 @@
 package com.iksgmbh.sysnat;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -29,7 +30,11 @@ import org.apache.maven.shared.invoker.MavenInvocationException;
 
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.DialogStartTab;
 import com.iksgmbh.sysnat.dialog.SysNatDialog;
+import com.iksgmbh.sysnat.domain.TestApplication;
+import com.iksgmbh.sysnat.helper.PomFileDependencyInjector;
+import com.iksgmbh.sysnat.helper.PropertyFilesPreparer;
 import com.iksgmbh.sysnat.testresult.archiving.SysNatTestResultArchiver;
 
 import de.iksgmbh.sysnat.docing.SysNatDocumentGenerator;
@@ -38,19 +43,28 @@ public class SysNatExecutor
 {
 	public static final String MAVEN_OK = "OK";
 	public static final File JAVA_HOME = new File("../../java");
+	
 	private static final String PATH_TO_MAVEN = "../../maven";
-
+	private static final String[] SYSNAT_FILES = {"pom.xml", "AvailableNaturalLanguageScripts.properties"};
+	
 	public static void main(String[] args) 
 	{
 		// optional PRE-Phase: read settings from dialog
 		SysNatDialog.doYourJob();
 		
-		String sysNatMode = System.getProperty(SysNatConstants.SYSNAT_MODE);
+		String sysNatMode = getSysNatMode();
 		if (SysNatConstants.SysNatMode.Testing.name().equals(sysNatMode)) 
 		{
 			
 			// mandatory Phase A: translate natural language into JUnit test code
 			boolean generationSuccessful = SysNatJUnitTestClassGenerator.doYourJob();
+			
+			if (generationSuccessful) {
+				cleanGenerationTargetRootDir();
+				List<String> fingAppsToStart = findAppsToStart();
+				generationSuccessful = PomFileDependencyInjector.doYourJob(fingAppsToStart);
+				if (generationSuccessful) generationSuccessful = PropertyFilesPreparer.doYourJob(fingAppsToStart);
+			}
 			
 			if (generationSuccessful) 
 			{
@@ -68,6 +82,61 @@ public class SysNatExecutor
 		}
 	}
 
+	private static void cleanGenerationTargetRootDir()
+	{
+		File rootDir = SysNatFileUtil.getTestExecutionRootDir();
+		File[] todelete = rootDir.listFiles(new FileFilter() {
+			@Override public boolean accept(File file)
+			{
+				for (String filename : SYSNAT_FILES) {
+					if (file.isDirectory()) return false;
+					if (file.getName().equals(filename)) return false;
+					if (file.getName().startsWith(".")) return false;
+				}
+				return true;
+			}
+		});
+		
+		for (File file : todelete) {
+			boolean ok = file.delete();
+			if (!ok) System.err.println("Warning: Could not delete " + file.getAbsolutePath() + ".");
+		}
+	}
+
+	private static List<String> findAppsToStart()
+	{
+		final List<String> toReturn = new ArrayList<>();
+		
+		TestApplication testApplication = ExecutionRuntimeInfo.getInstance().getTestApplication();
+		
+		if (testApplication.isCompositeApplication()) 
+		{
+			testApplication.checkNumberOfComposites();
+			List<String> composites = testApplication.getElementAppications();
+			toReturn.addAll(composites);
+		}
+		else 
+		{
+			toReturn.add(testApplication.getName());
+		}
+
+		return toReturn;
+	}
+
+	private static String getSysNatMode()
+	{
+		String sysNatMode = System.getProperty(SysNatConstants.SYSNAT_MODE);
+		if (sysNatMode == null) {
+			if (ExecutionRuntimeInfo.getInstance().getDialogStartTab() == DialogStartTab.Testing)
+			{
+				sysNatMode = SysNatConstants.SysNatMode.Testing.name();
+			} else {
+				sysNatMode = SysNatConstants.SysNatMode.Docing.name();
+			}
+		}
+		return sysNatMode;
+	}
+
 	private static void archiveIfNeccessary() 
 	{
 		final ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
@@ -77,12 +146,13 @@ public class SysNatExecutor
 	}
 
 	/**
+	 * @param relativePathToPom 
 	 * @return result of execution 
 	 */
-	public static String startMavenCleanCompileTest(Properties jvmSystemProperties)
+	public static String startMaven(Properties jvmSystemProperties, String relativePathToPom, String goal)
 	{
 		final InvocationRequest request = new DefaultInvocationRequest();
-		final String pomFile = SysNatFileUtil.findAbsoluteFilePath("../sysnat.test.execution/pom.xml");
+		final String pomFile = SysNatFileUtil.findAbsoluteFilePath(relativePathToPom);
 		request.setPomFile(new File(pomFile));
 		request.setProperties(jvmSystemProperties);
 		request.setJavaHome(JAVA_HOME);
@@ -90,7 +160,7 @@ public class SysNatExecutor
 		
 		final List<String> goals = new ArrayList<>();
 		goals.add("clean"); 
-		goals.add("test");
+		goals.add(goal);
 		request.setGoals(goals);
 		
 		final Invoker mavenInvoker = new DefaultInvoker();
@@ -124,7 +194,7 @@ public class SysNatExecutor
 	public static String startMavenCleanCompileTest() 
 	{
 		Properties properties = collectSysNatSystemProperties();
-		return startMavenCleanCompileTest( properties );
+		return startMaven( properties, "../sysnat.test.execution/pom.xml", "test" );
 	}
 
 	public static Properties collectSysNatSystemProperties() 
@@ -159,7 +229,7 @@ public class SysNatExecutor
 		property = System.getProperty(propertyKey, "");
 		properties.setProperty(propertyKey, property);		
 		
-		propertyKey = "sysnat.dummy.test.run";
+		propertyKey = SysNatConstants.SYSNAT_DUMMY_TEST_RUN;
 		properties.setProperty(propertyKey, System.getProperty(propertyKey));
 		
 		propertyKey = SysNatConstants.RESULT_LAUNCH_OPTION_SETTING_KEY; // former: "sysnat.autolaunch.report";

@@ -27,7 +27,7 @@ public class TestCaseInactive2Behaviour extends TestCaseTestImpl
 {
 	public TestCaseInactive2Behaviour()  {
 		languageTemplatesCommon = new LanguageTemplatesCommonTestImpl(this);
-		ExecutionRuntimeInfo.getInstance().setApplicationStarted(true);
+		ExecutionRuntimeInfo.getInstance().setTestEnvironmentInitialized();
 	}
 	
 	@Override

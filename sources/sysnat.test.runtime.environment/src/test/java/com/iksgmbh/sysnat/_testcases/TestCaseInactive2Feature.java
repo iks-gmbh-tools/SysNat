@@ -27,7 +27,7 @@ public class TestCaseInactive2Feature extends TestCaseTestImpl
 {
 	public TestCaseInactive2Feature()  {
 		languageTemplatesCommon = new LanguageTemplatesCommonTestImpl(this);
-		ExecutionRuntimeInfo.getInstance().setApplicationStarted(true);
+		ExecutionRuntimeInfo.getInstance().setTestEnvironmentInitialized();
 	}
 	
 	@Override

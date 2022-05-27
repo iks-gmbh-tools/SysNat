@@ -92,9 +92,12 @@ public class LanguageTemplatesCommonClassLevelTest
 	{
 		// arrange
 		ExecutableExample executableExample =  new TestCaseCallingSimpleScript();
+		System.setProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "true");
 
 		// act
 		executableExample.executeTestCase();
+		
+		//System.err.println(executableExample.getReportMessages());
 
 		// assert
 		assertTrue("Expected error message not found.", doesMessagesContain(executableExample.getReportMessages(), "Skript Start: <b>SimpleTestScript</b>"));
@@ -110,8 +113,11 @@ public class LanguageTemplatesCommonClassLevelTest
 		ExecutionRuntimeInfo.reset();
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.runtime.environment/src/test/resources/AvailableNaturalLanguageScripts.properties");
 		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, "../sysnat.test.runtime.environment/src/test/resources/testSettingConfigs/settingsHomePageIKS.config");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY, "../sysnat.test.runtime.environment/target");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.nls.lookup.file", "../sysnat.test.runtime.environment/src/test/resources/AvailableNaturalLanguageScripts.properties");
 		ExecutionRuntimeInfo.setSysNatSystemProperty("sysnat.testdata.import.directory", "../sysnat.test.runtime.environment/src/test/resources/testData");
+		ExecutionRuntimeInfo.setSysNatSystemProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "true");
+		
 		ExecutionRuntimeInfo.getInstance().setTestApplicationName("HomePageIKS");
 		ExecutionRuntimeInfo.getInstance();
 		ExecutableExample executableExample =  new TestCaseCallingMainScriptCallingSubscript();

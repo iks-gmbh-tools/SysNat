@@ -1,0 +1,14 @@
+# Common Application Properties 
+ApplicationType=Web
+withLogin=true
+runGuiInSeparateThread=true
+maximizeApplicationWindow=true
+LoginId=Tester
+Password=12345
+
+# Environment specific properties
+LOCAL.starturl=http//somewhere.com
+LOCAL.LoginId=Tester
+LOCAL.Password=12345
+
+# Note: Environment specific properties do overwrite common ones with the same key

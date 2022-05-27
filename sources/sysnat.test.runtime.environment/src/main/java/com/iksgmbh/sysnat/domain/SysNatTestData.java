@@ -50,6 +50,7 @@ public class SysNatTestData
 
    private LinkedHashMap<String, SysNatDataset> orderedDatasets = new LinkedHashMap<>();  // order reflects priority when searching a value
    private HashMap<Integer, String> order = new HashMap<>();  // contains order information for each dataset
+   private List<ValuePair> synonyms = new ArrayList<>();  // contains pairs of keys that can replace each other when searching for datasets
    private SysNatDataset markedDataset;
 
    /**
@@ -207,7 +208,7 @@ public class SysNatTestData
          return orderedDatasets.get(order.get(datasetName.get())).getValue(fieldName);
       }
 
-      throw new SysNatTestDataException("Für das Feld <b>" + fieldName + "</b> steht kein Wert in den angegebenen Testdaten zur Verfügung!");
+      return null;
    }
 
    private boolean containsField(String datasetName, String fieldName) {
@@ -279,6 +280,11 @@ public class SysNatTestData
     */
    public String findValueForValueReference(final String valueReference)
    {
+	  if (orderedDatasets.get(SINGLE_TEST_DATA_VALUES) != null) {
+		  Object result = orderedDatasets.get(SINGLE_TEST_DATA_VALUES).get(valueReference);
+		  if (result != null) return result.toString();
+	  }
+	  
       if (markedDataset != null)
       {
          String fieldName = valueReference;
@@ -289,11 +295,17 @@ public class SysNatTestData
       }
 
       Set<String> keySet = orderedDatasets.keySet();
-      List<String> datasetMatches = keySet.stream().filter(key -> valueReference.contains(key))
-                                                 .collect(Collectors.toList());
-      if (   datasetMatches.size() == 0
-         && keySet.size() == 1
-         && valueReference.contains("::"))
+      List<String> datasetMatches = keySet.stream().filter(key -> orderedDatasets.get(key).containsKey(valueReference))
+                                                   .collect(Collectors.toList());
+      if (datasetMatches.size() > 1) {
+    	  throw new SysNatTestDataException("Die Referenz des Testdatenwerts <b>" + valueReference + "</b> "
+    	  		                          + "ist nicht eindeutig, weil es " + datasetMatches.size() 
+    	  		                          + " Testdatensätze gibt, die sie beinhalten!");
+      }
+      
+      if (datasetMatches.size() == 1) return orderedDatasets.get(datasetMatches.get(0)).getProperty(valueReference);
+      
+      if (valueReference.contains("::"))
       {
          String fieldName;
          if (valueReference.startsWith("::")) {
@@ -303,7 +315,7 @@ public class SysNatTestData
             fieldName = valueReference.substring(pos+2);
          }
          return getValue(fieldName);
-      }
+      } 
 
       for (String datasetName : datasetMatches)
       {
@@ -322,7 +334,7 @@ public class SysNatTestData
       return getValue(valueReference);
    }
 
-   /**
+/**
     * List of key-value-pairs that represent a data set for a domain object.
     */
    public static class SysNatDataset extends Properties
@@ -389,8 +401,45 @@ public class SysNatTestData
     * This dataset is going to be used shortly
     * @param aDatasetName
     */
-   public void setMarker(SysNatDataset aDatasetName) {
-      markedDataset = aDatasetName;
+   public void setMarker(SysNatDataset aDataset) {
+      markedDataset = aDataset;
    }
+   
+   public void setMarker(String aDatasetName) {
+	  markedDataset = orderedDatasets.get(aDatasetName);
+   }
+   
+   public void resetMarker() {
+	  markedDataset = null;
+   }
+   
+   public boolean addSynonym(String value1, String value2) 
+   {
+	   synonyms.add(new ValuePair(value1, value2));
+	   return true;
+   }
+
+	public List<String> getSynonmysFor(String fieldName)
+	{
+		if (fieldName.startsWith(SysNatConstants.DC)) fieldName = fieldName.substring( SysNatConstants.DC.length() );
+		List<String> toReturn = new ArrayList<>();
+		
+		final String search = fieldName;
+		synonyms.forEach(pair -> { if (pair.value1.equals(search)) toReturn.add(pair.value2); });
+		synonyms.forEach(pair -> { if (pair.value2.equals(search)) toReturn.add(pair.value1); });
+		
+		return toReturn;
+	}
+	
+	private class ValuePair 
+	{
+		String value1;
+		String value2;
+		public ValuePair(String value1, String value2)
+		{
+			this.value1 = value1;
+			this.value2 = value2;
+		}
+	}
 }
 

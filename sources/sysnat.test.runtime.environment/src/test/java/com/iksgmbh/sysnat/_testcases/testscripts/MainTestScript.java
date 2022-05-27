@@ -19,7 +19,6 @@ import org.junit.Ignore;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat._testhelper.LanguageTemplatesCommonTestImpl;
-import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.testcasejavatemplate.SysNatScript;
 
 
@@ -39,7 +38,5 @@ public class MainTestScript extends SysNatScript
 		addReportMessage("Mainscript executed."); 
 	}
 	
-	public LanguageTemplateBasics getApplicationSpecificLanguageTemplates() {
-		return null;
-	}
+
 }

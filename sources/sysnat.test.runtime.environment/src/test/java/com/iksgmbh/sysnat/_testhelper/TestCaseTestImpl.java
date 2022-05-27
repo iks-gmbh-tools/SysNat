@@ -17,7 +17,6 @@ package com.iksgmbh.sysnat._testhelper;
 
 import org.junit.Ignore;
 
-import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 import com.iksgmbh.sysnat.language_templates.common.LanguageTemplatesCommon;
 import com.iksgmbh.sysnat.testcasejavatemplate.SysNatTestCase;
 
@@ -36,10 +35,7 @@ public class TestCaseTestImpl extends SysNatTestCase
 	public boolean doesTestBelongToApplicationUnderTest() {
 		return true;
 	}
-	
-	public LanguageTemplateBasics getApplicationSpecificLanguageTemplates() {
-		return null;
-	}
+
 
 	@Override
 	public void executeTestCase() {

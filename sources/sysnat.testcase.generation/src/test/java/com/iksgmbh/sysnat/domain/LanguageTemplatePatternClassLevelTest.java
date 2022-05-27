@@ -234,7 +234,7 @@ public class LanguageTemplatePatternClassLevelTest
 		final LanguageTemplatePattern languagePattern1 = new LanguageTemplatePattern(method1, new Filename("test1"), "" );
 		final Class<?> c2 = Class.forName("com.iksgmbh.sysnat.test.testTemplateContainers.testapplication2.LanguageTemplateContainer2TestImpl");
 		final Method method2 = c2.getMethod("anotherMethodWithFourParameters", String.class, String.class, String.class, String.class);
-		final LanguageTemplatePattern languagePattern2 = new LanguageTemplatePattern(method2, new Filename("test2"), "" );
+		final LanguageTemplatePattern languagePattern2 = new LanguageTemplatePattern(method2, new Filename("test1"), "" );
 		
 		// act
 		boolean isIdentical = languagePattern1.isIdentical(languagePattern2);

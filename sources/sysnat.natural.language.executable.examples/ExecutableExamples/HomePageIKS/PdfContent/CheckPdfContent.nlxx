@@ -3,14 +3,14 @@ Autor = Reik Oberrath
 
 Test-Phase: Arrange    
 Open main menu.
-Click main menu item "Blog".
+Click main menu item "Fachartikel".
 Wait "2" second(s).
-Click link "Softwarequalität".
-Wait "2" second(s).
+Click link "Softwarequalität zum Anfassen".
+Wait "1" second(s).
 
 Test-Phase: Act
 
-Click link "Download Softwarequalität-zum-Anfassen.pdf". 
+Click link "IKS-Fachartikel-Software-zum-Anfassen-Gibt-es-so-etwas.pdf". 
 The downloaded PDF is saved as <Fachartikel Softwarequalität zum Anfassen.pdf>.  # Here a Dynamic Test Object (DTO) is created.
 # use if needed: Close PDF window "IKS-Software-zum-Anfassen-Gibt-es-so-etwas.pdf".
 

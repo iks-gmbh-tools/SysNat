@@ -23,13 +23,14 @@ protected ComplexInstructionTestApplication_LanguageTemplateContainer complexIns
 public void setUp()
 {
 super.setUp();
+initNumberOfTestCases(1);
 complexInstructionTestApplication_LanguageTemplateContainer = new ComplexInstructionTestApplication_LanguageTemplateContainer(this);
 }
 
 @After
 public void shutdown()
 {
-if ( ! isSkipped() && executionInfo.isApplicationStarted()) {
+if ( ! isSkipped() && executionInfo.isTestEnvironmentInitialized()) {
 if (languageTemplatesCommon != null) languageTemplatesCommon.gotoStartPage();
 }
 complexInstructionTestApplication_LanguageTemplateContainer = null;
@@ -60,6 +61,7 @@ toReturn.add("com");
 toReturn.add("iksgmbh");
 toReturn.add("sysnat");
 toReturn.add("test");
+toReturn.add("TestCaseFilename.java");
 return toReturn;
 }
 

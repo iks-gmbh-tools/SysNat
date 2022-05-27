@@ -15,6 +15,9 @@
  */
 package com.iksgmbh.sysnat.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Wrapper class for a string that represents a name of a complete java command.
  * 
@@ -31,6 +34,7 @@ public class JavaCommand
 	 * One line of Java code for the JUnit test case to create.
 	 */
 	public String value;
+	public List<Object> testObjectParameters;
 
 	/**
 	 * Meta information about this Java command line.
@@ -48,18 +52,27 @@ public class JavaCommand
 	}
 
 	public JavaCommand(final String aValue, final Class<?> returnType) {
-		this(aValue, returnType, CommandType.Standard);
+		this(aValue, returnType, CommandType.Standard, new ArrayList<>());
+	}
+
+	public JavaCommand(final String aValue,
+	           final Class<?> returnType,
+	           final CommandType aCommandType)
+	{
+		this(aValue, returnType, aCommandType, new ArrayList<>());
 	}
 
 	public JavaCommand(final String aValue,
 			           final Class<?> returnType,
-			           final CommandType aCommandType) 
+			           final CommandType aCommandType,
+			           final List<Object> paramVariables) 
 	{
 		this.value = aValue;
 		if (returnType != null) {
 			this.returnType = returnType.getName();
 		}
 		this.commandType = aCommandType;
+		this.testObjectParameters = paramVariables;
 	}
 	
 	@Override

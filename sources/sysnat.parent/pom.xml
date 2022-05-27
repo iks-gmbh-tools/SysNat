@@ -3,12 +3,13 @@
 	
 	<groupId>com.iksgmbh.snt</groupId>
 	<artifactId>sysnat.parent</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<name>SNT Parent Module</name>
 	<packaging>pom</packaging>
 	
 	<modules>
 	    <module>../sysnat.common</module>
+	    <!--  <module>../sysnat.gui</module>    -->
 	    <module>../sysnat.testdata.import</module>
 		<module>../sysnat.test.runtime.environment</module>
 		<module>../sysnat.test.execution</module>
@@ -24,7 +25,7 @@
 	   	<dependency>
 			<groupId>com.iksgmbh.snt</groupId>
 	 		<artifactId>sysnat.common</artifactId>
-			<version>1.2.0-SNAPSHOT</version>
+			<version>1.1.0</version>
 	  	</dependency>
 		
 	  	<dependency>
@@ -49,6 +50,7 @@
 	           <artifactId>maven-compiler-plugin</artifactId>
 	           <version>3.7.0</version>
 	           <configuration>
+	               <encoding>UTF-8</encoding>
 	               <source>1.8</source>
 	               <target>1.8</target>
 	           </configuration>

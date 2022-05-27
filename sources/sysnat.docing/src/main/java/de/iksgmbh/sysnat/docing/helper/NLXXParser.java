@@ -82,7 +82,7 @@ public class NLXXParser
 			                    final File nlxxFile)
 	{
 		if (nlxxFile.getName().equals("Relogin.nlxx")) {
-			System.out.println("");
+			// System.out.println("");
 		}
 		final XXGroupDocData nlxxData = new XXGroupDocData(); 
 		final List<String> lines = SysNatFileUtil.readTextFile(nlxxFile);
@@ -105,6 +105,9 @@ public class NLXXParser
 			                   final XXGroupDocData nlxxData,
 			                   final String filename)
 	{
+		if (filename.equals("AkteLifeCycleDSGVO.nlxx")) {
+			//System.out.println("");
+		}
 		if (isComment(line)) return;
 		line = removeInlineComment(line);
 		
@@ -121,6 +124,11 @@ public class NLXXParser
 		if (line.startsWith(SYS_DOC_IDENTIFIER)) 
 		{
 			startSysDocParsing(nlxxData);
+			return;
+		}
+		
+		if (line.startsWith(SysNatConstants.TAGS)) {
+			parseGroupTags(line, nlxxData);
 			return;
 		}
 
@@ -141,6 +149,13 @@ public class NLXXParser
 		if ( ! doesLineBelongToPrivateBehaviourHeader ) {
 			addLine(line, nlxxData);
 		}
+	}
+
+	private void parseGroupTags(String line, XXGroupDocData nlxxData)
+	{
+		int pos = SysNatConstants.TAGS.length();
+		String tags = line.substring(pos);
+		nlxxData.setGroupTags(tags);
 	}
 
 	private String removeInlineComment(String line)

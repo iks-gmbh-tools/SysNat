@@ -44,7 +44,8 @@ public class TableDataParser
 		inputFile = aDataFile;
 	}
 
-	public static List<Properties> doYourJob(String aDatafile, String lines) {
+	public static List<Properties> doYourJob(String aDatafile, String lines) 
+	{
 		String[] splitResult = lines.split(SysNatConstants.LINE_SEPARATOR);
 		List<String> linesList = Arrays.asList(splitResult).stream().collect(Collectors.toList());
 		return doYourJob( aDatafile, linesList );

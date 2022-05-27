@@ -193,7 +193,11 @@ public class LanguageTemplatePattern
 	public boolean isIdentical(LanguageTemplatePattern otherPattern) 
 	{
 		boolean toReturn = false;
-		
+
+		if (! containerFileName.value.equals(otherPattern.containerFileName.value)) {
+			return toReturn;  // allow same patterns in different containers (necessary for composited application)
+		}
+
 		if (getNumberOfParts() == otherPattern.getNumberOfParts()) 
 		{
 			toReturn = true;

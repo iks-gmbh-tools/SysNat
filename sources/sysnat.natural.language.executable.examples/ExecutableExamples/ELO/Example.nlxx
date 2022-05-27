@@ -1,0 +1,16 @@
+XX:  <filename>   # This Executable Example will be named as its file
+
+TestData: ExampleTestData
+
+Test-Phase: Arrange
+Comment: TODO: Write Arrange instructions
+
+Test-Phase: Act
+Comment: TODO: Write Act instructions
+Who are you.
+
+Test-Phase: Cleanup
+Comment: TODO: Write Cleanup instructions
+
+Test-Phase: Assert
+Comment: TODO: Write Assert instructions

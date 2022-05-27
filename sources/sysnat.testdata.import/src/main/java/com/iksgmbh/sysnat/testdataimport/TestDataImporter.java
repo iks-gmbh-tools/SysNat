@@ -50,7 +50,7 @@ public class TestDataImporter
 	protected static final char[] CHARS_TO_CUT_FROM_DATA_FILE_NAME = 
 		{'0','1','2','3','4','5','6','7','8','9','0','-','_', '.' };
 	
-	String testdataDir;
+	List<String> testdataDirs;
 	String testdataId;
 
 	private int validationRuleCounter;
@@ -58,11 +58,23 @@ public class TestDataImporter
 	private List<File> lastFilesLoaded;
 
 	/**
-	 * @param aTestdataDir path to testdata dir
+	 * @param a list of pathes suppossed to contain testdata relevant for the current test application
 	 *                   e.g. ../sysnat.natural.language.executable.examples/testdata/HelloWorldSpringBoot
 	 */
-	public TestDataImporter(final String aTestdataDir) {
-		this.testdataDir = aTestdataDir;
+	public TestDataImporter(final List<String> someTestdataDir) {
+		this.testdataDirs = someTestdataDir;
+	}
+
+	public TestDataImporter(String testdataDir)
+	{
+		this(toList(testdataDir));
+	}
+
+	private static List<String> toList(String testdataDir)
+	{
+		List<String> toReturn = new ArrayList<>();
+		toReturn.add(testdataDir);
+		return toReturn;
 	}
 
 	/**
@@ -87,10 +99,64 @@ public class TestDataImporter
 		return testdata;
 	}
 
-	List<File> findFilesToLoad() 
+	List<File> findFilesToLoad()
 	{
-		String dir = SysNatFileUtil.findAbsoluteFilePath(testdataDir);
-		File targetDir = new File(dir);
+		List<File> toReturn = new ArrayList<>();
+		testdataDirs.forEach(testdataDir -> toReturn.addAll(findFilesToLoad(testdataDir)));
+		
+		if (toReturn.size() == 0) 
+		{
+			String errorMessage = "<b>" + testdataId + "</b> is not found in " + getDirList() + ".";
+			String helpMessage = "Create test data file or remove its reference.";
+			ErrorPageLauncher.doYourJob(errorMessage, helpMessage, ERR_MSG_BUNDLE.getString("GenerationError"));
+			throw new SysNatTestDataException(errorMessage);
+		}
+		
+		return toReturn;
+	}
+
+	private String getDirList()
+	{
+		String toReturn = SysNatStringUtil.listToString(testdataDirs, ",");
+		int pos = toReturn.lastIndexOf(",");
+		if (pos > -1)
+		{
+			toReturn = toReturn.substring(0, pos) + " or " + toReturn.substring(pos);
+		}
+		return toReturn;
+	}
+
+	List<File> findFilesToLoad(String testdataDir) 
+	{
+		if (hasAbsolutePath(testdataId.trim())) 
+		{
+			String filename = testdataId;
+			int pos = filename.lastIndexOf("__");
+			if (pos > -1) {
+				filename = filename.substring(0, pos);
+			}
+			List<File> toReturn = new ArrayList<>();
+			File file = new File(filename);
+			boolean ok = true;
+			if (! file.exists()) {
+				System.err.println("###############################################");
+				System.err.println("WARNING: File with abolute path does not exist: " + file.getName());
+				System.err.println("###############################################");
+				ok = false;
+			}
+			if (file.isDirectory()) {
+				System.err.println("###############################################");
+				System.err.println("WARNING: File with absolute path must not represent a director: " + file.getName());
+				System.err.println("###############################################");
+				ok = false;
+			}
+			
+			if (ok) toReturn.add(file);
+			return toReturn;
+		}
+		
+		String dirAsString = SysNatFileUtil.findAbsoluteFilePath(testdataDir);
+		File targetDir = new File(dirAsString);
 
 		if (! targetDir.exists()) {
 			throw new SysNatTestDataException("Das Testdatenverzeichnis '" + testdataDir + "' existiert nicht.");
@@ -102,58 +168,70 @@ public class TestDataImporter
 		} else {
 			filenameToSearch = testdataId;
 		}
-
-		final List<File> toReturn = FileFinder.searchFilesRecursively(targetDir, new FilenameFilter()
+		
+		File dir = new File(targetDir, filenameToSearch);
+		if (dir.exists() && dir.isDirectory()) 
 		{
-			@Override 
-			public boolean accept(File dir, String filename) 
+			return FileFinder.searchFilesRecursively(dir, new FilenameFilter()
 			{
-				if (! filename.endsWith(".dat") && ! filename.endsWith(".xlsx") && ! filename.endsWith(DOC_VAL))
-					return false;
-
-				if (filename.equals(filenameToSearch))
-					return true;
-
-				filename = SysNatStringUtil.cutExtension(filename);
-
-				if ( ! filenameToSearch.contains("Testdaten") ) {
-					filename = SysNatStringUtil.cutTrailingChars(filename, CHARS_TO_CUT_FROM_DATA_FILE_NAME);
+				@Override public boolean accept(File dir, String filename) {
+					return filename.endsWith(".dat") || filename.endsWith(".xlsx") ;
 				}
+			});
+		}
 
-				if (filename.equals(filenameToSearch))
-					return true;
-
-				int pos = filenameToSearch.indexOf('_');
-
-				if (pos > 0) {
-					String filenameCandidate = filenameToSearch.substring(0, pos);
-					return filenameCandidate.equals(filename);
-				}
-
-				pos = filenameToSearch.lastIndexOf('/');
-				if (pos == -1) 
-					return false;
-				
-				String filenameCandidate = filenameToSearch.substring(pos+1);
-				boolean ok = filenameCandidate.equals(filename);
-				if (ok) return filenameCandidate.equals(filename);
-
-				pos = filenameCandidate.lastIndexOf(".");
-				if (pos == -1) return false;
-				String filenameCandidateWithoutExtension = filenameCandidate.substring(0, pos);
-				return filenameCandidateWithoutExtension.equals(filename);
+		return FileFinder.searchFilesRecursively(targetDir, new FilenameFilter()
+		{
+			@Override public boolean accept(File dir, String filename) {
+				return checkFilename(filenameToSearch, filename);
 			}
 		});
-		
-		if (toReturn.size() == 0) {
-			String errorMessage = "For '" + filenameToSearch + "' there is no test data file found in " + testdataDir + ".";
-			String helpMessage = "Create test data file or remove its reference.";
-			ErrorPageLauncher.doYourJob(errorMessage, helpMessage, ERR_MSG_BUNDLE.getString("GenerationError"));
-			throw new SysNatTestDataException(errorMessage);
+	}
+	
+	private boolean hasAbsolutePath(String pathToFile)
+	{
+		if (pathToFile.isEmpty()) return false;
+		char firstChar = pathToFile.toUpperCase().charAt(0);
+		if (firstChar < 'A' || firstChar > 'Z') return false;
+		char secondChar = pathToFile.charAt(1);
+		return secondChar == ':';
+	}
+
+	private boolean checkFilename(String filenameToSearch, String filename)
+	{
+		if (! filename.endsWith(".dat") && ! filename.endsWith(".xlsx") && ! filename.endsWith(DOC_VAL))
+			return false;
+
+		filename = SysNatStringUtil.cutExtension(filename);
+		filenameToSearch = SysNatStringUtil.cutExtension(filenameToSearch);
+
+		int pos = filename.indexOf("__");
+		if (pos > 0) {
+			filename = filename.substring(0, pos);
 		}
 		
-		return toReturn;
+		pos = filenameToSearch.indexOf("__");
+		if (pos > 0) {
+			filenameToSearch = filenameToSearch.substring(0, pos);
+		}
+		
+		if (filename.equals(filenameToSearch))
+			return true;
+
+		pos = filenameToSearch.lastIndexOf('/');
+		if (pos == -1) 
+			return false;
+		
+		String filenameCandidate = filenameToSearch.substring(pos+1);
+		boolean ok = filenameCandidate.equals(filename);
+		if (ok) return filenameCandidate.equals(filename);
+
+		pos = filenameCandidate.lastIndexOf(".");
+		if (pos == -1) return false;
+		String filenameCandidateWithoutExtension = filenameCandidate.substring(0, pos);
+		return filenameCandidateWithoutExtension.equals(filename);
 	}
+	
 
 	private String extractFilename(String testdataId) {
 		return testdataId.split(TESTDATA_LOCATION_SEPARATOR)[0];
@@ -167,16 +245,51 @@ public class TestDataImporter
 		final List<String> datasetNames = new ArrayList(dataSetsFromFile.keySet());
 		//datasetNames.forEach(System.err::println);
 
-
-		if (file.getName().endsWith(".dat") || file.getName().endsWith(".xlsx")) 
+		if (hasAbsolutePath(testdataId)) 
 		{
 			// Add only those datasets that match the testdataId
 			datasetNames.stream()
-					.filter(name -> name.equals(testdataId) || name.startsWith(testdataId) || testdataId.endsWith(name + ".dat"))
-					.forEach(name -> testdata.put(name, dataSetsFromFile.get(name)));
+					    .filter(name -> doesMatch(testdataId, name))
+					    .forEach(name -> testdata.put(SysNatStringUtil.checkFilePath(testdataId) + extractId(name), dataSetsFromFile.get(name)));
+		} 
+		else if (file.getName().endsWith(".dat") || file.getName().endsWith(".xlsx")) 
+		{
+			// Add only those datasets that match the testdataId
+			datasetNames.stream()
+					    .filter(name -> doesMatch(testdataId, name))
+					    .forEach(name -> testdata.put(name, dataSetsFromFile.get(name)));
 		} else {
 			datasetNames.forEach(name -> testdata.put(name, dataSetsFromFile.get(name)));
 		}
+	}
+
+	private boolean doesMatch(String wanted, String available)
+	{
+		if (hasAbsolutePath(wanted)) 
+		{
+			int pos = available.indexOf("__");
+			if (wanted.contains("__")) {
+				available = available.substring(pos);
+			} else if (available.contains("__")) {
+				available = available.substring(0,pos);
+			}
+			if (wanted.endsWith(".xlsx")) {
+				return wanted.contains(available);
+			}
+			return wanted.endsWith(available);
+		}
+		
+		if (! wanted.contains("__") && available.contains("__")) {
+			return available.contains(wanted);
+		}
+		return wanted.equals(available) || wanted.contains(available) || wanted.contains(available);
+	}
+
+	private String extractId(String name)
+	{
+		int pos = name.lastIndexOf("__");
+		if (pos == -1) return name;
+		return name.substring(pos);
 	}
 
 	public Hashtable<String, Properties> loadDatasetsFromFile(final File file) 
@@ -237,7 +350,7 @@ public class TestDataImporter
 			int counter = 0;
 			for (Properties dataset : loadedDataSets) {
 				counter++;
-				String dataSetName = SysNatStringUtil.cutExtension(file.getName()) + "_" + counter;
+				String dataSetName = SysNatStringUtil.cutExtension(file.getName()) + "__" + counter;
 				toReturn.put(dataSetName, dataset);
 			}
 		}

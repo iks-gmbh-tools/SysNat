@@ -16,11 +16,13 @@
 package com.iksgmbh.sysnat.helper.docval.domain;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.helper.docval.filereader.SysNatPdfReader;
+import com.iksgmbh.sysnat.helper.docval.filereader.SysNatTextFileReader;
 
 /**
  * Reads and stores content of a document file.
@@ -31,6 +33,16 @@ import com.iksgmbh.sysnat.helper.docval.filereader.SysNatPdfReader;
  */
 public class DocumentContent
 {	
+	private final static List<String> TEXT_FILE_FORMATS = new ArrayList<>();
+	
+	static {
+		TEXT_FILE_FORMATS.add("txt");
+		TEXT_FILE_FORMATS.add("xml");
+		TEXT_FILE_FORMATS.add("properties");
+		TEXT_FILE_FORMATS.add("config");
+		TEXT_FILE_FORMATS.add("ini");
+	}
+	
 	private String fileName;
     private List<PageContent> pageContentList;
 
@@ -192,6 +204,8 @@ public class DocumentContent
 		
 		if (extension.equalsIgnoreCase("pdf")) {
 			pageContentList = SysNatPdfReader.doYourJob(fileName);
+		} else if (TEXT_FILE_FORMATS.contains(extension)) {
+				pageContentList = SysNatTextFileReader.doYourJob(fileName);
 		} else {
 			throw new SysNatTestDataException("Unsupported file type: " + extension);
 		}

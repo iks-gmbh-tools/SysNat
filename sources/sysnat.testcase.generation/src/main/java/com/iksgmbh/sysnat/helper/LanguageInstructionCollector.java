@@ -16,19 +16,21 @@
 package com.iksgmbh.sysnat.helper;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
-import com.iksgmbh.sysnat.common.helper.FileFinder;
+import com.iksgmbh.sysnat.common.exception.SysNatException.ErrorCode;
+import com.iksgmbh.sysnat.common.utils.ExceptionHandlingUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.domain.Filename;
 import com.iksgmbh.sysnat.domain.LanguageInstructionPattern;
+import com.iksgmbh.sysnat.domain.TestApplication;
 import com.iksgmbh.sysnat.utils.BDDKeywordUtil;
 import com.iksgmbh.sysnat.utils.StageInstructionUtil;
 
@@ -99,22 +101,33 @@ public class LanguageInstructionCollector
 
 	protected List<File> findInstructionFiles(final String fileExtension) 
 	{
-		final String dir = SysNatFileUtil.findAbsoluteFilePath(getTestCaseDir());
-		final File testCaseDir = new File(dir, applicationName);
-		final FilenameFilter fileFilter = new FilenameFilter() {
-			@Override public boolean accept(File dir, String name) {
-				return name.endsWith(fileExtension);
-			}
-		};
+		TestApplication testApplication = ExecutionRuntimeInfo.getInstance().getTestApplication();
+		final String mainDir = SysNatFileUtil.findAbsoluteFilePath(getTestCaseDir());
+		List<File> directories = new ArrayList<>();
+		directories.add(new File(mainDir, applicationName));
 		
-		return FileFinder.searchFilesRecursively(testCaseDir, fileFilter);
+		if (fileExtension.equals(".nls")) 
+		{
+			// ignore nlxx files from element applications
+			if (testApplication.isCompositeApplication()) {
+				testApplication.getElementAppications().forEach(subdir -> directories.add(new File(mainDir, subdir)));
+			}
+		}
+		
+		return SysNatFileUtil.findUniqueFilesRecursively(fileExtension, directories);
 	}
 
 	List<String> getInstructionLines(File file)
 	{
-		final List<String> content = SysNatFileUtil.readTextFile(file);
+		if (file.getName().contains("SAP")) {
+			// System.out.println("");
+		}
 		List<String> toReturn = new ArrayList<>();
-		String  firstLine= content.get(0);
+		List<String> content = SysNatFileUtil.readTextFile(file);
+		if (content.isEmpty()) {
+			return toReturn;
+		}
+		String firstLine= content.get(0);
 		final boolean isFeatureBased = firstLine.startsWith("Feature") || 
 				                       firstLine.startsWith("Szenario") || 
 				                       firstLine.startsWith("Scenario");
@@ -142,11 +155,6 @@ public class LanguageInstructionCollector
 				extractBddInstruction(line.trim(), toReturn);
 				continue;
 			}
-			
-			if (isCleanupLine(line)) {
-				lineInXXParsingSection = false;
-			}
-			
 
 			if (behaviourHeaderDetected && ! lineInXXParsingSection) 
 			{
@@ -170,15 +178,9 @@ public class LanguageInstructionCollector
 
 		toReturn = removeBddKeywordMethodCallsIfPossible(toReturn);
 		toReturn = checkForSimpleScriptCallSyntax(toReturn);
-		toReturn = checkForSingleTestDataValueSetter(toReturn);
+		toReturn = checkForSingleTestDataValueSetter(toReturn, file.getName());
 
 		return toReturn;
-	}
-
-	private boolean isCleanupLine(String line)
-	{
-		return line.contains("Aufräumen")
-				|| line.contains("Cleanup");
 	}
 
 	private boolean isXXLine(String line)
@@ -197,20 +199,31 @@ public class LanguageInstructionCollector
 			   || line.startsWith("Verhalten");
 	}
 
-	private List<String> checkForSingleTestDataValueSetter(List<String> instructions) 
+	private List<String> checkForSingleTestDataValueSetter(List<String> instructions, String filename) 
 	{
 		final List<String> toReturn = new ArrayList<>();
 		for (String line : instructions)
 		{
-			if ( ! line.contains("\"") && 
-				 ! line.contains("<") && 
-				 ! line.contains(">") && 
-				 ! line.contains(":") && 
-				 ! line.contains("'")  )
+			if ( line.endsWith("=\"\"") ||
+				 (! line.contains("\"") &&
+				  ! line.contains("<") && 
+				  ! line.contains(">") && 
+				  ! line.contains(":") && 
+				  ! line.contains("'"))  )
 			{
+				if (line.trim().endsWith("=")) {
+					ExceptionHandlingUtil.throwClassifiedException(ErrorCode.NATURAL_LANGUAGE_INSTRUCTING_PARSING__EMPTY_PARAMETER_IDENTIFIER, 
+                            line, filename, "help");
+				}
 				String[] splitResult = line.split("=");
-				if (splitResult.length == 2) {
-					line = "\"" + splitResult[0].trim() + "\" = \"" + splitResult[1].trim() + "\"";
+				if (splitResult.length == 2) 
+				{
+					String key = splitResult[0].trim();
+					String value = splitResult[1].trim();
+					if (value.equals("\"\"")) {
+						value = "";
+					}
+					line = "\"" + key + "\" = \"" + value + "\"";
 				}
 			}
 			toReturn.add(line);

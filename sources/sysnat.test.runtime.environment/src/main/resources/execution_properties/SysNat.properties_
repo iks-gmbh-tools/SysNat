@@ -1,0 +1,6 @@
+ApplicationType=Swing
+withLogin=false
+
+integration.sourcelibs="./target/classes"
+integration.javastartclass=com.iksgmbh.sysnat.SysNatExecutor
+integration.mainframetitle=SysNat

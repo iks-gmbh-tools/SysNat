@@ -1,0 +1,74 @@
+﻿
+echo off
+
+echo.
+echo ########################################################
+echo Updating this SysNat installation…
+echo --------------------------------------------------------
+echo.
+
+set sourceFolder=L:\oberratr\SysNat\update
+set zipExe="C:\Program Files\7-Zip\7z.exe"
+
+echo Step 1: unzipping sources folder...
+
+set targetParentFolder="."
+set targetFolder=%targetParentFolder%"\sources"
+set sourceFile=SourcesUpdate.zip
+
+if exist %sourceFolder%\%sourceFile% (
+    rd /s/q %targetFolder%
+    %zipExe% x %sourceFolder%\%sourceFile% -o%targetParentFolder% -y
+) else (
+    echo File %sourceFolder%\%sourceFile% not found. Nothing to do.
+)
+
+echo.
+echo --------------------------------------------------------
+echo.
+echo Step 2: unzipping Maven SysNat folder...
+echo.
+
+set targetParentFolder=".\maven\localRepository\com"
+set targetFolder=%targetParentFolder%"\iksgmbh"
+set sourceFile="MavenJarsUpdate.zip"
+
+if exist %sourceFolder%\%sourceFile% (
+    rd /s/q %targetFolder%
+    %zipExe% x %sourceFolder%\%sourceFile% -o%targetParentFolder% -y
+) else (
+    echo File %sourceFolder%\%sourceFile% not found. Nothing to do.
+)
+
+echo.
+echo --------------------------------------------------------
+echo.
+echo Step 3: unzipping jre security...
+echo.
+
+set targetParentFolder=".\java\jre\lib\"
+set targetFolder="security"
+set sourceFile="JreSecurity.zip"
+
+if exist %sourceFolder%\%sourceFile% (
+    rd /s/q %targetFolder%
+    %zipExe% x %sourceFolder%\%sourceFile% -o%targetParentFolder% -y
+) else (
+    echo File %sourceFolder%\%sourceFile% not found. Nothing to do.
+)
+
+echo.
+echo --------------------------------------------------------
+echo.
+echo Step 4: Update Maven Repository...
+echo.
+
+cd Notepad++
+CleanWorkspace.bat
+
+echo.
+echo --------------------------------------------------------
+echo Done.
+echo ########################################################
+
+pause

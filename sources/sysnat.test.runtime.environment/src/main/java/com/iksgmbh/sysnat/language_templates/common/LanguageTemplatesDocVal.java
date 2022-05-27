@@ -107,7 +107,7 @@ public class LanguageTemplatesDocVal
 	public void validateDocumentContent(final File documentFile,
 							            final String validationFileName)
 	{
-		Hashtable<String, Properties> contentDefinitions = executableExample.importTestData(validationFileName);
+		Hashtable<String, Properties> contentDefinitions = executableExample.importTestData(validationFileName);;
 		Optional<String> validationDataOptional = contentDefinitions.keySet().stream().findFirst();
 		if ( ! validationDataOptional.isPresent() ) {
 			throw new SysNatTestDataException("File <b>" + documentFile.getAbsolutePath() + "</b> not found.");
@@ -425,16 +425,22 @@ public class LanguageTemplatesDocVal
 	{
 		final DocumentContentCompareValidationRule rule = DocumentValidationRule.getCompareInstance(ruleAsString);
 		
-		switch (rule.getType()) {
-			case ShouldBeFile: return;  // do nothing
-			case Dateformat: ignoreConfig.addDateformat(new SimpleDateFormat(rule.getValue()));
-			                 break;
-			case Prefix:     ignoreConfig.addPrefix(rule.getValue());
-            				 break;
-			case Substring:  ignoreConfig.addSubstring(rule.getValue());
-            				 break;
-			case Regex:      ignoreConfig.addRegex(rule.getValue());
-			                 break;
+		switch (rule.getType()) 
+		{
+			case ShouldBeFile:   return;  // do nothing
+			
+			case Dateformat:     ignoreConfig.addDateformat(new SimpleDateFormat(rule.getValue()));
+			                     break;
+			case Prefix:         ignoreConfig.addPrefix(rule.getValue());
+            				     break;
+			case Substring:      ignoreConfig.addSubstring(rule.getValue());
+            				     break;
+			case IgnoreBetween:  if (! rule.getValue().contains("|#|")) throw new RuntimeException("Cannot parse IgnoreBetween-Value: " + rule.getValue());
+			                     int pos = rule.getValue().indexOf("|#|");
+				                 ignoreConfig.addIgnoreBetween(rule.getValue().substring(0,pos), rule.getValue().substring(pos+3));
+			                     break;
+			case Regex:          ignoreConfig.addRegex(rule.getValue());
+			                     break;
 			case LineDefinition: ignoreConfig.addLineDefinition(rule.getValue());
 			                     break;
 		}

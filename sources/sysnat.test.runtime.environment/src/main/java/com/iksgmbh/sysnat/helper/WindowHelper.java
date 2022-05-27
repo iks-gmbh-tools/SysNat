@@ -35,6 +35,17 @@ public class WindowHelper
       int GetWindowTextA(Pointer hWnd, byte[] lpString, int nMaxCount);
       Pointer GetWindow(Pointer hWnd, int uCmd);
    }
+   
+   public static void main(String[] args)
+   {
+	   getAllWindowNames().stream().filter(e -> e.startsWith("Neuer Tab -")).forEach(System.out::println);
+	   getAllWindowNames().stream().filter(e -> e.contains("hrome")).forEach(System.out::println);
+	   System.out.println(getAllWindowNames().size());
+//	   List<String> allWindowNames1 = getAllWindowNames();
+//	   try {Thread.sleep(5000);	} catch (InterruptedException e1) {}
+//	   List<String> allWindowNames2 = getAllWindowNames();
+//	   allWindowNames1.stream().filter(e -> ! allWindowNames2.contains(e)).forEach(System.out::println);
+	}
 
    private static List<String> getAllWindowNames() {
       final List<String> windowNames = new ArrayList<String>();

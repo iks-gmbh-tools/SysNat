@@ -1,0 +1,11 @@
+{
+
+    @LanguageTemplate(value = "Do something with ^^.")
+    public void doSomethingWith(String aValue)
+    {
+        // String value = executableExample.getTestDataValue(aValue); // comment in if needed
+        // TODO Implement here code that corresponds to the Language Template's promise.
+        executableExample.addReportMessage("Something done with <b>" + aValue + "</b>.");
+    }
+
+}

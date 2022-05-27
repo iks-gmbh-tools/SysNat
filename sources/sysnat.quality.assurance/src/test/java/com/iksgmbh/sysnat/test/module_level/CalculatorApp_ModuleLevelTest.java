@@ -52,7 +52,7 @@ public class CalculatorApp_ModuleLevelTest
 		GenerationRuntimeInfo.reset();
 		System.setProperty("sysnat.properties.path", TESTDATA_DIR + testAppName);
 		System.setProperty(SysNatConstants.TESTING_CONFIG_PROPERTY, TESTDATA_DIR + testAppName + "/settings.config");
-		System.setProperty("sysnat.dummy.test.run", "true");
+		System.setProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "true");
 		GenerationRuntimeInfo.getInstance().setResultLaunchOptionName("None"); // former: System.setProperty("sysnat.autolaunch.report", "false");
 
 		String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/target");

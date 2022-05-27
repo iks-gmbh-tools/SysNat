@@ -129,8 +129,7 @@ public class LanguageTemplateCollector
 
 	private void removeFirstElementIfUniqueOrThrowException(final List<LanguageTemplatePattern> naturalLanguagePatterns) 
 	{
-		LanguageTemplatePattern firstElement = naturalLanguagePatterns.get(0);
-		naturalLanguagePatterns.remove(0);
+		LanguageTemplatePattern firstElement = naturalLanguagePatterns.remove(0);
 		naturalLanguagePatterns.forEach(pattern -> compareNaturalLanguagePatterns(pattern, firstElement));
 	}
 

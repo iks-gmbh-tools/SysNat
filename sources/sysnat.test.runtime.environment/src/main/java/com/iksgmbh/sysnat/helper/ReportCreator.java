@@ -15,16 +15,17 @@
  */
 package com.iksgmbh.sysnat.helper;
 
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.BLACK_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.BLUE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.GREEN_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.ORANGE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.RED_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.WHITE_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.YELLOW_HTML_COLOR;
-import static com.iksgmbh.sysnat.common.utils.SysNatConstants.BLACK_HTML_COLOR;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ASSERT_ERROR_TEXT;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.ERROR_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.NO_KEYWORD;
+import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.PROBLEM_KEYWORD;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.TECHNICAL_ERROR_TEXT;
 import static com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants.YES_KEYWORD;
 
@@ -209,8 +210,10 @@ public class ReportCreator
 
 	private String createOverview(String report) 
 	{
+		String envDisplayName =  ExecutionRuntimeInfo.getInstance().getEnvironmentsMap().get(executionInfo.getTestEnvironmentName());
+		if (envDisplayName == null) envDisplayName = "?";
 		report = report.replace("PLACEHOLDER_PRODUCT", executionInfo.getTestApplicationName());
-		report = report.replace("PLACEHOLDER_TARGET_ENV", executionInfo.getTestEnvironmentName());
+		report = report.replace("PLACEHOLDER_TARGET_ENV", envDisplayName);
 		report = report.replace("PLACEHOLDER_TIME", executionInfo.getStartPointOfTimeAsString());
 		report = report.replace("PLACEHOLDER_DURATION", executionInfo.getExecutionDurationAsString());
 		report = report.replace("PLACEHOLDER_EXECUTION_FILTER", executionInfo.getTestExecutionFilter());
@@ -359,7 +362,7 @@ public class ReportCreator
 
 	String buildDetailSection() 
 	{
-		final Map<String, String> reportDetails = new HashMap<String, String>();
+		final Map<String, String> reportDetails = new HashMap<String, String>();;
 
 		buildReportDetailsForXXGroups(reportDetails);
 		buildReportDetailsForStandAloneXX(reportDetails);
@@ -691,7 +694,9 @@ public class ReportCreator
 			sb.append(htmlTab + buildOkMessageLine(message));
 		} else if (message.contains(NO_KEYWORD)) {
 			sb.append(htmlTab + buildWrongMessageLine(message));
-		} else if (message.contains(ERROR_KEYWORD)) {
+		} else if (message.contains(PROBLEM_KEYWORD + ":")) {
+			sb.append(htmlTab + buildWrongMessageLine(message));
+		} else if (message.contains(ERROR_KEYWORD) && ! message.contains("<b>" + ERROR_KEYWORD + "</b>")) {
 			message = message + " " + ExecutableExample.SMILEY_FAILED;
 			sb.append("<span style='font-size:12.0pt;color:" + RED_HTML_COLOR + "'>" + htmlTab +  message + "</span>");
 		} else {
@@ -736,11 +741,29 @@ public class ReportCreator
 			sb.append("<br>").append(System.getProperty("line.separator"));
 			sb.append("<i><span style='font-size:13.0pt;color:" + BLUE_HTML_COLOR + "'>" + message + "</span></i>");
 		} else {
+			if (message.startsWith("Doc1: ") || message.startsWith("Doc2: ")) message = reformatToFileHyperLink(message);
 			sb.append("<i><span style='font-size:12.0pt;color:grey'>" + message + "</span></i>");
 		}
 		sb.append(System.getProperty("line.separator"))
 		  .append("<br>")
 		  .append(System.getProperty("line.separator"));
+	}
+
+	private String reformatToFileHyperLink(String message)
+	{
+		int pos1 = message.indexOf(" ");
+		int pos2 = message.indexOf(" (Number of pages:");
+		
+		String filePath = message.substring(pos1, pos2).trim();
+		String filename = new File(filePath).getName();
+		
+		String href = "<a href=\"file:///" + filePath + "\">" + filename + "</a>";
+		
+		String trailer = "";
+		if (pos2 > -1) {
+			trailer = message.substring(pos2);
+		}
+		return message.substring(0, pos1+1) + href + trailer;
 	}
 
 	private String readReportTemplate(final String template) 

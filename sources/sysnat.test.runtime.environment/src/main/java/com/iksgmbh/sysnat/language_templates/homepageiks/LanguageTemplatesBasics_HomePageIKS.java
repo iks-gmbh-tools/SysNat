@@ -18,14 +18,14 @@ package com.iksgmbh.sysnat.language_templates.homepageiks;
 import static com.iksgmbh.sysnat.common.utils.SysNatConstants.QUESTION_IDENTIFIER;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.annotation.LanguageTemplate;
 import com.iksgmbh.sysnat.annotation.LanguageTemplateContainer;
-import com.iksgmbh.sysnat.common.utils.SysNatConstants.WebLoginParameter;
+import com.iksgmbh.sysnat.common.utils.SysNatConstants.ApplicationLoginParameter;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics;
 
@@ -77,7 +77,7 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	//##########################################################################################
 	
 	@Override
-	public void doLogin(final HashMap<WebLoginParameter,String> startParameter) {
+	public void doLogin(final Map<ApplicationLoginParameter,String> startParameter) {
 		// no login/logout for this test application
 	}
 
@@ -94,7 +94,7 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	@Override
 	public boolean isStartPageVisible() {
 		try {
-			return executableExample.getTextForId("//div[@class='text hasImage  float_right']//p").startsWith("Die unternehmerische Anforderung im Fokus");
+			return executableExample.getTextForId("//div[@class='text hasImage  float_right']//p").startsWith("Wir stellen unser Wissen in Ihren Dienst.");
 		} catch (Exception e) {
 			return false;
 		}
@@ -119,31 +119,32 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	public void isPageVisible(String expectedPage) 
 	{
 		boolean ok = true;
-		executableExample.sleep(1500);
+		executableExample.sleep(1000);
 		String xpath1 = "//h1[@class='ce_headline headline']";
-		String xpath2 = "//h1[@class='ce_headline headline_italic  headline']";
+		String xpath2 = "//div[@class='text']//h3";
 		String xpath3 = "//div[@class='ce_form last tableless block']//h2";
-		String xpath4 = "//h1[@class='headline ']";
+		String xpath4 = "//div[@class='mod_breadcrumb breadcrumb block']//ul//li//span";
 		String xpath5 = "//h1[@class='headline  float_right']";
 		String xpath6 = "//h1[@class='ce_headline first last headline_italic  headline']";
+		String xpath7 = "//h1[@class='ce_headline headline_italic  headline']";
 		
 		
 		if (expectedPage.equals("Startseite"))  {
 			ok = isStartPageVisible();
 		} else if (expectedPage.equals("Unternehmen"))  {
-			ok = executableExample.getTextForId(xpath2).equals("Wir behalten den Blick für das Ganze");
+			ok = executableExample.getTextForId(xpath2).equals("Mit Erfahrung, Mut und Begeisterung geben wir Ideen eine digitale Zukunft.");
 		} else if (expectedPage.equals("Leistungen"))  {
 			ok = executableExample.getTextForId(xpath5).equals("Maßgeschneiderte Lösungen");
 		} else if (expectedPage.equals("Referenzen"))  {
 			ok = executableExample.getTextForId(xpath6).equals("Jede Idee ist nur so gut, wie ihre Umsetzung");
 		} else if (expectedPage.equals("Karriere"))  {
-			ok = executableExample.getTextForId(xpath2).equals("Spezialisten mit Persönlichkeit");
+			ok = executableExample.getTextForId(xpath7).equals("Spezialisten mit Persönlichkeit");
 		} else if (expectedPage.equals("Kontakt"))  {
 			ok = executableExample.getTextForId(xpath3).equals("Schreiben Sie uns, wir freuen uns auf Ihre Nachricht!");
 		} else if (expectedPage.equals("Blog"))  {
 			ok = executableExample.getTextForId(xpath1).equals("Blog und Veröffentlichungen");
-		} else if (expectedPage.equals("Vorträge"))  {
-			ok = executableExample.getTextForId(xpath4).equals("IT Fachvorträge");
+		} else if (expectedPage.equals("Fachartikel"))  {
+			ok = executableExample.getTextForId(xpath4).equals("FACHARTIKEL");
 		} else if (expectedPage.equals("News"))  {
 			ok = executableExample.getTextForId(xpath1).equals("News und Terminübersicht");
 		} else {
@@ -184,8 +185,10 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 			executableExample.clickLink("//li[@class='item ext-pdf']", "//div[@class='ce_text block']");
 		} else if (linkText.equals("MainMenuSymbol")) {
 				executableExample.clickLink("//div[@class='menu_hamburger']");
-		} else if (linkText.equals("Softwarequalität")) {
-			executableExample.clickLink("filltext_51");
+		} else if (linkText.equals("Softwarequalität zum Anfassen")) {
+			executableExample.clickElement("//*[contains(text(), 'Softwarequalität zum Anfassen')]");
+		} else if (linkText.equals("IKS-Fachartikel-Software-zum-Anfassen-Gibt-es-so-etwas.pdf")) {
+			executableExample.clickElement("//*[contains(text(), 'IKS-Fachartikel-Software-zum-Anfassen-Gibt-es-so-etwas')]");
 		} else {			
 			executableExample.clickLink(linkText);
 		}

@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Thu Sep 10 14:39:49 CEST 2020
+maven-deploy-plugin-2.7.pom>nexus-vvc=
+maven-deploy-plugin-2.7.jar>nexus-vvc=

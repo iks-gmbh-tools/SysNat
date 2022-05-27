@@ -64,8 +64,7 @@ public class MethodAnnotationSuggestionBuilderClassLevelTest
 	@Test
 	public void removesAllDataCharsFromInstructionLine() {
 		assertEquals("abc '' abc '' and <> and ^^ and ^^ abc", 
-				MethodAnnotationSuggestionBuilder.buildAnnotationValue(
-						"abc 'x1' abc 'x2' and <x3> and ^x4^ and ^x5^ abc"));
+				     MethodAnnotationSuggestionBuilder.buildAnnotationValue("abc 'x1' abc 'x2' and <x3> and \"^x4\" and \"x5\" abc"));
 	}
 
 	@Test

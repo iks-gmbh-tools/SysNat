@@ -1,7 +1,6 @@
 Differences between
-Doc1: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_C.pdf (Number of pages: 1)
-and
-Doc2: ../sysnat.test.runtime.environment/src/test/resources/PdfPageContentTestData/PDF_D.pdf (Number of pages: 1)
+Doc1: C:\dev\Tools\SysNat\sources\sysnat.test.runtime.environment\src\test\resources\PdfPageContentTestData\PDF_C.pdf (Number of pages: 1) and
+Doc2: C:\dev\Tools\SysNat\sources\sysnat.test.runtime.environment\src\test\resources\PdfPageContentTestData\PDF_D.pdf (Number of pages: 1)
 --------------------------------------------------------------------
 There are following configurations defined to ignore:
 6 line definition(s)

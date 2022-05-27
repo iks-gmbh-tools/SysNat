@@ -1,0 +1,11 @@
+{
+
+    @LanguageTemplate(value = "Do something with ^^, '', ^^ and ''.")
+    public void doSomethingWith(String value1, Object value2, String value3, Object value4)
+    {
+        // String value = executableExample.getTestDataValue(value1); // comment in if needed
+        // TODO Implement here code that corresponds to the Language Template's promise.
+        executableExample.addReportMessage("Something done with <b>" + value1 + "</b>, <b>" + value2 + "</b>, <b>" + value3 + "</b> and <b>" + value4 + "</b>.");
+    }
+
+}

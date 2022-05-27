@@ -4,7 +4,7 @@
 
 XX:       <filename>
 Filter:   <path>
-TestData: HelloWorldTestData_GreetingValidationData1
+TestData: HelloWorldTestData__GreetingValidationData1
 
 # arrange
 Test-Phase: Arrange    # setup all test requirements

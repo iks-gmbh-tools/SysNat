@@ -34,7 +34,7 @@ public class TestCaseForTestPurpose extends ExecutableExample
 		this.testDataIdentifier = aTestdataIdentifier;
 		languageTemplatesCommon = new LanguageTemplatesCommon(this);
 		ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
-		executionInfo.setApplicationStarted(true);
+		executionInfo.setTestEnvironmentInitialized();
 		testDataImporter = new TestDataImporter(executionInfo.getTestdataDir());
 	}
 

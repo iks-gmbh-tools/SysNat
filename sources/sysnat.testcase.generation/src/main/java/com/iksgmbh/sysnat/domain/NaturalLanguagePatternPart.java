@@ -26,7 +26,7 @@ public class NaturalLanguagePatternPart
 {
 	public enum NaturalLanguagePatternPartType { DEFAULT,          // static template text 
 		                                         PARAM_VALUE,      // a parameter represented by a concrete value defined within the current instruction or by test data
-		                                         PARAM_VARIABLE,   // a parameter represented by a variable defined by a return value of a previous instruction
+		                                         PARAM_VARIABLE,   // a parameter represented by a variable defined by a return value of a previous instruction (i.e. a variable of a test object)
 		                                         RETURN_VALUE };   // a value returned from this instruction to be used from a later instruction as PARAM_VARIABLE
 	
 	public NaturalLanguagePatternPartType type;

@@ -19,6 +19,8 @@ public class SysNatConstants
 {
 	public static final String SYS_NAT_VERSION = "1.1.0";
 	
+	public static final String SYSTEM_PROPERTIES_FILENAME = "system.properties";
+
 	/**
 	 * The Double Colon is used to specify placeholders for test data values.
 	 */
@@ -44,20 +46,42 @@ public class SysNatConstants
 
     public enum DocumentationDepth { Maximum, Medium, Minimum };
 
-	public enum BrowserType { CHROME, IE, FIREFOX, FIREFOX_45_9 };
+	public enum BrowserType { CHROME, IE, FIREFOX, EDGE };
 
 	public enum ExecSpeed { QUICK, SCHNELL, NORMAL, SLOW, LANGSAM };
 
-	public enum WebLoginParameter { URL, LOGINID, PASSWORD };
 	
 	public enum ApplyIgnoreLineDefinitionScope { Doc1, Doc2, BOTH };
 	
+	public enum ApplicationLoginParameter { LoginId, Password };
+	
+	public enum SwingStartParameter { InstallDir, LibDirs, JavaStartClass, MainFrameTitle, ConfigFiles };
+	public enum WebStartParameter { starturl };
+	
+	public enum ApplicationType 
+	{ 
+		Web(WebStartParameter.starturl.name()),  
+		Composite(APP_COMPOSITES),
+		Swing(SwingStartParameter.InstallDir.name() + "," +
+		      SwingStartParameter.LibDirs.name() + "," + 
+			  SwingStartParameter.JavaStartClass.name()  + "," +
+			  SwingStartParameter.MainFrameTitle.name()  + "," +
+			  SwingStartParameter.ConfigFiles.name()); 
+		
+		private String startParameter; 
+	    public String getStartParameter(){return startParameter;}
+	    private ApplicationType(String aStartParameter){this.startParameter = aStartParameter;}		
+	};	
+	
 	public enum GuiType { Button, 
 		                  TextField,   // single line input field
+		                  TextArea,
 		                  ComboBox,    // selectbox with dropdown
+		                  DateField,
 		                  RadioButtonSelection,   
 		                  ElementToReadText,
 		                  CheckBox,
+		                  Table,
 		                  Link};
 	
    /**
@@ -124,9 +148,18 @@ public class SysNatConstants
 	public static final String METHOD_CALL_IDENTIFIER_FILTER_DEFINITION = ".defineAndCheckExecutionFilter(";
 	public static final String METHOD_CALL_IDENTIFIER_TEST_DATA = ".setTestData(";
 	public static final String METHOD_CALL_IDENTIFIER_SET_ACTIVE_STATE = ".setActiveState(";
+	public static final String METHOD_CALL_IDENTIFIER_STORE_TEST_OBJECT = ".storeTestObject";
+	
 
 	public static final String TOOLTIP_IDENTIFIER = "ToolTip:";
 	public static final String COMMENT_CONFIG_IDENTIFIER = "#";
+	public static final String SCRIPT_SUFFIX = "Script";
+	public static final String SCRIPT_DIR = "scripts";
+	public static final String ENV_DISPLAY_NAME = "DisplayName";
 
-	
+	public static final String APP_COMPOSITES = "Composites";
+	public static final String ENVIRONMENT_SPECIFIC_TEST_VALUE = "<env>";
+	public static final String TAGS = "Tags:";
+
+	public static final String SYSNAT_DUMMY_TEST_RUN = "sysnat.dummy.test.run"; // for test purpose
 }

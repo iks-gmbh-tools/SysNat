@@ -15,6 +15,9 @@
  */
 package com.iksgmbh.sysnat.helper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.iksgmbh.sysnat.common.utils.SysNatLocaleConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.domain.JavaCommand;
@@ -62,10 +65,20 @@ public class JavaCommandCreator
 			commandString = commandString.replace(SysNatLocaleConstants.PLACEHOLDER_FILENAME_EN, replacement);
 		}
 		
-		
 		final CommandType commandType = determineCommandType(instructionPattern);
 
-		return new JavaCommand(commandString, templatePattern.getReturnType(), commandType );
+		return new JavaCommand(commandString, templatePattern.getReturnType(), commandType, getParamVariables(instructionPattern) );
+	}
+
+	private static List<Object> getParamVariables(LanguageInstructionPattern instructionPattern)
+	{
+		List<Object> toReturn = new ArrayList<>();
+		for (int i = 0; i < instructionPattern.getNumberOfParts(); i++) {
+			if (instructionPattern.getPart(i).type == NaturalLanguagePatternPart.NaturalLanguagePatternPartType.PARAM_VARIABLE) {
+				toReturn.add(instructionPattern.getPart(i).value);
+			}
+		}
+		return toReturn;
 	}
 
 	private static CommandType determineCommandType(LanguageInstructionPattern instructionPattern) 
@@ -113,6 +126,7 @@ public class JavaCommandCreator
 	{
 		String variableName = SysNatStringUtil.replaceSpacesByUnderscore(value);
 		variableName = SysNatStringUtil.replaceDotsByUnderscore(variableName);
+		variableName = SysNatStringUtil.replaceDashByUnderscore(variableName);
 		return SysNatStringUtil.firstCharToLowerCase(variableName);
 	}
 
@@ -138,6 +152,7 @@ public class JavaCommandCreator
 		String toReturn = sb.toString();
 		
 		if (toReturn.isEmpty()) return "";
+
 		return toReturn.substring(0, toReturn.length()-2);
 	}
 
@@ -148,9 +163,10 @@ public class JavaCommandCreator
 	private static Object getValueValue(final NaturalLanguagePatternPart part, 
 			                            final Class<?> parameterType) 
 	{
+		String toReturn = part.value.toString().replaceAll("\"", "'");
 		if (parameterType.getName().equals("java.lang.String")) {
-			return "\"" + part.value.toString() + "\"";
+			toReturn = "\"" + toReturn + "\"";
 		}
-		return part.value.toString();
+		return toReturn;
 	}
 }

@@ -1,8 +1,7 @@
-The data file <b>PDFCompare.nldocval</b> has been imported with <b>1</b> datasets.
+The data file <b>PDFCompare.nldocval</b> has been imported with <b>1</b> dataset(s).
 Differences between
-Doc1: C:\SysNat\sources\sysnat.test.runtime.environment\..\sysnat.test.runtime.environment\src\test\resources\validation\CompareTest.pdf (Number of pages: 1)
-and
-Doc2: C:\SysNat\sources\sysnat.test.runtime.environment\..\sysnat.test.runtime.environment\src\test\resources\validation\ShouldBeTest.pdf (Number of pages: 1)
+Doc1: C:\dev\Tools\SysNat\sources\sysnat.test.runtime.environment\src\test\resources\validation\CompareTest.pdf (Number of pages: 1) and
+Doc2: C:\dev\Tools\SysNat\sources\sysnat.test.runtime.environment\src\test\resources\validation\ShouldBeTest.pdf (Number of pages: 1)
 --------------------------------------------------------------------
 There are following configurations defined to ignore:
 1 Date Format(s)

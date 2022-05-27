@@ -15,7 +15,9 @@
  */
 package com.iksgmbh.sysnat.helper;
 
-import static com.iksgmbh.sysnat.common.utils.SysNatConstants.*;
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION;
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.METHOD_CALL_IDENTIFIER_FILTER_DEFINITION;
+import static com.iksgmbh.sysnat.common.utils.SysNatConstants.METHOD_CALL_IDENTIFIER_START_XX;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
@@ -46,7 +49,7 @@ import com.iksgmbh.sysnat.domain.JavaFieldData;
  */
 public class JavaFileBuilder 
 {
-	private static final String REPORT_CREATOR = "ReportCreator";
+	// private static final String REPORT_CREATOR = "com.iksgmbh.sysnat.helper.ReportCreator";
 
 	private static final String PATH_TO_TEMPLATES = "../sysnat.testcase.generation/src/main/java/javafiletemplatepackage";
 
@@ -158,7 +161,10 @@ public class JavaFileBuilder
 	}
 
 	private void buildJUnitTestCaseFile(final Filename instructionFilename)
-	{
+	{	
+		if (instructionFilename.value.contains("SAP_Export")) {
+			// System.out.println("");
+		}				
 		String filename = SysNatFileUtil.findAbsoluteFilePath(PATH_TO_TEMPLATES + "/JUnitTestcaseTemplate.java");
 		String templateContent = SysNatFileUtil.readTextFileToString(filename);
 		templateContent = SysNatStringUtil.removeLicenceComment(templateContent);
@@ -175,7 +181,7 @@ public class JavaFileBuilder
 		fileContent = fileContent.replace("package ;", ""); 
 		if (isTestcaseInactive(fileContent)) {
 			fileContent = fileContent.replace("super.setUp();", "super.initShutDownHook();"); // do not setUp inactive XX !
-			fileContent = fileContent.replace("languageTemplatesCommon.startNewXX(", "setXXIdForInactiveTests("); 
+			fileContent = fileContent.replace("languageTemplatesCommon" + SysNatConstants.METHOD_CALL_IDENTIFIER_START_XX, "setXXIdForInactiveTests("); 
 		}
 		
 		fileContent = fileContent.replace("//import org.junit.Test;", "import org.junit.Test;"); 
@@ -204,7 +210,7 @@ public class JavaFileBuilder
 	}
 
 	private HashMap<String, List<String>> buildCommandBlocksForReplacements(final Filename instructionFilename) 
-	{
+	{	
 		final HashMap<String,List<String>> placeHolderBlocks = new HashMap<>();
 
 		final List<String> constantsBlock = getConstantsBlock(instructionFilename);
@@ -216,9 +222,12 @@ public class JavaFileBuilder
 		final List<String> fieldsBlock = getFieldBlock();
 		placeHolderBlocks.put("/* TO BE REPLACED: fields for language template containers */", fieldsBlock);
 		
-		final List<String> setupBlock = getSetupBlock();
-		placeHolderBlocks.put("/* TO BE REPLACED: field initialization */", setupBlock);
-		
+		final List<String> fieldInitializationBlock = getFieldInitializationBlock();
+		placeHolderBlocks.put("/* TO BE REPLACED: field initialization */", fieldInitializationBlock);
+
+		final List<String> initNumberOfTestCasesBlock = getInitNumberOfTestCasesBlock();
+		placeHolderBlocks.put("/* TO BE REPLACED: init number of test cases*/", initNumberOfTestCasesBlock);
+
 		final List<String> shutdownBlock = getTearDownBlock();
 		placeHolderBlocks.put("/* TO BE REPLACED: technical cleanup */", shutdownBlock);
 
@@ -239,14 +248,24 @@ public class JavaFileBuilder
 		
 		return placeHolderBlocks;
 	}
-
+	
 	private List<String> getNlxxFilepath(Filename instructionFilename)
-	{
+	{		
 		String[] splitResult = instructionFilename.value.split("/");
 		List<String> toReturn = new ArrayList<>();
 
-		for (int i = 0; i<splitResult.length-1; i++) {
-			toReturn.add("toReturn.add(\"" + splitResult[i] + "\");");
+		for (int i = 0; i<splitResult.length; i++) 
+		{
+			String element = splitResult[i];
+			if (! element.equals(ExecutionRuntimeInfo.getInstance().getTestApplication().getName()) &&
+				! element.equals(SysNatConstants.SCRIPT_DIR)) 
+			{
+				element = element.replace("Test.java", "");
+				if (element.endsWith("_")) {
+					element = element.substring(0, element.length()-1);
+				}
+				toReturn.add("toReturn.add(\"" + element + "\"); ");
+			}
 		}
 
 		return toReturn;
@@ -275,7 +294,6 @@ public class JavaFileBuilder
 			toReturn.add("    if (executionInfo.isFirstXXOfGroup(BEHAVIOUR_ID))");
 			toReturn.add("    {");
 			onetimePreconditions.forEach(javaCommand -> addToJavaFile("        " + javaCommand.value, toReturn));
-			toReturn.add("        languageTemplatesCommon.createComment(ReportCreator.END_OF_ONETIME_PRECONDTIONS_COMMENT);");
 			toReturn.add("    }");
 			toReturn.add("}");
 		}
@@ -301,7 +319,7 @@ public class JavaFileBuilder
 			toReturn.add("{");
 			toReturn.add("    if (executionInfo.isLastXXOfGroup(BEHAVIOUR_ID))");
 			toReturn.add("    {");
-			toReturn.add("        languageTemplatesCommon.createComment(ReportCreator.START_OF_ONETIME_CLEANUPS_COMMENT);");
+			//toReturn.add("        languageTemplatesCommon.createComment(ReportCreator.START_OF_ONETIME_CLEANUPS_COMMENT);");
 			onetimeCleanups.forEach(javaCommand -> addToJavaFile("        " + javaCommand.value, toReturn));
 			toReturn.add("    }");
 			toReturn.add("}");
@@ -323,7 +341,8 @@ public class JavaFileBuilder
 		
 		boolean constructorNeeded = 
 		commands.stream().filter(command -> command.commandType == CommandType.OneTimePrecondition
-		                         || command.commandType == CommandType.OneTimeCleanup)
+		                         || command.commandType == CommandType.OneTimeCleanup
+		                         || command.value.contains(SysNatConstants.METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION))
 		                 .findAny()
 		                 .isPresent();
 		
@@ -361,15 +380,16 @@ public class JavaFileBuilder
 	private String getBehaviourIdFor(Filename filename) 
 	{
 		List<JavaCommand> commands = javaCommandCollection.get(filename);
-		String declareBehaviorCommand = findDeclareBehaviorCommand(commands).value;
+		JavaCommand declareBehaviorCommand = findDeclareBehaviorCommand(commands);
 	
 		if (declareBehaviorCommand == null) {
 			return "";
 		}
 		
-		int pos1 = declareBehaviorCommand.indexOf("\"");
-		int pos2 = declareBehaviorCommand.lastIndexOf("\"");
-		return declareBehaviorCommand.substring(pos1+1, pos2);
+		String commandAsString = declareBehaviorCommand.value;
+		int pos1 = commandAsString.indexOf("\"");
+		int pos2 = commandAsString.lastIndexOf("\"");
+		return commandAsString.substring(pos1+1, pos2);
 	}
 
 	private List<String> getFieldBlock() 
@@ -399,25 +419,26 @@ public class JavaFileBuilder
 		                                addReturnTypeIfNecessary(typesToImport, 
 		                                  		                 javaCommandList));
 
-		javaCommandCollection.forEach( (filename, javaCommandList) -> 
-                                        addReportCreatorReturnTypeIfNecessary(typesToImport, 
-        		                        javaCommandList));
+		// ? is this neccesary:
+//		javaCommandCollection.forEach( (filename, javaCommandList) -> 
+//                                        addReportCreatorReturnTypeIfNecessary(typesToImport, 
+//        		                        javaCommandList));
 	
 		return typesToImport;
 	}
 
-	private void addReportCreatorReturnTypeIfNecessary(List<String> typesToImport,
-			                                           List<JavaCommand> javaCommandList) 
-	{
-		boolean add =  javaCommandList.stream()
-				                      .map(command -> command.commandType)
-		                              .filter(type -> type == CommandType.OneTimeCleanup 
-		                                           || type == CommandType.OneTimePrecondition)
-		                              .findFirst().isPresent();
-		
-		
-		if (add && ! typesToImport.contains(REPORT_CREATOR)) typesToImport.add(REPORT_CREATOR);
-	}
+//	private void addReportCreatorReturnTypeIfNecessary(List<String> typesToImport,
+//			                                           List<JavaCommand> javaCommandList) 
+//	{
+//		boolean add =  javaCommandList.stream()
+//				                      .map(command -> command.commandType)
+//		                              .filter(type -> type == CommandType.OneTimeCleanup 
+//		                                           || type == CommandType.OneTimePrecondition)
+//		                              .findFirst().isPresent();
+//		
+//		
+//		if (add && ! typesToImport.contains(REPORT_CREATOR)) typesToImport.add(REPORT_CREATOR);
+//	}
 
 	private void addReturnTypeIfNecessary(final List<String> typesToImport,
 			                              final List<JavaCommand> javaCommandList) 
@@ -442,7 +463,21 @@ public class JavaFileBuilder
 		return toReturn;
 	}
 
-	private List<String> getSetupBlock() {
+	
+	private List<String> getInitNumberOfTestCasesBlock() {
+		final List<String> toReturn = new ArrayList<>();
+		
+		int num = 0;
+		
+		for (Filename key : javaCommandCollection.keySet()) {
+			if ( ! key.value.endsWith(SysNatConstants.SCRIPT_SUFFIX + ".java")) num++;
+		}
+		
+		toReturn.add("initNumberOfTestCases(" + num + ");");
+		return toReturn;
+	}
+	
+	private List<String> getFieldInitializationBlock() {
 		final List<String> toReturn = new ArrayList<>();
 		languageTemplateContainerJavaFields.forEach(javaFieldData -> 
 		                                            toReturn.add(javaFieldData.name + " = new " + javaFieldData.type.getSimpleName() + "(this);"));
@@ -500,31 +535,55 @@ public class JavaFileBuilder
 
 	private List<String> getTestExecutionBlockFor(final Filename instructionFilename) 
 	{
-		List<JavaCommand> commands = javaCommandCollection.get(instructionFilename);
 		List<String> toReturn = new ArrayList<>();
-		boolean oneTimePreconditionPresent = isOneTimePreconditionPresent(commands);
-		boolean oneTimeCleanupsPresent = isOnetimeCleanupPresent(commands);
-
-		commands = extractTestExecutionCommands(commands);
-		commands = addFilterCommandIfNotPresent(commands);
-		JavaCommand declareBehaviorCommand = findDeclareBehaviorCommand(commands);
-		JavaCommand defineFeatureCommand = findDefineFeatureCommand(commands);
+		List<JavaCommand> commands = javaCommandCollection.get(instructionFilename);
+		int index = findIndexOfCommandThatMatch(commands, METHOD_CALL_IDENTIFIER_BEHAVIOUR_DECLARATION); 
+		if (index > -1) 
+		{
+			JavaCommand declareGroupCommand = commands.remove(index);
+			addToJavaFile(declareGroupCommand.value, toReturn);
+		}
+		
+		index = findIndexOfCommandThatMatch(commands, METHOD_CALL_IDENTIFIER_START_XX);
+		if (index > -1) 
+		{
+			JavaCommand startXXCommand = commands.remove(index);
+			addToJavaFile(startXXCommand.value, toReturn);
+			
+			JavaCommand filterCommand;
+			index = findIndexOfCommandThatMatch(commands, METHOD_CALL_IDENTIFIER_FILTER_DEFINITION);
+			if (index > -1) 
+			{
+				filterCommand = commands.remove(index);
+			} else {
+				String value = "languageTemplatesCommon" + METHOD_CALL_IDENTIFIER_FILTER_DEFINITION + "\"" + SysNatConstants.NO_FILTER +  "\");";
+				filterCommand = new JavaCommand(value, CommandType.Standard);
+			}
+			addToJavaFile(filterCommand.value, toReturn);
+		}
+				
+		List<JavaCommand> testExeCommands = extractTestExecutionCommands(commands);
+		JavaCommand declareBehaviorCommand = findDeclareBehaviorCommand(testExeCommands);
+		JavaCommand defineFeatureCommand = findDefineFeatureCommand(testExeCommands);
 		
 		if (declareBehaviorCommand != null) 
 		{
 			if (defineFeatureCommand != null) {
-				commands.remove(defineFeatureCommand);
+				testExeCommands.remove(defineFeatureCommand);
 				addToJavaFile(defineFeatureCommand.value, toReturn);
 			}
-			commands.remove(declareBehaviorCommand);
+			testExeCommands.remove(declareBehaviorCommand);
 			addToJavaFile(declareBehaviorCommand.value, toReturn);
 		}
+		
+		boolean oneTimePreconditionPresent = isOneTimePreconditionPresent(commands);
+		boolean oneTimeCleanupsPresent = isOnetimeCleanupPresent(commands);
 		
 		if (oneTimePreconditionPresent) {
 			toReturn.add("prepareOnceIfNeeded();");
 		}
 
-		commands.forEach(javaCommand -> addToJavaFile(javaCommand.value, toReturn));
+		testExeCommands.forEach(javaCommand -> addToJavaFile(javaCommand.value, javaCommand.testObjectParameters, toReturn));
 
 		if ( oneTimeCleanupsPresent ) {
 			toReturn.add("cleanupOnceIfNeeded();");
@@ -533,30 +592,19 @@ public class JavaFileBuilder
 		return toReturn;
 	}
 
-	private List<JavaCommand> addFilterCommandIfNotPresent(List<JavaCommand> commands)
+	private int findIndexOfCommandThatMatch(List<JavaCommand> commands, String substring)
 	{
-		boolean isPresent = commands.stream()
-				                    .filter(command -> command.value.contains(METHOD_CALL_IDENTIFIER_FILTER_DEFINITION))
-				                    .findFirst()
-				                    .isPresent();
-		
-		if (isPresent) return commands;
-		
-		List<JavaCommand> toReturn = new ArrayList<>();
-		
+		int count = -1;
 		for (JavaCommand javaCommand : commands) 
 		{
-			toReturn.add(javaCommand);
-			if (javaCommand.value.contains(METHOD_CALL_IDENTIFIER_START_XX)) 
+			count++;
+			if (javaCommand.value.contains(substring)) 
 			{
-				String value = "languageTemplatesCommon.defineAndCheckExecutionFilter(\"" + SysNatConstants.NO_FILTER +  "\");";
-				JavaCommand newCommand = new JavaCommand(value, CommandType.Standard);
-				toReturn.add(newCommand);
+				return count;
 			}
-			
 		}
-		
-		return toReturn;
+
+		return -1;
 	}
 
 	private JavaCommand findDefineFeatureCommand(List<JavaCommand> commands) 
@@ -574,7 +622,7 @@ public class JavaFileBuilder
 				       .findFirst()
 				       .orElse(null);
 	}
-
+	
 	private List<JavaCommand> extractTestExecutionCommands(List<JavaCommand> commands) 
 	{
 		List<JavaCommand> toReturn = new ArrayList<>();
@@ -598,15 +646,37 @@ public class JavaFileBuilder
 
 	private void addToJavaFile(final String line, final List<String> javaFileContent) 
 	{
+		addToJavaFile(line, new ArrayList<>(), javaFileContent);
+	}
+
+	private void addToJavaFile(final String line, List<Object> testObjectParameters, final List<String> javaFileContent) 
+	{
 		if (line.contains(".startNewTestPhase(") )
 		{
 			handleNewTestPhase(line, javaFileContent);
 		}
-		else if (line.contains(" = " ) )
+		else if (line.contains(SysNatConstants.METHOD_CALL_IDENTIFIER_STORE_TEST_OBJECT) )
 		{
 			javaFileContent.add(line);
 			javaFileContent.add(buildStoreDataObjectLine(line));
 		} else {
+			if (testObjectParameters != null) 
+			{
+				// remove not needed command if necessary
+				for (Object testObjectParam : testObjectParameters) 
+				{
+					List<String> toRemove = new ArrayList<>();
+					for (String commandLine : javaFileContent) {
+						int pos = commandLine.indexOf("(");
+						if (pos == -1) continue;
+						String parameterString = commandLine.substring(pos);
+						if (commandLine.startsWith("storeTestObject(") && parameterString.contains(testObjectParam.toString().toLowerCase())) {
+							toRemove.add(commandLine);
+						}
+					}
+					javaFileContent.removeAll(toRemove);
+				}
+			}
 			javaFileContent.add(line);
 		}
 

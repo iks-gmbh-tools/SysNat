@@ -27,7 +27,7 @@ public class TestCaseOK extends TestCaseTestImpl
 {
 	public TestCaseOK()  {
 		languageTemplatesCommon = new LanguageTemplatesCommonTestImpl(this);
-		ExecutionRuntimeInfo.getInstance().setApplicationStarted(true);
+		ExecutionRuntimeInfo.getInstance().setTestEnvironmentInitialized();
 	}
 
 	@Override

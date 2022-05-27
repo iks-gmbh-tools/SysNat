@@ -39,7 +39,8 @@ import com.iksgmbh.sysnat.helper.docval.domain.PageContent;
 public class DocumentComparer
 {
 	private static final String NO_DIFFERENCE_FOUND = "<No difference found>";
-	private static final int MAX_DIFFERENCES_IN_REPORT = 10;
+	private static final int SHOW_FIRST_DIFFERENCES_IN_REPORT = 7;
+	private static final int MAX_DIFFERENCES_IN_REPORT = 12;
 	private static final String DIFF_PAGE_MESSAGE = "The documents differ in their page numbers.";
 	
 	private String firstDocName;
@@ -49,6 +50,17 @@ public class DocumentComparer
 	private int diffCounter;
 	private boolean addParanthesesNote;
 
+	public static void main(String[] args)
+	{
+		try {
+			String result = new DocumentComparer("C:\\Users\\OberratR\\AppData\\Roaming\\Client\\ImportExport\\SAPExportTest.xml")
+					       .getFullDifferenceReport("C:\\dev\\Tools\\SysNatLight\\sources\\sysnat.test.execution\\..\\sysnat.natural.language.executable.examples\\testdata\\Client\\Validationsregeln\\..\\Erwartungswerte\\ExpectedSAPExportResultUSAkte.xml");
+			System.out.println(result);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public DocumentComparer(String aFileName) {
 		this.firstDocName = aFileName;
@@ -78,9 +90,17 @@ public class DocumentComparer
 
 		return getDifferingPages(contentToCompare1, contentToCompare2);
 	}
-	
+
 	public List<Integer> getDifferingPages(final List<PageContent> contentToCompare1, 
-			                               final List<PageContent> contentToCompare2) 
+                                           final List<PageContent> contentToCompare2) 
+                                           throws IOException 
+    {
+            	return getDifferingPages(contentToCompare1, contentToCompare2, null);
+    }
+
+	public List<Integer> getDifferingPages(final List<PageContent> contentToCompare1, 
+			                               final List<PageContent> contentToCompare2, 
+			                               final HashMap<String, String> ignoreBetweenIdentifier) 
 			                               throws IOException 
 	{
 		if (contentToCompare1.size() != contentToCompare2.size()) {
@@ -93,8 +113,10 @@ public class DocumentComparer
 		{
 			List<String> differenceList = getDifferenceList(contentToCompare1.get(pageNo-1), 
 	                                                        contentToCompare2.get(pageNo-1),
-	                                                        pageNo);
+	                                                        pageNo, 
+	                                                        ignoreBetweenIdentifier);
 			if ( ! differenceList.isEmpty() ) {
+				
 				differingPages.add(pageNo);
 			}			
 		}
@@ -235,7 +257,7 @@ public class DocumentComparer
 		
 		final Map<Integer, List<String>> toReturn = new HashMap<>();
 		
-		List<Integer> differingPages = getDifferingPages(contentToCompare1, contentToCompare2);
+		List<Integer> differingPages = getDifferingPages(contentToCompare1, contentToCompare2, ignoreConfig.ignoreBetweenIdentifier);
 		if (differingPages == null) {
 			return null;
 		}
@@ -247,7 +269,7 @@ public class DocumentComparer
 			int pageNo = differingPages.get(i);
 			PageContent pageContent1 = contentToCompare1.get(pageNo-1);
 			PageContent pageContent2 = contentToCompare2.get(pageNo-1);
-			List<String> differenceList = getDifferenceList(pageContent1, pageContent2, pageNo);
+			List<String> differenceList = getDifferenceList(pageContent1, pageContent2, pageNo, ignoreConfig.ignoreBetweenIdentifier);
 			toReturn.put(new Integer(pageNo), differenceList);
 		}
 		
@@ -346,10 +368,18 @@ public class DocumentComparer
 		return sb.toString().trim();
 	}
 
+	List<String> getDifferenceList(final PageContent pageContent1,
+                                   final PageContent pageContent2, 
+                                   final int pageNo) 
+	{
+		return getDifferenceList(pageContent1, pageContent2, pageNo, null);
+	}
+
 
 	List<String> getDifferenceList(final PageContent pageContent1,
 			                       final PageContent pageContent2, 
-			                       final int pageNo) 
+			                       final int pageNo, 
+			                       final HashMap<String, String> ignoreBetweenIdentifier) 
 	{
 		List<String> toReturn = new ArrayList<>();
 		List<String> lines1 = pageContent1.getLines();
@@ -398,7 +428,7 @@ public class DocumentComparer
 				lineNo2 = "none";
 				line2 = "-";
 			}
-			else if ( ! lines1.get(i-1).equals(lines2.get(i-1)) ) 
+			else if ( doLinesDiffer(lines1.get(i-1), lines2.get(i-1), ignoreBetweenIdentifier) ) 
 			{
 				int originalNumberOfLineInPage1 = pageContent1.getOriginalNumberOfLineInPage(i-1);
 				int originalNumberOfLineInPage2 = pageContent2.getOriginalNumberOfLineInPage(i-1);
@@ -430,6 +460,40 @@ public class DocumentComparer
 	}
 
 
+	private boolean doLinesDiffer(String line1, String line2, HashMap<String, String> ignoreBetweenIdentifier)
+	{
+		line1 = cutIgnoreCharsIfPresent(line1, ignoreBetweenIdentifier);
+		line2 = cutIgnoreCharsIfPresent(line2, ignoreBetweenIdentifier);
+		return ! line1.equals(line2);
+	}
+	
+
+	public String cutIgnoreCharsIfPresent(String line, HashMap<String, String> ignoreBetweenIdentifier) 
+	{
+		if (ignoreBetweenIdentifier == null) return line;		
+		final String[] lineWrapper = {line};
+		ignoreBetweenIdentifier.entrySet().stream().forEach(e -> cutBeweenIdentifier(lineWrapper, e.getKey(), e.getValue()));
+		return lineWrapper[0];
+	}
+
+
+	private void cutBeweenIdentifier(String[] lineWrapper, String startIdentifier, String endIdentifier)
+	{
+		String line = lineWrapper[0];
+		int pos = line.indexOf(startIdentifier) + startIdentifier.length();
+		
+		if (pos > 0) 
+		{
+			String part1 = line.substring(0, pos);
+			String part2 = line.substring(pos);
+			pos = part2.indexOf(endIdentifier);
+			if (pos > -1) {
+				part2 = part2.substring(pos);
+				lineWrapper[0] = part1 + part2;
+			}
+		}
+	}
+
 	private String getDifferenceReport(final String anotherDoc,
 			                           final List<Integer> diffPages,
 			                           final List<String> differingLines, 
@@ -453,8 +517,8 @@ public class DocumentComparer
 		} else {
 			report.append( differingPagesToReportLine(diffPages)).append(System.getProperty("line.separator"));
 			report.append( "There are " + diffCounter + " differing lines. ");
-			report.append( "The first differences are ").append(System.getProperty("line.separator"));
-			for (int i = 0; i < MAX_DIFFERENCES_IN_REPORT; i++) {
+			report.append( "The first " + SHOW_FIRST_DIFFERENCES_IN_REPORT + " differences are ").append(System.getProperty("line.separator"));
+			for (int i = 0; i < SHOW_FIRST_DIFFERENCES_IN_REPORT*2; i++) {  // times 2 due to two lines per difference !
 				report.append(differingLines.get(i)).append(System.getProperty("line.separator"));
 			}
 		}
@@ -469,15 +533,14 @@ public class DocumentComparer
 		return report.toString().trim(); 
 	}
 
-	private StringBuffer getReportHeader(final String anotherDoc, final DocumentCompareIgnoreConfig ignoreConfig)
+	private StringBuffer getReportHeader(final String anotherDoc, final DocumentCompareIgnoreConfig ignoreConfig) throws IOException
 	{
 		StringBuffer report = new StringBuffer("Differences between");
 		report.append(System.getProperty("line.separator"));
-		report.append("Doc1: ").append(firstDocName).append(" (Number of pages: " + getPageNumber() + ")");
+		report.append("Doc1: ").append(new File(firstDocName).getCanonicalPath()).append(" (Number of pages: " + getPageNumber() + ")");
+		report.append(" and");
 		report.append(System.getProperty("line.separator"));
-		report.append("and");
-		report.append(System.getProperty("line.separator"));
-		report.append("Doc2: ").append(anotherDoc).append(" (Number of pages: " + getOtherContentAnalyser(anotherDoc).getNumberOfPages() + ")");
+		report.append("Doc2: ").append(new File(anotherDoc).getCanonicalPath()).append(" (Number of pages: " + getOtherContentAnalyser(anotherDoc).getNumberOfPages() + ")");
 		report.append(System.getProperty("line.separator"));
 		report.append("--------------------------------------------------------------------");
 		
