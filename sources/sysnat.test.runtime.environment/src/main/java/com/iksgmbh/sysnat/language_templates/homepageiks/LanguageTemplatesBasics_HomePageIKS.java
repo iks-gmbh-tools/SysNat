@@ -94,7 +94,7 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	@Override
 	public boolean isStartPageVisible() {
 		try {
-			return executableExample.getTextForId("//div[@class='text hasImage  float_right']//p").startsWith("Wir stellen unser Wissen in Ihren Dienst.");
+			return executableExample.getTextForId("//div[@class='text']").startsWith("Sie wollen uns kennenlernen?");
 		} catch (Exception e) {
 			return false;
 		}
@@ -122,11 +122,11 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 		executableExample.sleep(1000);
 		String xpath1 = "//h1[@class='ce_headline headline']";
 		String xpath2 = "//div[@class='text']//h3";
-		String xpath3 = "//div[@class='ce_form last tableless block']//h2";
+		String xpath3 = "//div[@class='ce_form tableless block']//h2";
 		String xpath4 = "//div[@class='mod_breadcrumb breadcrumb block']//ul//li//span";
 		String xpath5 = "//h1[@class='headline  float_right']";
-		String xpath6 = "//h1[@class='ce_headline first last headline_italic  headline']";
-		String xpath7 = "//h1[@class='ce_headline headline_italic  headline']";
+		String xpath6 = "//h1[@class='ce_headline headline_italic  headline']";
+		String xpath7 = "//*[@class='text']/h1";
 		
 		
 		if (expectedPage.equals("Startseite"))  {
@@ -137,16 +137,16 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 			ok = executableExample.getTextForId(xpath5).equals("Maßgeschneiderte Lösungen");
 		} else if (expectedPage.equals("Referenzen"))  {
 			ok = executableExample.getTextForId(xpath6).equals("Jede Idee ist nur so gut, wie ihre Umsetzung");
-		} else if (expectedPage.equals("Karriere"))  {
-			ok = executableExample.getTextForId(xpath7).equals("Spezialisten mit Persönlichkeit");
+		} else if (expectedPage.equals("IKS-KARRIERE"))  {
+			ok = executableExample.getTextForId(xpath7).startsWith("Das bieten wir");
 		} else if (expectedPage.equals("Kontakt"))  {
 			ok = executableExample.getTextForId(xpath3).equals("Schreiben Sie uns, wir freuen uns auf Ihre Nachricht!");
-		} else if (expectedPage.equals("Blog"))  {
-			ok = executableExample.getTextForId(xpath1).equals("Blog und Veröffentlichungen");
+		} else if (expectedPage.equals("Wissen"))  {
+			ok = executableExample.getTextForId(xpath1).equals("Blog");
 		} else if (expectedPage.equals("Fachartikel"))  {
 			ok = executableExample.getTextForId(xpath4).equals("FACHARTIKEL");
 		} else if (expectedPage.equals("News"))  {
-			ok = executableExample.getTextForId(xpath1).equals("News und Terminübersicht");
+			ok = executableExample.getTextForId(xpath1).equals("News");
 		} else {
 			executableExample.failWithMessage("Unbekannte Seite <b>" + expectedPage + "</b>.");
 		}
@@ -161,17 +161,17 @@ public class LanguageTemplatesBasics_HomePageIKS extends LanguageTemplateBasics
 	public void clickMainMenuItem(String menuItemText) 
 	{
 		String technicalTitle = menuItemText;
-		if (menuItemText.equals("Blog")) {
-			technicalTitle = "Blog und Veröffentlichungen";
-		}
-		else if (menuItemText.equals("News")) {
-			technicalTitle = "News und Terminübersicht";
-		}
-		else if (menuItemText.equals("Startseite")) {
-			technicalTitle = "Individuelle Softwareentwicklung und IT-Beratung";
+		if (menuItemText.equals("Kontakt") || menuItemText.equals("Leistungen") ||menuItemText.equals("Fachartikel") || 
+			menuItemText.equals("Referenzen")  || menuItemText.equals("Unternehmen")) {
+			executableExample.clickLink("//a[@title='" + technicalTitle + "']", 2);
+		} else if (menuItemText.equals("News")) {
+			executableExample.clickLink("//a[@title='News und Terminübersicht']", 1);
+		} else if (menuItemText.equals("Startseite")) {
+			executableExample.clickLink("//a[@title='Individuelle Softwareentwicklung und IT-Beratung']", 1);
+		} else {
+			executableExample.clickLink("//a[@title='" + technicalTitle + "']", 1);
 		}
 		
-		executableExample.clickLink("//a[@title='" + technicalTitle + "']", 2);
 		//executableExample.addReportMessage("Der Hauptmenüpunkt <b>" + menuItemText + "</b> wurde geklickt.");
 		executableExample.addReportMessage("Main menu item <b>" + menuItemText + "</b> has been clicked.");
 	}

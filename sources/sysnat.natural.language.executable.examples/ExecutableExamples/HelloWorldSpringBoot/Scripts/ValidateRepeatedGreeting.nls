@@ -3,10 +3,7 @@
 
 # arrange
 Test-Phase: Arrange    # setup all test requirements
-TestData: GreetingValidationData
-
-# This is needed ??? to make the test data in GreetingValidationData available for the script GreetingData!
-# Convert data "GreetingValidationData" to "GreetingData".
+Test-Parameter: HelloWorldTestData
 
 Click menu item "Form Page".
 Execute script "EnterGreetingData".

@@ -256,7 +256,6 @@ public class LanguagePatternParser
 			                          String valueInInstruction,
 			                          String naturalLanguageLine) 
 	{
-		
 		if (parameterTypes != null) {
 			// in LanguageTemplatePattern case
 			Class<?> parameterType = null;

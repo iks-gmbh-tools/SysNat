@@ -126,11 +126,12 @@ public class SysNatStringUtil
 
 	public static String cutExtension(String filename) 
 	{
-		int pos = filename.lastIndexOf(".");
-		if (pos == -1) {
+		int pos1 = filename.lastIndexOf(".");
+		int pos2 = filename.lastIndexOf("__");
+		if (pos1 == -1 || (pos2 > -1 && pos1<pos2)) {
 			return filename;
 		}
-		return filename.substring(0, pos);
+		return filename.substring(0, pos1);
 	}
 
 	public static String replaceGermanUmlauts(final String toReturn) 
@@ -449,6 +450,42 @@ public class SysNatStringUtil
 			toReturn.add(element);
 			parameters = parameters.substring(pos + separator.length());
 		}
+	}
+
+	public static boolean isIntegerNumber(String linkNo)
+	{
+		try {
+			Integer.valueOf(linkNo);
+			return true;
+		} catch (Exception e) {			  
+			return false;
+		}
+	}
+
+	public static String replaceBetweenQuotes(String text, String toSearch, String replacement)
+	{
+		char[] charArray = text.toCharArray();
+		StringBuffer toReturn = new StringBuffer();
+		boolean charBetweenQuotes = false;
+		
+		for (int i = 0; i < charArray.length; i++) 
+		{
+			char c = charArray[i];
+			if (c == '"') {
+				charBetweenQuotes = ! charBetweenQuotes;
+				toReturn.append(c);
+				continue;
+			}
+			
+			if (charBetweenQuotes && ("" + c).equals(toSearch)) {
+				toReturn.append(replacement);
+			} else {
+				toReturn.append(c);
+			}
+			
+		}
+		
+		return toReturn.toString();
 	}
 
 }

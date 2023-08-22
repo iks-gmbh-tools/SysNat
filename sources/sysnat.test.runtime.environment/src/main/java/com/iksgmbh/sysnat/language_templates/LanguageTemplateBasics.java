@@ -122,7 +122,11 @@ public abstract class LanguageTemplateBasics
 		this.executableExample.setCurrentPage(aPageObject);
 	}
 	
-	protected int toInteger(String intAsString, String valueName) {
+	protected int toInteger(String intAsString, String valueName) 
+	{
+		if (intAsString == null) {
+			executableExample.failWithMessage("Der Wert <b>" + valueName + "</b> ist nicht gesetzt.");
+		}
 		try {
 			return Integer.valueOf(intAsString);
 		} catch (NumberFormatException e) {
@@ -131,7 +135,11 @@ public abstract class LanguageTemplateBasics
 		}
 	}
 
-	protected double toDouble(String doubleAsString, String valueName) {
+	protected double toDouble(String doubleAsString, String valueName) 
+	{
+		if (doubleAsString == null) {
+			executableExample.failWithMessage("Der Wert <b>" + valueName + "</b> ist nicht gesetzt.");
+		}
 		try {
 			return Double.valueOf(doubleAsString);
 		} catch (NumberFormatException e) {
@@ -150,7 +158,9 @@ public abstract class LanguageTemplateBasics
 		}
 		
 		if (pageChangeEvent.currentPage != null) {
-			if (pageChangeEvent.currentPage != this.getCurrentPage()) return false;	
+			if (! pageChangeEvent.currentPage.getPageName().equals(this.getCurrentPage().getPageName())) {
+				return false;	
+			}
 		}
 		boolean noPageChange = pageChangeEvent.type != null && type != null && pageChangeEvent.type != type;
 		if (noPageChange) return false;
@@ -297,6 +307,12 @@ public abstract class LanguageTemplateBasics
 		getCurrentPage().chooseInCombobox(fieldName, value);
 		executableExample.addReportMessage("For field <b>" + fieldName + "</b> value <b>" + value + "</b> has been selected.");
 	}
+
+	protected void chooseInCombobox(int numberInOptionList, String fieldName) 
+	{
+		getCurrentPage().chooseInCombobox(fieldName, numberInOptionList-1);
+		executableExample.addReportMessage("For field <b>" + fieldName + "</b> option in position <b>" + numberInOptionList + "</b> has been selected.");
+	}
 	
 	protected void enterTextInField(String valueCandidate, String fieldName)
 	{
@@ -304,6 +320,13 @@ public abstract class LanguageTemplateBasics
 		getCurrentPage().enterTextInTextField(fieldName, value);
 		executableExample.addReportMessage("In field <b>" + fieldName + "</b> the value <b>" + value + "</b> has been entered.");
 	}
+	
+	protected void enterTextInTextarea(String valueCandidate, String fieldName)
+	{
+		final String value = executableExample.getTestDataValue(valueCandidate);
+		getCurrentPage().enterTextInTextArea(fieldName, value);
+		executableExample.addReportMessage("In text area <b>" + fieldName + "</b> the value <b>" + value + "</b> has been entered.");
+	}	
 	
 	protected void clickLink(String linkText)
     {
@@ -316,10 +339,17 @@ public abstract class LanguageTemplateBasics
 	   } catch (Exception e) {
 	        throw new SysNatException("Der Link <b>" + linkText + "</b> ist nicht bekannt oder konnte nicht geklickt werden.");
 	   }
+	   
+	   checkPageChange(linkText, EventType.LinkClick);
     }
 
-	// #########################  C H E C K B O X  ####################################
+	// #########################  R A D I O B U T T O N S    A N D    C H E C K B O X E S  ####################################
 
+	protected void clickRadioButton(String radioButtonName)
+	{
+	    getCurrentPage().clickRadioButton(radioButtonName);
+		executableExample.addReportMessage("Es wurde der RadioButton <b>" + radioButtonName + "</b> angeklickt.");
+	}	
 	
 	protected void ensureCheckboxIsTicked(String checkBoxDisplayName)
 	{
@@ -396,7 +426,7 @@ public abstract class LanguageTemplateBasics
 
 	public static class PageChangeEvent 
 	{
-		public enum EventType { ButtonClick, MenuItemClick, TabSwitch };
+		public enum EventType { ButtonClick, MenuItemClick, TabSwitch, LinkClick };
 		
 		public String uiElementIdentifierTrigger;
 		public PageObject nextPage;

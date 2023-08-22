@@ -55,6 +55,7 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 	private Robot robot;
 	private WebDriver webDriver;
 	private ExecutionRuntimeInfo executionInfo = ExecutionRuntimeInfo.getInstance();
+	private String initUrl;
 
 	private enum TAGNAME { select, input };
 
@@ -65,7 +66,7 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 	
 	@Override
 	public void reloadGui() {
-		reloadCurrentPage();
+		goToStartPage();
 	}
 
 	@Override
@@ -84,7 +85,7 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 	public boolean init(Map<String, String> startParameter) 
 	{
 		boolean ok = false;
-		String targetLoginUrl = startParameter.get("starturl");
+		initUrl = startParameter.get("starturl");
 		
 		if (webDriver == null) {
 			ok = openGUI();
@@ -93,7 +94,7 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 		if (ok) 
 		{
 			try {
-				webDriver.get(targetLoginUrl);
+				webDriver.get(initUrl);
 			} catch (Exception e) {
 				ok = false;
 			}
@@ -662,12 +663,13 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 		
 			try {
 				element.click();
+
 				return null;
 			} catch (Exception e) {
 				if (element != null) {
-//					((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", element);
-//					Actions builder = new Actions(webDriver);
-//					builder.moveToElement(element).perform();
+					((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", element);
+					Actions builder = new Actions(webDriver);
+					builder.moveToElement(element).perform();
 				}
 			}
 			
@@ -773,7 +775,7 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 			}
 			JavascriptExecutor js = (JavascriptExecutor) webDriver;
 			js.executeScript("arguments[0].scrollIntoView();", elementToScrollIntoView );
-			
+
 			if (webDriver instanceof InternetExplorerDriver) 
 			{
 				js.executeScript("return arguments[0].click();", element);
@@ -835,6 +837,15 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 	{
 		try {
 			webDriver.navigate().refresh();
+		} catch (Exception e) {
+			System.err.println("Error reloading current page. Presumably the endpoint is not available.");
+		}
+	}
+	
+	public void goToStartPage()
+	{
+		try {
+			webDriver.navigate().to(initUrl);
 		} catch (Exception e) {
 			System.err.println("Error reloading current page. Presumably the endpoint is not available.");
 		}
@@ -1137,7 +1148,7 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 				// ignore
 			}
 		}
-
+		
 		if (toReturn.size() == 0) {
 			try {
 				toReturn = webDriver.findElements(By.className(elementIdentifier));
@@ -1346,7 +1357,22 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 	@Override
 	public void clickRadioButton(String elementIndentifier)
 	{
-		// TODO Auto-generated method stub
+		List<WebElement> result = findMatchingElements(elementIndentifier);
+		if (result == null || result.size() != 1) {
+	    	throw new RuntimeException("No or no unique element with identifier '" + elementIndentifier + "' found.");
+		}
+		
+		result.get(0).click();
+		
+        int attempts = 1;
+        while (! isSelected(elementIndentifier)) {  //das klappt im Edge noch nicht richtig!
+        	if (attempts == 50) {
+        		throw new SysNatException("Could not click radiobutton " + elementIndentifier);
+        	}	
+        	attempts++;
+        	sleep(250);
+        	result.get(0).click();
+        }
 		
 	}
 
@@ -1388,8 +1414,11 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 	@Override
 	public void inputTextInTextArea(String value, String areaID)
 	{
-		// TODO Auto-generated method stub
-		
+		List<WebElement> result = findMatchingElements(areaID);
+		if (result == null || result.size() != 1) {
+	    	throw new RuntimeException("No or no unique element with identifier '" + areaID + "' found.");
+		}
+		result.get(0).sendKeys(value);
 	}
 
 	@Override
@@ -1633,8 +1662,13 @@ public class SeleniumGuiController extends AbstractGuiControl implements WebGuiC
 	@Override
 	public void waitUntilElementIsAvailable(String elementIdentifier)
 	{
-		// TODO Auto-generated method stub
-		
+		long startTimestamp = new Date().getTime();
+		while ( ! isElementReady(elementIdentifier)) {
+			long now = new Date().getTime();
+			if ((now-startTimestamp) > 30000) {
+				throw new SysNatException("GUI element was not available within 30 secs: " + elementIdentifier);
+			}
+		}
 	}
 
 }

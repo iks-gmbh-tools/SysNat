@@ -131,11 +131,16 @@ public class LanguageTemplatesBasics_ModuleTest_TestApplication extends Language
 		super.clickLink(linkText);
 	}
 
-	// #####################  Textfield and Combobox instructions  ###########################
+	// #####################  Text and Combobox instructions  ###########################
 
-	@LanguageTemplate(value = "Enter ^^ in field ^^.")
+	@LanguageTemplate(value = "Enter ^^ in textfield ^^.")
 	public void enterTextInField(String valueCandidate, String fieldName) {
 		super.enterTextInField(valueCandidate, fieldName);
+	}
+
+	@LanguageTemplate(value = "Enter ^^ in textarea ^^.")
+	public void enterTextInTextarea(String valueCandidate, String fieldName) {
+		super.enterTextInTextarea(valueCandidate, fieldName);
 	}
 
 	@LanguageTemplate(value = "Select ^^ in box ^^.")
@@ -143,7 +148,12 @@ public class LanguageTemplatesBasics_ModuleTest_TestApplication extends Language
 		super.chooseInCombobox(valueCandidate, fieldName);
 	}
 
-	// ##########################  checkbox instructions  ###################################
+	// ##########################  checkbox and radiobutton instructions  ###################################
+
+	@LanguageTemplate(value = "Click radiobutton ^^.")
+	public void clickRadioButton(String radioButtonName) {
+		super.clickRadioButton(radioButtonName);
+	}
 
 	@LanguageTemplate(value = "Tick checkbox ^^.")
 	public void ensureCheckboxIsTicked(String checkBoxDisplayName) {

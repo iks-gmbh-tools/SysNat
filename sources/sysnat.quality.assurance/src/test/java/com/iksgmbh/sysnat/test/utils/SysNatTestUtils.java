@@ -77,7 +77,8 @@ public class SysNatTestUtils
 	public static List<String> readCurrentlyKnownPids() 
 	{
 		try {
-			Process process = Runtime.getRuntime().exec("cmd /C tasklist");
+			final String[] args = {"cmd", "/C", "tasklist"};
+			Process process = Runtime.getRuntime().exec(args);
 			InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
 			BufferedReader reader = new BufferedReader(inputStreamReader);
 			String line = null;

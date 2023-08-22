@@ -1,0 +1,48 @@
+HashMap<String, List<String>> idMappings = new HashMap<String, List<String>>();
+        idMappings.put("Corporate name of company or organisation", createList("parties[0].company"));
+        idMappings.put("Surname", createList("parties[0].surName"));
+        idMappings.put("First name", createList("parties[0].lastName"));
+        idMappings.put("Identification code (if applicable)", createList("parties[0].idCode"));
+        idMappings.put("Address", createList("parties[0].address"));
+        idMappings.put("Postal code", createList("parties[0].postalCode"));
+        idMappings.put("City", createList("parties[0].city"));
+        idMappings.put("Phone", createList("parties[0].phone"));
+        idMappings.put("Fax", createList("parties[0].fax"));
+        idMappings.put("e-Mail", createList("parties[0].email"));
+        idMappings.put("Occupation", createList("parties[0].occupation"));
+        idMappings.put("Other details", createList("parties[0].otherDetails"));
+        idMappings.put("Corporate name of company or organisation", createList("parties[1].company"));
+        idMappings.put("Surname", createList("parties[1].surName"));
+        idMappings.put("First name", createList("parties[1].lastName"));
+        idMappings.put("Identification code (if applicable)", createList("parties[1].idCode"));
+        idMappings.put("Address", createList("parties[1].address"));
+        idMappings.put("Postal code", createList("parties[1].postalCode"));
+        idMappings.put("City", createList("parties[1].city"));
+        idMappings.put("Phone", createList("parties[1].phone"));
+        idMappings.put("Fax", createList("parties[1].fax"));
+        idMappings.put("e-Mail", createList("parties[1].email"));
+        idMappings.put("Occupation", createList("parties[1].occupation"));
+        idMappings.put("Other details", createList("parties[1].otherDetails"));
+        idMappingCollection.put(GuiType.TextField, idMappings);
+
+        idMappings = new HashMap<String, List<String>>();
+        idMappings.put("Country", createList("parties[0].country"));
+        idMappings.put("Please specify", createList("parties[0].otherCountry"));
+        idMappings.put("Country", createList("parties[1].country"));
+        idMappings.put("Please specify", createList("parties[1].otherCountry"));
+        idMappingCollection.put(GuiType.ComboBox, idMappings);
+
+        idMappings = new HashMap<String, List<String>>();
+        idMappings.put("01 Claimant", createList("01_Claimant"));
+        idMappings.put("02 Defendant", createList("02_Defendant"));
+        idMappings.put("03 Claimant's representative", createList("03_Claimant's_representative"));
+        idMappings.put("04 Defendant's representative", createList("04_Defendant's_representative"));
+        idMappings.put("05 Claimant's legally authorised representative", createList("05_Claimant's_legally_authorised_representative"));
+        idMappings.put("06 Defendant's legally authorised representative", createList("06_Defendant's_legally_authorised_representative"));
+        idMappingCollection.put(GuiType.RadioButtonSelection, idMappings);
+
+        idMappings = new HashMap<String, List<String>>();
+        idMappings.put("Choose File", createList("No Technical Id found for field with display name: Choose File"));
+        idMappings.put("Choose File", createList("submitNavigation4_id"));
+        idMappings.put("Choose File", createList("submitNavigation5_id"));
+        idMappingCollection.put(GuiType.Button, idMappings);

@@ -91,6 +91,7 @@ public interface GuiControl
 	void clickRadioButton(String elementIdentifier);
 	void clickRadioButton(int index);
 	void clickDialogRadioButton(String dialogTitle, String elementIdentifier);
+	
 	/**
 	 * @param elementIdentifier identifies a group of radio buttons
 	 * @param position identifies a radio button within the group by button order
@@ -203,10 +204,10 @@ public interface GuiControl
 		try {
 			Robot robot = new Robot();
 			robot.mouseMove(x,y);           
-			robot.mousePress(InputEvent.BUTTON1_MASK);
-			robot.mouseRelease(InputEvent.BUTTON1_MASK);
-			robot.mousePress(InputEvent.BUTTON1_MASK);
-			robot.mouseRelease(InputEvent.BUTTON1_MASK);
+			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 		} catch (AWTException e) {
 			e.printStackTrace();
 		}
@@ -218,8 +219,8 @@ public interface GuiControl
 		try {
 			Robot robot = new Robot();
 			robot.mouseMove(x,y);           
-			robot.mousePress(InputEvent.BUTTON1_MASK);
-			robot.mouseRelease(InputEvent.BUTTON1_MASK);
+			robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+			robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 		} catch (AWTException e) {
 			e.printStackTrace();
 		}
@@ -232,6 +233,19 @@ public interface GuiControl
 	      Robot robot = new Robot();
 	      robot.keyPress(KeyEvent.VK_ENTER);
 	      robot.keyRelease(KeyEvent.VK_ENTER);
+	      return true;
+	   } catch (AWTException e) {
+	      e.printStackTrace();
+	      return false;
+	   }
+	}
+
+	public default boolean pressEscape()
+	{
+	   try {
+	      Robot robot = new Robot();
+	      robot.keyPress(KeyEvent.VK_ESCAPE);
+	      robot.keyRelease(KeyEvent.VK_ESCAPE);
 	      return true;
 	   } catch (AWTException e) {
 	      e.printStackTrace();
@@ -369,6 +383,21 @@ public interface GuiControl
 		      robot.keyPress(KeyEvent.VK_TAB);
 		      robot.keyRelease(KeyEvent.VK_TAB);
 		      robot.keyRelease(KeyEvent.VK_ALT);
+		      return true;
+		   } catch (AWTException e) {
+		      e.printStackTrace();
+		      return false;
+		   }
+	}
+
+	public default boolean pressShiftTab() 
+	{
+	   try {
+		      Robot robot = new Robot();
+		      robot.keyPress(KeyEvent.VK_SHIFT);
+		      robot.keyPress(KeyEvent.VK_TAB);
+		      robot.keyRelease(KeyEvent.VK_TAB);
+		      robot.keyRelease(KeyEvent.VK_SHIFT);
 		      return true;
 		   } catch (AWTException e) {
 		      e.printStackTrace();

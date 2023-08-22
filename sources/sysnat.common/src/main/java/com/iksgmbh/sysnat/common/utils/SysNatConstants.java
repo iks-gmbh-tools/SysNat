@@ -46,7 +46,7 @@ public class SysNatConstants
 
     public enum DocumentationDepth { Maximum, Medium, Minimum };
 
-	public enum BrowserType { CHROME, IE, FIREFOX, EDGE };
+	public enum BrowserType { CHROME, FIREFOX, EDGE };
 
 	public enum ExecSpeed { QUICK, SCHNELL, NORMAL, SLOW, LANGSAM };
 

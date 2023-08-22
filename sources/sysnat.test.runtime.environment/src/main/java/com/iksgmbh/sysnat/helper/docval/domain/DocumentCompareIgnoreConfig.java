@@ -49,13 +49,6 @@ public class DocumentCompareIgnoreConfig
 		String s = "Für den Dokumentenvergleich wird Zeile 1 auf Seite 2 im ersten Dokument ignoriert.";
 		String r = "Für den Dokumentenvergleich wird Zeile .* auf Seite .* im ersten Dokument ignoriert.";
 		System.out.println(s.matches(r));
-		 
-//		String r = "bu.*bu.*bu";
-//		System.out.println("bbu".matches(r));
-//		System.out.println("bububu".matches(r));
-//		System.out.println("bu buaaaabu".matches(r));
-//		System.out.println("buabu".matches(r));
-//		System.out.println("buaaaabu ".matches(r));
 	}
 
 

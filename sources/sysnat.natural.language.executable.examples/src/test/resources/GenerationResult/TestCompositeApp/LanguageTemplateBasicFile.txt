@@ -161,11 +161,19 @@ public class LanguageTemplatesBasics_FakeCompositeApp extends LanguageTemplateBa
 	}
 
 	@LanguageTemplate(value = "Click link ^^.")
-	@LanguageTemplate(value = "Enter ^^ in field ^^.")
+	@LanguageTemplate(value = "Enter ^^ in textfield ^^.")
 	public void enterTextInField(String valueCandidate, String fieldName) 
 	{
 		if (applicationInFocus == APP.TestApp1) languageTemplatesBasics_TestApp1.enterTextInField(valueCandidate, fieldName);
 		else if (applicationInFocus == APP.TestApp2) languageTemplatesBasics_TestApp2.enterTextInField(valueCandidate, fieldName);
+		else throw new RuntimeException("Unsupported application: " + applicationInFocus);
+	}
+
+	@LanguageTemplate(value = "Enter ^^ in textarea ^^.")
+	public void enterTextInTextarea(String valueCandidate, String fieldName) 
+	{
+		if (applicationInFocus == APP.TestApp1) languageTemplatesBasics_TestApp1.enterTextInTextarea(valueCandidate, fieldName);
+		else if (applicationInFocus == APP.TestApp2) languageTemplatesBasics_TestApp2.enterTextInTextarea(valueCandidate, fieldName);
 		else throw new RuntimeException("Unsupported application: " + applicationInFocus);
 	}
 
@@ -174,6 +182,14 @@ public class LanguageTemplatesBasics_FakeCompositeApp extends LanguageTemplateBa
 	{
 		if (applicationInFocus == APP.TestApp1) languageTemplatesBasics_TestApp1.chooseInCombobox(valueCandidate, fieldName);
 		else if (applicationInFocus == APP.TestApp2) languageTemplatesBasics_TestApp2.chooseInCombobox(valueCandidate, fieldName);
+		else throw new RuntimeException("Unsupported application: " + applicationInFocus);
+	}
+
+	@LanguageTemplate(value = "Click radiobutton ^^.")
+	public void clickRadioButton(String radioButtonName) 
+	{
+		if (applicationInFocus == APP.TestApp1) languageTemplatesBasics_TestApp1.clickRadioButton(radioButtonName);
+		else if (applicationInFocus == APP.TestApp2) languageTemplatesBasics_TestApp2.clickRadioButton(radioButtonName);
 		else throw new RuntimeException("Unsupported application: " + applicationInFocus);
 	}
 

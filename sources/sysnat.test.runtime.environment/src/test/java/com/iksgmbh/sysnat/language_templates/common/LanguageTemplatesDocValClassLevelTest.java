@@ -29,6 +29,7 @@ import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
 import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
+import com.iksgmbh.sysnat.utils.TestUtils;
 
 public class LanguageTemplatesDocValClassLevelTest
 {
@@ -238,34 +239,11 @@ public class LanguageTemplatesDocValClassLevelTest
     		String expected = expectedMessages.get(i);
     		if (i != 0 && i+1 < size) expected = "//" + expected;
     		
-			expected = cutLocalPath(expected.replace("sysnat.test.runtime.environment\\..\\", ""));
-			String actual = cutLocalPath(reportMessages.get(i).replace("sysnat.quality.assurance\\..\\", ""));
+			expected = TestUtils.cutMainPath(expected.replace("sysnat.test.runtime.environment\\..\\", ""));
+			String actual = TestUtils.cutMainPath(reportMessages.get(i).replace("sysnat.quality.assurance\\..\\", ""));
 
             assertEquals( i + "th report message", expected, actual);
     	}
-	}
-
-	private String cutLocalPath(String str)
-	{
-		int pos1 = str.indexOf("Doc1");
-		int pos2 = -1;
-		
-		if (pos1 > -1) {
-			String s = str.substring(pos1);
-			pos2 = s.indexOf("\\sources\\");
-			if (pos2 == -1) return str;
-			str = str.substring(0, pos1) + s.substring(pos2);
-		}
-		
-		pos1 = str.indexOf("Doc2");
-		if (pos1 > -1) {
-			String s = str.substring(pos1);
-			pos2 = s.indexOf("\\sources\\");
-			if (pos2 == -1) return str;
-			str = str.substring(0, pos1) + s.substring(pos2);
-		}
-		
-		return str;
 	}
 
 	private List<String> loadExpectedLines(String filename)

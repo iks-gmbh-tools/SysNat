@@ -25,7 +25,8 @@ import com.sun.jna.win32.StdCallLibrary;
 public class WindowHelper 
 {
    static interface User32 extends StdCallLibrary {
-	      User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class);
+	    @SuppressWarnings("deprecation")
+		User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class);
 
       interface WNDENUMPROC extends StdCallCallback {
          boolean callback(Pointer hWnd, Pointer arg);

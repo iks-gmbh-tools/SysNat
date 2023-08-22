@@ -17,6 +17,7 @@ package com.iksgmbh.sysnat.common.helper;
 
 import java.io.File;
 
+import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -58,6 +59,8 @@ public class HtmlLauncher
 			{
 				System.setProperty("webdriver.edge.driver", getPathToBrowserExe(browserTypeToUse));
 				final EdgeOptions options = new EdgeOptions();
+			    options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.ACCEPT);
+			    options.addArguments("--remote-allow-origins=*");
 				EdgeDriver webDriver = new EdgeDriver(options);
 				webDriver.manage().window().maximize();
 				webDriver.get("file:///" + pathToHtmlFile);

@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class CurrentVersionFinder
 {
-	private static final String PREFIX = "\\Client-";
+	private static final String PREFIX = "\\InkaClient-";
 	private static final String SUFFIX = " - Umgebung REL";
 
 	public static String doYourJob(File sourceFile) 

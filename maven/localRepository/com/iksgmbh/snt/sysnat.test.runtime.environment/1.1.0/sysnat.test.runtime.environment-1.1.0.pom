@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <artifactId>sysnat.test.runtime.environment</artifactId>
+  <name>SNT Test Runtime Environment Module</name>
+  <description>Implementation of the test runtime. JUnit test classes located in the gen directory are executed..</description>
+  
+  <parent>
+     <groupId>com.iksgmbh.snt</groupId>
+     <artifactId>sysnat.parent</artifactId>
+     <version>1.1.0</version>
+     <relativePath>../sysnat.parent/pom.xml</relativePath>
+  </parent>  
+  
+  <properties>
+    <inka.version>8.8.1</inka.version>
+  </properties>
+  
+  <dependencies>
+
+   	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.testdata.import</artifactId>
+  	  <version>1.1.0</version>
+  	</dependency>
+
+   	<dependency>
+  	  <groupId>com.iksgmbh.snt</groupId>
+   	  <artifactId>sysnat.testresult.archiving</artifactId>
+  	  <version>1.1.0</version>
+  	</dependency>
+        
+	<!-- gui test framework dependencies -->
+
+        <dependency>
+            <groupId>org.netbeans</groupId>
+            <artifactId>jemmy</artifactId>
+            <version>2.2.7.5</version>
+        </dependency>
+        
+		<dependency>
+		    <groupId>org.netbeans.api</groupId>
+		    <artifactId>org-netbeans-modules-jellytools-platform</artifactId>
+		    <version>RELEASE180</version>
+		</dependency>        
+   
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-swing-junit</artifactId>
+            <version>3.17.1</version>
+        </dependency>
+
+		<dependency>
+		    <groupId>net.java.dev.jna</groupId>
+		    <artifactId>jna</artifactId>
+		    <version>5.13.0</version>
+		</dependency>
+        
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.14</version>
+		</dependency>
+                
+ </dependencies>  
+ 
+</project>

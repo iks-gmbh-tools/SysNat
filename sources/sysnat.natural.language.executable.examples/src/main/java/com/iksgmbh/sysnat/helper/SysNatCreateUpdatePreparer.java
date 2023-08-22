@@ -11,9 +11,9 @@ public class SysNatCreateUpdatePreparer
 {
 	public static final String EXECUTION_POM = "../sysnat.test.execution/pom.xml";
 	public static final String RUNTIME_POM = "../sysnat.test.runtime.environment/pom.xml";
-	public static final String PROPERTIES = "../sysnat.test.runtime.environment/src/main/resources/execution_properties/Client.properties";
+	public static final String PROPERTIES = "../sysnat.test.runtime.environment/src/main/resources/execution_properties/InkaClient.properties";
 	public static String PATH = "../../../../";
-	public static final String VERSION = "1.1"; //CurrentVersionFinder.doYourJob(new File(ClientUpdater.DefaultSource));
+	public static final String INKA_VERSION = CurrentVersionFinder.doYourJob(new File(InkaClientUpdater.DefaultSource));
 	
 	public static void main(String[] args) throws IOException
 	{
@@ -37,8 +37,8 @@ public class SysNatCreateUpdatePreparer
 
 		for (int i = 0; i < lines.size(); i++) 
 		{
-			if (lines.get(i).contains("<version>")) {
-				newLines.add("    <version>" + VERSION + "</version>");
+			if (lines.get(i).contains("<inka.version>")) {
+				newLines.add("    <inka.version>" + INKA_VERSION + "</inka.version>");
 			} else {
 				newLines.add(lines.get(i));
 			}

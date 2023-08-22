@@ -86,7 +86,7 @@ public class TestDataImporterClassLevelTest
 		// arrange
 		System.setProperty("sysnat.report.dir", "target");
 		System.setProperty(SysNatConstants.TEST_REPORT_NAME_SETTING_KEY, "TestReport");
-		System.setProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "true");
+		System.setProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN, "false");
 		
 		try {
 			// act

@@ -20,7 +20,7 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
@@ -30,6 +30,11 @@ import com.iksgmbh.sysnat.domain.NaturalLanguagePatternPart.NaturalLanguagePatte
 public class LanguageInstructionPatternClassLevelTest 
 {
 
+	@Before
+	public void setup() {
+		System.setProperty("sysnat.report.dir", "./target");
+	}
+	
 	@Test
 	public void createsSimpleNaturalLanguageInstruction() throws Exception 
 	{
@@ -180,34 +185,6 @@ public class LanguageInstructionPatternClassLevelTest
 		}
 	}
 
-	@Test
-	@Ignore
-	public void throwsErrorForEmptyVariableIdentifier() throws Exception 
-	{
-		try {
-			// act
-			new LanguageInstructionPattern("Create ''.", "xy.nlxx");
-			fail("Expected exception not thrown!");
-		} catch (SysNatException e) {
-			// assert
-			assertEquals("error message", ErrorCode.NATURAL_LANGUAGE_INSTRUCTING_PARSING__EMPTY_PARAMETER_IDENTIFIER, e.getErrorCode());
-		}
-	}
-	
-	@Test
-	@Ignore
-	public void throwsErrorForEmptyParameterIdentifier() throws Exception 
-	{
-		try {
-			// act
-			new LanguageInstructionPattern("Create ^^.", "xy.nlxx");
-			fail("Expected exception not thrown!");
-		} catch (SysNatException e) {
-			// assert
-			assertEquals("error message", ErrorCode.NATURAL_LANGUAGE_INSTRUCTING_PARSING__EMPTY_PARAMETER_IDENTIFIER, e.getErrorCode());
-		}
-	}
-	
 	@Test
 	public void returnsListOfParamVariableNames() throws Exception 
 	{

@@ -45,6 +45,7 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 			pid = Integer.valueOf( pidAsString );
 		} catch (Exception e) {
 			System.err.println("HelloWorldSpringBoot cannot start because it is already running.");
+			System.exit(1);
 		}
 		sleep(5000);
 		System.out.println("#######################################################");
@@ -60,7 +61,8 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 	private static void stopTestApplication() 
 	{
 		try {
-			final Process process = Runtime.getRuntime().exec("cmd /C taskkill /PID " + pid + " /F");
+			final String[] args = {"cmd", "/C", "taskkill /PID " + pid , " /F"};
+			final Process process = Runtime.getRuntime().exec(args);
 			final InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
 			final BufferedReader reader = new BufferedReader(inputStreamReader);
 			String line = null;
@@ -77,7 +79,8 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 		try {
 			String toReturn = null;
 			final String path = SysNatFileUtil.findAbsoluteFilePath("../sysnat.quality.assurance/HelloWorldSpringBoot");
-			final Process process = Runtime.getRuntime().exec("cmd /C cd " + path + " && startHelloWorldSpringBoot.bat");
+			final String[] args = {"cmd", "/C", "cd " + path , " && startHelloWorldSpringBoot.bat"};
+			final Process process = Runtime.getRuntime().exec(args);
 			final InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
 			final BufferedReader reader = new BufferedReader(inputStreamReader);
 			String line = null;
@@ -118,7 +121,7 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 		final String report = runSNTsucessfully();
 		
 		// assert
-		int expectedNumberSuccessfullyExecutedTests = 17;
+		int expectedNumberSuccessfullyExecutedTests = 19;
 		assertTrue("Unexpected number of successful test cases found in report.", 
 				   report.contains( getHtmlReportSnippet(expectedNumberSuccessfullyExecutedTests,
 						                                 SysNatConstants.GREEN_HTML_COLOR)));

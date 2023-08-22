@@ -45,6 +45,7 @@ import com.iksgmbh.sysnat.dialog.tab.GenerateNLInstructionPanel;
 import com.iksgmbh.sysnat.dialog.tab.GeneratePageObjectPanel;
 import com.iksgmbh.sysnat.dialog.tab.GenerateTestAppPanel;
 import com.iksgmbh.sysnat.dialog.tab.GenerationDeleteTestAppPanel;
+import com.iksgmbh.sysnat.dialog.tab.ParseCodeForIdMappingPanel;
 import com.iksgmbh.sysnat.dialog.tab.UserTestingPanel;
 
 /**
@@ -83,7 +84,7 @@ public class SysNatDialog extends JFrame
 	public static final int frameHeight = 685;
 	public static final int lineHeight = 26;
 	
-	private static DialogMode mode = DialogMode.User;
+	protected static DialogMode mode = DialogMode.User;
 
 	private JTabbedPane tabbedPane;
 	private UserTestingPanel testingPanel;
@@ -92,6 +93,7 @@ public class SysNatDialog extends JFrame
 	private GeneratePageObjectPanel pageObjectCreationPanel;
 	private GenerateTestAppPanel testApplicationCreationPanel;
 	private GenerateNLInstructionPanel languageInstructionCreationPanel;
+	private ParseCodeForIdMappingPanel parseCodeForIdMappingPanel;
 	private GenerationDeleteTestAppPanel testAppDeletePanel;
 
 	private File devgenConfigFile = new File("./devgen.config");
@@ -159,7 +161,9 @@ public class SysNatDialog extends JFrame
 		setVisible(true);
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 	    public boolean dispatchKeyEvent(KeyEvent e) {
-	    	return checkModeChange(e);
+	    	boolean ok = checkModeChange(e);
+	    	if (ok) changeMode();
+	    	return ok;
 	    }});	
 		initShutDownHook();
 	}
@@ -168,20 +172,24 @@ public class SysNatDialog extends JFrame
 	{
 		if (e.getID() == KeyEvent.KEY_PRESSED && e.isControlDown() && e.isAltDown() && e.isShiftDown() && e.getKeyCode() == KeyEvent.VK_M) 
 		{
-			tabbedPane.removeAll();
-			if (mode == DialogMode.User) {
-				mode = DialogMode.Developer;
-				setTitle(SYS_NAT_START_DIALOG + "  Developer Tools");
-			} else {
-				mode = DialogMode.User;
-				setTitle(SYS_NAT_START_DIALOG);
-			}
-			initComponents(tabbedPane);
-			tabbedPane.update(tabbedPane.getGraphics());
-			tabbedPane.updateUI();
 			return true;
 		}
 		return false;
+	}
+
+	protected void changeMode()
+	{
+		tabbedPane.removeAll();
+		if (mode == DialogMode.User) {
+			mode = DialogMode.Developer;
+			setTitle(SYS_NAT_START_DIALOG + "  Developer Tools");
+		} else {
+			mode = DialogMode.User;
+			setTitle(SYS_NAT_START_DIALOG);
+		}
+		initComponents(tabbedPane);
+		tabbedPane.update(tabbedPane.getGraphics());
+		tabbedPane.updateUI();
 	}
 
 	private void initWindowsCloseEventHandler()
@@ -228,7 +236,11 @@ public class SysNatDialog extends JFrame
 			languageInstructionCreationPanel = new GenerateNLInstructionPanel(this);
 			tabbedPane.addTab("New LanguageTemplate", null, languageInstructionCreationPanel, "Create a new Natural Language instruction for an existing TestApplications...");
 			tabbedPane.setMnemonicAt(2, KeyEvent.VK_L);
-			
+
+			parseCodeForIdMappingPanel = new ParseCodeForIdMappingPanel(this);
+			tabbedPane.addTab("Generate Id-Mapping", null, parseCodeForIdMappingPanel, "Creates id-Mapping from parsed code in clipboard...");
+			tabbedPane.setMnemonicAt(2, KeyEvent.VK_I);
+
 			testAppDeletePanel = new GenerationDeleteTestAppPanel(this);
 			tabbedPane.addTab("Del TestApp", null, testAppDeletePanel, "Delete an existing TestApplications...");
 			tabbedPane.setMnemonicAt(3, KeyEvent.VK_D);

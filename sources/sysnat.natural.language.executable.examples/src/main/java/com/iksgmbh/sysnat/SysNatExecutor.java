@@ -17,6 +17,7 @@ package com.iksgmbh.sysnat;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.DialogStartTab;
@@ -42,10 +44,11 @@ import de.iksgmbh.sysnat.docing.SysNatDocumentGenerator;
 public class SysNatExecutor 
 {
 	public static final String MAVEN_OK = "OK";
-	public static final File JAVA_HOME = new File("../../java");
+	public static final File JAVA_JDK_DIR = new File("C:/dev/java/openjdk-20.0.2");
 	
 	private static final String PATH_TO_MAVEN = "../../maven";
 	private static final String[] SYSNAT_FILES = {"pom.xml", "AvailableNaturalLanguageScripts.properties"};
+	private static final boolean updateSysNatJarsInLocalMavenRepository = false;
 	
 	public static void main(String[] args) 
 	{
@@ -66,6 +69,14 @@ public class SysNatExecutor
 				if (generationSuccessful) generationSuccessful = PropertyFilesPreparer.doYourJob(fingAppsToStart);
 			}
 			
+			if (ExecutionRuntimeInfo.getInstance().getTestApplication().getName().equals("InkaClient")) {
+				String inkaVersion = readInkaVersionFromCurrentProperties();  // depends on environment !
+				writeVersionInPomFile(inkaVersion);
+				Properties properties = new Properties();
+				properties.put("skipTests", "true");
+				startMaven( properties, "../sysnat.test.runtime.environment/pom.xml", "install");
+			}
+			
 			if (generationSuccessful) 
 			{
 				// mandatory Phase B: compile and start tests 
@@ -80,6 +91,40 @@ public class SysNatExecutor
 			String applicationUnderTest = ExecutionRuntimeInfo.getInstance().getDocApplicationName();
 			SysNatDocumentGenerator.doYourJob(applicationUnderTest);
 		}
+	}
+
+	private static void writeVersionInPomFile(String inkaVersion)
+	{
+		if (inkaVersion == null) return;
+		List<String> newContent = new ArrayList<>();
+		String pom = "../sysnat.test.runtime.environment/pom.xml";
+		List<String> lines = SysNatFileUtil.readTextFile(pom);
+		for (String line : lines) {
+			if (line.trim().startsWith("<inka.version>")) {
+				newContent.add("    <inka.version>" + inkaVersion + "</inka.version>");
+			} else {
+				newContent.add(line);
+			}
+		}
+		SysNatFileUtil.writeFile(new File(pom), newContent);
+	}
+
+	private static String readInkaVersionFromCurrentProperties()
+	{
+		try {
+			List<String> properties = SysNatFileUtil.readTextFile("../sysnat.test.execution/InkaClient.properties");
+			for (String p : properties) {
+				if (p.trim().startsWith("client.version")) 
+				{
+					String[] splitResult = p.split("=");
+					return splitResult[1].trim();
+				}
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+		return null;
+		
 	}
 
 	private static void cleanGenerationTargetRootDir()
@@ -151,11 +196,15 @@ public class SysNatExecutor
 	 */
 	public static String startMaven(Properties jvmSystemProperties, String relativePathToPom, String goal)
 	{
+		if (! JAVA_JDK_DIR.exists()) {
+			throw new SysNatException("Defined JAVA_JDK_DIR ('" + JAVA_JDK_DIR + "') does not exist. "
+					+ "Please correct path to Java JDK in source code (SysNatExecutor.java).");
+		}
 		final InvocationRequest request = new DefaultInvocationRequest();
 		final String pomFile = SysNatFileUtil.findAbsoluteFilePath(relativePathToPom);
 		request.setPomFile(new File(pomFile));
 		request.setProperties(jvmSystemProperties);
-		request.setJavaHome(JAVA_HOME);
+		request.setJavaHome(JAVA_JDK_DIR);
 		request.setMavenOpts("-Dfile.encoding=UTF-8");
 		
 		final List<String> goals = new ArrayList<>();
@@ -164,10 +213,13 @@ public class SysNatExecutor
 		request.setGoals(goals);
 		
 		final Invoker mavenInvoker = new DefaultInvoker();
-		mavenInvoker.setMavenHome(new File(PATH_TO_MAVEN));
+		File mavenDir = new File(PATH_TO_MAVEN);
+		mavenInvoker.setMavenHome(mavenDir);
+		System.out.println(mavenDir.getAbsolutePath());
 		
 		InvocationResult result = null;
 		try {
+			request.setInputStream(InputStream.nullInputStream());
 			result = mavenInvoker.execute(request);
 		} catch (MavenInvocationException e) {
 			e.printStackTrace();
@@ -194,6 +246,11 @@ public class SysNatExecutor
 	public static String startMavenCleanCompileTest() 
 	{
 		Properties properties = collectSysNatSystemProperties();
+		if (updateSysNatJarsInLocalMavenRepository) {
+			properties.setProperty("skipTests", "true"); 
+			startMaven( properties, "../sysnat.parent/pom.xml", "install" );
+			properties = collectSysNatSystemProperties();
+		}
 		return startMaven( properties, "../sysnat.test.execution/pom.xml", "test" );
 	}
 

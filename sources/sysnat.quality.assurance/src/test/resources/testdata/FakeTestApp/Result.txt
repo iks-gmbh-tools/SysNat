@@ -1,4 +1,4 @@
-package faketestapp.faketestapp.maindir.subdir;
+package faketestapp.maindir.subdir;
 
 import org.junit.Test;
 import org.junit.After;

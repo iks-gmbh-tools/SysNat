@@ -29,8 +29,7 @@ import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.ie.InternetExplorerOptions;
+import org.openqa.selenium.firefox.GeckoDriverService;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.exception.SysNatException;
@@ -61,6 +60,8 @@ public class BrowserStarter
    
 	public void closeCurrentUI()
 	{
+		if (webDriver == null) return;
+		
 		try {
 			webDriver.close();
 		} catch (Exception e) {
@@ -86,10 +87,6 @@ public class BrowserStarter
       {
          initChromeWebDriver();
       } 
-      else if (SysNatConstants.BrowserType.IE == executionInfo.getTestBrowserType())
-      {
-         initInternetExplorerWebDriver();
-      }
       else if (SysNatConstants.BrowserType.EDGE == executionInfo.getTestBrowserType())
       {
          initEdgeWebDriver();
@@ -101,34 +98,6 @@ public class BrowserStarter
       
       webDriver.manage().window().maximize();
     }
-
-   private void initInternetExplorerWebDriver() throws MalformedURLException 
-   {
-      System.out.println("Initializing Internet Explorer web driver...");
-
-      final InternetExplorerOptions options = new InternetExplorerOptions();
-      options.ignoreZoomSettings();
-      options.enablePersistentHovering();
-      options.introduceFlakinessByIgnoringSecurityDomains();
-      options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.ACCEPT);
-      //options.enableNativeEvents();
-      //options.requireWindowFocus();
-
-      //options.takeFullPageScreenshot();
-      //options.withInitialBrowserUrl("www.iks-gmbh.com");
-      //options.withAttachTimeout(5, TimeUnit.SECONDS );
-      //options.setPageLoadStrategy(PageLoadStrategy.EAGER);
-      //options.destructivelyEnsureCleanSession();
-      
-
-       if (executionInfo.isOS_Windows())  {
-          //System.setProperty("java.net.preferIPv4Stack", "true");
-         System.setProperty("webdriver.ie.driver", getExecutable("sysnat.webdriver.executable.ie"));
-         webDriver = new InternetExplorerDriver(options);
-      } else {
-         throw new RuntimeException("Non-Windows systems not yet supported.");
-      }
-   }
 
 	private void initChromeWebDriver() throws MalformedURLException
 	{
@@ -149,12 +118,14 @@ public class BrowserStarter
 		preferences.put("download.default_directory", SysNatFileUtil.getDownloadDir().getAbsolutePath());
 		preferences.put("plugins.always_open_pdf_externally", true);
 		preferences.put("plugins.plugins_disabled", new String[] { "Chrome PDF Viewer" });
+		
+		options.addArguments("--remote-allow-origins=*","ignore-certificate-errors");
 
 		if (executionInfo.isOS_Windows()) {
 			System.setProperty("webdriver.chrome.driver", getExecutable("sysnat.webdriver.executable.chrome"));
 			webDriver = new ChromeDriver(options);
 		} else {
-			throw new RuntimeException("Non-Windows systems not yet suppoerted.");
+			throw new RuntimeException("Non-Windows systems not yet supported.");
 		}
 	}
 
@@ -170,7 +141,7 @@ public class BrowserStarter
       {
          System.setProperty("webdriver.gecko.driver", getExecutable("sysnat.webdriver.executable.firefox.gecko"));
          // System.setProperty(FirefoxDriver.SystemProperty.DRIVER_USE_MARIONETTE,"true"); Selenium 3 Setting
-         System.setProperty(FirefoxDriver.SystemProperty.BROWSER_LOGFILE,"/dev/null");
+         System.setProperty(GeckoDriverService.GECKO_DRIVER_LOG_PROPERTY,"/dev/null");
          webDriver = new FirefoxDriver(firefoxOptions);
       } else {
          throw new RuntimeException("Non-Windows systems not yet supported.");
@@ -183,6 +154,7 @@ public class BrowserStarter
 
       final EdgeOptions options = new EdgeOptions();
       options.setUnhandledPromptBehaviour(UnexpectedAlertBehaviour.ACCEPT);
+      options.addArguments("--remote-allow-origins=*");
 
       if (executionInfo.isOS_Windows())  
       {
@@ -222,8 +194,9 @@ public class BrowserStarter
    {
       String path = System.getProperty("relative.path.to.webdrivers").replace(SysNatConstants.ROOT_PATH_PLACEHOLDER, System.getProperty("root.path"));
       String toReturn = path + "/" + System.getProperty( executableType );
-      if ( ! new File(toReturn).exists() ) {
-         throw new RuntimeException("Could not find: " + executableType);
+      File file = new File(toReturn);
+      if ( ! file.exists() ) {
+         throw new RuntimeException("Could not find: " + file.getAbsolutePath());
       }
       
       return toReturn;

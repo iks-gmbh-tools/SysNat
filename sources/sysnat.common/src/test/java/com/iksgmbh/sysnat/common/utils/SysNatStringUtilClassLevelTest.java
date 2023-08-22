@@ -260,4 +260,17 @@ public class SysNatStringUtilClassLevelTest
 		
 	}
 	
+	@Test
+	public void replacesSpacesBetweenQuotes() throws Exception
+	{
+		String result = SysNatStringUtil.replaceBetweenQuotes("<input name=\"A name\">", " ", "_");
+		assertEquals("replacement", "<input name=\"A_name\">", result);
+		
+		result = SysNatStringUtil.replaceBetweenQuotes("<input name=\"A_name\" id=\"an_Id\">", "_", " ");
+		assertEquals("replacement", "<input name=\"A name\" id=\"an Id\">", result);
+
+		result = SysNatStringUtil.replaceBetweenQuotes("<input type=\"radio\" name=\"cityField\" maxlength=\"50\" id=\"cityID\"> + <label for=\"cityField\">City<span class=\"asterisk\" id=\"labelId\"></label>", " ", "-");
+		assertEquals("<input type=\"radio\" name=\"cityField\" maxlength=\"50\" id=\"cityID\"> + <label for=\"cityField\">City<span class=\"asterisk\" id=\"labelId\"></label>", result);
+	}
+	
 }

@@ -330,10 +330,12 @@ public class TestApplication
 	private HashMap<String, String> getParameterValues(List<String> keys)
 	{
 		HashMap<String, String> toReturn = new HashMap<String, String>();
+		
 		for (String paramKey : keys) 
 		{
 			paramKey = paramKey.trim();
-			String lookupKey = ExecutionRuntimeInfo.getInstance().getTestEnvironmentName() + "." + paramKey;
+			String env = ExecutionRuntimeInfo.getInstance().getTestEnvironmentName();
+			String lookupKey = env + "." + paramKey;
 			String value = applicationProperties.get(lookupKey.toLowerCase());
 			if (value == null) {
 				// There is no value that is specific to the currently defined environment! 
@@ -341,12 +343,12 @@ public class TestApplication
 				lookupKey = paramKey;
 				value = applicationProperties.get(lookupKey.toLowerCase());
 				if (value == null) {
-					throw new RuntimeException("There is no value available for the required parameter '" 
-				                               + paramKey + "' for test application '" + name + "'.");
+					throw new RuntimeException("In file '" + name + ".properties' "
+							+ "the property '" + env + "." + paramKey + "' is not defined. "
+							+ "Either define it or change environment for execution!");
 				}
 			}
 
-			
 			toReturn.put(paramKey, value);
 		}
 		

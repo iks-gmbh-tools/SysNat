@@ -145,13 +145,13 @@ abstract public class ExecutableExample
 	
 	private void reinitTestEnvironment() 
 	{
-		if (System.getProperty("isWebApplication", "false").equals("true"))
-		{
-			executionInfo.getGuiControllerMap().forEach((key,value) -> value.reloadGui());  // prepare gui for next test
-		}
-		
+		executionInfo.getGuiControllerMap().forEach((key,value) -> value.reloadGui());  // prepare gui for next test
 		List<String> keys = new ArrayList<String>(executionInfo.getGuiControllerMap().keySet());
 		guiControlOfFocusedApp = executionInfo.getGuiControllerMap().get(keys.get(0));
+		TestApplication testApplication = executionInfo.getTestApplication();
+		if (testApplication.withLogin()) {
+			ApplicationStarter.executeLogin(this, testApplication);
+		}
 	}
 	
 	private boolean initTestEnvironment() 
@@ -221,7 +221,7 @@ abstract public class ExecutableExample
 	
 	public void passTestCaseImmediately(String message)
 	{
-		if (message != null) addCommentToReport(message);
+		if (message != null) reportMessages.add(message);
     	closeCurrentTestCaseWithSuccess();
     	throw new SysNatSuccessException();
 	}
@@ -507,7 +507,6 @@ abstract public class ExecutableExample
 		if (errMsg != null) {
 			failWithMessage(errMsg);
 		}
-		addReportMessage("Es wurde auf <b>" + uiText + "</b> geklickt.");
     }
 
     public void clickElement(final String elementAsString, String uiText)
@@ -1213,7 +1212,8 @@ abstract public class ExecutableExample
 	{
 		List<String> toReturn = new ArrayList<>();
 		try {
-			Process p = Runtime.getRuntime().exec("cmd /c " + command);
+			String[] args = { "cmd", "/c" , command };
+			Process p = Runtime.getRuntime().exec(args);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
             String line = "";			

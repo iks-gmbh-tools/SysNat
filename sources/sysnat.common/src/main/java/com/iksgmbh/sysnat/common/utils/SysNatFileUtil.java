@@ -217,19 +217,30 @@ public class SysNatFileUtil
 		return result.get(0);
 	}	
 
-	public static FileList findDownloadFiles(String... fileExtensions)
+	public static FileList findDownloadFiles(String dirCandidate, String... fileExtensions)
 	{
-		final File downloadDir = getDownloadDir();
+		File downloadDir = getDownloadDir();
+		if (dirCandidate != null && ! dirCandidate.isEmpty()) {
+			File dir = new File(dirCandidate);
+			if (dir.exists()) {
+				downloadDir = dir;
+			}
+		}
+		
 		final FileList toReturn = new FileList();
 		final File[] listFiles = downloadDir.listFiles();
 
 		for (File file : listFiles) 
 		{
-			for (String extension : fileExtensions) 
-			{
-				extension = extension.toLowerCase();
-				if (file.getAbsolutePath().toLowerCase().endsWith(extension) && file.isFile()) {
-					toReturn.add(file);
+			if (fileExtensions.length == 0 || (fileExtensions.length == 1 && fileExtensions[0] == null)) {
+				toReturn.getFiles().addAll(Arrays.asList(listFiles));
+			} else {				
+				for (String extension : fileExtensions) 
+				{
+					extension = extension.toLowerCase();
+					if (file.getAbsolutePath().toLowerCase().endsWith(extension) && file.isFile()) {
+						toReturn.add(file);
+					}
 				}
 			}
 		}
@@ -265,7 +276,7 @@ public class SysNatFileUtil
 		
 		while (downloadIsProgress) 
 		{
-			currentFileList = SysNatFileUtil.findDownloadFiles(".pdf", ".part");
+			currentFileList = SysNatFileUtil.findDownloadFiles(null, ".pdf", ".part");
 			recentFiles = extractRecentFiles(currentFileList, timeLimit);
 			if ( recentFiles == null || recentFiles.isEmpty()) 
 			{
