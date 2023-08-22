@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <artifactId>sysnat.testdata.import</artifactId>
+  <name>SNT Import of Test Data</name>
+  <description>Allows to provide test data imported during test execution and referential from nlxx and nls files.</description>
+
+  <parent>
+    <groupId>com.iksgmbh.snt</groupId>
+     <artifactId>sysnat.parent</artifactId>
+     <version>1.4.0-SNAPSHOT</version>
+     <relativePath>../sysnat.parent/pom.xml</relativePath>
+  </parent>
+  
+  <dependencies>
+  
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi-ooxml</artifactId>
+		<version>3.17</version>
+	</dependency>
+  
+  </dependencies>
+
+</project>
