@@ -10,6 +10,4 @@ sources/sysnat.test.execution/src/main/
 sources/sysnat.natural.language.executable.examples/reports/**
 sources/sysnat.natural.language.executable.examples/help/*TestApp*
 
-webdriver/MozillaFirefox45.9
-webdriver/MozillaFirefox54
 
