@@ -19,10 +19,6 @@
 		<module>../sysnat.testresult.archiving</module>
 		<module>../sysnat.natural.language.executable.examples</module>
 	</modules>
-	
-	<properties>
-		<java.version>20</java.version>
-	</properties>
   
 	<dependencies>
   		
