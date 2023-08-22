@@ -3,7 +3,7 @@
 
     <groupId>com.iksgmbh.snt</groupId>
     <artifactId>sysnat.common</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0</version>
     <name>SNT Commons Module</name>
     <description>Technically inspired module providing code commonly used in other modules.</description>
 
