@@ -121,7 +121,7 @@ public class HelloWorldSpringBootSystemLevelTest extends SysNatSystemTest
 		final String report = runSNTsucessfully();
 		
 		// assert
-		int expectedNumberSuccessfullyExecutedTests = 19;
+		int expectedNumberSuccessfullyExecutedTests = 15;
 		assertTrue("Unexpected number of successful test cases found in report.", 
 				   report.contains( getHtmlReportSnippet(expectedNumberSuccessfullyExecutedTests,
 						                                 SysNatConstants.GREEN_HTML_COLOR)));

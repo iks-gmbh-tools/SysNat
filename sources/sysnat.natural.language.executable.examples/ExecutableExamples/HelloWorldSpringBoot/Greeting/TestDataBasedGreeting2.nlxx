@@ -1,14 +1,17 @@
 # In this test case, a single dataset is defined by the stage instruction "TestData".
-# Therefore, when accessing the datafields, this test case does not need to specifies a specific dataset
-# and the script EnterGreetingData can be used.
+# This dataset does not contain the expected result and that is why a second dataset is imported.
+# Because two datasets are imported, this test case must specify a specific dataset
+# when accessing the datafields and the script EnterGreetingData cannot be used.
 
 XX:       <filename>
 Filter:   <path>
-TestData: SingleGreetingData # Note: this dataset does not contain a Greeting Result!
+TestData: MultipleGreetingData__1  # Note: this dataset does not contain a Greeting Result!
+TestData: MultipleValidationData__1 
 
 # arrange
 Test-Phase: Arrange    # setup all test requirements
-"EnterGreetingData".
+Select "MultipleGreetingData__1::Greeting" in selection field "Greeting".
+Enter "MultipleGreetingData__1::Name" in text field "Name".
 
 # act 
 Test-Phase: Act  # Perform action under test
@@ -16,4 +19,4 @@ Click button "Greet".
 
 # assert
 Test-Phase: Assert    # check expectations
-Is the displayed text "GreetingResult" equal to "Hey Elisabeth!"?
+Is the displayed text "GreetingResult" equal to "MultipleValidationData__1::GreetingResult"?

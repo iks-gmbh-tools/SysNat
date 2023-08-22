@@ -72,7 +72,7 @@ public class TestcaseGeneration_ModuleLevelTest
 				return name.endsWith(".java");
 			}
 		});
-		assertEquals("Number of Java files", 24, result.size());
+		assertEquals("Number of Java files", 17, result.size());
 	}	 
 	
 	@Test
