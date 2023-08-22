@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.common.utils.SysNatStringUtil;
@@ -107,6 +108,7 @@ public class JavaFileBuilder
 		javaCommandCollection.keySet().stream()
 					         .filter(this::isTestCase)
 					         .forEach(this::buildJUnitTestCaseFile);
+		
 		return toReturn;
 	}
 	
@@ -156,8 +158,8 @@ public class JavaFileBuilder
 		
 		String scriptFullyQualifiedJavaName = SysNatStringUtil.cutExtension(instructionFilename.value).replaceAll("/", ".").replaceAll(" ", "");
 		int pos = scriptFullyQualifiedJavaName.lastIndexOf('.');
-		String simpleName = scriptFullyQualifiedJavaName.substring(pos+1);
-		scriptMappings.put(simpleName, scriptFullyQualifiedJavaName);
+		String fileName = scriptFullyQualifiedJavaName.substring(pos+1);
+		scriptMappings.put(fileName, scriptFullyQualifiedJavaName);
 	}
 
 	private void buildJUnitTestCaseFile(final Filename instructionFilename)
@@ -186,12 +188,33 @@ public class JavaFileBuilder
 		
 		fileContent = fileContent.replace("//import org.junit.Test;", "import org.junit.Test;"); 
 		fileContent = fileContent.replace("JUnitTestCaseTemplate", "Executable Example"); 
-		fileContent = fileContent.replace("class JUnitTestcaseTemplate", "class " + getSimpleFileName(instructionFilename));
+		fileContent = fileContent.replace("class JUnitTestcaseTemplate", "class " + getSimpleFileName(instructionFilename).replace(".java", ""));
 		fileContent = fileContent.replace("//@Test", "@Test");		
 		fileContent = fileContent.replace("//if (languageTemplateContainer", "if (" + findApplicationBasicLanguageTemplateContainer())	
 		                         .replace("languageTemplateContainer", findApplicationBasicLanguageTemplateContainer());
+		
+		fileContent = addBehaviourConstantIfNecessary(instructionFilename.value, fileContent);
 		toReturn.put(testcaseFile, fileContent);
 	}
+	
+	private String addBehaviourConstantIfNecessary(String filename, String fileContent)
+	{
+		if (fileContent.contains("final String BEHAVIOUR_ID =")) return fileContent;
+		if (! fileContent.contains("executionInfo.register(BEHAVIOUR_ID")) return fileContent;
+
+		List<String> lines = SysNatStringUtil.toList(fileContent, System.getProperty("line.separator"));
+		String match = lines.stream().filter(l -> l.contains("public class")).findFirst().get();
+		int index = lines.indexOf(match) + 2;
+		String behaviourID = SysNatJUnitTestClassGenerator.extractNlxxFileNameFromJavaFile(filename);
+		lines.add(index, "\tprivate static final String BEHAVIOUR_ID = \"" + behaviourID + "\";");
+		
+		match = lines.stream().filter(l -> l.contains("try {")).findFirst().get();
+		index = lines.indexOf(match) + 1;
+		lines.add(index, "\t\t\tlanguageTemplatesCommon.declareXXGroupForBehaviour(BEHAVIOUR_ID);");
+	
+		return SysNatStringUtil.listToString(lines, System.getProperty("line.separator"));
+	}
+
 
 	private boolean isTestcaseInactive(String fileContent) {
 		return fileContent.contains("languageTemplatesCommon.setActiveState(\"no\");");
@@ -348,7 +371,7 @@ public class JavaFileBuilder
 		
 		if (constructorNeeded) 
 		{
-			String testName = getSimpleFileName(filename);
+			String testName = getSimpleFileName(filename).replace(".java", "");
 			String behaviourId = getBehaviourIdFor(filename);
 			int xxGroupSize = getXXGroupSize(behaviourId);
 			constructorCode.add("public " + testName + "() {");

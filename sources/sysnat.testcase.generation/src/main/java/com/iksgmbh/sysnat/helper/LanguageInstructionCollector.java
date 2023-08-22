@@ -241,16 +241,26 @@ public class LanguageInstructionCollector
 
 	/**
 	 * Scripts are called using the "^^." language template, e.g. "Create an order".
-	 * For convenience reasons, the following does the same: Create an order.
 	 * This convenience functionality is implemented here.
+	 * For convenience reasons, the following does the same: Create an order.
      */
 	private List<String> checkForSimpleScriptCallSyntax(List<String> instructions)
 	{
 		final List<String> toReturn = new ArrayList<>();
 		for (String line : instructions)
 		{
-			if (isScriptCall(line)) {
-				toReturn.add("\"" + line.substring(0, line.length()-1) + "\".");
+			String instruction = line;
+			if (StageInstructionUtil.isStageInstruction(line)) {
+				instruction = StageInstructionUtil.getContent(line);
+			}
+			if (isScriptCall(instruction)) 
+			{
+				instruction = "\"" + instruction.substring(0, instruction.length()-1) + "\"."; 
+				if (StageInstructionUtil.isStageInstruction(line)) {
+					String toReplace = StageInstructionUtil.getContent(line);
+					instruction = line.replace(toReplace, instruction);
+				}			
+				toReturn.add(instruction);
 			} else {
 				toReturn.add(line);
 			}

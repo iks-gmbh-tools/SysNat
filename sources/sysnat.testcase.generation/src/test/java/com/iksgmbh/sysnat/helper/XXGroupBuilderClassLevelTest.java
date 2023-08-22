@@ -16,11 +16,13 @@
 package com.iksgmbh.sysnat.helper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -105,7 +107,7 @@ public class XXGroupBuilderClassLevelTest
 		// arrange
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollectionRaw = new HashMap<>();
 		javaCommandCollectionRaw.put(new Filename("firstFile"), createSimpleCommandList());
-		javaCommandCollectionRaw.put(new Filename("secondFile"), createParametrizedCommandList());
+		javaCommandCollectionRaw.put(new Filename("secondFile"), createParametrizedCommandList("ParamXXId"));
 		
 		// act
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollection = XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
@@ -113,9 +115,9 @@ public class XXGroupBuilderClassLevelTest
 		// arrange
 		assertEquals("Number of testcases", 3, javaCommandCollection.size());
 		assertEquals("Java Command", "languageTemplatesCommon.startNewXX(\"ParamXXId__1\");", 
-				                     getCommandListFor(javaCommandCollection, "ParamXXId__1_Test.java").get(1).value);
+				                     getCommandListFor(javaCommandCollection, "ParamXXId/ParamXXId__1_Test.java").get(1).value);
 		assertEquals("Java Command", "languageTemplatesCommon.setTestData(\"TestParam__1\");", 
-				                     getCommandListFor(javaCommandCollection, "ParamXXId__1_Test.java").get(2).value);
+				                     getCommandListFor(javaCommandCollection, "ParamXXId/ParamXXId__1_Test.java").get(2).value);
 	}
 
 	@Test
@@ -220,15 +222,16 @@ public class XXGroupBuilderClassLevelTest
 			                                    final String toFind) 
 	{
 		final List<Filename> keys = new ArrayList(javaCommandCollection.keySet());
-		Filename filename = (Filename) keys.stream().filter(key -> key.value.equals(toFind)).findFirst().get();
-		return javaCommandCollection.get(filename);
+		Optional<Filename> candidate = keys.stream().filter(key -> key.value.equals(toFind)).findFirst();
+		assertTrue("Expected filename has not been generated: " + toFind, candidate.isPresent());
+		return javaCommandCollection.get(candidate.get());
 	}
 
-	private List<JavaCommand> createParametrizedCommandList() 
+	private List<JavaCommand> createParametrizedCommandList(String paramName) 
 	{
 		final List<JavaCommand> commands = new ArrayList<>();
 
-		commands.add(new JavaCommand("templateContainer.startNewXX(\"ParamXXId\");"));
+		commands.add(new JavaCommand("templateContainer.startNewXX(\"" + paramName + "\");"));
 		commands.add(new JavaCommand("templateContainer.applyTestParameter(\"TestParam\");") );
 		commands.add(new JavaCommand("templateContainer.doSomething();"));
 		commands.add(new JavaCommand("templateContainer.doSomethingElse();"));

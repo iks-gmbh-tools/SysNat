@@ -53,8 +53,8 @@ public class DocumentComparer
 	public static void main(String[] args)
 	{
 		try {
-			String result = new DocumentComparer("C:\\Users\\OberratR\\AppData\\Roaming\\Client\\ImportExport\\SAPExportTest.xml")
-					       .getFullDifferenceReport("C:\\dev\\Tools\\SysNatLight\\sources\\sysnat.test.execution\\..\\sysnat.natural.language.executable.examples\\testdata\\Client\\Validationsregeln\\..\\Erwartungswerte\\ExpectedSAPExportResultUSAkte.xml");
+			String result = new DocumentComparer("C:\\Users\\OberratR\\AppData\\Roaming\\InkaClient\\ImportExport\\SAPExportTest.xml")
+					       .getFullDifferenceReport("C:\\dev\\Tools\\SysNatLight\\sources\\sysnat.test.execution\\..\\sysnat.natural.language.executable.examples\\testdata\\InkaClient\\Validationsregeln\\..\\Erwartungswerte\\ExpectedSAPExportResultUSAkte.xml");
 			System.out.println(result);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -270,7 +270,7 @@ public class DocumentComparer
 			PageContent pageContent1 = contentToCompare1.get(pageNo-1);
 			PageContent pageContent2 = contentToCompare2.get(pageNo-1);
 			List<String> differenceList = getDifferenceList(pageContent1, pageContent2, pageNo, ignoreConfig.ignoreBetweenIdentifier);
-			toReturn.put(new Integer(pageNo), differenceList);
+			toReturn.put(Integer.valueOf(pageNo), differenceList);
 		}
 		
 		return toReturn;

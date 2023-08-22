@@ -74,5 +74,15 @@ public class StageInstructionUtilClassLevelTest
 		assertTrue("Valid StageInstruction expected.", result3);
 		assertTrue("Invalid StageInstruction expected.", result4);
 	}
+
+	@Test
+	public void parsesContentFromStageInstruction() 
+	{
+		// act
+		String result = StageInstructionUtil.getContent("Active:b");
+		
+		// assert
+		assertEquals("Content of StageInstruction", "b", result);
+	}
 	
 }

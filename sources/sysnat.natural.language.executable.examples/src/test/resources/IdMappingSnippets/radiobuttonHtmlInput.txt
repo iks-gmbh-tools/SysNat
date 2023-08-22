@@ -1,0 +1,172 @@
+
+  <fieldset>
+    <div class="selection-items codes hasGrid">
+      
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="01" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_01" data-title="Anspruchsgrundlage (Code 1)">
+                    
+                    
+<label class="label" for="dynformEPOA7claimRelatesCode1_01">01 Kaufvertrag</label>
+<label for="dynformEPOA7claimRelatesCode1_01">
+                    
+                    
+                    
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="02" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_02" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_02">02 Mietvertrag über bewegliche Sachen</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="03" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_03" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_03">03 Miet-/Pachtvertrag über Immobilien</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="04" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_04" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_04">04 Mietvertrag über Betriebs-/Büroräume</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="05" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_05" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_05">05 Vertrag über Dienstleistungen - Elektrizität, Gas, Wasser, Telefon</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="06" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_06" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_06">06 Vertrag über Dienstleistungen - medizinische Versorgung</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="07" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_07" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_07">07 Vertrag über Dienstleistungen - Beförderungsleistungen</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="08" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_08" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_08">08 Vertrag über Dienstleistungen - rechtliche, steuerliche oder technische Beratung</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="09" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_09" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_09">09 Vertrag über Dienstleistungen - Hotel- und Gaststätten­gewerbe</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="10" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_10" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_10">10 Vertrag über Dienstleistungen - Reparaturen</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="11" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_11" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_11">11 Vertrag über Dienstleistungen - Makler­leistungen</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="12" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_12" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_12">12 Vertrag über Dienstleistungen - Sonstiges (bitte näher erläutern)</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="13" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_13" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_13">13 Bauvertrag</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="14" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_14" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_14">14 Versicherungsvertrag</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="15" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_15" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_15">15 Darlehen</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="16" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_16" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_16">16 Bürgschaft oder sonstige Sicherheit</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="17" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_17" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_17">17 Außervertragliche Schuldverhältnisse, sofern sie einer Vereinbarung zwischen den Parteien oder einer Schuldanerkenntnis unterliegen (z.B. Schadensbegleichung, ungerechtfertigte Bereicherung)</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="18" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_18" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_18">18 Aus dem gemeinsamen Eigentum an Vermögensgegenständen erwachsende Forderungen</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="19" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_19" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_19">19 Schadensersatz aus Vertragsverletzung</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="20" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_20" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_20">20 Abonnement (Zeitung, Zeitschrift)</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="21" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_21" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_21">21 Mitgliedsbeitrag</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="22" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_22" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_22">22 Arbeitsvertrag</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="23" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_23" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_23">23 Außergerichtlicher Vergleich</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="24" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_24" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_24">24 Unterhaltsvertrag</label>
+                      </div>
+
+                
+                  	<div class="radio-wrapper">
+                    
+                    <input type="radio" name="code1" value="25" onchange="removeErrorMsg(this);validateFieldOnBlur(this);hideError('error_div_dynformEPOA7claimRelatesCode1');" id="dynformEPOA7claimRelatesCode1_25" data-title="Anspruchsgrundlage (Code 1)"><label class="label" for="dynformEPOA7claimRelatesCode1_25">25 Sonstige Forderungen (bitte näher erläutern)</label>
+                      </div>
+
+                
+              
+            
+    </div>
+    
+             
+   </fieldset>
+
+      
+
+</div>

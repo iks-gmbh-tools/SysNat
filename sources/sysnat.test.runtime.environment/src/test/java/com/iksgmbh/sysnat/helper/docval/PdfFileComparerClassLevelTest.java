@@ -31,6 +31,7 @@ import org.junit.Test;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 import com.iksgmbh.sysnat.helper.docval.domain.DocumentCompareIgnoreConfig;
 import com.iksgmbh.sysnat.helper.docval.domain.PageContent;
+import com.iksgmbh.sysnat.utils.TestUtils;
 
 /**
  * Tests in this class actually test the PDFComparer class in combination with the PdfCompareIgnoreConfig class. 
@@ -194,23 +195,8 @@ public class PdfFileComparerClassLevelTest
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
 						TEST_DATA_DIR + "/expectedDifferenceReport.txt");
-		assertEquals("Difference report", cutLocalPath(expectedFileContent), cutLocalPath(result));
+		assertEquals("Difference report", TestUtils.cutMainPath(expectedFileContent), TestUtils.cutMainPath(result));
 	}
-
-	private String cutLocalPath(String filecontent) 
-	{
-		int pos1 = filecontent.indexOf("Doc1");
-		String s = filecontent.substring(pos1);
-		int pos2 = s.indexOf("\\sources\\");
-		filecontent = filecontent.substring(0, pos1) + s.substring(pos2);
-		
-		pos1 = filecontent.indexOf("Doc2");
-		s = filecontent.substring(pos1);
-		pos2 = s.indexOf("\\sources\\");
-		filecontent = filecontent.substring(0, pos1) + s.substring(pos2);
-		return filecontent;
-	}
-
 
 	@Test
 	public void returnsDifferenceReport_IgnoreWithDateAndRegex() throws Exception
@@ -259,7 +245,7 @@ public class PdfFileComparerClassLevelTest
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
 						TEST_DATA_DIR + "/expectedDifferenceReport_PDF_C_D.txt");
-		assertEquals("Difference report", cutLocalPath(expectedFileContent), cutLocalPath(result));
+		assertEquals("Difference report", TestUtils.cutMainPath(expectedFileContent), TestUtils.cutMainPath(result));
 	}
 	
 	@Test
@@ -324,7 +310,7 @@ public class PdfFileComparerClassLevelTest
 		// assert
 		String expectedFileContent = SysNatFileUtil.readTextFileToString(
 				TEST_DATA_DIR + "/expectedAssymetricDifferenceReport.txt");
-		assertEquals("Difference report", cutLocalPath(expectedFileContent), cutLocalPath(expectedFileContent));
+		assertEquals("Difference report", TestUtils.cutMainPath(expectedFileContent), TestUtils.cutMainPath(result));
 	}
 	
 	@Test

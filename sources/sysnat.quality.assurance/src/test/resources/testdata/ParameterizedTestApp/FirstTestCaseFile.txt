@@ -1,4 +1,4 @@
-package parameterizedtestapp.parameterizedtestapp.testxxid;
+package parameterizedtestapp.testxxid;
 
 import org.junit.Test;
 import org.junit.After;

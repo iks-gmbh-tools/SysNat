@@ -37,7 +37,6 @@ import com.iksgmbh.sysnat.helper.generator.PageObjectDevGen.PageChangeElement;
 import com.iksgmbh.sysnat.helper.generator.PageObjectDevGen.PageChangeElementBuilder;
 import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics.PageChangeEvent.EventType;
 
-
 /**
  * Development helper to generate new test applications.
  * 
@@ -49,7 +48,7 @@ import com.iksgmbh.sysnat.language_templates.LanguageTemplateBasics.PageChangeEv
  */
 public class TestApplicationDevGen
 {
-	private static final String TEMPLATE_TEST_FILE_DIR = "./src/test/resources/TestApplicationGenerator";
+	private static final String TEMPLATE_TEST_FILE_DIR = "../sysnat.quality.assurance/src/test/resources/TestApplicationGenerator";
 	static String naturalLanguageDir = "../sysnat.natural.language.executable.examples";
 	static String sysnatTestRuntimeDir = "../sysnat.test.runtime.environment/src/main";
 	static String propertiesPath = new File("").getAbsolutePath() + "/../../" + ExecutionRuntimeInfo.PROPERTIES_PATH;
@@ -185,7 +184,7 @@ public class TestApplicationDevGen
 	{
 		File folder = buildNLFolder(data.get(DataType.TestApplicationName));
 		if (folder.exists()) {
-			System.out.println("ATTENTION: Folder '" + folder.getName() + "' exists and was not overwritten!");
+			System.err.println("ATTENTION: Folder '" + folder.getName() + "' exists and was not overwritten!");
 			return;
 		}
 		boolean ok = folder.mkdirs();
@@ -388,11 +387,16 @@ public class TestApplicationDevGen
 		content.add("		super.clickLink(linkText);");
 		content.add("	}");		
 		content.add("");
-		content.add("	// #####################  Textfield and Combobox instructions  ###########################");
+		content.add("	// #####################  Text and Combobox instructions  ###########################");
 		content.add("");
-		content.add("	@LanguageTemplate(value = \"Enter ^^ in field ^^.\")");
+		content.add("	@LanguageTemplate(value = \"Enter ^^ in textfield ^^.\")");
 		content.add("	public void enterTextInField(String valueCandidate, String fieldName) {");
 		content.add("		super.enterTextInField(valueCandidate, fieldName);");
+		content.add("	}");
+		content.add("");
+		content.add("	@LanguageTemplate(value = \"Enter ^^ in textarea ^^.\")");
+		content.add("	public void enterTextInTextarea(String valueCandidate, String fieldName) {");
+		content.add("		super.enterTextInTextarea(valueCandidate, fieldName);");
 		content.add("	}");
 		content.add("");
 		content.add("	@LanguageTemplate(value = \"Select ^^ in box ^^.\")");
@@ -400,7 +404,12 @@ public class TestApplicationDevGen
 		content.add("		super.chooseInCombobox(valueCandidate, fieldName);");
 		content.add("	}");		
 		content.add("");
-		content.add("	// ##########################  checkbox instructions  ###################################");
+		content.add("	// ##########################  checkbox and radiobutton instructions  ###################################");
+		content.add("");
+		content.add("	@LanguageTemplate(value = \"Click radiobutton ^^.\")");
+		content.add("	public void clickRadioButton(String radioButtonName) {");
+		content.add("		super.clickRadioButton(radioButtonName);");
+		content.add("	}");		
 		content.add("");
 		content.add("	@LanguageTemplate(value = \"Tick checkbox ^^.\")");
 		content.add("	public void ensureCheckboxIsTicked(String checkBoxDisplayName) {");

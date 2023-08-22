@@ -292,6 +292,7 @@ public class PatternMergeJavaCommandCreator
 		if (languageTemplatePattern.getAnnotationValue().contains("dann beende die")) {
 			// System.out.println("");
 		}
+
 		if ( ! matchFound && isMatching(languageTemplatePattern, instructionPatternToMatch)) 
 		{
 			matchFound = true;
@@ -532,7 +533,7 @@ public class PatternMergeJavaCommandCreator
 	private String cutDirectory(String s) 
 	{
 		String cutPositionIdentifier = applicationUnderTest;
-		int pos = s.indexOf(cutPositionIdentifier);
+		int pos = s.lastIndexOf(cutPositionIdentifier);
 		if (pos == -1) 
 		{
 			TestApplication testApplication = ExecutionRuntimeInfo.getInstance().getTestApplication();
@@ -542,7 +543,7 @@ public class PatternMergeJavaCommandCreator
 				for (String testapp : elementAppications) 
 				{
 					cutPositionIdentifier = testapp;
-					pos = s.indexOf(cutPositionIdentifier);
+					pos = s.lastIndexOf(cutPositionIdentifier);
 					if (pos > -1) {
 						break; 
 					}

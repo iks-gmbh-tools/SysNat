@@ -1,60 +1,19 @@
-# In this test case, a series of dataset is defined by the stage instruction "TestData".
-# The datasets are read from a dat-file.
-# Wenn accessing the datafield, this test case must specify which dataset to take for testing.
-# Therefore, the script "EnterGreetingData" cannot be used, because it depends on only one dataset loaded!
-
-# Note: This use of test data (more than one Arrange-Act-Assert series in one file) represents an Anti-Pattern.
-#       It is used here only for test purpose. Build parametrized XX instead!
+# In this test case, a single dataset from a Excel-File is defined by the stage instruction "TestData".
+# Therefore, when accessing the datafields, this test case does not need to specifies a specific dataset
+# and the script EnterGreetingData can be used.
 
 XX:       <filename>
 Filter:   <path>
-TestData: MultipleGreetingData
+TestData: HelloWorldTestData__GreetingValidationData1
 
-
-# arrange 1
+# arrange
 Test-Phase: Arrange    # setup all test requirements
-Select "MultipleGreetingData__1::Greeting" in selection field "Greeting".
-Enter "MultipleGreetingData__1::Name" in text field "Name".
+"EnterGreetingData".
 
-# act 1
+# act 
 Test-Phase: Act  # Perform action under test
 Click button "Greet".
 
-# assert 1
+# assert
 Test-Phase: Assert    # check expectations
-Is the displayed text "GreetingResult" equal to "Hi Tim!"?
-
-
-
-
-# arrange 2
-Test-Phase: Arrange    # setup all test requirements
-Click menu item "Form Page".
-Select "MultipleGreetingData__2::Greeting" in selection field "Greeting".
-Enter "MultipleGreetingData__2::Name" in text field "Name".
-
-# act 2
-Test-Phase: Act  # Perform action under test
-Click button "Greet".
-
-# assert 2
-Test-Phase: Assert    # check expectations
-Is the displayed text "GreetingResult" equal to "Hello Rose!"?
-
-
-
-
-
-# arrange 3
-Test-Phase: Arrange    # setup all test requirements
-Click menu item "Form Page".
-Select "MultipleGreetingData__3::Greeting" in selection field "Greeting".
-Enter "MultipleGreetingData__3::Name" in text field "Name".
-
-# act 3
-Test-Phase: Act  # Perform action under test
-Click button "Greet".
-
-# assert 3
-Test-Phase: Assert    # check expectations
-Is the displayed text "GreetingResult" equal to "Hi Abdul!"?
+Is the displayed text "GreetingResult" equal to "::GreetingResult"?

@@ -143,7 +143,7 @@ public class ApplicationStarter
 	}
 
 
-	private static boolean executeLogin(ExecutableExample executableExample, TestApplication testApplication) 
+	public static boolean executeLogin(ExecutableExample executableExample, TestApplication testApplication) 
     {
     	if ("false".equalsIgnoreCase( System.getProperty(SysNatConstants.SYSNAT_DUMMY_TEST_RUN))) 
     	{

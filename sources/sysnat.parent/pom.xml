@@ -19,6 +19,10 @@
 		<module>../sysnat.testresult.archiving</module>
 		<module>../sysnat.natural.language.executable.examples</module>
 	</modules>
+	
+	<properties>
+		<java.version>15</java.version>
+	</properties>
   
 	<dependencies>
   		
@@ -31,13 +35,13 @@
 	  	<dependency>
 	  		<groupId>junit</groupId>
 	  		<artifactId>junit</artifactId>
-	  		<version>4.12</version>
+	  		<version>4.13.2</version>
 	  	</dependency>
 	
 	  	<dependency>
 	  		<groupId>joda-time</groupId>
 	  		<artifactId>joda-time</artifactId>
-	  		<version>2.9.9</version>
+	  		<version>2.12.5</version>
 	  	</dependency>
 	  	
 	</dependencies>
@@ -48,20 +52,20 @@
 	       <plugin>
 	           <groupId>org.apache.maven.plugins</groupId>
 	           <artifactId>maven-compiler-plugin</artifactId>
-	           <version>3.7.0</version>
+	           <version>3.11.0</version>
 	           <configuration>
 	               <encoding>UTF-8</encoding>
-	               <source>1.8</source>
-	               <target>1.8</target>
+	               <source>20</source>
+	               <target>20</target>
 	           </configuration>
 	       </plugin>
 	       
 	 		<plugin>
 	        <groupId>org.apache.maven.plugins</groupId>
 	        <artifactId>maven-surefire-plugin</artifactId>
-	        <version>2.21.0</version>
+	        <version>3.1.2</version>
 	        <configuration>
-	            <include>**Test.java</include>
+	            <!-- <include>**Test.java</include> -->
 	        </configuration>  			
 	 		</plugin>
 	       

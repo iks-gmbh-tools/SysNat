@@ -33,9 +33,13 @@ Click link ^^.
 <br>
 Click menu item ^^.
 <br>
+Click radiobutton ^^.
+<br>
 Do something with '' and ^^ and return <>.
 <br>
-Enter ^^ in field ^^.
+Enter ^^ in textarea ^^.
+<br>
+Enter ^^ in textfield ^^.
 <br>
 In Dialog ^^ click button ^^.
 <br>

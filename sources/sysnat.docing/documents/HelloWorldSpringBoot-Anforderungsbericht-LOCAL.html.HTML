@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>'HelloWorldSpringBoot-Anforderungsbericht-LOCAL.html'</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<style>
+
+body {
+  background: linear-gradient(90deg, white, lightyellow);
+}
+
+h1 {
+  background: lightgray;
+}
+
+p.testphase {
+  color: blue;
+}
+
+/* 5 title lines */
+
+table:nth-of-type(1) tr:nth-of-type(1){
+  background: #0d73ff;
+  font-size: 40px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(2){
+  background: #0d73ff;
+  font-size: 28px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(3){
+  background: #0d73ff;
+  font-size: 40px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(4){
+  background: #0d73ff;
+  font-size: 20px;
+  border: solid 1px #0d73ff;
+}
+
+table:nth-of-type(1) tr:nth-of-type(5){
+  background: #0d73ff;
+  font-size: 20px;
+  border: solid 1px #0d73ff;
+}
+
+/* data tables */
+table {
+    table-layout:fixed;
+    width:100%;
+    border: solid 2px black;     /* Tabellenrahmen */
+    border-collapse: collapse;
+}
+
+table tr:nth-of-type(odd) {
+  background: lightgrey;
+}
+table tr:nth-of-type(even) {
+  background: #efefef;
+}
+
+
+</style>
+<table>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>System Beschreibung</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">für</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong><em>InkaClient</em></strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">mit Hilfe von <em>Pandoc</em></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">erzeugt am 25.11.2020 um 11:10</td>
+</tr>
+</tbody>
+</table>
+<h1 id="einleitung">Einleitung</h1>
+<p><em>Inka</em> ist eine Server-Client-Anwendung der AIA…</p>
+<h1 id="akteöffnen">AkteÖffnen</h1>
+<h2 id="akte-mit-clz-und-mitgliedsnummer-suchen-und-öffnen">Akte mit CLZ und Mitgliedsnummer suchen und öffnen</h2>
+<p>TestData: MyInkaTestData<br />
+Suche nach CLZ und MTGR.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Öffne Akte in Zeile “::SuchErgebnisZeile” der Suchergebnisse. Wenn die Akte ausgecheckt ist, dann setze sie zurück. Der Name des Gläubigers wird als <Gläubigername> festgehalten. Ein Screenshot wird als “TestResult” gespeichert.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Lautet der ‘Gläubigername’ “ein Gläuber”?</p>
+<h1 id="example">Example</h1>
+<p class="testphase">
+<strong>Arrange</strong>
+</p>
+<p>Öffne Hauptmenü “Akte”. Klicke Hauptmenüpunkt “Neue Suche”. Gebe “409” ins Textfeld “CLZ” ein. Gebe “000001” ins Textfeld “MTGNR” ein. Klicke den Button “Suchen”.</p>
+<p class="testphase">
+<strong>Act</strong>
+</p>
+<p>Öffne Akte in Zeile “2” der Suchergebnisse. Wenn die Akte ausgecheckt ist, dann setze sie zurück. Der Name des Gläubigers wird als <Gläubigername> festgehalten.</p>
+<p class="testphase">
+<strong>Assert</strong>
+</p>
+<p>Lautet der ‘Gläubigername’ “ein Gläuber”?</p>
+</body>
+</html>

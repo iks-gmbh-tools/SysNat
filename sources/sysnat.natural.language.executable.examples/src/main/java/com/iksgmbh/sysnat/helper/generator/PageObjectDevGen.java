@@ -25,8 +25,8 @@ public class PageObjectDevGen
 {
 	protected static String languageTemplatesContainerParentDir = "../sysnat.test.runtime.environment/src/main/java/com/iksgmbh/sysnat/language_templates/";
 	
-	private static final String TestApp = "Ikaros";
-	private static final String PageObject = "AktenUebersicht";
+	private static final String TestApp = "EJusticePdfGen";
+	private static final String PageObject = "Step1";
 	private static final PageChangeElement[] PAGE_CHANGE_ELEMENTS = { 
 		new PageChangeElementBuilder().from("main").via(EventType.MenuItemClick).on("Akten").to("this").waiting("1000").build(),
 		new PageChangeElementBuilder().from("this").via(EventType.ButtonClick).on("Neu").to("main").waiting("guielement").build()

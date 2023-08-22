@@ -104,7 +104,7 @@ public class TestDataImporter
 		List<File> toReturn = new ArrayList<>();
 		testdataDirs.forEach(testdataDir -> toReturn.addAll(findFilesToLoad(testdataDir)));
 		
-		if (toReturn.size() == 0) 
+		if (toReturn.size() == 0 && "false".equalsIgnoreCase(System.getProperty("sysnat.dummy.test.run"))) 
 		{
 			String errorMessage = "<b>" + testdataId + "</b> is not found in " + getDirList() + ".";
 			String helpMessage = "Create test data file or remove its reference.";
@@ -199,11 +199,15 @@ public class TestDataImporter
 
 	private boolean checkFilename(String filenameToSearch, String filename)
 	{
+		filenameToSearch = filenameToSearch.trim();
 		if (! filename.endsWith(".dat") && ! filename.endsWith(".xlsx") && ! filename.endsWith(DOC_VAL))
 			return false;
 
 		filename = SysNatStringUtil.cutExtension(filename);
+		
+		if (filename.equals(filenameToSearch)) return true;
 		filenameToSearch = SysNatStringUtil.cutExtension(filenameToSearch);
+		if (filename.equals(filenameToSearch)) return true;
 
 		int pos = filename.indexOf("__");
 		if (pos > 0) {

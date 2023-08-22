@@ -50,6 +50,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	@Before
 	public void setup() {
 		GenerationRuntimeInfo.reset();
+		System.setProperty("sysnat.dummy.test.run", "true");
 	}
 
 	@Test
@@ -71,7 +72,7 @@ public class TestcaseGeneration_ModuleLevelTest
 				return name.endsWith(".java");
 			}
 		});
-		assertEquals("Number of Java files", 19, result.size());
+		assertEquals("Number of Java files", 24, result.size());
 	}	 
 	
 	@Test
@@ -144,6 +145,7 @@ public class TestcaseGeneration_ModuleLevelTest
 	public void createsEmptyTestCaseForFakeTestApp() throws Exception 
 	{
 		// arrange
+		System.setProperty("sysnat.testdata.import.directory", "../sysnat.quality.assurance/src/test/resources/testdata");
 		prepareFakeTestApp();
 
 		// act

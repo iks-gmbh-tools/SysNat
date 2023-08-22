@@ -29,7 +29,7 @@ public class ErrorPageLauncher
 	public static void doYourJob(final String errorMessage, 
 			                     final String helpMessage, 
 			                     final String title) 
-	{
+	{	
 		final String templateText = SysNatFileUtil.readTextFileToString(SysNatFileUtil.findAbsoluteFilePath(ERROR_PAGE_TEMPLATE));
 		String filename = SysNatFileUtil.findAbsoluteFilePath(getErrorReportFileAsString());
 		File targetFolder = new File(filename).getParentFile();

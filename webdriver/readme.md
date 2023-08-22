@@ -5,7 +5,6 @@ If you wish to use a different (older or younger) Firefox version than installed
 If you are looking for a newer or older WebDriver versions have a look here: 
 - Geckodriver (for Firefox):  https://github.com/mozilla/geckodriver/releases
 - Chrome: https://chromedriver.chromium.org/downloads oder https://chromedriver.storage.googleapis.com/index.html
-- IE: https://www.seleniumhq.org/download/
 - Edge: https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
 
 SysNat currently uses the Selenium version 4.1.3. Its update requires a source code change.

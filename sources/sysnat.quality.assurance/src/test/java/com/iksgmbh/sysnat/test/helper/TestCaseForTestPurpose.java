@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2018 IKS Gesellschaft fuer Informations- und Kommunikationssysteme mbH
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");

@@ -16,10 +16,12 @@
 package com.iksgmbh.sysnat;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
@@ -37,6 +39,7 @@ import com.iksgmbh.sysnat.helper.LanguageTemplateCollector;
 import com.iksgmbh.sysnat.helper.LanguageTemplateContainerFinder;
 import com.iksgmbh.sysnat.helper.PatternMergeJavaCommandCreator;
 import com.iksgmbh.sysnat.helper.XXGroupBuilder;
+import com.iksgmbh.sysnat.testdataimport.TestDataImporter;
 import com.iksgmbh.sysnat.utils.JavaFileWriterUtil;
 
 /**
@@ -82,6 +85,7 @@ public class SysNatJUnitTestClassGenerator
 				LanguageInstructionCollector.doYourJob(testApplication.getName());
 		
 		boolean ok = areExecutableExamplesAvailable(languageInstructionCollection.size());
+		if (ok) ok = checkTestData(languageInstructionCollection);
 		if (!ok) return false;
 		
 		// step 4: find matches between language patterns and template patterns
@@ -90,7 +94,7 @@ public class SysNatJUnitTestClassGenerator
 				PatternMergeJavaCommandCreator.doYourJob(languageTemplateCollection, 
 						                                   languageInstructionCollection,
 						                                   testApplication.getName());
-		
+
 		// step 5: build test cases for Parameter-Tests
 		final HashMap<Filename, List<JavaCommand>> javaCommandCollection = 
 				XXGroupBuilder.doYourJob(javaCommandCollectionRaw);
@@ -111,6 +115,67 @@ public class SysNatJUnitTestClassGenerator
 		return true;
 	}
 
+	private boolean checkTestData(HashMap<Filename, List<LanguageInstructionPattern>> languageInstructionCollection)
+	{
+		List<String> testDataDefinitionLines = new ArrayList<>();
+		languageInstructionCollection.keySet().forEach(key -> addTestDataDefinitionLineIfPresent(languageInstructionCollection.get(key), testDataDefinitionLines));
+		boolean ok1 = testDataDefinitionLines.stream().filter(l -> ! isDataFileOk(l, false)).count() == 0;
+		testDataDefinitionLines.clear();
+		languageInstructionCollection.keySet().forEach(key -> addTestParameterDefinitionLineIfPresent(languageInstructionCollection.get(key), testDataDefinitionLines));
+		boolean ok2 = testDataDefinitionLines.stream().filter(l -> ! isDataFileOk(l, true)).count() == 0;
+		return ok1 && ok2;
+	}
+
+	private boolean isDataFileOk(String line, boolean testParameterCheck)
+	{
+		if ( "true".equalsIgnoreCase(System.getProperty("sysnat.dummy.test.run"))) {
+			return true;
+		}
+		
+		TestDataImporter testDataImporter = new TestDataImporter(ExecutionRuntimeInfo.getInstance().getTestdataDir());
+		int pos = line.indexOf(":") + 2;
+		if (pos >= line.length()) return true;
+		String datafile = line.substring(pos).trim();
+		int numDatasets = testDataImporter.loadTestdata(datafile).size();
+		
+		
+		if (testParameterCheck) {
+			if (numDatasets > 1) {
+				return true;
+			}
+			
+			ErrorPageLauncher.doYourJob("Use data file <b>" + datafile 
+					                   + "</b> with \"TestData\" instead of \"Test-Parameter\" because" + 
+					                   " it contains only one datasets.",  "", ERR_MSG_BUNDLE.getString("InitialisationError"));
+			return false;			
+		} else {
+			if (numDatasets == 1) {
+				return true;
+			}
+			
+			ErrorPageLauncher.doYourJob("Use data file <b>" + datafile 
+					                   + "</b> with \"Test-Parameter\" instead of \"TestData\" because" + 
+					                   " it contains more than one datasets.",  "", ERR_MSG_BUNDLE.getString("InitialisationError"));
+			return false;
+		}
+	}
+
+	private void addTestDataDefinitionLineIfPresent(List<LanguageInstructionPattern> patterns, List<String> testDataDefinitionLines)
+	{
+		List<String> result = patterns.stream().filter(p -> p.getInstructionLine().startsWith(SysNatConstants.TEST_DATA) || p.getInstructionLine().startsWith("Testdaten"))
+				                               .map(p -> p.getInstructionLine())
+				                               .collect(Collectors.toList());
+		testDataDefinitionLines.addAll(result);
+	}
+
+	private void addTestParameterDefinitionLineIfPresent(List<LanguageInstructionPattern> patterns, List<String> testDataDefinitionLines)
+	{
+		List<String> result = patterns.stream().filter(p -> p.getInstructionLine().startsWith(SysNatConstants.TEST_PARAMETER))
+				                               .map(p -> p.getInstructionLine())
+				                               .collect(Collectors.toList());
+		testDataDefinitionLines.addAll(result);
+	}
+	
 	private boolean areExecutableExamplesAvailable(int size)
 	{
 		if (size == 0) 
@@ -125,5 +190,15 @@ public class SysNatJUnitTestClassGenerator
 		}
 		return true;
 	}
+	
+	public static String extractNlxxFileNameFromJavaFile(String value) 
+	{
+		int pos1 = value.lastIndexOf("/") + 1;
+		int pos2 = value.lastIndexOf("Test.");
+		if (pos1 == 1 || pos2 == -1) {
+			return value;
+		}
+		return value.substring(pos1, pos2);
+	}	
 
 }

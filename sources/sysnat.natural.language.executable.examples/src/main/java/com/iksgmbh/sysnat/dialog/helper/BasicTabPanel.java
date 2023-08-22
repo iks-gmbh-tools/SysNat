@@ -27,6 +27,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -426,6 +427,18 @@ public abstract class BasicTabPanel extends JPanel
 		return getFirstColumnLength() + getSecondColumnLength() + getThirdColumnLength();
 	}
 	
+	protected void askToCloseDialog()
+	{
+		String message = "<html>Close dialog and finish generation?<br><br><html>";
+		String[] options = { "Yes", "No" };
+		int answer = JOptionPane.showOptionDialog(frameDialog, message, "Generation successful!", 
+				     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+		if (answer == JOptionPane.YES_OPTION) {
+			frameDialog.finishSysNatExecution();
+		} else {
+			reset();
+		}
+	}
 	
 
 	// ###########################################################################

@@ -97,7 +97,7 @@ public class FileFinder
 	}
 	
 	public static List<File> searchFilesRecursively(final File folder, 
-			                             		     final FilenameFilter fileFilter)
+			                             		    final FilenameFilter fileFilter)
 	{
 		final List<File> toReturn = new ArrayList<File>();
 		
@@ -111,7 +111,6 @@ public class FileFinder
 		
 		List<File> subdirs = Arrays.asList( folder.listFiles(DIRECTORY_FILTER) );
 		addSubdirsIfNotAlreadyContained(foundChildren, subdirs);
-		
 		
 		for (File child : foundChildren) 
 		{

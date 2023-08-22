@@ -67,6 +67,11 @@ public class LanguageInstructionPattern
 				ExceptionHandlingUtil.throwClassifiedException(ErrorCode.NATURAL_LANGUAGE_PARSING__MISSING_CLOSING_PART_IDENTIFIER, 
 						e.getErrorData(), fileName, instructionLine);
 			}
+			if (e.getErrorCode() == ErrorCode.NATURAL_LANGUAGE_INSTRUCTING_PARSING__EMPTY_PARAMETER_IDENTIFIER) 
+			{
+				ExceptionHandlingUtil.throwClassifiedException(ErrorCode.NATURAL_LANGUAGE_INSTRUCTING_PARSING__EMPTY_PARAMETER_IDENTIFIER, 
+						e.getErrorData(), fileName, instructionLine);
+			}
 		}
 		
 		validatePattern();

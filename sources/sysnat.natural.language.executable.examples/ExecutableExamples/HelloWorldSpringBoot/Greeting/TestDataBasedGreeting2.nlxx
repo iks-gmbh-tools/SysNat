@@ -1,16 +1,14 @@
-# In this test case, a series of dataset is defined by the stage instruction "TestData".
-# The datasets are read from a Excel-file.
-# Wenn accessing the datafield, this test case must specify which dataset to take for testing.
-# Therefore, the script "EnterGreetingData" cannot be used, because it depends on only one dataset loaded!
+# In this test case, a single dataset is defined by the stage instruction "TestData".
+# Therefore, when accessing the datafields, this test case does not need to specifies a specific dataset
+# and the script EnterGreetingData can be used.
 
 XX:       <filename>
 Filter:   <path>
-TestData: HelloWorldTestData
+TestData: SingleGreetingData # Note: this dataset does not contain a Greeting Result!
 
 # arrange
 Test-Phase: Arrange    # setup all test requirements
-Select "HelloWorldTestData__GreetingValidationData1::Greeting" in selection field "Greeting".
-Enter "HelloWorldTestData__GreetingValidationData1::Name" in text field "Name".
+"EnterGreetingData".
 
 # act 
 Test-Phase: Act  # Perform action under test
@@ -18,4 +16,4 @@ Click button "Greet".
 
 # assert
 Test-Phase: Assert    # check expectations
-Is the displayed text "GreetingResult" equal to "HelloWorldTestData__GreetingValidationData1::GreetingResult"?
+Is the displayed text "GreetingResult" equal to "Hey Elisabeth!"?

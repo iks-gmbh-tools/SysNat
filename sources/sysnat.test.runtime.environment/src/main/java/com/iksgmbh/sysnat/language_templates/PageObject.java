@@ -16,6 +16,7 @@
 package com.iksgmbh.sysnat.language_templates;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +28,7 @@ import javax.swing.JTextField;
 
 import com.iksgmbh.sysnat.ExecutableExample;
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
 import com.iksgmbh.sysnat.guicontrol.impl.SwingGuiController;
@@ -63,16 +65,19 @@ public abstract class PageObject
      */
 	protected ExecutableExample executableExample;
 	protected LanguageTemplateBasics languageTemplateBasics;
+	protected String technicalIdOfAnPageSpecificElement;
 
     // abstract methods
     public abstract String getPageName();    
-    public abstract boolean isCurrentlyDisplayed();
-    
-    
+        
     public PageObject(LanguageTemplateBasics aLanguageTemplateBasics) {
     	this.languageTemplateBasics = aLanguageTemplateBasics;
     }
-       
+    
+    public boolean isCurrentlyDisplayed() {
+		 return executableExample.getActiveGuiController().isElementAvailable(technicalIdOfAnPageSpecificElement, 30000, true);
+    };
+
     protected List<String> createList(String... elements)
     {
         List<String> toReturn = new ArrayList<String>();
@@ -86,7 +91,13 @@ public abstract class PageObject
     	return findTechnicalId(guiType, elementName, true);
     }
     
-    protected String findTechnicalId(SysNatConstants.GuiType guiType, String elementName, boolean onlyEnabled)
+    /**
+     * @param guiType
+     * @param elementName
+     * @param onlyEnabled
+     * @return list of unvalidated ids
+     */
+    public List<String> getTechnicalIds(SysNatConstants.GuiType guiType, String elementName) 
     {
         final HashMap<String, List<String>> idMappings = idMappingCollection.get(guiType);
         
@@ -94,10 +105,26 @@ public abstract class PageObject
             throwUnsupportedGuiEventException(guiType, elementName, "UnsupportedGuiEventExceptionMessage");
         }
         
-        final List<String> availableTechnicalIDs = idMappings.get(elementName);
+        return idMappings.get(elementName);
+    }
+    
+    /**
+     * @param guiType
+     * @param elementName
+     * @param onlyEnabled
+     * @return one validated Id
+     */
+    protected String findTechnicalId(SysNatConstants.GuiType guiType, String elementName, boolean onlyEnabled)
+    {
+        List<String> availableTechnicalIDs = getTechnicalIds(guiType, elementName);
         
         if (availableTechnicalIDs == null || availableTechnicalIDs.isEmpty()) {
-            throwUnsupportedGuiEventException(guiType, elementName, "UnsupportedGuiEventExceptionMessage");
+        	if (guiType == GuiType.Button) {
+        		availableTechnicalIDs = new ArrayList<String>();
+        		availableTechnicalIDs.add(elementName);
+        	} else {
+        		throwUnsupportedGuiEventException(guiType, elementName, "UnsupportedGuiEventExceptionMessage");
+        	}
         }        
         
         for (String id: availableTechnicalIDs)
@@ -117,7 +144,9 @@ public abstract class PageObject
         	}
         	if (executableExample.getActiveGuiController().isElementAvailable(id, 500, false)) {
         		return id;
-        	}	
+        	}else {
+        		System.out.println("");
+        	}
         }
         
         throwUnsupportedGuiEventException(guiType, elementName, "NonAccessibleGuiEventExceptionMessage");
@@ -182,19 +211,33 @@ public abstract class PageObject
 
     public void enterTextInTextField(String fieldName, String value)
     {
-        final String technicalId = findTechnicalId(SysNatConstants.GuiType.TextField, fieldName);
+    	if (value == null) {
+    		throw new SysNatException("Für das Feld <b>" + fieldName + "</b> ist kein Eingabewert vorhanden.");
+    	}
+
+        final String technicalId = findTechnicalId(SysNatConstants.GuiType.TextField, fieldName);;
        	if (! executableExample.getActiveGuiController().isTextFieldEnabled(technicalId)) {
         	executableExample.failWithMessage("Das Textfeld <b>" + fieldName + "</b> ist nicht aktiv.");
     	}
     	if (! executableExample.getActiveGuiController().isTextFieldEditable(technicalId)) {
     		executableExample.failWithMessage("Das Textfeld <b>" + fieldName + "</b> ist nicht editierbar.");
     	}
+    	executableExample.waitUntilElementIsAvailable(technicalId);
     	executableExample.inputText(technicalId, value);
     }    
     
     public void enterTextInTextArea(String areaName, String value)
     {
-        final String technicalId = findTechnicalId(SysNatConstants.GuiType.TextArea, areaName);
+        String technicalId = null;
+        long start = new Date().getTime();
+        while (technicalId == null && new Date().getTime()-start < 10000) {
+        	try {
+        		technicalId = findTechnicalId(SysNatConstants.GuiType.TextArea, areaName);
+			} catch (Exception e) { /* ignore */ }
+        }
+        if (technicalId == null) {
+        	throw new SysNatException("Element not available: " + areaName);
+        }
         executableExample.inputTextInTextArea(technicalId, value);
     }    
 
@@ -204,6 +247,20 @@ public abstract class PageObject
         final String technicalId = findTechnicalId(SysNatConstants.GuiType.DateField, fieldName);
         executableExample.inputDate(technicalId, value);
     }
+
+    public void chooseInCombobox(String fieldName, int index)
+    {
+        final String technicalId = findTechnicalId(SysNatConstants.GuiType.ComboBox, fieldName);
+        try {        	
+        	executableExample.chooseFromComboBoxByIndex(technicalId, index);
+        } catch (NoSuchElementException e) {
+            String errorMessage = BUNDLE.getString("UnknownComboboxEntry")
+                    .replace("xx", fieldName)
+                    .replace("yy", "index " + index);
+
+        	throw ExceptionHandler.createNewUnsupportedGuiEventException(errorMessage);
+        }    
+     }
     
     public void chooseInCombobox(String fieldName, String value)
     {
@@ -522,4 +579,6 @@ public abstract class PageObject
 			return false;
 		}
     }
+	
+	
 }

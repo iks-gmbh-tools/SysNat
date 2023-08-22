@@ -19,18 +19,18 @@ Is page "Referenzen" displayed?
 
 XX: Karriere
 Filter: Smoketest
-Click main menu item "Karriere".
-Is page "Karriere" displayed?
+Click main menu item "IKS-KARRIERE".
+Is page "IKS-KARRIERE" displayed?
 
 XX: News
 Filter: Smoketest
 Click main menu item "News".
 Is page "News" displayed?
 
-XX: Blog
+XX: Wissen
 Filter: Smoketest
-Click main menu item "Blog".
-Is page "Blog" displayed?
+Click main menu item "Wissen".
+Is page "Wissen" displayed?
 
 XX: Vorträge
 Filter: Smoketest

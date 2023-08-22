@@ -22,8 +22,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.iksgmbh.sysnat.ExecutionRuntimeInfo;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants.GuiType;
@@ -132,15 +130,7 @@ public class GeneratePageObjectPanel extends BasicTabPanel
 			System.err.println(result);
 			JOptionPane.showMessageDialog(frameDialog, result, "Error", JOptionPane.ERROR_MESSAGE);
 		} else {
-			String message = "<html>Close dialog and finish generation?<br><br><html>";
-			String[] options = { "Yes", "No" };
-			int answer = JOptionPane.showOptionDialog(frameDialog, message, "Generation successful!", 
-					     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
-			if (answer == JOptionPane.YES_OPTION) {
-				frameDialog.finishSysNatExecution();
-			} else {
-				reset();
-			}
+			askToCloseDialog();
 		}
 	}
 
@@ -261,8 +251,8 @@ public class GeneratePageObjectPanel extends BasicTabPanel
 		String tooltip = TOOLTIP_PAGEOBJECT_FROM;
 		JLabel label = initLabel(this, yPos, "from", tooltip);
 		label.setBounds(xPos, yPos, 50, 26);
-		String[] options = existingPageObbjects.toArray(new String[existingPageObbjects.size()]);
-		options = ArrayUtils.add( options, EVERYWHERE);
+		String[] options = existingPageObbjects.toArray(new String[existingPageObbjects.size() + 1]);
+		options[existingPageObbjects.size()] = EVERYWHERE;
 		cbxPageObjectFrom_forth = initCombo(this, options, yPos, null, tooltip, "cbxPageObjectFrom_forth");
 		xPos = getRightSidePosition(label);
 		cbxPageObjectFrom_forth.setBounds(xPos, yPos, 200, 26);
@@ -276,7 +266,8 @@ public class GeneratePageObjectPanel extends BasicTabPanel
 
 	private void checkEventType()
 	{
-		if (EVERYWHERE.equals(cbxPageObjectFrom_forth.getSelectedItem().toString())) {
+		Object selectedItem = cbxPageObjectFrom_forth.getSelectedItem();
+		if (selectedItem != null && EVERYWHERE.equals(selectedItem.toString())) {
 			cbxChangeEventType_forth.setSelectedItem(EventType.MenuItemClick.name());
 		}
 		
@@ -291,7 +282,9 @@ public class GeneratePageObjectPanel extends BasicTabPanel
 			this.setComponentZOrder(hidePanel, 0);
 			this.updateUI();
 		}
-		if (EventType.ButtonClick.name().equals(cbxPageObjectFrom_forth.getSelectedItem().toString())) {
+		
+		Object selectedItem = cbxPageObjectFrom_forth.getSelectedItem();
+		if (selectedItem != null && EventType.ButtonClick.name().equals(selectedItem.toString())) {
 			hidePanel.setVisible(false);
 		} else {
 			hidePanel.setVisible(true);

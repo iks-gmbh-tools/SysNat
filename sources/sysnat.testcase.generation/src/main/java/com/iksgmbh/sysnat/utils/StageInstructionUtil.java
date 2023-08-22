@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.iksgmbh.sysnat.common.exception.SysNatConfigurationException;
+import com.iksgmbh.sysnat.common.exception.SysNatException;
 import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 
 public class StageInstructionUtil 
@@ -57,5 +58,14 @@ public class StageInstructionUtil
 		throw new SysNatConfigurationException("Invalid instruction in " 
 		                                       + KNOWN_STAGE_INSTRUCTIONS_FILE 
 		                                       + ": " + line);
+	}
+
+	public static String getContent(String s)
+	{
+		if (! isStageInstruction(s)) {
+			throw new SysNatException("No stage instruction: " + s);
+		}
+		int pos = s.indexOf(":") + 1;
+		return s.substring(pos).trim();
 	}
 }

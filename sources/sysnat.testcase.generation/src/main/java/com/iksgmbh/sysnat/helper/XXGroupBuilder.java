@@ -35,6 +35,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 import com.iksgmbh.sysnat.GenerationRuntimeInfo;
+import com.iksgmbh.sysnat.SysNatJUnitTestClassGenerator;
 import com.iksgmbh.sysnat.common.exception.SysNatTestDataException;
 import com.iksgmbh.sysnat.common.helper.ErrorPageLauncher;
 import com.iksgmbh.sysnat.common.utils.SysNatConstants;
@@ -109,9 +110,10 @@ public class XXGroupBuilder
 		// put XX without parameter definition into javaCommandCollectionResult
 		javaCommandCollectionTemp.keySet().stream().filter(filename -> ! testParameter.containsKey(filename))
                                                    .forEach(filename -> javaCommandCollectionResult.put(filename, javaCommandCollectionTemp.get(filename)));
-
+		
 		return javaCommandCollectionResult;
 	}
+
 
 	private boolean isNoScript(Filename filename) {
 		return ! filename.value.endsWith("Script.java");
@@ -428,7 +430,7 @@ public class XXGroupBuilder
 		final Hashtable<String, Properties> datasets;
 		final boolean tableDataMode;
 		
-		String behaviourID = extractNlxxFileNameFromJavaFile(filename.value);
+		String behaviourID = SysNatJUnitTestClassGenerator.extractNlxxFileNameFromJavaFile(filename.value);
 		JavaCommand constant = new JavaCommand("private static final String BEHAVIOUR_ID = \"" + behaviourID + "\";",
 				                                CommandType.Constant);
 		commands.add(0, constant);
@@ -448,20 +450,13 @@ public class XXGroupBuilder
 			tableDataMode = false;
 		}
 		
-		final List<String> dataSetNames = new ArrayList(datasets.keySet());
+		final List<String> keys = new ArrayList(datasets.keySet());
+		final List<String> dataSetNames = new ArrayList();
+		keys.forEach(k -> dataSetNames.add(cutFileExtentionIfPresent(k)));
 		nameOfCurrentFile = filename.value;
 		dataSetNames.forEach(dataSetName -> buildTestCase(testParameterValue, dataSetName, datasets.get(dataSetName), tableDataMode, commands)); 
 	}
 	
-	private String extractNlxxFileNameFromJavaFile(String value) 
-	{
-		int pos1 = value.lastIndexOf("/") + 1;
-		int pos2 = value.lastIndexOf("Test.");
-		if (pos1 == 1 || pos2 == -1) {
-			return value;
-		}
-		return value.substring(pos1, pos2);
-	}
 
 	private void buildTestCase(final String testParameterValue, 
 			                   final String datasetName,
@@ -508,7 +503,11 @@ public class XXGroupBuilder
 		int pos = inputFilename.lastIndexOf('/');
 		String packagePath = "";
 		String compressedXXid = xxid.replaceAll(" ", "");
-		if (pos > -1) packagePath = inputFilename.substring(0, pos) + "/" + compressedXXid + "/";
+		if (pos > -1) {
+			packagePath = inputFilename.substring(0, pos) + "/" + compressedXXid + "/";
+		} else {
+			packagePath = compressedXXid + "/";
+		}
 		
 		String id = "xlsx__";
 		pos = datasetId.indexOf(id);
@@ -524,12 +523,23 @@ public class XXGroupBuilder
 		return new Filename(filenameWithPath);
 	}
 
-	private String getDatasetUniqueIdentifier(final String datasetName) {
+	private String getDatasetUniqueIdentifier(String datasetName) {
 		String datasetId = SysNatStringUtil.extraxtTrailingDigits(datasetName);
 		if (datasetId.isEmpty()) {
 			datasetId = datasetName;
 		}
 		return datasetId;
+	}
+
+	private String cutFileExtentionIfPresent(String datasetName)
+	{
+		if (datasetName.endsWith(".dat")) {
+			return datasetName.substring(0, datasetName.length()-4);
+		}
+		if (datasetName.endsWith(".xlsx")) {
+			return datasetName.substring(0, datasetName.length()-5);
+		}
+		return datasetName;
 	}
 
 	private String toTableData(Properties dataset) 

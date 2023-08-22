@@ -686,7 +686,7 @@ public class LanguageTemplatesCommon
 	}
 
 	@LanguageTemplate(value = "Drücke die Tastenkombination ^^.")
-	@LanguageTemplate(value = "Press keysDrücke die Tastenkombination ^^.")
+	@LanguageTemplate(value = "Press keys ^^.")
 	public void pressKeys(String keyCombination)
 	{
 		String keys = keyCombination.replaceAll(" ", "");
@@ -700,6 +700,8 @@ public class LanguageTemplatesCommon
 			executableExample.getActiveGuiController().pressFunctionKey("F4", true, false);
 		} else if ("Enter".equalsIgnoreCase(keys)) {
 			executableExample.getActiveGuiController().pressEnter();
+		} else if ("Esc".equalsIgnoreCase(keys)) {
+			executableExample.getActiveGuiController().pressEscape();
 		} else if (keys.toUpperCase().startsWith("ALT")) {
 			char key = keys.charAt(3); 
 			executableExample.getActiveGuiController().pressAltWith(key);
@@ -750,7 +752,15 @@ public class LanguageTemplatesCommon
 		final String question = "Does directory <b>" + dir + "</b> exist" + QUESTION_IDENTIFIER;
 		executableExample.answerQuestion(question, 	! file.exists());	
 	}
-	
+
+	@LanguageTemplate(value = "Aus ^^ und ^^ wird <>.")
+	@LanguageTemplate(value = "Concat ^^ and ^^ to <>.")
+	public String concatStrings0(String s1Candidate, String s2Candidate){
+		String s1 = executableExample.getTestDataValue(s1Candidate);
+		String s2 = executableExample.getTestDataValue(s2Candidate);
+		return s1 + s2;
+	}
+
 	@LanguageTemplate(value = "Aus ^^ und '' wird <>.")
 	@LanguageTemplate(value = "Concat ^^ and '' to <>.")
 	public String concatStrings1(String s1, String s2){

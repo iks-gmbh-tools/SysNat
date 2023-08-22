@@ -34,6 +34,10 @@ import com.iksgmbh.sysnat.common.utils.SysNatFileUtil;
 @LanguageTemplateContainer
 public class LanguageTemplatesDownload 
 {
+	private static final String DOWNLOAD_FILE_LIST = "DownloadFileList";
+
+	private static final String DOWNLOAD_DIR = "DownloadDir";
+
 	public static final String NO_PDF_MESSAGE = "Problem: Es wurde keine PDF-Datei erzeugt!";
 
 	private ExecutableExample executableExample;
@@ -101,6 +105,47 @@ public class LanguageTemplatesDownload
  
 		executableExample.sleep(1000); // give system time 
 	}
+	
+	
+	@LanguageTemplate(value = "Check Download directory of Webbrower ^^.")
+	@LanguageTemplate(value = "Prüfe Download-Verzeichnis des Webbrowers ^^.")
+	public void checkDownloadDirAndReadFileList(String webbrowserDownloadDir)
+	{
+		String expectedPath = webbrowserDownloadDir.replace("/", "\\").replace("Benutzer", "Users").toLowerCase();
+		String actualPath = SysNatFileUtil.getDownloadDir().getAbsolutePath().replace("Benutzer", "Users").toLowerCase();
+	    if (expectedPath.equals(actualPath)) {
+	    	executableExample.addReportMessage("Das angegebene Verzeichnis <b>" + webbrowserDownloadDir + "</b> stimmt mit der Voreinstellung überein." );
+	    } else {
+	    	executableExample.addReportMessage("Das angegebene Verzeichnis <b>" + webbrowserDownloadDir + "</b> wird als Download-Verzeichnis verwendet." );
+	    }
+    	executableExample.getTestData().addValue(DOWNLOAD_DIR, webbrowserDownloadDir);
+    	executableExample.storeTestObject(DOWNLOAD_FILE_LIST, SysNatFileUtil.findDownloadFiles(webbrowserDownloadDir));
+	}
+	
+	
+	@LanguageTemplate("The lastest downloaded ^^ file is stored as <>.")
+	@LanguageTemplate("Die zuletzt heruntergeladene ^^-Datei wird als <> festgehalten.")
+	public File getLastDownLoadedFile(String fileExtension) 
+	{
+		FileList newList = SysNatFileUtil.findDownloadFiles(DOWNLOAD_DIR, fileExtension);
+		FileList oldList = (FileList) executableExample.getTestObject(DOWNLOAD_FILE_LIST); 
+		oldList.getFiles().forEach(f -> newList.getFiles().remove(f));
+		
+		if (newList.getFiles().size() > 0) {
+			return newList.getFiles().get(0);
+		}
+
+		return null;
+	}
+	
+
+	@LanguageTemplate(value = "Speichere Download-Datei als ^^.")
+	public void moveAndRenameDownloadFile(String pathTemplate)
+	{
+		File lastDownLoadedFile = getLastDownLoadedFile(null);
+		SysNatFileUtil.copyBinaryFile(lastDownLoadedFile, pathTemplate);
+		lastDownLoadedFile.delete();
+	}		
 
 	// ###########################################################################
 	//                    P r i v a t e   M e t h o d s

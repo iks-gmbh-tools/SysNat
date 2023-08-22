@@ -1419,7 +1419,7 @@ public class SwingGuiController extends AbstractGuiControl implements SwingGuiCo
 			currentDialogHandle = dialogHandle.getOperator();
 			currentDialogName = dialogName;
 		} else {
-			if ("Frage".equals(dialogName)) {
+			if ("Inka Frage".equals(dialogName)) {
 				problemcount++;
 				if (problemcount == 1) {
 					System.out.println("");
@@ -1759,7 +1759,12 @@ public class SwingGuiController extends AbstractGuiControl implements SwingGuiCo
 	{
 		JComponentOperator c = findComponent(handle, elementIdentifier, timeoutInSeconds*1000);
 		if (c == null) throw new SysNatException("Expected GUI element not found: " + elementIdentifier);
-		if (isEnabledComponentAvailable(c)) return;  
+		if (c.getSource() instanceof JLabel) {
+			if (isComponentAvailable(c)) return;
+		} else {
+			if (isEnabledComponentAvailable(c)) return;  
+		}
+
 		throw new SysNatException("GUI element is not available: " + elementIdentifier);
 	}
 

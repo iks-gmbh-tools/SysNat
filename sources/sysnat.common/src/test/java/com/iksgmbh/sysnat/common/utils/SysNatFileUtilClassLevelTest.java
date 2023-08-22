@@ -61,7 +61,7 @@ public class SysNatFileUtilClassLevelTest
 		downloadedFile.createNewFile();
 
 		// act
-		File result = SysNatFileUtil.findRecentDownloadFile(100);
+		File result = SysNatFileUtil.findRecentDownloadFile(100000);
 
 		// assert
 		assertTrue(result.exists());
