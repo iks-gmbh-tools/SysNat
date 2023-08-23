@@ -2,8 +2,8 @@ Setting up SysNat Eclipse
 =========================
 
 Preconditions:
-- a Java SDK 8 is available
-- a Eclipse installation (v4.12) is available (at best the Java Developers package)
+- a Java SDK is available (recommended v20)
+- an Eclipse installation is available (recommended v2023-6 Java Developers package)
 
 Preparation:
 
