@@ -44,7 +44,7 @@ import de.iksgmbh.sysnat.docing.SysNatDocumentGenerator;
 public class SysNatExecutor 
 {
 	public static final String MAVEN_OK = "OK";
-	public static final File JAVA_JDK_DIR = new File("C:/dev/java/openjdk-20.0.2");
+	public static final File JAVA_JDK_DIR = new File("../../java");
 	
 	private static final String PATH_TO_MAVEN = "../../maven";
 	private static final String[] SYSNAT_FILES = {"pom.xml", "AvailableNaturalLanguageScripts.properties"};
